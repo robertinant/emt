@@ -84,6 +84,7 @@ class HardwareSerial : public Stream
 extern HardwareSerial Serial;
 extern HardwareSerial Serial1;
 
-// I should delete this, but I need to check first
 extern void serialEventRun(void) __attribute__((weak));
+extern void serialEventRun1(void) __attribute__((weak));
+
 #endif

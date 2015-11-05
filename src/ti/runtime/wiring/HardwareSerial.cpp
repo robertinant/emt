@@ -265,6 +265,9 @@ void uartReadCallback1(UART_Handle uart, void *buf, size_t count)
 void serialEvent() __attribute__((weak));
 void serialEvent() { }
 
+void serialEvent1() __attribute__((weak));
+void serialEvent1() { }
+
 void serialEventRun(void)
 {
     if (Serial.available()) {
@@ -275,7 +278,7 @@ void serialEventRun(void)
 void serialEventRun1(void)
 {
     if (Serial1.available()) {
-        serialEvent();
+        serialEvent1();
     }
 }
 
