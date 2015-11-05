@@ -39,6 +39,9 @@ SECTIONS {
         KEEP (*(.vtable))
     } > REGION_DATA
 
+    /* if a ROM-only symbol is present, then ROM is being used.
+     * Reserve memory for surgically placed module states.
+     */
     _rom_data_start = 0x20000100;
     _rom_data_size = DEFINED(ti_sysbios_rom_ROM_ti_sysbios_family_arm_cc26xx_Timer_getCount64__E) ? 0x104 : 0;
 
@@ -62,6 +65,9 @@ SECTIONS {
     UDMACC26XX_dmaTxControlTableEntry1_is_placed = 0;
     .dmaTxControlTableEntry1 0x20000510 : AT (0x20000510) {*(.dmaTxControlTableEntry1)} > REGION_DATA
 
+    /* if a ROM-only symbol is present, then ROM is being used.
+     * Reserve memory for surgically placed config constants.
+     */
     _rom_rodata_start = 0x100;
     _rom_rodata_size = DEFINED(ti_sysbios_rom_ROM_ti_sysbios_family_arm_cc26xx_Timer_getCount64__E) ? 0x500 : 0;
 
@@ -94,7 +100,7 @@ SECTIONS {
         *(.rodata.*)
     } > REGION_TEXT AT> REGION_TEXT
 
-    .data : ALIGN (4) {
+    .data : ALIGN(4) {
         __data_load__ = LOADADDR (.data);
         __data_start__ = .;
         *(.data)
