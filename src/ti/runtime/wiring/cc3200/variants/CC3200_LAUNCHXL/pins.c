@@ -93,11 +93,11 @@ const uint8_t digital_pin_to_timer[] = {
 	NOT_ON_TIMER,	/*  6  - GPIO_04 */
 	NOT_ON_TIMER,	/*  7  - GPIO_14 */
 	NOT_ON_TIMER,	/*  8  - GPIO_07 */
-	TIMERA3A, 		/*  9  -  port 0 */
-	TIMERA3B, 		/*  10 -  port 1 */
+	TIMERA3A, 	/*  9  -  port 0 */
+	TIMERA3B, 	/*  10 -  port 1 */
 	NOT_ON_TIMER,	/*  11 - GPIO_22 */
 	NOT_ON_TIMER,	/*  12 - GPIO_01 */
-	TIMERA1A, 		/*  13 -  port 0 */
+	TIMERA1A, 	/*  13 -  port 0 */
 	NOT_ON_TIMER,	/*  14 - GPIO_15 */
 	NOT_ON_TIMER,	/*  15 - GPIO_16 */
 	NOT_ON_TIMER,	/*  16 - RESET */
@@ -113,18 +113,18 @@ const uint8_t digital_pin_to_timer[] = {
 	NOT_ON_TIMER,	/*  26 - GPIO_04 */
 	NOT_ON_TIMER,	/*  27 - GPIO_08 */
 	NOT_ON_TIMER,	/*  28 - GPIO_30 */
-	TIMERA2B,		/*  29 -  port 1 */
+	TIMERA2B,	/*  29 -  port 1 */
 	NOT_ON_TIMER,	/*  30 - GPIO_00 */
-	TIMERA0A, 		/*  31 -  port 0 */
+	TIMERA0A, 	/*  31 -  port 0 */
 	NOT_ON_TIMER,	/*  32 - GPIO_23 */
 	NOT_ON_TIMER,	/*  33 - GPIO_05 */
 	NOT_ON_TIMER,	/*  34 - GPIO_07 */
 	NOT_ON_TIMER,	/*  35 - GPIO_28 */
-	TIMERA1A, 		/*  36 -  port 0 */
-	TIMERA2B, 		/*  37 -  port 1 */
-	TIMERA0A, 		/*  38 -  port 0 */
-	TIMERA3A, 		/*  39 -  port 0 */
-	TIMERA3B, 		/*  40 -  port 1 */
+	TIMERA1A, 	/*  36 -  port 0 */
+	TIMERA2B, 	/*  37 -  port 1 */
+	TIMERA0A, 	/*  38 -  port 0 */
+	TIMERA3A, 	/*  39 -  port 0 */
+	TIMERA3B, 	/*  40 -  port 1 */
 };
 
 const uint16_t digital_pin_to_pin_num[] = {

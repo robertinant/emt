@@ -435,7 +435,7 @@ SPI_Handle Board_openSPI(UInt spiPortIndex, SPI_Params *spiParams)
     SPI_init();
 
     /* initialize the pins associated with the respective UART */
-    switch(spiPortIndex) {
+    switch (spiPortIndex) {
         /*
          * NOTE: TI-RTOS examples configure EUSCIB0 as either SPI or I2C.  Thus,
          * a conflict occurs when the I2C & SPI drivers are used simultaneously in
@@ -528,14 +528,14 @@ const UART_Config UART_config[] = {
  *  Initialize the UART port's pins.
  *  Open the UART port.
  */
-UART_Handle  Board_openUART(UInt uartPortIndex, UART_Params *uartParams)
+UART_Handle Board_openUART(UInt uartPortIndex, UART_Params *uartParams)
 {
     /* Initialize the UART driver */
     /* By design, UART_init() is idempotent */
     UART_init();
 
     /* initialize the pins associated with the respective UART */
-    switch(uartPortIndex) {
+    switch (uartPortIndex) {
         case 0:
             /* Serial */
             /* enable UART1 clock */
