@@ -12,8 +12,9 @@ for (var i = 0; i < Manifest.files.length; i++) {
 
     if (fname.match(/\.[ch]$/) != null
         || fname.match(/\.cpp$/) != null
-        || fname.match(/simple.*\.mak$/) != null
+        || fname.match(/\keywords\.txt$/) != null
         || fname.match(/package\.xdc$/) != null
+        || fname.match(/\/lib\/.*\.m[a-zA-Z0-9]+\.lib$/) != null
         || fname.match(/\.rel\.xml$/) != null) {
         if (fname.match(/package\/package_.+\.c$/) == null) {
             files.push(fname);
