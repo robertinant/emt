@@ -1,4 +1,4 @@
-				emt-a61
+				emt-a62
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -129,12 +129,18 @@ DELETIONS
 
 CHANGES
 
-ti.platforms.emt26xx
-ti.platforms.launchpad
-	Rework ordering of section placements to not cause resetting of
-        "." after DMA descriptors are placed.
+ti.platforms.*
+    Follow normalized cc26xx linker command file designs in simplelink platform
 
-	Allow either linker command file to be used for ROM or non ROM build
-	flows.
+ti.runtime.wiring
+	make it possible to "optimally" support serialEvent() in the
+	"arduiono way"; i.e., if the main loop calls serialEventRun() after
+	each call to loop().
+
+	We can/should add the call to serialEventRun() _only_ if the user's
+	sketch defines the function serialEvent()
+
+ti.runtime.wiring/cc3200/variants/CC3200_LAUNCHXL
+	minor code formatting cleanup
 
 MRS
