@@ -1,8 +1,39 @@
 /*
  *  ======== mapsum.xs ========
+ *  Account for an executable's footprint in terms of the linked object files
+ * 
+ *  Usage: xs -c mapsum.xs [-e <executable>] [-t <toolchain>] [-v] \ 
+ *                         [-f <object>] mapfile ...";
+ * 
+ *  Options:
+ *     -e <exe>    - use <exe> to determine target/platform
+ *
+ *     -t <tools>  - specify the type of linker map file ("gnu" or "ti").  If
+ *                   not specified the toolchain will be infered by the map 
+ *                   file content.
+ *
+ *     -v          - verbose output.  More -v options increase the amount of 
+ *                   information dumped
+ *
+ *     -f <obj>    - follow and display the "dependency chain" that causes
+ *                   <obj> to be included in the executable
+ *
+ *     mapfile     - the map file(s) to analyze.  If multiple map files are
+ *                   provided display accounting for each _and_ display the 
+ *                   difference between the first and second, first and 
+ *                   third, etc.
+ *
+ *  Linker map files provide the mapping of output sections to the set of
+ *  object file "input sections" that it contains and a mapping for object 
+ *  files to the thier containing library (if any).
+ * 
+ *  This tool uses these relations to create a mapping from libraries (or
+ *  top-level object files) to the individual object file output sections that
+ *  contribute to the executable's total footprint.  This relation provides a
+ *  view of the footprint contribution of each library (or top-level object
+ *  file).
  */
-
-var usage = "usage: xs -c mapsum.xs [-e <executable>] [-t <toolchain>] [-v] [-f <object>] mapfile";
+var usage = "usage: xs -c mapsum.xs [-e <executable>] [-t <toolchain>] [-v] [-f <object>] mapfile ...";
 
 var symbolNamesGnu = {
     __UNUSED_SRAM_start__: "SRAM_UNUSED_start",
@@ -183,18 +214,16 @@ function parse(fileName, executable)
 {
     var result = null;
 
-    /* if toolchain is not specified, try to figure it out from the executable file */
-    if (toolChain == null) {
-        if (executable != null) {
-            exeAttrs = getExeAttrs(executable);
-            var target = exeAttrs.__TARG__;
-            if (target != null) {
-                toolChain = target.split('.')[0];
-            }
+    /* if toolchain isn't specified, figure it out from the executable */
+    if (toolChain == null && executable != null) {
+        exeAttrs = getExeAttrs(executable);
+        var target = exeAttrs.__TARG__;
+        if (target != null) {
+            toolChain = target.split('.')[0];
         }
     }
 
-    /* if toolchain is still not specified, try to figure it out from the map file */
+    /* if toolchain still isn't specified, figure it out from the map file */
     if (toolChain == null) {
         toolChain = getToolChain(fileName);
     }
@@ -219,6 +248,10 @@ function parse(fileName, executable)
 
 /*
  *  ======== parseGnu ========
+ *  Heuristics:
+ *     *fill* sections exist to 
+ *         o align the beginning of a subsequent input section
+ *         o statically allocate space for stacks, heaps, ROM data blocks
  */
 function parseGnu(fileName) 
 {
@@ -250,32 +283,69 @@ function parseGnu(fileName)
         }
 
         /* now look for section allocation lines */
-        var section; /* output section name */
-        var size;    /* size of contained "section" */
-        var key;     /* input container name + optional object name */
-        var start;   /* start address */
+        var outSection;  /* most recent top-level output section name */
+        var section;     /* output section name */
+        var prevSection; /* most recent non-null section name */
+        var size;        /* size of contained "section" */
+        var key;         /* input container name + optional object name */
+        var start;       /* start address */
+
+        /* Look for the start of a new output section; i.e., lines of the
+         *  form: 
+         *     "^<output_section_name>( 0x<addr> 0x<size>)?" 
+         */
+        var tokens = line.match(/^([\.a-zA-Z0-9_\*]+)(\s+(0x[0-9a-f]+)\s+(0x[0-9a-f]+))?/);
+        if (tokens != null) {
+            outSection = tokens[1];
+
+            /* add outstanding *fill* to most recent elem of prev section */
+            if (fill != 0) {
+                var elem = result[key];
+                if (elem != null) {
+                    elem.fill += fill;
+                    elem.total += fill;
+
+                    /* add a separate fill section to see who needs alignment*/
+                    elem.sections[prevSection + "(*fill*)"] = fill;
+                    fill = 0;
+                }
+                else {
+                    print("======= key: " + key 
+                          + "\n      line: " + line
+                          + "\n      prev: " + prevSection);
+                }
+            }
+            //key = outSection;
+            continue;
+        }
 
         /* look for lines of the form:
-         *    "^ <section_name> 0x<addr> 0x<size> <container>(<object>)",
-         *    "^ <section_name>", or
-         *    "^     0x<addr> 0x<size> <container>(<object>)" immediately followed by the form above
+         *       section_object start    size     key
+         *    "^ <section_name> 0x<addr> 0x<size> <container>(<object>)", or
+         *    "^ <section_name>",                                         or
+         *    "^     0x<addr> 0x<size> <container>(<object>)", immediately
+         *    followed by the "lone section name" form above
          */
-        var tokens = line.match(/^ ([\.a-zA-Z0-9_+:\*]+)\s+(0x[0-9a-f]+)\s+(0x[0-9a-f]+)\s+([\.a-zA-Z0-9_+:\/\\\-]+)(\(.+\))?/);
+        tokens = line.match(/^ ([\.a-zA-Z0-9_+:\*]+)\s+(0x[0-9a-f]+)\s+(0x[0-9a-f]+)\s+([\.a-zA-Z0-9_+:\/\\\-]+)(\(.+\))?/);
         if (tokens == null) {
 
-            /* check for fill sections (alignment padding) */
+            /* check for *fill* sections, these are either
+             *     o object alignment padding, or
+             *     o raw space allocation: heap, stack, ...
+             */
             tokens = line.match(/^\s+\*fill\*\s+0x[0-9a-f]+\s+(0x[\0-9a-f]+)/);
-            if (tokens != null && tokens[1] != null) {
-                fill = tokens[1] - 0;
+            if (tokens != null && tokens[1] != null && outSection.indexOf(".debug") != 0) {
+                fill += tokens[1] - 0;
                 continue;
             }
 
-            /* are we expecting a continuation line? */
             if (continuation == true) {
+                /* parse continuation line */
                 continuation = false;
                 tokens = line.match(/^ \s+(0x[0-9a-f]+)\s+(0x[0-9a-f]+)\s+([\.a-zA-Z0-9_+:\/\\\-]+)(\(.+\))?/);
                 if (tokens == null) {
-                    print("warning: expected a continuation of section '" + section + "', skipping line: " + line);
+                    print("warning: expected a continuation of section '" 
+                          + section + "', skipping line: " + line);
                     continue;
                 }
                 section += (tokens[4] ? tokens[4] : "");
@@ -284,13 +354,18 @@ function parseGnu(fileName)
                 key = tokens[3];
             }
             else {
+                /* check for <section_name> start */
                 tokens = line.match(/^ ([\.a-zA-Z0-9_+:\*]+)$/);
                 if (tokens != null && tokens[1] != "CREATE_OBJECT_SYMBOLS") {
                     continuation = true;
                     section = tokens[1];
                 }
                 else {
-                    section = null;
+                    /* don't know what this line is (do we care?) */
+                    if (section != null) {
+                        prevSection = section;
+                        section = null;
+                    }
                 }
                 continue;
             }
@@ -303,6 +378,7 @@ function parseGnu(fileName)
             continuation = false;
         }
 
+        /* ignore zero length sections or well-known non-loadable sections */
         if (size == 0 || section.match(/^(\.(debug|comment|stab|ARM\.attr|TI\.section\.flag|TI\.symbol))|xdc\.|__TI_DW\.debug/) != null) {
             continue;
         }
@@ -313,6 +389,9 @@ function parseGnu(fileName)
             key = "COMMON";
         }
             
+        /* if we get here, we should have a "key": a container name that we
+         * canonicalize
+         */
         var index = Math.max(key.lastIndexOf('/'), key.lastIndexOf('\\'));
         var prefix = key.substring(0, index);
         if (java.io.File(prefix).isAbsolute()) {
@@ -336,6 +415,14 @@ function parseGnu(fileName)
             result[key].sections[section + "(*fill*)"] = fill;
             fill = 0;
         }
+    }
+    if (fill != 0) {
+        print("warning: unattributed fill value: " 
+              + fill + ", section: " + section);
+        result["*fill*"] = {
+            name: "*fill*", total: fill, sections: {}, fill: fill
+        };
+        fill = 0;
     }
 
     /* close file stream */
@@ -526,8 +613,8 @@ function printDeps(ot)
 
 /*
  *  ======== printDepChains ========
- *  print sequence of objects that leads to the inclusion of each object matching
- *  the start pattern
+ *  print sequence of objects that leads to the inclusion of each object 
+ *  matching the start pattern
  */
 function printDepChains(ot, startPattern)
 {
@@ -558,7 +645,7 @@ function printDepChain(ot, fullName)
     /* define start to be the canonical shortened fullName */
     var start = fullName.substring(fullName.lastIndexOf('/') + 1);
 
-    /* follow the chain of referers back to an initial obj file or undefined symbol */
+    /* follow the chain of referers back to an init obj or undefined symbol */
     var prefix = " ";
     var obj = ot[fullName];
     for (var ref = obj.referer; ref; ref = obj.referer) {
@@ -569,12 +656,14 @@ function printDepChain(ot, fullName)
         start = shortRef;
         obj = ot[ref];
         if (obj == null) {
-            print(prefix + ref + ": required because it's on the command line");
+            print(prefix + ref 
+                  + ": required because it's on the command line");
             break;
         }
     }
     if (obj != null) {
-        print(prefix + start + ": required to define initially undefined symbol "
+        print(prefix + start 
+              + ": required to define initially undefined symbol "
               + obj.symbol);
     }
 }
@@ -652,7 +741,7 @@ function findRef(carray, name)
                 var line = lines[j];
 
                 /* skip over object file name lines (from "nm <archive>") */
-                var tokens = line.match(/^([a-zA-Z-0-9_+\.\\\/]*):$/);
+                tokens = line.match(/^([a-zA-Z-0-9_+\.\\\/]*):$/);
                 if (tokens && tokens[1]) {
                     curObj = tokens[1];
                     continue;
