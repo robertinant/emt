@@ -70,6 +70,9 @@ endif
 
 OBJS = $(patsubst %.ino,%.obj,$(patsubst %.cpp,%.obj,$(SOURCES)))
 
+## ensure objects are not implicitly removed by make
+.PRECIOUS: $(OBJS)
+
 # build rules
 all: $(PROGNAME).out $(PROGNAME).size
 

@@ -101,7 +101,7 @@ void setup2() {
 }
 
 void loop2() {
-    uint32_t startTime;
+//    uint32_t startTime;
     // listen for incoming clients
     WiFiClient client = server.available();
     if (client) {
