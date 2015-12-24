@@ -1,7 +1,7 @@
 #!/bin/ksh
 
 ##push closures out to energia.nu
-#./push.ksh
+./push.ksh
 
 echo "removing uncompressed closures ..."
 rm -rf $base/msp432/closure $base/cc3200/closure $base/cc26xx/closure

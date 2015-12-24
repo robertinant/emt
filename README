@@ -1,4 +1,4 @@
-				emt-a62
+				emt-b00
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -106,8 +106,8 @@ Librarian releases
     cd emt.git; git fetch; cd ..
 
     # clone the tree and merge/review user content
-    ggentree -u karl@ti.com emt.git/
-    cd emt-a??
+    ggentree -u d-russo@ti.com emt.git/
+    cd emt-b??
     git merge origin/dr
 
     # build the tree
@@ -116,7 +116,7 @@ Librarian releases
 
     # update README 
     emacs README
-    git commit -a -m emt-a??
+    git commit -a -m emt-b??
 
     # release the tree
     greltree -m "something brief and meaningful"
@@ -129,18 +129,8 @@ DELETIONS
 
 CHANGES
 
-ti.platforms.*
-    Follow normalized cc26xx linker command file designs in simplelink platform
-
-ti.runtime.wiring
-	make it possible to "optimally" support serialEvent() in the
-	"arduiono way"; i.e., if the main loop calls serialEventRun() after
-	each call to loop().
-
-	We can/should add the call to serialEventRun() _only_ if the user's
-	sketch defines the function serialEvent()
-
-ti.runtime.wiring/cc3200/variants/CC3200_LAUNCHXL
-	minor code formatting cleanup
+*
+	migrate to TIRTOS 2.15 (from 2.14)
+	migrate to xdctools 3.32 (from 3.31)
 
 MRS
