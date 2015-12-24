@@ -11,17 +11,21 @@ var srcDir = java.io.File(cc26xx.DLIBROOT).getCanonicalPath();
 cc26xx.addLibs([srcDir + "/driverlib"]);
 
 /* include copy of ti.drivers/lib that has gcc built libraries */
-Pkg.otherFiles = ["./ti_drivers_lib"];
-print("WARNING: including hand-built ti.drivers/lib libraries (from a clone of git://gitorious.design.ti.com/ti-rtos/drivers.git @ tag 2.14.00.10)");
+//Pkg.otherFiles = ["./ti_drivers_lib"];
+
+//print("WARNING: including hand-built ti.drivers/lib libraries (from a clone of git://gitorious.design.ti.com/ti-rtos/drivers.git @ tag 2.14.00.10)");
 
 /* check compatibility with ti.drivers libraries:
  *   for zumaprod-g06, ti.drivers drivers built against
  *     CC26XXWARE = /db/vendors/ti/CCWare/cc26xxware_2_21_01_15600
  *   for zumaprod-h10, and
  *     CC26XXWARE = /db/vendors/ti/CCWare/cc26xxware_2_21_02_15830
- *   
- *   See `grep CC26XXWARE <drivers repo>/Makefile`
+ *   for zumaprod-17
+ *     CC26XXWARE = /db/vendors/ti/CCWare/cc26xxware_2_23_00_16374
+ * 
+ *   See `grep CC26XXWARE <drivers repo>/Makefile`.  For example,
+ *     grep CC26XXWARE $TREES/drivers/drivers-2.15.00.26/Makefile
  */
-if ("/db/vendors/ti/CCWare/cc26xxware_2_21_02_15830" != srcDir) {
-    throw new Error("driverlib <-> TI-RTOS library mismatch");
-}
+//if ("/db/vendors/ti/CCWare/cc26xxware_2_23_00_16374" != srcDir) {
+//    throw new Error("driverlib <-> TI-RTOS library mismatch");
+//}

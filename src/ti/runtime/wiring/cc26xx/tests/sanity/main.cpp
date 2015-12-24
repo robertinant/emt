@@ -50,7 +50,8 @@ void the_task(xdc_UArg _task_setup, xdc_UArg _task_loop)
 int main()
 {
     /* initialize all device/board specific peripherals */
-    //    Board_init();  /* this function is generated as part of TI-RTOS config */
+    //Board_init();  /* this function is generated as part of TI-RTOS config */
+    Board_initPower();  /* this function is generated as part of TI-RTOS config */
 
     Task_Params taskParams;
 

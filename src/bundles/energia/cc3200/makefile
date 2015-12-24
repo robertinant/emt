@@ -16,8 +16,9 @@ include tools.mak
 
 # define the XDC package path based on the settings above
 SYSBIOS ?= $(wildcard $(TIRTOS)/products/bios_*)
+TIDRIVERS ?= $(wildcard $(TIRTOS)/products/tidrivers_*)
 
-XDCPATH = $(TIRTOS)/packages;$(SYSBIOS)/packages;$(EMTROOT)
+XDCPATH = $(TIRTOS)/packages;$(SYSBIOS)/packages;$(TIDRIVERS)/packages;$(EMTROOT)
 
 PLATFORM = ti.platforms.emt3200
 TARGET   = gnu.targets.arm.M4

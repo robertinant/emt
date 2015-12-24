@@ -18,7 +18,7 @@ function getLibs(prog)
  */
 function validate()
 {
-//    return;
+    return;
 
     /* patch TI-RTOS getLibs() bug */
     if ("ti.tirtos.Package" in xdc.om) {
@@ -37,7 +37,6 @@ function _newGetLibs(prog)
     if (libs != null) {
 	var nlibs = libs.replace(/\.am3g/, '\.aem3');
 	if (nlibs != libs) {
-	    nlibs = getGnuLibs();
             print("    WARNING: patching " + this.$name 
 		  + " getLibs to link: " + nlibs + " (was '" + libs + "')");
 	    libs = nlibs;
@@ -45,13 +44,4 @@ function _newGetLibs(prog)
     }
 
     return (libs);
-}
-
-function getGnuLibs()
-{
-    var drivers = xdc.findFile("ti/runtime/driverlib/cc26xx");
-    if (drivers == null) {
-	throw new Error("can't find 'ti/runtime/driverlib/cc26xx'");
-    }
-    return (drivers + "/ti_drivers_lib/drivers_cc26xxware.am3g;"); 
 }

@@ -109,6 +109,15 @@ extern void Board_initGPIO(void);
 extern void Board_initSDSPI(void);
 
 /*!
+ *  @brief  Initialize board specific Power management
+ *
+ *  This function initializes the board specific power settings and then calls
+ *  the Power_init API to initialize the Power module.
+ *
+ */
+extern void Board_initPower(void);
+
+/*!
  *  @brief  Initialize board specific Watchdog settings
  *
  *  This function initializes the board specific Watchdog settings and then

@@ -16,8 +16,9 @@ include tools.mak
 
 # define the XDC package path based on the settings above
 SYSBIOS ?= $(wildcard $(TIRTOS)/products/bios_*)
+TIDRIVERS ?= $(wildcard $(TIRTOS)/products/tidrivers_*)
 
-XDCPATH = $(TIRTOS)/packages;$(SYSBIOS)/packages;$(EMTROOT)
+XDCPATH = $(TIRTOS)/packages;$(SYSBIOS)/packages;$(TIDRIVERS)/packages;$(EMTROOT)
 
 PLATFORM = ti.platforms.emt26xx
 TARGET   = gnu.targets.arm.M3
@@ -50,13 +51,9 @@ all: .debug closure
 closure: configPkg
 	@$(RMDIR) $@
 	@echo xs xdc.tools.closure -d $@ $< ...
-	$(XDCROOT)/xs xdc.tools.closure -d $@ -i ti.drivers.bsp -i ti.runtime.driverlib.cc26xx $<
+	$(XDCROOT)/xs xdc.tools.closure -d $@ -i ti.drivers.pdm -i ti.drivers.bsp -i ti.runtime.driverlib.cc26xx $<
 
 	$(XDCROOT)/bin/xdccpp $(wildcard $(VARIANTS)/*) $@
-
-	@echo WARNING: copying ti.drivers headers to $@ from $(EMTROOT)/ti/drivers
-	@cp $(EMTROOT)/ti/drivers/gpio/* $@/ti/drivers/gpio
-	@cp $(EMTROOT)/ti/drivers/pwm/* $@/ti/drivers/pwm
 
 	@echo patching $@ ...
 	@$(CURDIR)/../patch.ksh $@ ./src $<

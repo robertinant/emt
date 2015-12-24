@@ -34,7 +34,6 @@
 
 #include "wiring_private.h"
 
-#include <ti/sysbios/family/arm/cc26xx/Power.h>
 #include <ti/sysbios/family/arm/m3/Hwi.h>
 
 #include <driverlib/ioc.h>
@@ -43,10 +42,11 @@
 
 #include <ti/drivers/PWM.h>
 #include <ti/drivers/GPIO.h>
+#include <ti/drivers/Power.h>
+#include <ti/drivers/power/PowerCC26XX.h>
 #include <ti/drivers/gpio/GPIOCC26XX.h>
-#include <ti/drivers/pwm/PWMTimerCC26xx.h>
+#include <ti/drivers/pwm/PWMTimerCC26XX.h>
 #include <ti/drivers/pin/PINCC26XX.h>
-
 
 /*
  * analogWrite() support
@@ -141,7 +141,7 @@ void analogWrite(uint8_t pin, int val)
     else {
         /* re-configure pin if possible */
         PWM_Params params;
-        PWMTimerCC26xx_PWMPinCfg pwmPinCfg;
+        PWMTimerCC26XX_PWMPinCfg pwmPinCfg;
         
         if (digital_pin_to_pin_function[pin] == PIN_FUNC_INVALID) {
             Hwi_restore(hwiKey);
@@ -186,7 +186,7 @@ void analogWrite(uint8_t pin, int val)
         params.period = 2040; /* arduino period is 2.04ms (490Hz) */
         params.dutyMode = PWM_DUTY_COUNTS;
         pwmPinCfg.pwmPinId = pwmPinId; /* override HWAttrs pwmPinId */
-        params.custom = &pwmPinCfg;
+        params.custom = (uintptr_t)&pwmPinCfg;
         
         PWM_open(pwmIndex, &params);
         digital_pin_to_pin_function[pin] = PIN_FUNC_ANALOG_OUTPUT;
@@ -307,7 +307,7 @@ uint16_t analogRead(uint8_t pin)
     // Set up ADC (use 3.3V VDD as reference)
     AUXADCEnableAsync(AUXADC_REF_VDDS_REL, AUXADC_TRIGGER_MANUAL);
     // Disallow STANDBY mode while using the ADC.
-    Power_setConstraint(Power_SB_DISALLOW);
+    Power_setConstraint(PowerCC26XX_SB_DISALLOW);
     // Trigger ADC sampling
     AUXADCGenManualTrigger();
     /* fetch the next sample */
@@ -316,7 +316,7 @@ uint16_t analogRead(uint8_t pin)
     // Disable ADC
     AUXADCDisable();
     // Allow STANDBY mode again
-    Power_releaseConstraint(Power_SB_DISALLOW);
+    Power_releaseConstraint(PowerCC26XX_SB_DISALLOW);
     /* finally allow another thread to do an analogRead */
     Hwi_restore(hwiKey);
 

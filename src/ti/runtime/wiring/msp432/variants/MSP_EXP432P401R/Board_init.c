@@ -809,8 +809,8 @@ UART_Handle  Board_openUART(UInt uartPortIndex, UART_Params *uartParams)
 #include <ti/drivers/power/PowerMSP432.h>
 
 const PowerMSP432_Config PowerMSP432_config = {
-    .policyInitFxn = &PowerMSP432_policyInitFxn,
-    .policyFxn = &PowerMSP432_policyFxn,
+    .policyInitFxn = PowerMSP432_initPolicy,
+    .policyFxn = PowerMSP432_sleepPolicy,
     .initialPerfLevel = 2,
     .enablePolicy = false,
     .enablePerf = true

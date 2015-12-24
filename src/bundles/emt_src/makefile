@@ -2,7 +2,9 @@ include ../../../imports.mak
 
 EXPORTS = ../../../exports
 
-TIRTOS_REPOS = $(TIRTOS)/packages;$(SYSBIOS)/packages
+TIDRIVERS ?= $(wildcard $(TIRTOS)/products/tidrivers_*)
+
+TIRTOS_REPOS = $(TIRTOS)/packages;$(SYSBIOS)/packages;$(TIDRIVERS)/packages;$(EMTROOT)
 
 XDC = $(XDCROOT)/xdc
 

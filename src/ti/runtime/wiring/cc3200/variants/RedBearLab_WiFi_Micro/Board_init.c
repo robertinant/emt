@@ -473,14 +473,14 @@ const UART_Config UART_config[] = {
  *  Initialize the UART port's pins.
  *  Open the UART port.
  */
-UART_Handle  Board_openUART(UInt uartPortIndex, UART_Params *uartParams)
+UART_Handle Board_openUART(UInt uartPortIndex, UART_Params *uartParams)
 {
     /* Initialize the UART driver */
     /* By design, UART_init() is idempotent */
     UART_init();
 
     /* initialize the pins associated with the respective UART */
-    switch(uartPortIndex) {
+    switch (uartPortIndex) {
         case 0:
             /* Serial */
             /* enable UART1 clock */
@@ -543,20 +543,19 @@ UART_Handle  Board_openUART(UInt uartPortIndex, UART_Params *uartParams)
  *  Power_enablePolicy(), or by changing runPolicy to 1 in this structure.
  */
 const PowerCC3200_Config PowerCC3200_config = {
-    &PowerCC3200_initPolicy,   /* policyInitFxn */
-    &PowerCC3200_sleepPolicy,  /* policyFxn */
-    NULL,                      /* enterLPDSHookFxn */
-    NULL,                      /* resumeLPDSHookFxn */
-    1,                         /* enablePolicy */
-    1,                         /* enableGPIOWakeupLPDS */
-    0,                         /* enableGPIOWakeupShutdown */
-    1,                         /* enableNetworkWakeupLPDS */
-    PRCM_LPDS_GPIO13,          /* wakeupGPIOSourceLPDS */
-    PRCM_LPDS_FALL_EDGE,       /* wakeupGPIOTypeLPDS */
-    0,                         /* wakeupGPIOSourceShutdown */
-    0,                         /* wakeupGPIOTypeShutdown */
-    PRCM_SRAM_COL_1|PRCM_SRAM_COL_2|PRCM_SRAM_COL_3|PRCM_SRAM_COL_4
-                               /* ramRetentionMaskLPDS */
+    .policyInitFxn = PowerCC3200_initPolicy,
+    .policyFxn = PowerCC3200_sleepPolicy,
+    .enterLPDSHookFxn = NULL,
+    .resumeLPDSHookFxn = NULL,
+    .enablePolicy = true,
+    .enableGPIOWakeupLPDS = true,
+    .enableGPIOWakeupShutdown = false,
+    .enableNetworkWakeupLPDS = true,
+    .wakeupGPIOSourceLPDS = PRCM_LPDS_GPIO13,
+    .wakeupGPIOTypeLPDS = PRCM_LPDS_FALL_EDGE,
+    .wakeupGPIOSourceShutdown = 0,
+    .wakeupGPIOTypeShutdown = 0,
+    .ramRetentionMaskLPDS = PRCM_SRAM_COL_1|PRCM_SRAM_COL_2|PRCM_SRAM_COL_3|PRCM_SRAM_COL_4
 };
 
 #define SPI_RATE_13M                    13000000
@@ -592,10 +591,9 @@ void simpleLinkWakupCallback()
  */
 void Board_initPower(void)
 {
-    Power_setConstraint(PowerCC3200_DISALLOW_DEEPSLEEP);
     Power_setConstraint(PowerCC3200_DISALLOW_LPDS);
 
-//    Power_registerNotify(&slNotify, PowerCC3200_AWAKE_LPDS|PowerCC3200_AWAKE_DEEPSLEEP, (Power_NotifyFxn)simpleLinkWakupCallback, NULL);
+//    Power_registerNotify(&slNotify, PowerCC3200_AWAKE_LPDS, (Power_NotifyFxn)simpleLinkWakupCallback, NULL);
     Power_init();
 }
 

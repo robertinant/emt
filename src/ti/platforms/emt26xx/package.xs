@@ -35,7 +35,7 @@ function getLibs(prog)
 	libs = outDir + "/Board_init.obj";
     }
 
-    if (false) {
+    if (true) {
 	/* get required DriverLib libraries (if requested) */
 	var dlib = Platform.addDriverLibs ? Platform.findDriverLib() : null;
 	if (dlib != null) {

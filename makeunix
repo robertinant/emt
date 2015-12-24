@@ -5,7 +5,7 @@
 
 include ./imports.mak
 
-TIRTOS_REPOS = $(TIRTOS)/packages;$(SYSBIOS)/packages
+TIRTOS_REPOS = $(TIRTOS)/packages;$(SYSBIOS)/packages;$(TIDRIVERS)/packages
 
 MYXDC = $(XDCROOT)/xdc XDCPATH="$(CURDIR)/src;$(TIRTOS_REPOS)"
 

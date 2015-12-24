@@ -49,9 +49,9 @@
 #include <xdc/std.h>
 #include <xdc/runtime/System.h>
 #include <ti/sysbios/family/arm/m3/Hwi.h>
-#include <ti/sysbios/family/arm/cc26xx/Power.h>
-#include <ti/sysbios/family/arm/cc26xx/PowerCC2650.h>
-#include <ti/drivers/PIN.h>
+
+#include <ti/drivers/Power.h>
+#include <ti/drivers/power/PowerCC26XX.h>
 #include "Board.h"
 
 /*
@@ -69,6 +69,14 @@
  *  When a pin is allocated and then de-allocated, it will revert to the state
  *  configured in this table
 */
+#include <ti/drivers/PIN.h>
+#include  <ti/drivers/pin/PINCC26XX.h>
+
+PINCC26XX_HWAttrs PINCC26XX_hwAttrs = {
+    7 << 5, /* intPriority */
+    0       /* swiPriority */
+};
+
 PIN_Config BoardGpioInitTable[] = {
     Board_LED1       | PIN_GPIO_OUTPUT_EN | PIN_GPIO_LOW | PIN_PUSHPULL | PIN_DRVSTR_MAX,     /* LED initially off             */
     Board_LED2       | PIN_GPIO_OUTPUT_EN | PIN_GPIO_LOW | PIN_PUSHPULL | PIN_DRVSTR_MAX,     /* LED initially off             */
@@ -240,11 +248,11 @@ void Board_initGPIO(void)
 UARTCC26XX_Object uartCC26XXObjects[CC2650_UARTCOUNT];
 
 /* UART hardware parameter structure, also used to assign UART pins */
-const UARTCC26XX_HWAttrs uartCC26XXHWAttrs[CC2650_UARTCOUNT] = {
-    {    /* CC2650_UART0 */
+const UARTCC26XX_HWAttrsV1 uartCC26XXHWAttrs[CC2650_UARTCOUNT] = {
+    {   /* CC2650_UART0 */
         .baseAddr = UART0_BASE,
-        .powerMngrId = PERIPH_UART0,
-        .intNum = INT_UART0,
+        .powerMngrId = PowerCC26XX_PERIPH_UART0,
+        .intNum = INT_UART0_COMB,    /* <driverlib>/inc/hw_ints.h */
         .intPriority = (~0),
         .txPin = Board_DP5_UARTTX,
         .rxPin = Board_DP4_UARTRX,
@@ -306,9 +314,9 @@ UDMACC26XX_Object UdmaObjects[CC2650_UDMACOUNT];
 /* UDMA configuration structure */
 const UDMACC26XX_HWAttrs udmaHWAttrs[CC2650_UDMACOUNT] = {
     {
-        .baseAddr =  UDMA0_BASE, 
-        .powerMngrId =  PERIPH_UDMA,
-        .intNum = INT_UDMAERR,
+        .baseAddr = UDMA0_BASE, 
+        .powerMngrId = PowerCC26XX_PERIPH_UDMA,
+        .intNum = INT_DMA_ERR,    /* <driverlib>/inc/hw_ints.h */
         .intPriority = (~0)
     },
 };
@@ -335,16 +343,16 @@ const UDMACC26XX_Config UDMACC26XX_config[] = {
 #include <ti/drivers/spi/SPICC26XXDMA.h>
 
 /* SPI objects */
-SPICC26XX_Object spiCC26XXDMAObjects[CC2650_SPICOUNT];
+SPICC26XXDMA_Object spiCC26XXDMAObjects[CC2650_SPICOUNT];
 
 /* SPI configuration structure, describing which pins are to be used */
-const SPICC26XX_HWAttrs spiCC26XXDMAHWAttrs[CC2650_SPICOUNT] = {
+const SPICC26XXDMA_HWAttrsV1 spiCC26XXDMAHWAttrs[CC2650_SPICOUNT] = {
     {   /* SENSORTAG_CC2650_SPI0 */
         .baseAddr = SSI0_BASE,
-        .intNum = INT_SSI0,
+        .intNum = INT_SSI0_COMB,   /* <driverlib>/inc/hw_ints.h */
         .intPriority = 0xC0,       /* make SPI interrupt one priority higher than default */
         .defaultTxBufValue = 0,
-        .powerMngrId = PERIPH_SSI0,
+        .powerMngrId = PowerCC26XX_PERIPH_SSI0,
         .rxChannelBitMask = 1<<UDMA_CHAN_SSI0_RX,
         .txChannelBitMask = 1<<UDMA_CHAN_SSI0_TX,
         .mosiPin = Board_SPI0_MOSI,
@@ -354,10 +362,10 @@ const SPICC26XX_HWAttrs spiCC26XXDMAHWAttrs[CC2650_SPICOUNT] = {
     },
     {   /* SENSORTAG_CC2650_SPI1 */
         .baseAddr = SSI1_BASE,
-        .intNum = INT_SSI1,
+        .intNum = INT_SSI1_COMB,     /* <driverlib>/inc/hw_ints.h */
         .intPriority = ~0,
         .defaultTxBufValue = 0,
-        .powerMngrId = PERIPH_SSI1,
+        .powerMngrId = PowerCC26XX_PERIPH_SSI1,
         .rxChannelBitMask  = 1<<UDMA_CHAN_SSI1_RX,
         .txChannelBitMask  = 1<<UDMA_CHAN_SSI1_TX,
         .mosiPin = Board_SPI1_MOSI,
@@ -401,11 +409,11 @@ SPI_Handle Board_openSPI(UInt spiPortIndex, SPI_Params *spiParams)
 
 /*
  *  ========================== SPI DMA end =====================================
-*/
+ */
 
 /*
  *  ============================= I2C Begin=====================================
-*/
+ */
 /* Place into subsections to allow the TI linker to remove items properly */
 #if defined(__TI_COMPILER_VERSION__)
 #pragma DATA_SECTION(I2C_config, ".const:I2C_config")
@@ -419,19 +427,19 @@ SPI_Handle Board_openSPI(UInt spiPortIndex, SPI_Params *spiParams)
 I2CCC26XX_Object i2cCC26xxObjects[CC2650_I2CCOUNT];
 
 /* I2C configuration structure, describing which pins are to be used */
-const I2CCC26XX_HWAttrs i2cCC26xxHWAttrs[CC2650_I2CCOUNT] = {
+const I2CCC26XX_HWAttrsV1 i2cCC26xxHWAttrs[CC2650_I2CCOUNT] = {
     {
         .baseAddr = I2C0_BASE,
-        .powerMngrId = PERIPH_I2C0,
-        .intNum = INT_I2C,
+        .powerMngrId = PowerCC26XX_PERIPH_I2C0,
+        .intNum = INT_I2C_IRQ,    /* <driverlib>/inc/hw_ints.h */
         .intPriority = (~0),
         .sdaPin = Board_I2C0_SDA0,
         .sclPin = Board_I2C0_SCL0,
     },
     {
         .baseAddr = I2C0_BASE,
-        .powerMngrId = PERIPH_I2C0,
-        .intNum = INT_I2C,
+        .powerMngrId = PowerCC26XX_PERIPH_I2C0,
+        .intNum = INT_I2C_IRQ,    /* <driverlib>/inc/hw_ints.h */
         .intPriority = (~0),
         .sdaPin = Board_I2C0_SDA1,
         .sclPin = Board_I2C0_SCL1,
@@ -495,8 +503,8 @@ CryptoCC26XX_Object cryptoCC26XXObjects[CC2650_CRYPTOCOUNT];
 const CryptoCC26XX_HWAttrs cryptoCC26XXHWAttrs[CC2650_CRYPTOCOUNT] = {
     {
         .baseAddr = CRYPTO_BASE,
-        .powerMngrId = PERIPH_CRYPTO,
-        .intNum = INT_CRYPTO,
+        .powerMngrId = PowerCC26XX_PERIPH_CRYPTO,
+        .intNum = INT_CRYPTO_RESULT_AVAIL_IRQ,    /* <driverlib>/inc/hw_ints.h */
         .intPriority = ~0,
     }
 };
@@ -511,32 +519,51 @@ const CryptoCC26XX_Config CryptoCC26XX_config[] = {
  * ======== PWM driver ========
  */
 #include <ti/drivers/PWM.h>
-#include <ti/drivers/pwm/PWMTimerCC26xx.h>
+#include <ti/drivers/pwm/PWMTimerCC26XX.h>
 #include <driverlib/timer.h>
 
-PWMTimerCC26xx_Object pwmCC26xxObjects[CC2650_PWMCOUNT];
+PWMTimerCC26XX_Object pwmCC26xxObjects[CC2650_PWMCOUNT];
 
-const PWMTimerCC26xx_HWAttrs pwmCC26xxHWAttrs[CC2650_PWMCOUNT] = {
-    {GPT0_BASE, TIMER_A, PERIPH_GPT0, IOID_0},
-    {GPT0_BASE, TIMER_B, PERIPH_GPT0, IOID_1},
-    {GPT1_BASE, TIMER_A, PERIPH_GPT1, IOID_2},
-    {GPT1_BASE, TIMER_B, PERIPH_GPT1, IOID_3},
-    {GPT2_BASE, TIMER_A, PERIPH_GPT2, IOID_4},
-    {GPT2_BASE, TIMER_B, PERIPH_GPT3, IOID_5},
-    {GPT3_BASE, TIMER_A, PERIPH_GPT3, IOID_6},
-    {GPT3_BASE, TIMER_B, PERIPH_GPT3, IOID_7}
+const PWMTimerCC26XX_HWAttrs pwmCC26xxHWAttrs[CC2650_PWMCOUNT] = {
+    {GPT0_BASE, TIMER_A, PowerCC26XX_PERIPH_GPT0, IOID_0},
+    {GPT0_BASE, TIMER_B, PowerCC26XX_PERIPH_GPT0, IOID_1},
+    {GPT1_BASE, TIMER_A, PowerCC26XX_PERIPH_GPT1, IOID_2},
+    {GPT1_BASE, TIMER_B, PowerCC26XX_PERIPH_GPT1, IOID_3},
+    {GPT2_BASE, TIMER_A, PowerCC26XX_PERIPH_GPT2, IOID_4},
+    {GPT2_BASE, TIMER_B, PowerCC26XX_PERIPH_GPT3, IOID_5},
+    {GPT3_BASE, TIMER_A, PowerCC26XX_PERIPH_GPT3, IOID_6},
+    {GPT3_BASE, TIMER_B, PowerCC26XX_PERIPH_GPT3, IOID_7}
 };
 
 const PWM_Config PWM_config[] = {
-    {&PWMTimerCC26xx_fxnTable, &pwmCC26xxObjects[0], &pwmCC26xxHWAttrs[0]},
-    {&PWMTimerCC26xx_fxnTable, &pwmCC26xxObjects[1], &pwmCC26xxHWAttrs[1]},
-    {&PWMTimerCC26xx_fxnTable, &pwmCC26xxObjects[2], &pwmCC26xxHWAttrs[2]},
-    {&PWMTimerCC26xx_fxnTable, &pwmCC26xxObjects[3], &pwmCC26xxHWAttrs[3]},
-    {&PWMTimerCC26xx_fxnTable, &pwmCC26xxObjects[4], &pwmCC26xxHWAttrs[4]},
-    {&PWMTimerCC26xx_fxnTable, &pwmCC26xxObjects[5], &pwmCC26xxHWAttrs[5]},
-    {&PWMTimerCC26xx_fxnTable, &pwmCC26xxObjects[6], &pwmCC26xxHWAttrs[6]},
-    {&PWMTimerCC26xx_fxnTable, &pwmCC26xxObjects[7], &pwmCC26xxHWAttrs[7]},
+    {&PWMTimerCC26XX_fxnTable, &pwmCC26xxObjects[0], &pwmCC26xxHWAttrs[0]},
+    {&PWMTimerCC26XX_fxnTable, &pwmCC26xxObjects[1], &pwmCC26xxHWAttrs[1]},
+    {&PWMTimerCC26XX_fxnTable, &pwmCC26xxObjects[2], &pwmCC26xxHWAttrs[2]},
+    {&PWMTimerCC26XX_fxnTable, &pwmCC26xxObjects[3], &pwmCC26xxHWAttrs[3]},
+    {&PWMTimerCC26XX_fxnTable, &pwmCC26xxObjects[4], &pwmCC26xxHWAttrs[4]},
+    {&PWMTimerCC26XX_fxnTable, &pwmCC26xxObjects[5], &pwmCC26xxHWAttrs[5]},
+    {&PWMTimerCC26XX_fxnTable, &pwmCC26xxObjects[6], &pwmCC26xxHWAttrs[6]},
+    {&PWMTimerCC26XX_fxnTable, &pwmCC26xxObjects[7], &pwmCC26xxHWAttrs[7]},
     {NULL, NULL, NULL}
+};
+
+/* 
+ *  =============================== Power ===============================
+ */
+
+#include <ti/drivers/Power.h>
+#include <ti/drivers/power/PowerCC26XX.h>
+
+/*
+ *  ======== PowerCC26XX_config ========
+ */
+const PowerCC26XX_Config PowerCC26XX_config = {
+    .policyInitFxn = NULL,
+    .policyFxn = PowerCC26XX_standbyPolicy,
+    .calibrateFxn = PowerCC26XX_calibrate,
+    .enablePolicy = TRUE,
+    .calibrateRCOSC_LF = TRUE,
+    .calibrateRCOSC_HF = TRUE
 };
 
 /*
@@ -547,10 +574,22 @@ void Board_initPWM(void)
     PWM_init();
 }
 
+/*
+ *  ======== Board_initPIN ========
+ */
 void Board_initPIN()
 {
     PIN_init(BoardGpioInitTable);
 }
+
+/*
+ *  ======== Board_initPower ========
+ */
+void Board_initPower(void)
+{
+    Power_init();
+}
+
 /*
  *  ======== Board_init ========
  *  Initialialize the ti.platforms.tink2 hardware
@@ -564,4 +603,3 @@ void Board_init(void)
     Board_initGPIO();
     Board_initPWM();
 }
-
