@@ -36,7 +36,7 @@ ifeq (,$(XDCROOT))
     #
     # UNIX TISB tree build support
     #
-    XDCROOT = $(TOOLS)/vendors/xdc/xdctools_3_31_01_33/$(BUILD_HOST_OS)
+    XDCROOT = $(TOOLS)/vendors/xdc/xdctools_3_32_00_06/$(BUILD_HOST_OS)
     TIRTOS  = $(wildcard $(TREES)/zumaprod/zumaprod-i17/exports/tirtos_full_*)
     SYSBIOS = $(wildcard $(TIRTOS)/products/bios_6_*)
     TIDRIVERS = $(wildcard $(TIRTOS)/products/tidrivers_*)
