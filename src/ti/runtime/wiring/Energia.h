@@ -132,9 +132,6 @@ void analogReadResolution(uint16_t);
 
 void delay(uint32_t milliseconds);
 
-void attachInterrupt(uint8_t, void (*)(void), int mode);
-void detachInterrupt(uint8_t);
-
 /* Implemented in wiring.c */
 void delayMicroseconds(unsigned int us);
 unsigned long micros();
@@ -143,8 +140,14 @@ unsigned long millis();
 void setDelayResolution(uint32_t milliseconds);
 
 /* implemented in WInterrupts.c */
+void attachInterrupt(uint8_t, void (*)(void), int mode);
+void detachInterrupt(uint8_t);
+
 void disablePinInterrupt(uint8_t pin);
 void enablePinInterrupt(uint8_t pin);
+
+void interrupts(void);
+void noInterrupts(void);
 
 #ifdef __cplusplus
 } // extern "C"
