@@ -28,10 +28,10 @@ JOBS = --jobs=4
 # ======== .local-release ========
 # Builds all packages and releases
 .local-release: .local-all imports.mak
-	@echo making energia closures ...
-	make -C src/bundles/energia all msp432/closure.zip cc3200/closure.zip cc26xx/closure.zip
 	@echo making emt_src bundle ...
 	make -C src/bundles/emt_src release
+	@echo making energia closures ...
+	make -C src/bundles/energia all closure-$(notdir $(CURDIR)).tar.gz
 
 # ======== .local-all ========
 # Builds all packages
