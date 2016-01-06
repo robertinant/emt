@@ -63,4 +63,4 @@ fi
 ## cleanup our mess
 cd ..
 rm -rf $w
-exit $?
+exit $status
