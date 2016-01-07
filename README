@@ -1,4 +1,4 @@
-				emt-b00
+				emt-b01
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -129,8 +129,20 @@ DELETIONS
 
 CHANGES
 
-*
-	migrate to TIRTOS 2.15 (from 2.14)
-	migrate to xdctools 3.32 (from 3.31)
+./push.ksh
+	push "universal closure" to energia.nu
+
+bundles/energia
+	add build of "universal closure"
+
+ti/runtime/wiring
+	update Energia.h to define interrtups()/noInterrupts() and min()/max()
+
+ti/platforms/emt26xx
+	fix getLibs to use gcc driverlib rather than TI dirverlib library; the
+	TI library is not EABI complient (due to the "common" default bug)
+
+ti/runtime/wiring/cc26xx/variants
+	fix Board_init.c to call Power_init() to enable power management
 
 MRS
