@@ -57,22 +57,8 @@ extern const GPIOCC26XX_Config GPIOCC26XX_config;
 
 #define NOT_IN_USE 0
 
-/* Mappable PWM Timer capture pins */
-const uint8_t mappable_pwms[] = {
-   IOC_IOCFG17_PORT_ID_PORT_EVENT0,
-   IOC_IOCFG17_PORT_ID_PORT_EVENT1,
-   IOC_IOCFG17_PORT_ID_PORT_EVENT2,
-   IOC_IOCFG17_PORT_ID_PORT_EVENT3,
-   IOC_IOCFG17_PORT_ID_PORT_EVENT4,
-   IOC_IOCFG17_PORT_ID_PORT_EVENT5,
-   IOC_IOCFG17_PORT_ID_PORT_EVENT6,
-   IOC_IOCFG17_PORT_ID_PORT_EVENT7,
-};
-
 /* Current PWM timer GPIO mappings */
 uint8_t used_pwm_port_pins[] = {
-    NOT_IN_USE,
-    NOT_IN_USE,
     NOT_IN_USE,
     NOT_IN_USE,
     NOT_IN_USE,
@@ -142,6 +128,7 @@ void analogWrite(uint8_t pin, int val)
         /* re-configure pin if possible */
         PWM_Params params;
         PWMTimerCC26XX_PWMPinCfg pwmPinCfg;
+        uint8_t numPwmChannels = sizeof(used_pwm_port_pins)/sizeof(uint8_t);
         
         if (digital_pin_to_pin_function[pin] == PIN_FUNC_INVALID) {
             Hwi_restore(hwiKey);
@@ -152,7 +139,7 @@ void analogWrite(uint8_t pin, int val)
         pwmPinId = GPIOCC26XX_config.pinConfigs[pin] & 0xff;
         
         /* find an unused PWM resource and port map it */
-        for (pwmIndex = 0; pwmIndex < 8; pwmIndex++) {
+        for (pwmIndex = 0; pwmIndex < numPwmChannels; pwmIndex++) {
             if (used_pwm_port_pins[pwmIndex] == NOT_IN_USE) {
                 /* remember which pinId is being used by this PWM resource */
                 used_pwm_port_pins[pwmIndex] = pwmPinId; /* save pwm pin info */
@@ -162,7 +149,7 @@ void analogWrite(uint8_t pin, int val)
             }
         }
 
-        if (pwmIndex > 7) {
+        if (pwmIndex > (numPwmChannels-1)) {
             Hwi_restore(hwiKey);
             return; /* no unused PWM ports */
         }
