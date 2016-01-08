@@ -251,8 +251,6 @@ typedef enum CC2650_PWMName {
     CC2650_PWM3 = 3, /* PWM output from TIMERA1 side B */
     CC2650_PWM4 = 4, /* PWM output from TIMERA2 side A */
     CC2650_PWM5 = 5, /* PWM output from TIMERA2 side B */
-    CC2650_PWM6 = 6, /* PWM output from TIMERA3 side A */
-    CC2650_PWM7 = 7, /* PWM output from TIMERA3 side B */
     CC2650_PWMCOUNT
 } CC2650_PWMName;
 

@@ -72,11 +72,6 @@
 #include <ti/drivers/PIN.h>
 #include  <ti/drivers/pin/PINCC26XX.h>
 
-PINCC26XX_HWAttrs PINCC26XX_hwAttrs = {
-    7 << 5, /* intPriority */
-    0       /* swiPriority */
-};
-
 PIN_Config BoardGpioInitTable[] = {
     Board_LED1       | PIN_GPIO_OUTPUT_EN | PIN_GPIO_LOW | PIN_PUSHPULL | PIN_DRVSTR_MAX,     /* LED initially off             */
     Board_LED2       | PIN_GPIO_OUTPUT_EN | PIN_GPIO_LOW | PIN_PUSHPULL | PIN_DRVSTR_MAX,     /* LED initially off             */
@@ -105,6 +100,12 @@ PIN_Config BoardGpioInitTable[] = {
 
     PIN_TERMINATE
 };
+
+PINCC26XX_HWAttrs PINCC26XX_hwAttrs = {
+    .intPriority = ~0,
+    .swiPriority = 0
+};
+
 /*============================================================================*/
 
 /*
@@ -254,6 +255,7 @@ const UARTCC26XX_HWAttrsV1 uartCC26XXHWAttrs[CC2650_UARTCOUNT] = {
         .powerMngrId = PowerCC26XX_PERIPH_UART0,
         .intNum = INT_UART0_COMB,    /* <driverlib>/inc/hw_ints.h */
         .intPriority = (~0),
+        .swiPriority    = 0,
         .txPin = Board_DP5_UARTTX,
         .rxPin = Board_DP4_UARTRX,
         .ctsPin = PIN_UNASSIGNED,
@@ -263,8 +265,12 @@ const UARTCC26XX_HWAttrsV1 uartCC26XXHWAttrs[CC2650_UARTCOUNT] = {
 
 /* UART configuration structure */
 const UART_Config UART_config[] = {
-    { &UARTCC26XX_fxnTable, &uartCC26XXObjects[0], &uartCC26XXHWAttrs[0] },
-    { NULL, NULL, NULL }
+    {
+        .fxnTablePtr = &UARTCC26XX_fxnTable,
+        .object      = &uartCC26XXObjects[0],
+        .hwAttrs     = &uartCC26XXHWAttrs[0]
+    },
+    {NULL, NULL, NULL}
 };
 
 /*
@@ -309,7 +315,7 @@ UART_Handle Board_openUART(UInt uartPortIndex, UART_Params *uartParams)
 #include <ti/drivers/dma/UDMACC26XX.h>
 
 /* UDMA objects */
-UDMACC26XX_Object UdmaObjects[CC2650_UDMACOUNT];
+UDMACC26XX_Object udmaObjects[CC2650_UDMACOUNT];
 
 /* UDMA configuration structure */
 const UDMACC26XX_HWAttrs udmaHWAttrs[CC2650_UDMACOUNT] = {
@@ -323,8 +329,11 @@ const UDMACC26XX_HWAttrs udmaHWAttrs[CC2650_UDMACOUNT] = {
 
 /* UDMA configuration structure */
 const UDMACC26XX_Config UDMACC26XX_config[] = {
-    {&UdmaObjects[0], &udmaHWAttrs[0]},
-    {NULL, NULL},
+    {
+        .object  = &udmaObjects[0],
+        .hwAttrs = &udmaHWAttrs[0]
+    },
+    {NULL, NULL}
 };
 /*
  *  ============================= UDMA end =====================================
@@ -433,6 +442,7 @@ const I2CCC26XX_HWAttrsV1 i2cCC26xxHWAttrs[CC2650_I2CCOUNT] = {
         .powerMngrId = PowerCC26XX_PERIPH_I2C0,
         .intNum = INT_I2C_IRQ,    /* <driverlib>/inc/hw_ints.h */
         .intPriority = (~0),
+        .swiPriority = 0,
         .sdaPin = Board_I2C0_SDA0,
         .sclPin = Board_I2C0_SCL0,
     },
@@ -441,14 +451,23 @@ const I2CCC26XX_HWAttrsV1 i2cCC26xxHWAttrs[CC2650_I2CCOUNT] = {
         .powerMngrId = PowerCC26XX_PERIPH_I2C0,
         .intNum = INT_I2C_IRQ,    /* <driverlib>/inc/hw_ints.h */
         .intPriority = (~0),
+        .swiPriority = 0,
         .sdaPin = Board_I2C0_SDA1,
         .sclPin = Board_I2C0_SCL1,
     }
 };
 
 const I2C_Config I2C_config[] = {
-    {&I2CCC26XX_fxnTable, &i2cCC26xxObjects[0], &i2cCC26xxHWAttrs[0]},
-    {&I2CCC26XX_fxnTable, &i2cCC26xxObjects[1], &i2cCC26xxHWAttrs[1]},
+    {
+        .fxnTablePtr = &I2CCC26XX_fxnTable,
+        .object = &i2cCC26xxObjects[0],
+        .hwAttrs = &i2cCC26xxHWAttrs[0]
+    },
+    {
+        .fxnTablePtr = &I2CCC26XX_fxnTable,
+        .object = &i2cCC26xxObjects[1],
+        .hwAttrs = &i2cCC26xxHWAttrs[1]
+    },
     {NULL, NULL, NULL}
 };
 
@@ -511,7 +530,10 @@ const CryptoCC26XX_HWAttrs cryptoCC26XXHWAttrs[CC2650_CRYPTOCOUNT] = {
 
 /* Crypto configuration structure */
 const CryptoCC26XX_Config CryptoCC26XX_config[] = {
-    {&cryptoCC26XXObjects[0], &cryptoCC26XXHWAttrs[0]},
+    {
+        .object  = &cryptoCC26XXObjects[0],
+        .hwAttrs = &cryptoCC26XXHWAttrs[0]
+    },
     {NULL, NULL}
 };
 
@@ -530,9 +552,7 @@ const PWMTimerCC26XX_HWAttrs pwmCC26xxHWAttrs[CC2650_PWMCOUNT] = {
     {GPT1_BASE, TIMER_A, PowerCC26XX_PERIPH_GPT1, IOID_2},
     {GPT1_BASE, TIMER_B, PowerCC26XX_PERIPH_GPT1, IOID_3},
     {GPT2_BASE, TIMER_A, PowerCC26XX_PERIPH_GPT2, IOID_4},
-    {GPT2_BASE, TIMER_B, PowerCC26XX_PERIPH_GPT3, IOID_5},
-    {GPT3_BASE, TIMER_A, PowerCC26XX_PERIPH_GPT3, IOID_6},
-    {GPT3_BASE, TIMER_B, PowerCC26XX_PERIPH_GPT3, IOID_7}
+    {GPT2_BASE, TIMER_B, PowerCC26XX_PERIPH_GPT2, IOID_5},
 };
 
 const PWM_Config PWM_config[] = {
@@ -542,8 +562,6 @@ const PWM_Config PWM_config[] = {
     {&PWMTimerCC26XX_fxnTable, &pwmCC26xxObjects[3], &pwmCC26xxHWAttrs[3]},
     {&PWMTimerCC26XX_fxnTable, &pwmCC26xxObjects[4], &pwmCC26xxHWAttrs[4]},
     {&PWMTimerCC26XX_fxnTable, &pwmCC26xxObjects[5], &pwmCC26xxHWAttrs[5]},
-    {&PWMTimerCC26XX_fxnTable, &pwmCC26xxObjects[6], &pwmCC26xxHWAttrs[6]},
-    {&PWMTimerCC26XX_fxnTable, &pwmCC26xxObjects[7], &pwmCC26xxHWAttrs[7]},
     {NULL, NULL, NULL}
 };
 
@@ -599,8 +617,8 @@ void Board_init(void)
     /* driver-independent initialization */
 
     /* driver-specific initialization */
+    Board_initPower();
     Board_initPIN();
     Board_initGPIO();
     Board_initPWM();
-    Board_initPower();
 }
