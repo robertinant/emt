@@ -1,4 +1,4 @@
-				emt-b01
+				emt-b02
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -129,20 +129,23 @@ DELETIONS
 
 CHANGES
 
+./imports.mak ./product.mak
+	imports latest xdctools to get recent ROV fixes; this will enable
+	us to use Energia to easily create ROV test cases
+
 ./push.ksh
-	push "universal closure" to energia.nu
+	fix export of env
 
-bundles/energia
-	add build of "universal closure"
+ti.runtime.wiring.cc26xx
+	relinquish 2 PWM resuources to enable Tone().
 
-ti/runtime/wiring
-	update Energia.h to define interrtups()/noInterrupts() and min()/max()
+ti.runtime.wiring.cc26xx.variants
+	Various CC26xx 2.15.00 driver compatibility repairs and cleanup.
 
-ti/platforms/emt26xx
-	fix getLibs to use gcc driverlib rather than TI dirverlib library; the
-	TI library is not EABI complient (due to the "common" default bug)
+bundles/energia/cc26xx
+	Provide a Timer for Tone().
 
-ti/runtime/wiring/cc26xx/variants
-	fix Board_init.c to call Power_init() to enable power management
+bundles/energia/*
+	Switch from using HeapRem to using HeapMem's equivalent functionality
 
 MRS
