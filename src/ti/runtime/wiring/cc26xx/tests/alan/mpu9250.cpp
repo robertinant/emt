@@ -69,7 +69,10 @@ void blinkSetup()
 {
     // Arduino initializations
     Wire1.begin();
-    Serial.begin(9600);
+    /* turn on MPU power */
+    digitalWrite(22, 1);
+
+//    Serial.begin(9600);
     pinMode(LED, OUTPUT);
 
     for (int i = 0; i < 2; i++) {
@@ -94,8 +97,8 @@ void blinkSetup()
 
     uint8_t id;
     I2Cread(MPU9250_ADDRESS, MPU6500_RA_WHO_AM_I, 1, &id);
-    Serial.print("id should be 0x71: ");
-    Serial.println(id, HEX);
+//    Serial.print("id should be 0x71: ");
+//    Serial.println(id, HEX);
 
     // Set DLPF_CFG to 1: 1kHz Gyro sampling, 184Hz bandwidth
     I2CwriteByte(MPU9250_ADDRESS, MPU6500_RA_CONFIG, 0x01);
