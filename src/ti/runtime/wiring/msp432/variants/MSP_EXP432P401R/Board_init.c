@@ -711,13 +711,33 @@ UARTMSP432_Object uartMSP432Objects[Board_UARTCOUNT];
  */
 const UARTMSP432_BaudrateConfig uartMSP432Baudrates[] = {
     /* {baudrate, input clock, prescalar, UCBRFx, UCBRSx, oversampling} */
-    {115200, 12000000,  6,  8,  32, 1},
-    {115200, 6000000,   3,  4,   2, 1},
-    {115200, 3000000,   1, 10,   0, 1},
-    {9600,   12000000, 78,  2,   0, 1},
-    {9600,   6000000,  39,  1,   0, 1},
-    {9600,   3000000,  19,  8,  85, 1},
-    {9600,   32768,     3,  0, 146, 0}
+    {
+        .outputBaudrate = 115200,
+        .inputClockFreq = 12000000,
+        .prescalar = 6,
+        .hwRegUCBRFx = 8,
+        .hwRegUCBRSx = 32,
+        .oversampling = 1
+    },
+    {57600,  12000000,  13,  0,  37, 1},
+    {38400,  12000000,  19,  8,  85, 1},
+    {19200,  12000000,  39,  1,   0, 1},
+    {9600,   12000000,  78,  2,   0, 1},
+    {4800,   12000000, 156,  4,   0, 1},
+
+    {115200, 6000000,    3,  4,   2, 1},
+    {57600,  6000000,    6,  8,  32, 1},
+    {38400,  6000000,    9, 12,  34, 1},
+    {19200,  6000000,   19,  8,  85, 1},
+    {9600,   6000000,   39,  1,   0, 1},
+    {4800,   6000000,   78,  2,   0, 1},
+
+    {115200, 3000000,    1, 10,   0, 1},
+    {57600,  3000000,    3,  4,   2, 1},
+    {38400,  3000000,    4, 14,   8, 1},
+    {19200,  3000000,    9, 12,  34, 1},
+    {9600,   3000000,   19,  8,  85, 1},
+    {4800,   3000000,   39,  1,   0, 1},
 };
 
 unsigned char uartMSP432RingBuffer0[32];
@@ -848,6 +868,7 @@ const WatchdogMSP432_HWAttrs watchdogMSP432HWAttrs[Board_WATCHDOGCOUNT] = {
     {
         .baseAddr = WDT_A_BASE,
         .intNum = INT_WDT_A,
+        .intPriority = (~0),
         .clockSource = WDT_A_CLOCKSOURCE_SMCLK,
         .clockDivider = WDT_A_CLOCKDIVIDER_8192K
     },

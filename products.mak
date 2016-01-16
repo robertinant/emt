@@ -7,6 +7,7 @@
 #  TIRTOS         - TI-RTOS
 #  DRVLIB.msp432  - MSP432 driverlib
 #  DRVLIB.cc3200  - CC3200 driverlib
+#  DRVLIB.cc26xx  - CC26xx driverlib
 #  ti.targets.arm.elf.M4F - TI Arm compiler
 #  gnu.targets.arm.M4F    - Gnu Arm compiler
 #
