@@ -1,4 +1,4 @@
-				emt-b02
+				emt-b03
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -129,23 +129,10 @@ DELETIONS
 
 CHANGES
 
-./imports.mak ./product.mak
-	imports latest xdctools to get recent ROV fixes; this will enable
-	us to use Energia to easily create ROV test cases
+bundles/energia/msp432
+    Formally pull in MSP432 Timer module that is used by the PWM driver.
 
-./push.ksh
-	fix export of env
-
-ti.runtime.wiring.cc26xx
-	relinquish 2 PWM resuources to enable Tone().
-
-ti.runtime.wiring.cc26xx.variants
-	Various CC26xx 2.15.00 driver compatibility repairs and cleanup.
-
-bundles/energia/cc26xx
-	Provide a Timer for Tone().
-
-bundles/energia/*
-	Switch from using HeapRem to using HeapMem's equivalent functionality
+ti.runtime.wiring.msp432.variants
+    Add 4800,19200,38400,57600 baudrates
 
 MRS
