@@ -14,8 +14,7 @@ Adafruit_TMP007 tmp007;
 /* LCD driver */
 LCD_SharpBoosterPack_SPI myScreen(7, 20, 10, false);
 
-/* 45 years from 1970 */
-int32_t secondsOffset = 1420064228;
+int32_t secondsOffset = 0;
 
 Semaphore_Handle mySem;
 
@@ -75,9 +74,6 @@ void lcdSetup() {
     /* comment out for steady state power testing */
     Clock_create(myClkFunc, 0, &myClkParams, NULL); 
   
-    /* set to 1970 plus 45 years */
-    Seconds_set(secondsOffset);
-  
     myScreen.begin(); /* also calls SPI.begin() */
 
     myScreen.setFont(1);
@@ -98,7 +94,7 @@ void printTime()
 {
     String buf;
     uint32_t curSeconds;
-    int hours, minutes, seconds;
+    int days, hours, minutes, seconds;
 
     SPI.begin();
 
@@ -110,6 +106,7 @@ void printTime()
     seconds = (int) curSeconds % 60;
     minutes = (int) ((curSeconds / 60) % 60);
     hours   = (int) ((curSeconds / (60*60)) % 24);
+    days    = (int) (curSeconds / (60*60*24));
 
     if (hours < 10) {
         buf += "0";
@@ -125,8 +122,14 @@ void printTime()
         buf += "0";
     }
     buf += seconds;
-    myScreen.text(1, 40, buf);
+    myScreen.text(1, 50, buf);
     myScreen.text(25, 70, "Time");
+    buf = "";
+    if (days < 100) buf += "0";
+    if (days < 10) buf += "0";
+    buf += days;
+    buf += ":";
+    myScreen.text(1, 30, buf);
     myScreen.flush();
 
     SPI.end(); /* to save Power */
