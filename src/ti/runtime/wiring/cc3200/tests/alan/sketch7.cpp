@@ -54,6 +54,10 @@ void setup7()
 
     attachInterrupt(PUSH1, buttonFxn0, RISING);
     attachInterrupt(PUSH2, buttonFxn1, RISING);
+
+    digitalWrite(RED_LED, 0);
+    digitalWrite(GREEN_LED, 0);
+    digitalWrite(YELLOW_LED, 0);
 }
 
 void loop7()
@@ -63,5 +67,7 @@ void loop7()
     delay(5000);
 //    pinMode(YELLOW_LED, INPUT_PULLUP);
     digitalWrite(YELLOW_LED, 0);
+    Serial.end();
     delay(5000);
+    Serial.begin(1152000);
 }
