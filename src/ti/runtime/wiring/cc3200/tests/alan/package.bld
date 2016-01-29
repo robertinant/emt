@@ -5,7 +5,17 @@ Pkg.attrs.profile = "release";
 //Pkg.attrs.profile = "debug";
 Pkg.attrs.exportAll = true;
 
-Pkg.uses = ["ti/runtime/wiring"];
+var platform = xdc.module("ti.platforms.emt3200.Platform");
+var DLIBROOT = platform.findDriverLib();
+print (DLIBROOT);
+
+var INCS = '-I"' + DLIBROOT + '" '
+       + '-I"' + DLIBROOT + '/driverlib" '
+       + '-I"' + DLIBROOT + '/inc" '
+       + '-I"' + xdc.getPackageBase("ti.mw.wifi.cc3x00") + '" ';
+
+
+Pkg.uses = ["ti/runtime/wiring", "ti/runtime/wiring/cc3200/libraries/WiFi"];
 
 var PLATFORM = "ti.platforms.emt3200:CC3200_LAUNCHXL";
 var DEFS = "-Dxdc__nolocalstring=1 -DBOARD_CC3200_LAUNCHXL";
@@ -13,18 +23,20 @@ var DEFS = "-Dxdc__nolocalstring=1 -DBOARD_CC3200_LAUNCHXL";
 //var PLATFORM = "ti.platforms.emt3200:CC3200STK_WIFI";
 //var DEFS = "-Dxdc__nolocalstring=1 -DBOARD_CC3200STK_WIFI";
 
-var SRCS = getSources(".");
 var MAIN = "main.cpp";
+var SRCS = getSources(".");
+print(SRCS);
+print(MAIN);
 
 for (var i = 0; i < Build.targets.length; i++) {
     var targ = Build.targets[i];
 
     var cxxopts = targ.$name.indexOf("gnu.targets") == 0 ? "-fno-rtti" : "";
 
-    var lib = Pkg.addLibrary("lib/sketches", targ, {defs: DEFS});
+    var lib = Pkg.addLibrary("lib/sketches", targ, {defs: DEFS, incs: INCS});
     lib.addObjects(SRCS, {copts: cxxopts});
 
-    var exe = Pkg.addExecutable("energia", targ, PLATFORM, {defs: DEFS});
+    var exe = Pkg.addExecutable("energia", targ, PLATFORM, {defs: DEFS, incs: INCS});
     exe.addObjects([MAIN], {copts: cxxopts});
 
     break;  /* comment this out to build using TI compiler */
