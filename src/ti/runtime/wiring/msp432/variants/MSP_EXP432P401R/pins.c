@@ -30,7 +30,8 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <ti/runtime/wiring/msp432/wiring_private.h>
+#include <ti/runtime/wiring/wiring_private.h>
+#include <ti/runtime/wiring/msp432/wiring_analog.h>
 
 #include <adc14.h>
 

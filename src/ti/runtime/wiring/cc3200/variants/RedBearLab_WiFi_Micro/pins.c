@@ -30,7 +30,8 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <ti/runtime/wiring/cc3200/wiring_private.h>
+#include <ti/runtime/wiring/wiring_private.h>
+#include <ti/runtime/wiring/cc3200/wiring_analog.h>
 
 #include <inc/hw_types.h>
 #include <inc/hw_memmap.h>
