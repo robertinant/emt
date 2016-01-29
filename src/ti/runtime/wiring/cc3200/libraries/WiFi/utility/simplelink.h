@@ -1,35 +1,35 @@
 /*
  * simplelink.h - CC31xx/CC32xx Host Driver Implementation
  *
- * Copyright (C) 2014 Texas Instruments Incorporated - http://www.ti.com/ 
- * 
- * 
- *  Redistribution and use in source and binary forms, with or without 
- *  modification, are permitted provided that the following conditions 
+ * Copyright (C) 2015 Texas Instruments Incorporated - http://www.ti.com/
+ *
+ *
+ *  Redistribution and use in source and binary forms, with or without
+ *  modification, are permitted provided that the following conditions
  *  are met:
  *
- *    Redistributions of source code must retain the above copyright 
+ *    Redistributions of source code must retain the above copyright
  *    notice, this list of conditions and the following disclaimer.
  *
  *    Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the 
- *    documentation and/or other materials provided with the   
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the
  *    distribution.
  *
  *    Neither the name of Texas Instruments Incorporated nor the names of
  *    its contributors may be used to endorse or promote products derived
  *    from this software without specific prior written permission.
  *
- *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
- *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- *  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT 
- *  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
- *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT 
+ *  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ *  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
  *  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
  *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT 
- *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
+ *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  *  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
 */
@@ -52,7 +52,7 @@
 
 
  \section modules_sec Module Names
- To make it simple, TI's SimpleLink CC31xx/CC32xx platform capabilities were divided into modules by topic (Silo). 
+ To make it simple, TI's SimpleLink CC31xx/CC32xx platform capabilities were divided into modules by topic (Silo).
  These capabilities range from basic device management through wireless
  network configuration, standard BSD socket and much more.
  Listed below are the various modules in the SimpleLink CC31xx/CC32xx driver:
@@ -60,7 +60,7 @@
      -# \ref wlan - controls the use of the WiFi WLAN module including:
        - Connection features, such as: profiles, policies, SmartConfig&trade;
        - Advanced WLAN features, such as: scans, rx filters and rx statistics collection
-     -# \ref socket - controls standard client/server sockets programming options and capabilities 
+     -# \ref socket - controls standard client/server sockets programming options and capabilities
      -# \ref netapp - activates networking applications, such as: HTTP Server, DHCP Server, Ping, DNS and mDNS.
      -# \ref netcfg - controls the configuration of the device addresses (i.e. IP and MAC addresses)
      -# \ref FileSystem     - provides file system capabilities to TI's CC31XX that can be used by both the CC31XX device and the user.
@@ -178,44 +178,45 @@
 
  *
  *
- * Copyright (C) 2014 Texas Instruments Incorporated - http://www.ti.com/ 
- * 
- * 
- *  Redistribution and use in source and binary forms, with or without 
- *  modification, are permitted provided that the following conditions 
+ * Copyright (C) 2015 Texas Instruments Incorporated - http://www.ti.com/
+ *
+ *
+ *  Redistribution and use in source and binary forms, with or without
+ *  modification, are permitted provided that the following conditions
  *  are met:
  *
- *    Redistributions of source code must retain the above copyright 
+ *    Redistributions of source code must retain the above copyright
  *    notice, this list of conditions and the following disclaimer.
  *
  *    Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the 
- *    documentation and/or other materials provided with the   
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the
  *    distribution.
  *
  *    Neither the name of Texas Instruments Incorporated nor the names of
  *    its contributors may be used to endorse or promote products derived
  *    from this software without specific prior written permission.
  *
- *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
- *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- *  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT 
- *  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
- *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT 
+ *  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ *  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
  *  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
  *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT 
- *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
+ *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  *  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
 */
-    
-    
+
+
 
 #ifndef __SIMPLELINK_H__
 #define    __SIMPLELINK_H__
 
+//#include <simplelink/user.h>
 #include "user.h"
 
 #ifdef    __cplusplus
@@ -225,17 +226,17 @@ extern "C"
 
 
 /*! \attention  Async event activation notes
-    Function prototypes for event callback handlers                               
-    Event handler function names should be defined in the user.h file             
-    e.g.                                                                          
-    "#define sl_WlanEvtHdlr   SLWlanEventHandler"                               
-    Indicates all WLAN events are handled by User func "SLWlanEventHandler"                                                                       
-    Important notes:                                                              
-    1. Event handlers cannot activate another SimpleLink API from the event's context                                                                    
-    2. Event's data is valid during event's context. Any application data         
-       which is required for the user application should be copied or marked      
-       into user's variables                                                      
-    3. It is not recommended to delay the execution of the event callback handler 
+    Function prototypes for event callback handlers
+    Event handler function names should be defined in the user.h file
+    e.g.
+    "#define sl_WlanEvtHdlr   SLWlanEventHandler"
+    Indicates all WLAN events are handled by User func "SLWlanEventHandler"
+    Important notes:
+    1. Event handlers cannot activate another SimpleLink API from the event's context
+    2. Event's data is valid during event's context. Any application data
+       which is required for the user application should be copied or marked
+       into user's variables
+    3. It is not recommended to delay the execution of the event callback handler
 
 */
 
@@ -329,10 +330,10 @@ extern "C"
 
 
 
-  
+
 /*****************************************************************************/
 /* Types definitions                                                                                                                */
-/*****************************************************************************/  
+/*****************************************************************************/
 
 #ifndef NULL
 #define NULL        (0)
@@ -353,14 +354,14 @@ extern "C"
 #ifndef _SL_USER_TYPES
       typedef unsigned char _u8;
       typedef signed char   _i8;
- 
+
       typedef unsigned short _u16;
       typedef signed short   _i16;
- 
+
       typedef unsigned long  _u32;
       typedef signed long    _i32;
       #define _volatile volatile
-	  #define _const    const
+      #define _const    const
 #endif
 
 typedef _u16  _SlOpcode_t;
@@ -378,8 +379,8 @@ typedef _i16   _SlReturnVal_t;
  */
 
  typedef enum {
- 	EVENT_PROPAGATION_BLOCK = 0,
- 	EVENT_PROPAGATION_CONTINUE
+    EVENT_PROPAGATION_BLOCK = 0,
+    EVENT_PROPAGATION_CONTINUE
 
  } _SlEventPropogationStatus_e;
 
@@ -396,20 +397,20 @@ typedef _i16   _SlReturnVal_t;
 /*****************************************************************************/
 
 
-/* 
-   objInclusion.h and user.h must be included before all api header files 
-   objInclusion.h must be the last arrangement just before including the API header files 
-   since it based on the other configurations to decide which object should be included 
+/*
+   objInclusion.h and user.h must be included before all api header files
+   objInclusion.h must be the last arrangement just before including the API header files
+   since it based on the other configurations to decide which object should be included
 */
-#include "objInclusion.h"
-#include "trace.h"
-#include "fs.h"
-#include "socket.h"
-#include "netapp.h"
-#include "wlan.h"
-#include "device.h"
-#include "netcfg.h"
-#include "wlan_rx_filters.h"
+#include <simplelink/source/objInclusion.h>
+#include <simplelink/include/trace.h>
+#include <simplelink/include/fs.h>
+#include <simplelink/include/socket.h>
+#include <simplelink/include/netapp.h>
+#include <simplelink/include/wlan.h>
+#include <simplelink/include/device.h>
+#include <simplelink/include/netcfg.h>
+#include <simplelink/include/wlan_rx_filters.h>
 
 #ifdef    __cplusplus
 extern "C"
@@ -460,49 +461,49 @@ extern "C"
 #ifdef SL_EXT_LIB_1
 
     /* General Event Registration */
-	#if __CONCAT2(SL_EXT_LIB_1, _NOTIFY_GENERAL_EVENT)
-	extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_1, _GeneralEventHdl) (SlDeviceEvent_t *);
-	#define SlExtLib1GeneralEventHandler   __CONCAT2(SL_EXT_LIB_1, _GeneralEventHdl)
+    #if __CONCAT2(SL_EXT_LIB_1, _NOTIFY_GENERAL_EVENT)
+    extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_1, _GeneralEventHdl) (SlDeviceEvent_t *);
+    #define SlExtLib1GeneralEventHandler   __CONCAT2(SL_EXT_LIB_1, _GeneralEventHdl)
 
-	#undef EXT_LIB_REGISTERED_GENERAL_EVENTS
+    #undef EXT_LIB_REGISTERED_GENERAL_EVENTS
     #define EXT_LIB_REGISTERED_GENERAL_EVENTS
-	#endif
+    #endif
 
-	/* Wlan Event Registration */
-	#if __CONCAT2(SL_EXT_LIB_1, _NOTIFY_WLAN_EVENT)
-	extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_1, _WlanEventHdl) (SlWlanEvent_t *);
-	#define SlExtLib1WlanEventHandler   __CONCAT2(SL_EXT_LIB_1, _WlanEventHdl)
+    /* Wlan Event Registration */
+    #if __CONCAT2(SL_EXT_LIB_1, _NOTIFY_WLAN_EVENT)
+    extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_1, _WlanEventHdl) (SlWlanEvent_t *);
+    #define SlExtLib1WlanEventHandler   __CONCAT2(SL_EXT_LIB_1, _WlanEventHdl)
 
-	#undef EXT_LIB_REGISTERED_WLAN_EVENTS
+    #undef EXT_LIB_REGISTERED_WLAN_EVENTS
     #define EXT_LIB_REGISTERED_WLAN_EVENTS
-	#endif
+    #endif
 
-	/* NetApp Event Registration */
-	#if __CONCAT2(SL_EXT_LIB_1, _NOTIFY_NETAPP_EVENT)
-	extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_1, _NetAppEventHdl) (SlNetAppEvent_t *);
-	#define SlExtLib1NetAppEventHandler __CONCAT2(SL_EXT_LIB_1, _NetAppEventHdl)
+    /* NetApp Event Registration */
+    #if __CONCAT2(SL_EXT_LIB_1, _NOTIFY_NETAPP_EVENT)
+    extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_1, _NetAppEventHdl) (SlNetAppEvent_t *);
+    #define SlExtLib1NetAppEventHandler __CONCAT2(SL_EXT_LIB_1, _NetAppEventHdl)
 
-	#undef EXT_LIB_REGISTERED_NETAPP_EVENTS
+    #undef EXT_LIB_REGISTERED_NETAPP_EVENTS
     #define EXT_LIB_REGISTERED_NETAPP_EVENTS
-	#endif
+    #endif
 
-	/* Http Server Event Registration */
-	#if __CONCAT2(SL_EXT_LIB_1, _NOTIFY_HTTP_SERVER_EVENT)
-	extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_1, _HttpServerEventHdl) (SlHttpServerEvent_t* , SlHttpServerResponse_t*);
-	#define SlExtLib1HttpServerEventHandler __CONCAT2(SL_EXT_LIB_1, _HttpServerEventHdl)
+    /* Http Server Event Registration */
+    #if __CONCAT2(SL_EXT_LIB_1, _NOTIFY_HTTP_SERVER_EVENT)
+    extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_1, _HttpServerEventHdl) (SlHttpServerEvent_t* , SlHttpServerResponse_t*);
+    #define SlExtLib1HttpServerEventHandler __CONCAT2(SL_EXT_LIB_1, _HttpServerEventHdl)
 
-	#undef EXT_LIB_REGISTERED_HTTP_SERVER_EVENTS
+    #undef EXT_LIB_REGISTERED_HTTP_SERVER_EVENTS
     #define EXT_LIB_REGISTERED_HTTP_SERVER_EVENTS
-	#endif
+    #endif
 
-	/* Socket Event Registration */
-	#if __CONCAT2(SL_EXT_LIB_1, _NOTIFY_SOCK_EVENT)
-	extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_1, _SockEventHdl) (SlSockEvent_t *);
-	#define SlExtLib1SockEventHandler __CONCAT2(SL_EXT_LIB_1, _SockEventHdl)
+    /* Socket Event Registration */
+    #if __CONCAT2(SL_EXT_LIB_1, _NOTIFY_SOCK_EVENT)
+    extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_1, _SockEventHdl) (SlSockEvent_t *);
+    #define SlExtLib1SockEventHandler __CONCAT2(SL_EXT_LIB_1, _SockEventHdl)
 
-	#undef EXT_LIB_REGISTERED_SOCK_EVENTS
+    #undef EXT_LIB_REGISTERED_SOCK_EVENTS
     #define EXT_LIB_REGISTERED_SOCK_EVENTS
-	#endif
+    #endif
 
 #endif
 
@@ -510,49 +511,49 @@ extern "C"
 #ifdef SL_EXT_LIB_2
 
     /* General Event Registration */
-	#if __CONCAT2(SL_EXT_LIB_2, _NOTIFY_GENERAL_EVENT)
-	extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_2, _GeneralEventHdl) (SlDeviceEvent_t *);
-	#define SlExtLib2GeneralEventHandler   __CONCAT2(SL_EXT_LIB_2, _GeneralEventHdl)
+    #if __CONCAT2(SL_EXT_LIB_2, _NOTIFY_GENERAL_EVENT)
+    extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_2, _GeneralEventHdl) (SlDeviceEvent_t *);
+    #define SlExtLib2GeneralEventHandler   __CONCAT2(SL_EXT_LIB_2, _GeneralEventHdl)
 
-	#undef EXT_LIB_REGISTERED_GENERAL_EVENTS
+    #undef EXT_LIB_REGISTERED_GENERAL_EVENTS
     #define EXT_LIB_REGISTERED_GENERAL_EVENTS
-	#endif
+    #endif
 
-	/* Wlan Event Registration */
-	#if __CONCAT2(SL_EXT_LIB_2, _NOTIFY_WLAN_EVENT)
-	extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_2, _WlanEventHdl) (SlWlanEvent_t *);
-	#define SlExtLib2WlanEventHandler   __CONCAT2(SL_EXT_LIB_2, _WlanEventHdl)
+    /* Wlan Event Registration */
+    #if __CONCAT2(SL_EXT_LIB_2, _NOTIFY_WLAN_EVENT)
+    extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_2, _WlanEventHdl) (SlWlanEvent_t *);
+    #define SlExtLib2WlanEventHandler   __CONCAT2(SL_EXT_LIB_2, _WlanEventHdl)
 
-	#undef EXT_LIB_REGISTERED_WLAN_EVENTS
+    #undef EXT_LIB_REGISTERED_WLAN_EVENTS
     #define EXT_LIB_REGISTERED_WLAN_EVENTS
-	#endif
+    #endif
 
-	/* NetApp Event Registration */
-	#if __CONCAT2(SL_EXT_LIB_2, _NOTIFY_NETAPP_EVENT)
-	extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_2, _NetAppEventHdl) (SlNetAppEvent_t *);
-	#define SlExtLib2NetAppEventHandler __CONCAT2(SL_EXT_LIB_2, _NetAppEventHdl)
+    /* NetApp Event Registration */
+    #if __CONCAT2(SL_EXT_LIB_2, _NOTIFY_NETAPP_EVENT)
+    extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_2, _NetAppEventHdl) (SlNetAppEvent_t *);
+    #define SlExtLib2NetAppEventHandler __CONCAT2(SL_EXT_LIB_2, _NetAppEventHdl)
 
-	#undef EXT_LIB_REGISTERED_NETAPP_EVENTS
+    #undef EXT_LIB_REGISTERED_NETAPP_EVENTS
     #define EXT_LIB_REGISTERED_NETAPP_EVENTS
-	#endif
+    #endif
 
-	/* Http Server Event Registration */
-	#if __CONCAT2(SL_EXT_LIB_2, _NOTIFY_HTTP_SERVER_EVENT)
-	extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_2, _HttpServerEventHdl) (SlHttpServerEvent_t* , SlHttpServerResponse_t*);
-	#define SlExtLib2HttpServerEventHandler __CONCAT2(SL_EXT_LIB_2, _HttpServerEventHdl)
+    /* Http Server Event Registration */
+    #if __CONCAT2(SL_EXT_LIB_2, _NOTIFY_HTTP_SERVER_EVENT)
+    extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_2, _HttpServerEventHdl) (SlHttpServerEvent_t* , SlHttpServerResponse_t*);
+    #define SlExtLib2HttpServerEventHandler __CONCAT2(SL_EXT_LIB_2, _HttpServerEventHdl)
 
-	#undef EXT_LIB_REGISTERED_HTTP_SERVER_EVENTS
+    #undef EXT_LIB_REGISTERED_HTTP_SERVER_EVENTS
     #define EXT_LIB_REGISTERED_HTTP_SERVER_EVENTS
-	#endif
+    #endif
 
-	/* Socket Event Registration */
-	#if __CONCAT2(SL_EXT_LIB_2, _NOTIFY_SOCK_EVENT)
-	extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_2, _SockEventHdl) (SlSockEvent_t *);
-	#define SlExtLib2SockEventHandler __CONCAT2(SL_EXT_LIB_2, _SockEventHdl)
+    /* Socket Event Registration */
+    #if __CONCAT2(SL_EXT_LIB_2, _NOTIFY_SOCK_EVENT)
+    extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_2, _SockEventHdl) (SlSockEvent_t *);
+    #define SlExtLib2SockEventHandler __CONCAT2(SL_EXT_LIB_2, _SockEventHdl)
 
-	#undef EXT_LIB_REGISTERED_SOCK_EVENTS
+    #undef EXT_LIB_REGISTERED_SOCK_EVENTS
     #define EXT_LIB_REGISTERED_SOCK_EVENTS
-	#endif
+    #endif
 
 #endif
 
@@ -560,49 +561,49 @@ extern "C"
 #ifdef SL_EXT_LIB_3
 
     /* General Event Registration */
-	#if __CONCAT2(SL_EXT_LIB_3, _NOTIFY_GENERAL_EVENT)
-	extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_3, _GeneralEventHdl) (SlDeviceEvent_t *);
-	#define SlExtLib3GeneralEventHandler   __CONCAT2(SL_EXT_LIB_3, _GeneralEventHdl)
+    #if __CONCAT2(SL_EXT_LIB_3, _NOTIFY_GENERAL_EVENT)
+    extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_3, _GeneralEventHdl) (SlDeviceEvent_t *);
+    #define SlExtLib3GeneralEventHandler   __CONCAT2(SL_EXT_LIB_3, _GeneralEventHdl)
 
-	#undef EXT_LIB_REGISTERED_GENERAL_EVENTS
+    #undef EXT_LIB_REGISTERED_GENERAL_EVENTS
     #define EXT_LIB_REGISTERED_GENERAL_EVENTS
-	#endif
+    #endif
 
-	/* Wlan Event Registration */
-	#if __CONCAT2(SL_EXT_LIB_3, _NOTIFY_WLAN_EVENT)
-	extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_3, _WlanEventHdl) (SlWlanEvent_t *);
-	#define SlExtLib3WlanEventHandler   __CONCAT2(SL_EXT_LIB_3, _WlanEventHdl)
+    /* Wlan Event Registration */
+    #if __CONCAT2(SL_EXT_LIB_3, _NOTIFY_WLAN_EVENT)
+    extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_3, _WlanEventHdl) (SlWlanEvent_t *);
+    #define SlExtLib3WlanEventHandler   __CONCAT2(SL_EXT_LIB_3, _WlanEventHdl)
 
-	#undef EXT_LIB_REGISTERED_WLAN_EVENTS
+    #undef EXT_LIB_REGISTERED_WLAN_EVENTS
     #define EXT_LIB_REGISTERED_WLAN_EVENTS
-	#endif
+    #endif
 
-	/* NetApp Event Registration */
-	#if __CONCAT2(SL_EXT_LIB_3, _NOTIFY_NETAPP_EVENT)
-	extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_3, _NetAppEventHdl) (SlNetAppEvent_t *);
-	#define SlExtLib3NetAppEventHandler __CONCAT2(SL_EXT_LIB_3, _NetAppEventHdl)
+    /* NetApp Event Registration */
+    #if __CONCAT2(SL_EXT_LIB_3, _NOTIFY_NETAPP_EVENT)
+    extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_3, _NetAppEventHdl) (SlNetAppEvent_t *);
+    #define SlExtLib3NetAppEventHandler __CONCAT2(SL_EXT_LIB_3, _NetAppEventHdl)
 
-	#undef EXT_LIB_REGISTERED_NETAPP_EVENTS
+    #undef EXT_LIB_REGISTERED_NETAPP_EVENTS
     #define EXT_LIB_REGISTERED_NETAPP_EVENTS
-	#endif
+    #endif
 
-	/* Http Server Event Registration */
-	#if __CONCAT2(SL_EXT_LIB_3, _NOTIFY_HTTP_SERVER_EVENT)
-	extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_3, _HttpServerEventHdl) (SlHttpServerEvent_t* , SlHttpServerResponse_t*);
-	#define SlExtLib3HttpServerEventHandler __CONCAT2(SL_EXT_LIB_3, _HttpServerEventHdl)
+    /* Http Server Event Registration */
+    #if __CONCAT2(SL_EXT_LIB_3, _NOTIFY_HTTP_SERVER_EVENT)
+    extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_3, _HttpServerEventHdl) (SlHttpServerEvent_t* , SlHttpServerResponse_t*);
+    #define SlExtLib3HttpServerEventHandler __CONCAT2(SL_EXT_LIB_3, _HttpServerEventHdl)
 
-	#undef EXT_LIB_REGISTERED_HTTP_SERVER_EVENTS
+    #undef EXT_LIB_REGISTERED_HTTP_SERVER_EVENTS
     #define EXT_LIB_REGISTERED_HTTP_SERVER_EVENTS
-	#endif
+    #endif
 
-	/* Socket Event Registration */
-	#if __CONCAT2(SL_EXT_LIB_3, _NOTIFY_SOCK_EVENT)
-	extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_3, _SockEventHdl) (SlSockEvent_t *);
-	#define SlExtLib3SockEventHandler __CONCAT2(SL_EXT_LIB_3, _SockEventHdl)
+    /* Socket Event Registration */
+    #if __CONCAT2(SL_EXT_LIB_3, _NOTIFY_SOCK_EVENT)
+    extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_3, _SockEventHdl) (SlSockEvent_t *);
+    #define SlExtLib3SockEventHandler __CONCAT2(SL_EXT_LIB_3, _SockEventHdl)
 
-	#undef EXT_LIB_REGISTERED_SOCK_EVENTS
+    #undef EXT_LIB_REGISTERED_SOCK_EVENTS
     #define EXT_LIB_REGISTERED_SOCK_EVENTS
-	#endif
+    #endif
 
 #endif
 
@@ -610,49 +611,49 @@ extern "C"
 #ifdef SL_EXT_LIB_4
 
     /* General Event Registration */
-	#if __CONCAT2(SL_EXT_LIB_4, _NOTIFY_GENERAL_EVENT)
-	extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_4, _GeneralEventHdl) (SlDeviceEvent_t *);
-	#define SlExtLib4GeneralEventHandler   __CONCAT2(SL_EXT_LIB_4, _GeneralEventHdl)
+    #if __CONCAT2(SL_EXT_LIB_4, _NOTIFY_GENERAL_EVENT)
+    extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_4, _GeneralEventHdl) (SlDeviceEvent_t *);
+    #define SlExtLib4GeneralEventHandler   __CONCAT2(SL_EXT_LIB_4, _GeneralEventHdl)
 
-	#undef EXT_LIB_REGISTERED_GENERAL_EVENTS
+    #undef EXT_LIB_REGISTERED_GENERAL_EVENTS
     #define EXT_LIB_REGISTERED_GENERAL_EVENTS
-	#endif
+    #endif
 
-	/* Wlan Event Registration */
-	#if __CONCAT2(SL_EXT_LIB_4, _NOTIFY_WLAN_EVENT)
-	extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_4, _WlanEventHdl) (SlWlanEvent_t *);
-	#define SlExtLib4WlanEventHandler   __CONCAT2(SL_EXT_LIB_4, _WlanEventHdl)
+    /* Wlan Event Registration */
+    #if __CONCAT2(SL_EXT_LIB_4, _NOTIFY_WLAN_EVENT)
+    extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_4, _WlanEventHdl) (SlWlanEvent_t *);
+    #define SlExtLib4WlanEventHandler   __CONCAT2(SL_EXT_LIB_4, _WlanEventHdl)
 
-	#undef EXT_LIB_REGISTERED_WLAN_EVENTS
+    #undef EXT_LIB_REGISTERED_WLAN_EVENTS
     #define EXT_LIB_REGISTERED_WLAN_EVENTS
-	#endif
+    #endif
 
-	/* NetApp Event Registration */
-	#if __CONCAT2(SL_EXT_LIB_4, _NOTIFY_NETAPP_EVENT)
-	extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_4, _NetAppEventHdl) (SlNetAppEvent_t *);
-	#define SlExtLib4NetAppEventHandler __CONCAT2(SL_EXT_LIB_4, _NetAppEventHdl)
+    /* NetApp Event Registration */
+    #if __CONCAT2(SL_EXT_LIB_4, _NOTIFY_NETAPP_EVENT)
+    extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_4, _NetAppEventHdl) (SlNetAppEvent_t *);
+    #define SlExtLib4NetAppEventHandler __CONCAT2(SL_EXT_LIB_4, _NetAppEventHdl)
 
-	#undef EXT_LIB_REGISTERED_NETAPP_EVENTS
+    #undef EXT_LIB_REGISTERED_NETAPP_EVENTS
     #define EXT_LIB_REGISTERED_NETAPP_EVENTS
-	#endif
+    #endif
 
-	/* Http Server Event Registration */
-	#if __CONCAT2(SL_EXT_LIB_4, _NOTIFY_HTTP_SERVER_EVENT)
-	extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_4, _HttpServerEventHdl) (SlHttpServerEvent_t* , SlHttpServerResponse_t*);
-	#define SlExtLib4HttpServerEventHandler __CONCAT2(SL_EXT_LIB_4, _HttpServerEventHdl)
+    /* Http Server Event Registration */
+    #if __CONCAT2(SL_EXT_LIB_4, _NOTIFY_HTTP_SERVER_EVENT)
+    extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_4, _HttpServerEventHdl) (SlHttpServerEvent_t* , SlHttpServerResponse_t*);
+    #define SlExtLib4HttpServerEventHandler __CONCAT2(SL_EXT_LIB_4, _HttpServerEventHdl)
 
-	#undef EXT_LIB_REGISTERED_HTTP_SERVER_EVENTS
+    #undef EXT_LIB_REGISTERED_HTTP_SERVER_EVENTS
     #define EXT_LIB_REGISTERED_HTTP_SERVER_EVENTS
-	#endif
+    #endif
 
-	/* Socket Event Registration */
-	#if __CONCAT2(SL_EXT_LIB_4, _NOTIFY_SOCK_EVENT)
-	extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_4, _SockEventHdl) (SlSockEvent_t *);
-	#define SlExtLib4SockEventHandler __CONCAT2(SL_EXT_LIB_4, _SockEventHdl)
+    /* Socket Event Registration */
+    #if __CONCAT2(SL_EXT_LIB_4, _NOTIFY_SOCK_EVENT)
+    extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_4, _SockEventHdl) (SlSockEvent_t *);
+    #define SlExtLib4SockEventHandler __CONCAT2(SL_EXT_LIB_4, _SockEventHdl)
 
-	#undef EXT_LIB_REGISTERED_SOCK_EVENTS
+    #undef EXT_LIB_REGISTERED_SOCK_EVENTS
     #define EXT_LIB_REGISTERED_SOCK_EVENTS
-	#endif
+    #endif
 
 #endif
 
@@ -660,49 +661,49 @@ extern "C"
 #ifdef SL_EXT_LIB_5
 
     /* General Event Registration */
-	#if __CONCAT2(SL_EXT_LIB_5, _NOTIFY_GENERAL_EVENT)
-	extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_5, _GeneralEventHdl) (SlDeviceEvent_t *);
-	#define SlExtLib5GeneralEventHandler   __CONCAT2(SL_EXT_LIB_5, _GeneralEventHdl)
+    #if __CONCAT2(SL_EXT_LIB_5, _NOTIFY_GENERAL_EVENT)
+    extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_5, _GeneralEventHdl) (SlDeviceEvent_t *);
+    #define SlExtLib5GeneralEventHandler   __CONCAT2(SL_EXT_LIB_5, _GeneralEventHdl)
 
-	#undef EXT_LIB_REGISTERED_GENERAL_EVENTS
+    #undef EXT_LIB_REGISTERED_GENERAL_EVENTS
     #define EXT_LIB_REGISTERED_GENERAL_EVENTS
-	#endif
+    #endif
 
-	/* Wlan Event Registration */
-	#if __CONCAT2(SL_EXT_LIB_5, _NOTIFY_WLAN_EVENT)
-	extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_5, _WlanEventHdl) (SlWlanEvent_t *);
-	#define SlExtLib5WlanEventHandler   __CONCAT2(SL_EXT_LIB_5, _WlanEventHdl)
+    /* Wlan Event Registration */
+    #if __CONCAT2(SL_EXT_LIB_5, _NOTIFY_WLAN_EVENT)
+    extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_5, _WlanEventHdl) (SlWlanEvent_t *);
+    #define SlExtLib5WlanEventHandler   __CONCAT2(SL_EXT_LIB_5, _WlanEventHdl)
 
-	#undef EXT_LIB_REGISTERED_WLAN_EVENTS
+    #undef EXT_LIB_REGISTERED_WLAN_EVENTS
     #define EXT_LIB_REGISTERED_WLAN_EVENTS
-	#endif
+    #endif
 
-	/* NetApp Event Registration */
-	#if __CONCAT2(SL_EXT_LIB_5, _NOTIFY_NETAPP_EVENT)
-	extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_5, _NetAppEventHdl) (SlNetAppEvent_t *);
-	#define SlExtLib5NetAppEventHandler __CONCAT2(SL_EXT_LIB_5, _NetAppEventHdl)
+    /* NetApp Event Registration */
+    #if __CONCAT2(SL_EXT_LIB_5, _NOTIFY_NETAPP_EVENT)
+    extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_5, _NetAppEventHdl) (SlNetAppEvent_t *);
+    #define SlExtLib5NetAppEventHandler __CONCAT2(SL_EXT_LIB_5, _NetAppEventHdl)
 
-	#undef EXT_LIB_REGISTERED_NETAPP_EVENTS
+    #undef EXT_LIB_REGISTERED_NETAPP_EVENTS
     #define EXT_LIB_REGISTERED_NETAPP_EVENTS
-	#endif
+    #endif
 
-	/* Http Server Event Registration */
-	#if __CONCAT2(SL_EXT_LIB_5, _NOTIFY_HTTP_SERVER_EVENT)
-	extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_5, _HttpServerEventHdl) (SlHttpServerEvent_t* , SlHttpServerResponse_t*);
-	#define SlExtLib5HttpServerEventHandler __CONCAT2(SL_EXT_LIB_5, _HttpServerEventHdl)
+    /* Http Server Event Registration */
+    #if __CONCAT2(SL_EXT_LIB_5, _NOTIFY_HTTP_SERVER_EVENT)
+    extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_5, _HttpServerEventHdl) (SlHttpServerEvent_t* , SlHttpServerResponse_t*);
+    #define SlExtLib5HttpServerEventHandler __CONCAT2(SL_EXT_LIB_5, _HttpServerEventHdl)
 
-	#undef EXT_LIB_REGISTERED_HTTP_SERVER_EVENTS
+    #undef EXT_LIB_REGISTERED_HTTP_SERVER_EVENTS
     #define EXT_LIB_REGISTERED_HTTP_SERVER_EVENTS
-	#endif
+    #endif
 
-	/* Socket Event Registration */
-	#if __CONCAT2(SL_EXT_LIB_5, _NOTIFY_SOCK_EVENT)
-	extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_5, _SockEventHdl) (SlSockEvent_t *);
-	#define SlExtLib5SockEventHandler __CONCAT2(SL_EXT_LIB_5, _SockEventHdl)
+    /* Socket Event Registration */
+    #if __CONCAT2(SL_EXT_LIB_5, _NOTIFY_SOCK_EVENT)
+    extern _SlEventPropogationStatus_e __CONCAT2(SL_EXT_LIB_5, _SockEventHdl) (SlSockEvent_t *);
+    #define SlExtLib5SockEventHandler __CONCAT2(SL_EXT_LIB_5, _SockEventHdl)
 
-	#undef EXT_LIB_REGISTERED_SOCK_EVENTS
+    #undef EXT_LIB_REGISTERED_SOCK_EVENTS
     #define EXT_LIB_REGISTERED_SOCK_EVENTS
-	#endif
+    #endif
 
 #endif
 
@@ -733,9 +734,9 @@ extern void _SlDrvHandleSockEvents(SlSockEvent_t *slSockEvent);
 typedef void (*_SlSpawnEntryFunc_t)(void* pValue);
 
 #ifdef SL_PLATFORM_MULTI_THREADED
-    #include "spawn.h"
+#include <simplelink/source/spawn.h>
 #else
-    #include "nonos.h"
+#include <simplelink/source/nonos.h>
 #endif
 
 
@@ -744,25 +745,25 @@ typedef void (*_SlSpawnEntryFunc_t)(void* pValue);
 
 /*!
     \brief General async event for inspecting general events
-    
-    \param[out]      pSlDeviceEvent   pointer to SlDeviceEvent_t 
-    
+
+    \param[out]      pSlDeviceEvent   pointer to SlDeviceEvent_t
+
     \par
           Parameters: \n
           - <b>pSlDeviceEvent->Event = SL_DEVICE_FATAL_ERROR_EVENT </b>
-              - pSlDeviceEvent->EventData.deviceEvent fields:      
+              - pSlDeviceEvent->EventData.deviceEvent fields:
                   - status: An error code indication from the device
-                  - sender: The sender originator which is based on SlErrorSender_e enum 
+                  - sender: The sender originator which is based on SlErrorSender_e enum
 
         - <b>pSlDeviceEvent->Event = SL_DEVICE_ABORT_ERROR_EVENT </b>
-              Indicates a severe error occured and the device stopped 
-              - pSlDeviceEvent->EventData.deviceReport fields:      
+              Indicates a severe error occured and the device stopped
+              - pSlDeviceEvent->EventData.deviceReport fields:
                   - AbortType: An idication of the event type
-                  - AbortData: Additional info about the data error 
-                  
-      
-    \par  Example for fatal error:           
-    \code         
+                  - AbortData: Additional info about the data error
+
+
+    \par  Example for fatal error:
+    \code
     printf(General Event Handler - ID=%d Sender=%d\n\n",
            pSlDeviceEvent->EventData.deviceEvent.status,  // status of the general event
            pSlDeviceEvent->EventData.deviceEvent.sender); // sender type
@@ -770,8 +771,8 @@ typedef void (*_SlSpawnEntryFunc_t)(void* pValue);
     \par Example for abort request:
     \code
      printf(Abort type =%d Abort Data=%d\n\n",
-           pSlDeviceEvent->EventData.deviceReport.AbortType,  
-           pSlDeviceEvent->EventData.deviceReport.AbortData); 
+           pSlDeviceEvent->EventData.deviceReport.AbortType,
+           pSlDeviceEvent->EventData.deviceReport.AbortData);
 
     \endcode
 */
@@ -782,12 +783,12 @@ extern void sl_GeneralEvtHdlr(SlDeviceEvent_t *pSlDeviceEvent);
 
 /*!
     \brief WLAN Async event handler
-    
-    \param[out]      pSlWlanEvent   pointer to SlWlanEvent_t data 
-    
+
+    \param[out]      pSlWlanEvent   pointer to SlWlanEvent_t data
+
     \par
              Parameters:
-             
+
              - <b>pSlWlanEvent->Event = SL_WLAN_CONNECT_EVENT </b>, STA or P2P client connection indication event
                  - pSlWlanEvent->EventData.STAandP2PModeWlanConnected main fields:
                       - ssid_name
@@ -795,14 +796,14 @@ extern void sl_GeneralEvtHdlr(SlDeviceEvent_t *pSlDeviceEvent);
                       - bssid
                       - go_peer_device_name
                       - go_peer_device_name_len
-                       
-             - <b>pSlWlanEvent->Event = SL_WLAN_DISCONNECT_EVENT </b>, STA or P2P client disconnection event                          
+
+             - <b>pSlWlanEvent->Event = SL_WLAN_DISCONNECT_EVENT </b>, STA or P2P client disconnection event
                  - pSlWlanEvent->EventData.STAandP2PModeDisconnected main fields:
                       - ssid_name
                       - ssid_len
                       - reason_code
 
-             - <b>pSlWlanEvent->Event = SL_WLAN_STA_CONNECTED_EVENT </b>, AP/P2P(Go) connected STA/P2P(Client)                  
+             - <b>pSlWlanEvent->Event = SL_WLAN_STA_CONNECTED_EVENT </b>, AP/P2P(Go) connected STA/P2P(Client)
                   - pSlWlanEvent->EventData.APModeStaConnected fields:
                       - go_peer_device_name
                       - mac
@@ -810,8 +811,8 @@ extern void sl_GeneralEvtHdlr(SlDeviceEvent_t *pSlDeviceEvent);
                       - wps_dev_password_id
                       - own_ssid:  relevant for event sta-connected only
                       - own_ssid_len:  relevant for event sta-connected only
-                      
-             - <b>pSlWlanEvent->Event = SL_WLAN_STA_DISCONNECTED_EVENT </b>, AP/P2P(Go) disconnected STA/P2P(Client)                        
+
+             - <b>pSlWlanEvent->Event = SL_WLAN_STA_DISCONNECTED_EVENT </b>, AP/P2P(Go) disconnected STA/P2P(Client)
                   - pSlWlanEvent->EventData.APModestaDisconnected fields:
                       - go_peer_device_name
                       - mac
@@ -820,19 +821,19 @@ extern void sl_GeneralEvtHdlr(SlDeviceEvent_t *pSlDeviceEvent);
                       - own_ssid:  relevant for event sta-connected only
                       - own_ssid_len:  relevant for event sta-connected only
 
-             - <b>pSlWlanEvent->Event = SL_WLAN_SMART_CONFIG_COMPLETE_EVENT </b>                             
+             - <b>pSlWlanEvent->Event = SL_WLAN_SMART_CONFIG_COMPLETE_EVENT </b>
                   - pSlWlanEvent->EventData.smartConfigStartResponse fields:
                      - status
                      - ssid_len
                      - ssid
                      - private_token_len
                      - private_token
-                     
-             - <b>pSlWlanEvent->Event = SL_WLAN_SMART_CONFIG_STOP_EVENT </b>                 
-                     - pSlWlanEvent->EventData.smartConfigStopResponse fields:       
+
+             - <b>pSlWlanEvent->Event = SL_WLAN_SMART_CONFIG_STOP_EVENT </b>
+                     - pSlWlanEvent->EventData.smartConfigStopResponse fields:
                          - status
-                         
-             - <b>pSlWlanEvent->Event = SL_WLAN_P2P_DEV_FOUND_EVENT </b>         
+
+             - <b>pSlWlanEvent->Event = SL_WLAN_P2P_DEV_FOUND_EVENT </b>
                      - pSlWlanEvent->EventData.P2PModeDevFound fields:
                          - go_peer_device_name
                          - mac
@@ -840,18 +841,18 @@ extern void sl_GeneralEvtHdlr(SlDeviceEvent_t *pSlDeviceEvent);
                          - wps_dev_password_id
                          - own_ssid:  relevant for event sta-connected only
                          - own_ssid_len:  relevant for event sta-connected only
-                         
-             - <b>pSlWlanEvent->Event = SL_WLAN_P2P_NEG_REQ_RECEIVED_EVENT </b>                             
+
+             - <b>pSlWlanEvent->Event = SL_WLAN_P2P_NEG_REQ_RECEIVED_EVENT </b>
                       - pSlWlanEvent->EventData.P2PModeNegReqReceived fields
                           - go_peer_device_name
                           - mac
                           - go_peer_device_name_len
                           - wps_dev_password_id
                           - own_ssid:  relevant for event sta-connected only
-                           
+
              - <b>pSlWlanEvent->Event = SL_WLAN_CONNECTION_FAILED_EVENT </b>, P2P only
                        - pSlWlanEvent->EventData.P2PModewlanConnectionFailure fields:
-                           - status                  
+                           - status
 */
 #if (defined(sl_WlanEvtHdlr))
 extern void sl_WlanEvtHdlr(SlWlanEvent_t* pSlWlanEvent);
@@ -860,9 +861,9 @@ extern void sl_WlanEvtHdlr(SlWlanEvent_t* pSlWlanEvent);
 
 /*!
     \brief NETAPP Async event handler
-    
-    \param[out]      pSlNetApp   pointer to SlNetAppEvent_t data    
-    
+
+    \param[out]      pSlNetApp   pointer to SlNetAppEvent_t data
+
     \par
              Parameters:
               - <b>pSlNetApp->Event = SL_NETAPP_IPV4_IPACQUIRED_EVENT</b>, IPV4 acquired event
@@ -870,7 +871,7 @@ extern void sl_WlanEvtHdlr(SlWlanEvent_t* pSlWlanEvent);
                        - ip
                        - gateway
                        - dns
-                           
+
               - <b>pSlNetApp->Event = SL_NETAPP_IP_LEASED_EVENT</b>, AP or P2P go dhcp lease event
                   - pSlNetApp->EventData.ipLeased  fields:
                        - ip_address
@@ -890,9 +891,9 @@ extern void sl_NetAppEvtHdlr(SlNetAppEvent_t* pSlNetApp);
 
 /*!
     \brief Socket Async event handler
-    
-    \param[out]      pSlSockEvent   pointer to SlSockEvent_t data 
-    
+
+    \param[out]      pSlSockEvent   pointer to SlSockEvent_t data
+
     \par
              Parameters:\n
              - <b>pSlSockEvent->Event = SL_SOCKET_TX_FAILED_EVENT</b>
@@ -902,7 +903,7 @@ extern void sl_NetAppEvtHdlr(SlNetAppEvent_t* pSlNetApp);
              - <b>pSlSockEvent->Event = SL_SOCKET_ASYNC_EVENT</b>
                 - pSlSockEvent->SockAsyncData fields:
                      - sd
-                     - type: SSL_ACCEPT  or RX_FRAGMENTATION_TOO_BIG or OTHER_SIDE_CLOSE_SSL_DATA_NOT_ENCRYPTED 
+                     - type: SSL_ACCEPT  or RX_FRAGMENTATION_TOO_BIG or OTHER_SIDE_CLOSE_SSL_DATA_NOT_ENCRYPTED
                      - val
 
 */
@@ -927,16 +928,16 @@ extern void sl_SockEvtHdlr(SlSockEvent_t* pSlSockEvent);
              - pSlHttpServerResponse->ResponseData fields:
                      - data
                      - len
-             
+
           - <b>pSlHttpServerEvent->Event = SL_NETAPP_HTTPPOSTTOKENVALUE_EVENT</b>
               - pSlHttpServerEvent->EventData.httpPostData fields:
                      - action
                      - token_name
-                     - token_value                     
+                     - token_value
               - pSlHttpServerResponse->ResponseData fields:
                      - data
-                     - len         
- 
+                     - len
+
 */
 #if (defined(sl_HttpServerCallback))
 extern void sl_HttpServerCallback(SlHttpServerEvent_t *pSlHttpServerEvent, SlHttpServerResponse_t *pSlHttpServerResponse);
@@ -947,10 +948,9 @@ extern void sl_HttpServerCallback(SlHttpServerEvent_t *pSlHttpServerEvent, SlHtt
  @}
 
  */
- 
+
 #ifdef  __cplusplus
 }
 #endif /* __cplusplus */
 
 #endif    /*  __SIMPLELINK_H__ */
-

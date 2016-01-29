@@ -17,14 +17,6 @@
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-extern "C" {
-    #include "utility/simplelink.h"
-    #include "utility/socket.h"
-    #include "utility/wl_definitions.h"
-}
-
-#include <string.h>
-
 #include "WiFi.h"
 #include "WiFiUdp.h"
 

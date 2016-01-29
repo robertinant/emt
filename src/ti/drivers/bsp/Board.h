@@ -62,6 +62,7 @@ extern "C" {
 #define Board_I2C      (0)
 #define Board_WATCHDOG (0)
 #define Board_WIFI     (0)
+#define Board_WIFI_SPI (1)
 
 /*!
  *  @brief  Initialize all board specific peripherals

@@ -35,19 +35,20 @@
 #include <ti/runtime/wiring/Energia.h>
 #include <xdc/runtime/System.h>
 #include "WiFi.h"
-#include "utility/wl_definitions.h"
 
 extern "C" {
-    #include "utility/simplelink.h"
     #include <string.h>
-    #include "utility/wlan.h"
-    #include "utility/netcfg.h"
-    #include "utility/netapp.h"
-    #include "utility/socket.h"
-    #include "utility/udma_if.h"
+    #include <ti/drivers/WiFi.h>
+    #include <ti/mw/wifi/cc3x00/oslib/osi.h>
+//    #include <ti/mw/wifi/cc3x00/simplelink/include/simplelink.h>
+    #include <ti/mw/wifi/cc3x00/simplelink/include/wlan.h>
+    #include <ti/mw/wifi/cc3x00/simplelink/include/netcfg.h>
+    #include <ti/mw/wifi/cc3x00/simplelink/include/netapp.h>
+    #include <ti/mw/wifi/cc3x00/simplelink/include/socket.h>
 }
 
-#define SPAWN_TASK_PRI 1 /* TODO: review w.r.t. default sketch priorities */
+//#define SPAWN_TASK_PRI 1 /* TODO: review w.r.t. default sketch priorities */
+#define SPI_BIT_RATE    20000000
 
 //
 //initialize WiFi_status to the disconnected flag
@@ -104,6 +105,9 @@ WiFiClass::WiFiClass()
 //--tested, working--//
 bool WiFiClass::init()
 {
+    WiFi_Params        wifiParams;
+    WiFi_Handle        handle;
+
     //
     //only initialize once
     //
@@ -111,21 +115,21 @@ bool WiFiClass::init()
         return true;
     }
 
-    /* The SimpleLink Host Driver requires a mechanism to allow functions to
-     * execute in temporary context.  The SpawnTask is created to handle such
-     * situations.  This task will remain blocked until the host driver
-     * posts a function.  If the SpawnTask priority is higher than other tasks,
-     * it will immediately execute the function and return to a blocked state.
-     * Otherwise, it will remain ready until it is scheduled.
-     */
-    if (VStartSimpleLinkSpawnTask(SPAWN_TASK_PRI)) {
-        return false;
-    }
+    //
+    // initialize TI-RTOS WiFi driver
+    //
+    WiFi_init();
 
     //
-    //Initialize the UDMA
+    // Open TI-RTOS WiFi driver
     //
-    UDMAInit();
+    WiFi_Params_init(&wifiParams);
+    wifiParams.bitRate = SPI_BIT_RATE;
+    wifiParams.spawnTaskPri = Task_numPriorities - 2;
+    handle = WiFi_open(Board_WIFI, Board_WIFI_SPI, NULL, &wifiParams);
+    if (handle == NULL) {
+        System_abort("WiFi driver failed to open.");
+    }
 
     //
     //start the SimpleLink driver (no callback)
@@ -499,6 +503,13 @@ int WiFiClass::beginNetwork(char *ssid, char *passphrase)
     return (retVal == 0 ? sl_Start(NULL, NULL, NULL) : retVal);
 }
 
+void WiFiClass::end()
+{
+    sl_WlanPolicySet(SL_POLICY_CONNECTION , SL_CONNECTION_POLICY(0,0,0,0,0), 0, 0);
+    delay(500);
+    sl_WlanDisconnect();
+    _connecting = false;
+}
 
 void WiFiClass::config(IPAddress local_ip)
 {
@@ -1197,9 +1208,131 @@ MACAddress WiFiClass::deviceMacByIpAddress(IPAddress ip)
     return MACADDR_NONE;
 }
 
-
-
 WiFiClass WiFi;
 
+extern "C" {
 
+/*
+ *  ======== SimpleLinkGeneralEventHandler ========
+ *  SimpleLink Host Driver callback for general device errors & events.
+ */
+extern void SimpleLinkGeneralEventHandler(SlDeviceEvent_t *pDevEvent)
+{
+    System_printf("General event occurred, Event ID: %x", pDevEvent->Event);
+}
 
+/*
+ *  ======== SimpleLinkWlanEventHandler ========
+ *  SimpleLink Host Driver callback for Wlan events
+ *  WLAN Event Handler: Modifies static variable in WiFi
+ *  to indicate if a connection to an AP is made or not
+ */
+extern void SimpleLinkWlanEventHandler(SlWlanEvent_t *pSlWlanEvent)
+{
+    unsigned char tmp[4] = {0,0,0,0};
+
+    switch (pSlWlanEvent->Event) {
+        
+        //
+        //Wlan has connected to a station
+        //brackets necessary to avoid crosses initialization error
+        //
+        case SL_WLAN_CONNECT_EVENT: {
+            WiFiClass::WiFi_status = WL_CONNECTED;
+            //
+            //copy ssid name to WiFiClass and manually add null terminator
+            //
+            char* pSSID = (char*)pSlWlanEvent->EventData.STAandP2PModeWlanConnected.ssid_name;
+            uint8_t ssidLength = pSlWlanEvent->EventData.STAandP2PModeWlanConnected.ssid_len;
+            if (ssidLength > MAX_SSID_LEN) {
+                return;
+            }
+            memcpy(WiFiClass::connected_ssid, pSSID, ssidLength);
+            WiFiClass::connected_ssid[ssidLength] = '\0';
+            
+            //
+            //copy bssid to WiFiClass (no null terminator. Length always = 6)
+            //
+            char* pBSSID = (char*)pSlWlanEvent->EventData.STAandP2PModeWlanConnected.bssid;
+            WiFiClass::connected_bssid[5] = pBSSID[0];
+            WiFiClass::connected_bssid[4] = pBSSID[1];
+            WiFiClass::connected_bssid[3] = pBSSID[2];
+            WiFiClass::connected_bssid[2] = pBSSID[3];
+            WiFiClass::connected_bssid[1] = pBSSID[4];
+            WiFiClass::connected_bssid[0] = pBSSID[5];
+            break;
+        }
+            
+        //
+        //Wlan has disconnected, so completely zero out the ssid and bssid
+        //
+        case SL_WLAN_DISCONNECT_EVENT:
+            WiFiClass::WiFi_status = WL_DISCONNECTED;
+            memset(WiFiClass::connected_ssid, 0, MAX_SSID_LEN);
+            memset(WiFiClass::connected_bssid, 0, BSSID_LEN);
+            
+            break;
+
+        /* Track station connects & disconnects in AP mode */
+        case SL_WLAN_STA_CONNECTED_EVENT:
+            /* Register the MAC w/o an IP; later on, when an IP is leased to this user, the _latestConnect index will update
+             * to point to this one (inside sl_NetAppEvtHdlr's run of _registerNewDeviceIP() below).
+             */
+            WiFiClass::_registerNewDeviceIP(tmp, pSlWlanEvent->EventData.APModeStaConnected.mac);
+            break;
+
+        case SL_WLAN_STA_DISCONNECTED_EVENT:
+            WiFiClass::_unregisterDevice(pSlWlanEvent->EventData.APModestaDisconnected.mac);
+            WiFiClass::_connectedDeviceCount--;
+            break;
+            
+        default:
+            break;
+    }
+}
+
+/*
+ *  ======== SimpleLinkNetAppEventHandler ========
+ *  SimpleLink Host Driver callback for NetApp events
+ *  NETAPP Sync Event Handler.
+ */
+extern void SimpleLinkNetAppEventHandler(SlNetAppEvent_t *pSlSockEvent)
+{
+    switch (pSlSockEvent->Event) {
+        //
+        //IP address acquired. Copy the uint32 to the WiFiClass static variable
+        //do the following for both IPV4 and IPV6
+        //
+        case SL_NETAPP_IPV4_IPACQUIRED_EVENT:
+        case SL_NETAPP_IPV6_IPACQUIRED_EVENT:
+        {
+            WiFiClass::local_IP = pSlSockEvent->EventData.ipAcquiredV4.ip;
+            break;
+        }
+
+        /* Track station IP leases in AP mode */
+        case SL_NETAPP_IP_LEASED_EVENT:
+            unsigned char ipAddrAry[4];
+
+            ipAddrAry[0] = (pSlSockEvent->EventData.ipLeased.ip_address >> 24);
+            ipAddrAry[1] = (pSlSockEvent->EventData.ipLeased.ip_address >> 16) & 0xFF;
+            ipAddrAry[2] = (pSlSockEvent->EventData.ipLeased.ip_address >> 8) & 0xFF;
+            ipAddrAry[3] = pSlSockEvent->EventData.ipLeased.ip_address & 0xFF;
+            WiFiClass::_registerNewDeviceIP(ipAddrAry, pSlSockEvent->EventData.ipLeased.mac);
+            WiFiClass::_connectedDeviceCount++;
+            break;
+
+        default:
+            break;
+    }
+}
+
+extern void SimpleLinkSockEventHandler(SlSockEvent_t *pSlSockEvent)
+{
+}
+
+extern void SimpleLinkHttpServerCallback(SlHttpServerEvent_t *pSlHttpServerEvent, SlHttpServerResponse_t *pSlHttpServerResponse)
+{
+}
+
+}

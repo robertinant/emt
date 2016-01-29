@@ -154,6 +154,11 @@ public:
      *        must be between ASCII 32-126 (decimal).
      */
     int begin(char* ssid, char *passphrase);
+
+    /*
+     * teardown any existing network connection.
+     */
+    void end(void);
     
     /* Change Ip configuration settings disabling the dhcp client
      *
