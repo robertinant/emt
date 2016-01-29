@@ -1,5 +1,6 @@
 requires ti.tirtos;
 requires ti.runtime.wiring;
+requires ti.mw;
 
 /*!
  *  ======== ti.runtime.wiring.cc3200 ========
