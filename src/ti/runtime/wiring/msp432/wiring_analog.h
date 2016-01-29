@@ -30,20 +30,14 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WiringPrivate_h
-#define WiringPrivate_h
+#ifndef WiringAnalog_h
+#define WiringAnalog_h
 
 #include <ti/runtime/wiring/Energia.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#define PIN_FUNC_UNUSED             0
-#define PIN_FUNC_DIGITAL_OUTPUT     1
-#define PIN_FUNC_DIGITAL_INPUT      2
-#define PIN_FUNC_ANALOG_OUTPUT      3
-#define PIN_FUNC_ANALOG_INPUT       4
 
 #define NOT_A_PIN       0
 #define NOT_ON_ADC      0xff
@@ -59,10 +53,6 @@ extern "C" {
 #define PWM_FIXED_INDEX_7   7
 #define PWM_AVAILABLE_PWMS  8
 
-extern void stopAnalogWrite(uint8_t pin);
-extern void stopAnalogRead(uint8_t pin);
-
-extern uint8_t digital_pin_to_pin_function[];
 extern uint16_t digital_pin_to_pwm_index[];
 extern const uint8_t digital_pin_to_adc_index[];
 

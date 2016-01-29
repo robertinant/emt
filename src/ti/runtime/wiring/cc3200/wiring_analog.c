@@ -32,7 +32,8 @@
  
 #define ARDUINO_MAIN
 
-#include "wiring_private.h"
+#include <ti/runtime/wiring/wiring_private.h>
+#include "wiring_analog.h"
 #include <inc/hw_types.h>
 #include <inc/hw_memmap.h>
 #include <driverlib/prcm.h>

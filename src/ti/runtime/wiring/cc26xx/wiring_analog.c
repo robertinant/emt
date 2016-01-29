@@ -32,7 +32,8 @@
  
 #define ARDUINO_MAIN
 
-#include "wiring_private.h"
+#include <ti/runtime/wiring/wiring_private.h>
+#include "wiring_analog.h"
 
 #include <ti/sysbios/family/arm/m3/Hwi.h>
 

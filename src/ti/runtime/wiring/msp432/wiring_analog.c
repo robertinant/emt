@@ -31,7 +31,9 @@
  */
 
 #define ARDUINO_MAIN
-#include "wiring_private.h"
+
+#include <ti/runtime/wiring/wiring_private.h>
+#include "wiring_analog.h"
 #include <rom.h>
 #include <rom_map.h>
 #include <timer_a.h>
