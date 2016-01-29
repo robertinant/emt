@@ -60,6 +60,7 @@ typedef enum Board_SDSPIName {
 typedef enum Board_SPIName {
     Board_SPI0 = 0, /* MISO: wire ?, MOSI: wire ?, CLK: wire ?, CS: wire ? */
     Board_GSPI = Board_SPI0,
+    Board_LSPI,     /* Board_WIFI_SPI */
 
     Board_SPICOUNT
 } Board_SPIName;
@@ -73,6 +74,17 @@ typedef enum Board_UARTName {
 
     Board_UARTCOUNT
 } Board_UARTName;
+
+/*!
+ *  @def    Board_WiFiName
+ *  @brief  Enum of WiFi names on the CC3200_LAUNCHXL dev board
+ */
+typedef enum Board_WiFiName {
+    Board_WIFI0 = 0,
+
+    Board_WIFICOUNT
+} Board_WiFiName;
+
 
 /*!
  *  @def    Board_WatchdogName

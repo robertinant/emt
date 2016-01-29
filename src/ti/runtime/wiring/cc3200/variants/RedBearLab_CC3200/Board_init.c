@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Texas Instruments Incorporated
+ * Copyright (c) 2015-2016, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -70,7 +70,7 @@ static tDMAControlTable dmaControlTable[64];
 static bool dmaInitialized = false;
 
 /* Hwi_Struct used in the initDMA Hwi_construct call */
-static Hwi_Struct hwiStruct;
+static Hwi_Struct dmaHwiStruct;
 
 /*
  *  ======== Board_errorDMAHwi ========
@@ -93,10 +93,10 @@ void Board_initDMA(void)
     if (!dmaInitialized) {
         Error_init(&eb);
         Hwi_Params_init(&hwiParams);
-        Hwi_construct(&(hwiStruct), INT_UDMAERR, Board_errorDMAHwi,
+        Hwi_construct(&(dmaHwiStruct), INT_UDMAERR, Board_errorDMAHwi,
                       &hwiParams, &eb);
         if (Error_check(&eb)) {
-            System_abort("Couldn't create DMA error hwi");
+            System_abort("Couldn't construct DMA error hwi");
         }
 
         MAP_PRCMPeripheralClkEnable(PRCM_UDMA, PRCM_RUN_MODE_CLK | PRCM_SLP_MODE_CLK);
@@ -220,7 +220,7 @@ const GPIOCC3200_Config GPIOCC3200_config = {
     .callbacks = (GPIO_CallbackFxn *)gpioCallbackFunctions,
     .numberOfPinConfigs = sizeof(gpioPinConfigs)/sizeof(GPIO_PinConfig),
     .numberOfCallbacks = sizeof(gpioCallbackFunctions)/sizeof(GPIO_CallbackFxn),
-    .intPriority = ~0
+    .intPriority = (~0)
 };
 
 /*
@@ -246,12 +246,16 @@ const I2CCC3200_HWAttrs i2cCC3200HWAttrs[Board_I2CCOUNT] = {
     {
         .baseAddr = I2CA0_BASE, 
         .intNum = INT_I2CA0,
-        .intPriority = ~(0), 
+        .intPriority = (~0)
     }
 };
 
 const I2C_Config I2C_config[] = {
-    {&I2CCC3200_fxnTable, &i2cCC3200Objects[0], &i2cCC3200HWAttrs[0]},
+    {
+        .fxnTablePtr = &I2CCC3200_fxnTable,
+        .object = &i2cCC3200Objects[0],
+        .hwAttrs = &i2cCC3200HWAttrs[0]
+    },
     {NULL, NULL, NULL}
 };
 
@@ -341,7 +345,7 @@ void Board_initPWM(void)
 #include <ti/drivers/spi/SPICC3200DMA.h>
 #include <driverlib/spi.h>
 
-static SPICC3200DMA_Object SPICC3200DMAobjects[Board_SPICOUNT];
+static SPICC3200DMA_Object SPICC3200DMAObjects[Board_SPICOUNT];
 
 #if defined(__TI_COMPILER_VERSION__)
 #pragma DATA_ALIGN(spiCC3200DMAscratchBuf, 32)
@@ -353,26 +357,51 @@ __attribute__ ((aligned (32)))
 static uint32_t spiCC3200DMAscratchBuf[Board_SPICOUNT];
 
 /* SPI configuration structure */
-static const SPICC3200DMA_HWAttrs SPICC3200DMAHWAttrs[Board_SPICOUNT] = {
+static const SPICC3200DMA_HWAttrs spiCC3200DMAHWAttrs[Board_SPICOUNT] = {
     {
-        GSPI_BASE,
-        INT_GSPI,
-        0xC0,       /* make SPI interrupt one priority higher than default */
-        PRCM_GSPI,
-        SPI_HW_CTRL_CS,
-        SPI_CS_ACTIVELOW,
-        SPI_4PIN_MODE,
-        SPI_TURBO_OFF,
-        &spiCC3200DMAscratchBuf[0],
-        0,
-        UDMA_CH6_GSPI_RX,
-        UDMA_CH7_GSPI_TX,
+        .baseAddr = GSPI_BASE,
+        .intNum = INT_GSPI,
+        .intPriority = 0xC0,       /* make SPI interrupt one priority higher than default */
+        .spiPRCM = PRCM_GSPI,
+        .csControl = SPI_HW_CTRL_CS,
+        .csPolarity = SPI_CS_ACTIVELOW,
+        .pinMode = SPI_4PIN_MODE,
+        .turboMode = SPI_TURBO_OFF,
+        .scratchBufPtr = &spiCC3200DMAscratchBuf[0],
+        .defaultTxBufValue = 0,
+        .rxChannelIndex = UDMA_CH6_GSPI_RX,
+        .txChannelIndex = UDMA_CH7_GSPI_TX,
+        .minDmaTransferSize = 100
     },
+    {
+        .baseAddr = LSPI_BASE,
+        .intNum = INT_LSPI,
+        .intPriority = (~0),
+        .spiPRCM = PRCM_LSPI,
+        .csControl = SPI_SW_CTRL_CS,
+        .csPolarity = SPI_CS_ACTIVEHIGH,
+        .pinMode = SPI_4PIN_MODE,
+        .turboMode = SPI_TURBO_OFF,
+        .scratchBufPtr = &spiCC3200DMAscratchBuf[1],
+        .defaultTxBufValue = 0,
+        .rxChannelIndex = UDMA_CH12_LSPI_RX,
+        .txChannelIndex = UDMA_CH13_LSPI_TX,
+        .minDmaTransferSize = 100
+    }
 };
 
 const SPI_Config SPI_config[] = {
-    {&SPICC3200DMA_fxnTable, &SPICC3200DMAobjects[0], &SPICC3200DMAHWAttrs[0]},
-    {NULL, NULL, NULL},
+    {
+        .fxnTablePtr = &SPICC3200DMA_fxnTable,
+        .object = &SPICC3200DMAObjects[0],
+        .hwAttrs = &spiCC3200DMAHWAttrs[0]
+    },
+    {
+        .fxnTablePtr = &SPICC3200DMA_fxnTable,
+        .object = &SPICC3200DMAObjects[1],
+        .hwAttrs = &spiCC3200DMAHWAttrs[1]
+    },
+    {NULL, NULL, NULL}
 };
 
 /*
@@ -380,6 +409,8 @@ const SPI_Config SPI_config[] = {
  */
 SPI_Handle Board_openSPI(UInt spiPortIndex, SPI_Params *spiParams)
 {
+    Board_initDMA();
+
     /* Initialize the SPI driver */
     /* By design, SPI_init() is idempotent */
     SPI_init();
@@ -413,8 +444,6 @@ SPI_Handle Board_openSPI(UInt spiPortIndex, SPI_Params *spiParams)
             return(NULL);
     }
     
-    Board_initDMA();
-
     /* open the SPI port */
     return (SPI_open(spiPortIndex, spiParams));
 }
@@ -436,7 +465,7 @@ const UARTCC3200_HWAttrs uartCC3200HWAttrs[Board_UARTCOUNT] = {
     {
         .baseAddr = UARTA1_BASE, 
         .intNum = INT_UARTA1,
-        .intPriority = ~(0),
+        .intPriority = (~0),
         .flowControl = UART_FLOWCONTROL_NONE,
         .ringBufPtr  = uartCC3200RingBuffer0,
         .ringBufSize = sizeof(uartCC3200RingBuffer0),
@@ -444,7 +473,7 @@ const UARTCC3200_HWAttrs uartCC3200HWAttrs[Board_UARTCOUNT] = {
     {
         .baseAddr = UARTA0_BASE, 
         .intNum = INT_UARTA0,
-        .intPriority = ~(0),
+        .intPriority = (~0),
         .flowControl = UART_FLOWCONTROL_NONE,
         .ringBufPtr  = uartCC3200RingBuffer1,
         .ringBufSize = sizeof(uartCC3200RingBuffer1)
@@ -453,14 +482,14 @@ const UARTCC3200_HWAttrs uartCC3200HWAttrs[Board_UARTCOUNT] = {
 
 const UART_Config UART_config[] = {
     {
-        &UARTCC3200_fxnTable,
-        &uartCC3200Objects[0],
-        &uartCC3200HWAttrs[0]
+        .fxnTablePtr = &UARTCC3200_fxnTable,
+        .object = &uartCC3200Objects[0],
+        .hwAttrs = &uartCC3200HWAttrs[0]
     },
     {
-        &UARTCC3200_fxnTable,
-        &uartCC3200Objects[1],
-        &uartCC3200HWAttrs[1]
+        .fxnTablePtr = &UARTCC3200_fxnTable,
+        .object = &uartCC3200Objects[1],
+        .hwAttrs = &uartCC3200HWAttrs[1]
     },
     {NULL, NULL, NULL}
 };
@@ -536,9 +565,6 @@ UART_Handle Board_openUART(UInt uartPortIndex, UART_Params *uartParams)
 
 /*
  *  ======== PowerCC3200_config ========
- *  In this configuration, Power management is disabled since runPolicy
- *  is set to 0.  Power management can be enabled from main() by calling
- *  Power_enablePolicy(), or by changing runPolicy to 1 in this structure.
  */
 const PowerCC3200_Config PowerCC3200_config = {
     .policyInitFxn = PowerCC3200_initPolicy,
@@ -556,43 +582,53 @@ const PowerCC3200_Config PowerCC3200_config = {
     .ramRetentionMaskLPDS = PRCM_SRAM_COL_1|PRCM_SRAM_COL_2|PRCM_SRAM_COL_3|PRCM_SRAM_COL_4
 };
 
-#define SPI_RATE_13M                    13000000
-#define SPI_RATE_20M                    20000000
-
-//uint32_t wakeupcalled = 0;
-
-void simpleLinkWakupCallback()
-{
-    unsigned long ulBase;
-    unsigned long ulSpiBitRate = 0;
-
-//wakeupcalled++;
-
-    //NWP master interface
-    ulBase = LSPI_BASE;
-
-    ulSpiBitRate = SPI_RATE_20M;
-
-    MAP_SPIConfigSetExpClk(ulBase,MAP_PRCMPeripheralClockGet(PRCM_LSPI),
-                                    ulSpiBitRate,SPI_MODE_MASTER,SPI_SUB_MODE_0,
-                     (SPI_SW_CTRL_CS |
-                     SPI_4PIN_MODE |
-                     SPI_TURBO_OFF |
-                     SPI_CS_ACTIVEHIGH |
-                     SPI_WL_32));
-}
-
-//static Power_NotifyObj slNotify;
-
 /*
  *  ======== Board_initPower ========
  */
 void Board_initPower(void)
 {
-    Power_setConstraint(PowerCC3200_DISALLOW_LPDS);
-
-//    Power_registerNotify(&slNotify, PowerCC3200_AWAKE_LPDS, (Power_NotifyFxn)simpleLinkWakupCallback, NULL);
     Power_init();
+//    Power_setConstraint(PowerCC3200_DISALLOW_LPDS);
+}
+
+/*
+ *  =============================== WiFi ===============================
+ */
+/* Place into subsections to allow the TI linker to remove items properly */
+#if defined(__TI_COMPILER_VERSION__)
+#pragma DATA_SECTION(WiFi_config, ".const:WiFi_config")
+#pragma DATA_SECTION(wiFiCC3200HWAttrs, ".const:wiFiCC3200HWAttrs")
+#endif
+
+#include <ti/drivers/WiFi.h>
+#include <ti/drivers/wifi/WiFiCC3200.h>
+
+WiFiCC3200_Object wiFiCC3200Objects[Board_WIFICOUNT];
+
+const WiFiCC3200_HWAttrs wiFiCC3200HWAttrs[Board_WIFICOUNT] = {
+    {
+        .wifiIntNum = INT_NWPIC
+    }
+};
+
+const WiFi_Config WiFi_config[] = {
+    {
+        .fxnTablePtr = &WiFiCC3200_fxnTable,
+        .object = &wiFiCC3200Objects[0],
+        .hwAttrs = &wiFiCC3200HWAttrs[0]
+    },
+    {NULL,NULL, NULL},
+};
+
+/*
+ *  ======== Board_initWiFi ========
+ */
+void Board_initWiFi(void)
+{
+    Board_initDMA();
+    SPI_init();
+
+    WiFi_init();
 }
 
 /*
@@ -605,7 +641,7 @@ void Board_init(void)
     Board_initGeneral();
 
     /* driver-specific initialization */
+    Board_initPower();
     Board_initGPIO();
     Board_initPWM();
-//    Board_initPower();
 }
