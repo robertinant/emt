@@ -63,6 +63,8 @@ for FILE in $FILES; do
     find ./ti/sysbios -type f -name "*.h" | cpio -pudm $EMTDIR
     echo "Copy drivers headers"
     find ./ti/drivers -type f -name "*.h" | cpio -pudm $EMTDIR
+    echo "Copy TI mw headers"
+    find ./ti/mw -type f -name "*.h" | cpio -pudm $EMTDIR
     echo "Copy xdc headers"
     find ./xdc -type f -name "*.h" | cpio -pudm $EMTDIR
     echo "Copy gnu headers"
