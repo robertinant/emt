@@ -43,7 +43,7 @@ BRD_DEFS = -DBOARD_$(VARIANT)
 
 # define TI-RTOS and Energia wiring headers based on CLOSURE above
 CFG_INCS = -I "$(CLOSURE)" -I "$(CLOSURE)/src" \
-           -I "$(CLOSURE)/ti/runtime/wiring"
+           -I "$(CLOSURE)/ti/runtime/wiring" -I "$(CLOSURE)/ti/mw/wifi/cc3x00"
 
 # C compiler-specific options and commands
 #    --cmd-file=...  - use the options defined in the specified file
