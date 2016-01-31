@@ -1,4 +1,4 @@
-				emt-b03
+				emt-b04
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -129,10 +129,17 @@ DELETIONS
 
 CHANGES
 
-bundles/energia/msp432
-    Formally pull in MSP432 Timer module that is used by the PWM driver.
+bundles/energia
+    quick fix for unified closure to include fatfs
 
-ti.runtime.wiring.msp432.variants
-    Add 4800,19200,38400,57600 baudrates
+bundles/energia/cc3200/libraries/WiFi
+    use WiFi support in new TI-RTOS (so we'll be portable to CC3220 and so
+    we can put the WiFi SPI into low power)
+
+    replace WiFi/utility with only that necessary to incorporate power 
+    management
+
+ti.runtime.wiring.cc3200
+    update tests and variants to work with new WiFi library
 
 MRS
