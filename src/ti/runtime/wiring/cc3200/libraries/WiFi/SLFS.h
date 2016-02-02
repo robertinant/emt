@@ -39,7 +39,6 @@
 #define SLFS_H
 
 #include <Energia.h>
-#include <WiFi.h>
 
 // Errno values intrinsic to this library (not the SimpleLink API)
 /// @defgroup slfs_errnos SLFS Library-native Error Codes
@@ -56,7 +55,7 @@
 
 class SLFS : public Stream {
     private:
-        int32_t filehandle;
+        _i32 filehandle; // was int32_t; TI C/C++ says it's incompatable
         int32_t filesize, offset;
         int32_t retval;
         boolean is_write;

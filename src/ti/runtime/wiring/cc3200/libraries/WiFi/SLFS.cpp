@@ -20,7 +20,8 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <SLFS.h>
+#include "WiFi.h"
+#include "SLFS.h"
 
 SLFS SerFlash;
 
@@ -367,6 +368,13 @@ int32_t SLFS::del(String filename)
 
 /* SimpleLink API error codes with string representations */
 
+#ifdef __TI_COMPILER_VERSION__
+/*
+ * supress the warning from the TI compiler that
+ *     class "SLerrorCode" defines no constructor to initialize ...
+ */
+#pragma diag_suppress 370
+#endif
 typedef struct {
     const char *name;
     const int32_t id;
