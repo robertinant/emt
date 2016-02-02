@@ -6,7 +6,7 @@ Pkg.attrs.exportAll = true;
 
 //Pkg.attrs.profile = "debug";
 
-Pkg.uses = ["ti/runtime/wiring", "ti/mw/wifi/cc3x00"];
+Pkg.uses = ["ti/runtime/wiring"];
 
 var PLATFORM = "ti.platforms.emt3200:CC3200_LAUNCHXL";
 
