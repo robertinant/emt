@@ -1,11 +1,11 @@
 #!/bin/ksh
 
 if [ "$PASSWORD" = "" ]; then
-    tree="`ls -dr $TREES/emt/emt-b[0-9][0-9]* | grep -v @ | head -2 | tail -1`"
+    tree="`ls -dr $TREES/emt/emt-b[0-9][0-9]* | egrep -v '@|.*x$' | head -2 | tail -1`"
     if [ -r $tree/.lastword ]; then
 	export PASSWORD="`cat $tree/.lastword`"
     else
-	echo "WARNING: energia push failed."
+	echo "WARNING: energia push failed: can't read $tree"
 	echo "    you must run `/bin/pwd`/push.ksh to push the closures"
 	exit 0
     fi
