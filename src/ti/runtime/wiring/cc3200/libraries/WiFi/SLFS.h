@@ -38,7 +38,7 @@
 #ifndef SLFS_H
 #define SLFS_H
 
-#include <Energia.h>
+#include <ti/runtime/wiring/Energia.h>
 
 // Errno values intrinsic to this library (not the SimpleLink API)
 /// @defgroup slfs_errnos SLFS Library-native Error Codes
