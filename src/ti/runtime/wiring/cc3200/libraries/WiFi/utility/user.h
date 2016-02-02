@@ -73,8 +73,8 @@ extern "C" {
 
  ******************************************************************************
  */
-#include <simplelink/cc3x00_control.h>
-#include <simplelink/cc3x00_spi.h>
+#include <ti/mw/wifi/cc3x00/simplelink/cc3x00_control.h>
+#include <ti/mw/wifi/cc3x00/simplelink/cc3x00_spi.h>
 
 typedef P_EVENT_HANDLER     SL_P_EVENT_HANDLER;
 

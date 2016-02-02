@@ -402,15 +402,15 @@ typedef _i16   _SlReturnVal_t;
    objInclusion.h must be the last arrangement just before including the API header files
    since it based on the other configurations to decide which object should be included
 */
-#include <simplelink/source/objInclusion.h>
-#include <simplelink/include/trace.h>
-#include <simplelink/include/fs.h>
-#include <simplelink/include/socket.h>
-#include <simplelink/include/netapp.h>
-#include <simplelink/include/wlan.h>
-#include <simplelink/include/device.h>
-#include <simplelink/include/netcfg.h>
-#include <simplelink/include/wlan_rx_filters.h>
+#include <ti/mw/wifi/cc3x00/simplelink/source/objInclusion.h>
+#include <ti/mw/wifi/cc3x00/simplelink/include/trace.h>
+#include <ti/mw/wifi/cc3x00/simplelink/include/fs.h>
+#include <ti/mw/wifi/cc3x00/simplelink/include/socket.h>
+#include <ti/mw/wifi/cc3x00/simplelink/include/netapp.h>
+#include <ti/mw/wifi/cc3x00/simplelink/include/wlan.h>
+#include <ti/mw/wifi/cc3x00/simplelink/include/device.h>
+#include <ti/mw/wifi/cc3x00/simplelink/include/netcfg.h>
+#include <ti/mw/wifi/cc3x00/simplelink/include/wlan_rx_filters.h>
 
 #ifdef    __cplusplus
 extern "C"
@@ -734,9 +734,9 @@ extern void _SlDrvHandleSockEvents(SlSockEvent_t *slSockEvent);
 typedef void (*_SlSpawnEntryFunc_t)(void* pValue);
 
 #ifdef SL_PLATFORM_MULTI_THREADED
-#include <simplelink/source/spawn.h>
+#include <ti/mw/wifi/cc3x00/simplelink/source/spawn.h>
 #else
-#include <simplelink/source/nonos.h>
+#include <ti/mw/wifi/cc3x00/simplelink/source/nonos.h>
 #endif
 
 
