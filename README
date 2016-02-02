@@ -1,4 +1,4 @@
-				emt-b04
+				emt-b05
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -125,21 +125,17 @@ Librarian releases
 
 ADDITIONS
 
+ti.runtime.wiring.cc3200
+    add SLFS to WiFi library for CC3200
+
+
 DELETIONS
 
 CHANGES
 
-bundles/energia
-    quick fix for unified closure to include fatfs
-
 bundles/energia/cc3200/libraries/WiFi
-    use WiFi support in new TI-RTOS (so we'll be portable to CC3220 and so
-    we can put the WiFi SPI into low power)
+    use full package name in includes as a step to eliminating the need for 
+    makefile -I changes (need to change tidrivers/mw/wifi next)
 
-    replace WiFi/utility with only that necessary to incorporate power 
-    management
-
-ti.runtime.wiring.cc3200
-    update tests and variants to work with new WiFi library
 
 MRS
