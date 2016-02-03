@@ -1,9 +1,10 @@
 #!/bin/ksh
 
-##push closures out to energia.nu
+## push closures out to energia.nu
 ./push.ksh
 
 echo "removing uncompressed closures ..."
+base=./src/bundles/energia
 rm -rf $base/msp432/closure $base/cc3200/closure $base/cc26xx/closure
 
 echo "pushing to gitorious ..."
