@@ -46,7 +46,7 @@ static const uint8_t PUSH2 = 74;
 
 static const uint8_t A0 = 30;
 static const uint8_t A1 = 29;
-//static const uint8_t A2 = n/a;
+static const uint8_t A2 = 61;
 static const uint8_t A3 = 12;
 static const uint8_t A4 = 33;
 static const uint8_t A5 = 13;

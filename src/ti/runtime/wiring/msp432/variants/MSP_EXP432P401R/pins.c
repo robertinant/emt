@@ -308,7 +308,7 @@ const uint8_t digital_pin_to_adc_index[] = {
     ADC14INCH_18,   /*  58 - P8.7 */
     ADC14INCH_16,   /*  59 - P9.1 */
     ADC14INCH_22,   /*  60 - P8.3 */
-    NOT_ON_ADC,     /*  61 - P5.3 */
+    ADC14INCH_2,    /*  61 - P5.3 */
     NOT_ON_ADC,     /*  62 - P9.3 */
     NOT_ON_ADC,     /*  63 - P6.3 */
     NOT_ON_ADC,     /*  64 - P7.2 */
