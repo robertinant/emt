@@ -275,6 +275,7 @@ void stopAnalogWrite(uint8_t pin)
 static bool adc_module_enabled = false;
 static int8_t analogReadShift = 4; /* 14 - 4 = 10 bits by default */
 /* Default reference is VCC */
+static uint16_t adcReferenceMode = DEFAULT;
 static uint32_t adcReferenceSelect = ADC_VREFPOS_AVCC_VREFNEG_VSS;
 static uint_fast8_t referenceVoltageSelect = REF_A_VREF2_5V;
 
@@ -314,7 +315,14 @@ static const uint16_t adc_to_port_pin[] = {
  */
 void analogReference(uint16_t mode)
 {
+    uint32_t hwiKey;
+
+    hwiKey = Hwi_disable();
+
+    adcReferenceMode = mode; 
+
     switch (mode) {
+        default:
         case DEFAULT:  /* Use VCC as reference (3.3V) */
             adcReferenceSelect = ADC_VREFPOS_AVCC_VREFNEG_VSS;
             break;
@@ -339,6 +347,14 @@ void analogReference(uint16_t mode)
             adcReferenceSelect = ADC_VREFPOS_EXTPOS_VREFNEG_EXTNEG;
             break;
     }
+
+    if (adcReferenceSelect == ADC_VREFPOS_INTBUF_VREFNEG_VSS) {
+        /* Setting reference voltage */
+        MAP_REF_A_setReferenceVoltage(referenceVoltageSelect);
+        MAP_REF_A_enableReferenceVoltage();
+    }
+
+    Hwi_restore(hwiKey);
 }
 
 /*
@@ -378,11 +394,8 @@ uint16_t analogRead(uint8_t pin)
                              ADC_PREDIVIDER_1,
                              ADC_DIVIDER_1,
                              0);
-            if (adcReferenceSelect == ADC_VREFPOS_INTBUF_VREFNEG_VSS) {
-                /* Setting reference voltage */
-                MAP_REF_A_setReferenceVoltage(referenceVoltageSelect);
-                MAP_REF_A_enableReferenceVoltage();
-            }
+            /* set the analog reference source */
+            analogReference(adcReferenceMode);
             /* always use max resolution */
             MAP_ADC14_setResolution(ADC_14BIT);
         }
