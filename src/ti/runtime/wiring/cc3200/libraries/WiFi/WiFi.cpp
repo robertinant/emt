@@ -40,7 +40,6 @@ extern "C" {
     #include <string.h>
     #include <ti/drivers/WiFi.h>
     #include <ti/mw/wifi/cc3x00/oslib/osi.h>
-//    #include <ti/mw/wifi/cc3x00/simplelink/include/simplelink.h>
     #include <ti/mw/wifi/cc3x00/simplelink/include/wlan.h>
     #include <ti/mw/wifi/cc3x00/simplelink/include/netcfg.h>
     #include <ti/mw/wifi/cc3x00/simplelink/include/netapp.h>
@@ -49,6 +48,14 @@ extern "C" {
 
 //#define SPAWN_TASK_PRI 1 /* TODO: review w.r.t. default sketch priorities */
 #define SPI_BIT_RATE    20000000
+
+#if !defined(SL_PLATFORM_MULTI_THREADED) || !defined(__USER_H__)
+    // we require a pre-puilt simplelink host driver which has
+    // been built with SL_PLATFORM_MULTI_THREADED defined.  To ensure
+    // consistency, we rely on this symbol being defined in user.h;
+    // simplelink's "configuration" file.
+    #error SL_PLATFORM_MULTI_THREADED must be defined in the simplelink user.h file
+#endif
 
 //
 //initialize WiFi_status to the disconnected flag
@@ -676,10 +683,6 @@ int WiFiClass::disconnect(void)
 
 unsigned int WiFiClass::getTotalDevices(void)
 {
-#ifndef SL_PLATFORM_MULTI_THREADED
-    sl_Task();
-#endif
-
     return WiFiClass::_connectedDeviceCount;
 }
 
@@ -706,14 +709,6 @@ uint8_t* WiFiClass::macAddress(uint8_t* mac)
 //--tested, working--//
 IPAddress WiFiClass::localIP()
 {
-#ifndef SL_PLATFORM_MULTI_THREADED
-    //
-    //the local IP is maintained with callbacks, so sl_Task()
-    //is critical. The IP is "written" into the buffer to avoid memory errors
-    //
-    sl_Task();
-#endif
-
     SlNetCfgIpV4Args_t config = {0};
     unsigned char len = sizeof(SlNetCfgIpV4Args_t);
     sl_NetCfgGet(SL_IPV4_STA_P2P_CL_GET_INFO, NULL, &len, (unsigned char*)&config);
@@ -989,13 +984,6 @@ uint8_t WiFiClass::status()
         return WL_AP_MODE;
     }
 
-#ifndef SL_PLATFORM_MULTI_THREADED
-    //
-    // The class variable WiFi_status is maintained by the slWlanEvenHandler
-    //
-    sl_Task();
-#endif
-
     return WiFi_status;
 }
 
@@ -1051,13 +1039,8 @@ int WiFiClass::startSmartConfig(bool block)
 
     /* Block until connected */
     while (WiFi.status() != WL_CONNECTED) {
-#ifndef SL_PLATFORM_MULTI_THREADED
-        // TODO: this call appears unnecessary: status() already calls sl_Task
-        sl_Task();
-#else
         // TODO: is 10 appropriate?  to save power, shouldn't we always delay?
         delay(10);
-#endif
     }
 
     return 0;

@@ -23,13 +23,6 @@
 #include "WiFiClient.h"
 #include "WiFiServer.h"
 
-extern "C" {
-//    #include <ti/mw/wifi/cc3x00/simplelink/include/simplelink.h>
-//    #include <ti/mw/wifi/cc3x00/simplelink/include/wlan.h>
-//    #include <ti/mw/wifi/cc3x00/simplelink/include/netapp.h>
-//    #include <ti/mw/wifi/cc3x00/simplelink/include/socket.h>
-}
-
 WiFiServer::WiFiServer(uint16_t port)
 {
     _socketIndex = NO_SOCKET_AVAIL;
