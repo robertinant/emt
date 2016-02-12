@@ -8,7 +8,7 @@ Pkg.attrs.profile = "debug";
 
 Pkg.makeEpilogue = "include custom.mak"; /* rules for zumo.bin flash image */
 
-Pkg.uses = ["ti/runtime/wiring", "ti/mw/wifi/cc3x00"];
+Pkg.uses = ["ti/runtime/wiring"];
 
 var VARIANT = "RedBearLab_CC3200";
 

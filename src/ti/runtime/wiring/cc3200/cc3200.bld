@@ -11,13 +11,11 @@ Pkg.attrs.exportAll = true;
 var COPTS   = {ti: "--gcc --diag_warning=225", gnu: ""};
 var CXXOPTS = {ti: "",                         gnu: "-fno-rtti"};
 
-var DEFS = "-Dxdc__nolocalstring=1 -DSL_PLATFORM_MULTI_THREADED ";
-//var DEFS = "-Dxdc__nolocalstring=1 "; /* single threaded WiFi build */
+var DEFS = "-Dxdc__nolocalstring=1 "; /* DSL_PLATFORM_MULTI_THREADED is now defned in usr.h */
 
 var INCS = '-I"' + DLIBROOT + '" '
        + '-I"' + DLIBROOT + '/driverlib" '
-       + '-I"' + DLIBROOT + '/inc" '
-       + '-I"' + xdc.getPackageBase("ti.mw.wifi.cc3x00") + '" ';
+       + '-I"' + DLIBROOT + '/inc" ';
 
 var DEF_OPTS = {name: null, defs: "", incs: ""};
 
