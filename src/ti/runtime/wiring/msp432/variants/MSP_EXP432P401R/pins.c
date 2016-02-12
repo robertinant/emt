@@ -230,6 +230,33 @@ uint16_t digital_pin_to_pwm_index[] = {
     NOT_MAPPABLE,       /*  78 - P1.0 LED1 */
 };
 
+#if 1
+#warning the following ADC14INCH symbols need to be replaced with new driverlib names
+#define     ADC14INCH_15 0   /*  2  - P6.0_A15 */
+#define     ADC14INCH_12 0   /*  5  - P4.1_IO_A12 */
+#define     ADC14INCH_10 0   /*  6  - P4.3_A10 */
+#define     ADC14INCH_7 0    /*  8  - P4.6_IO_A7 */
+#define     ADC14INCH_3 0    /*  12 - P5.2_IO */
+#define     ADC14INCH_5 0    /*  13 - P5.0_IO */
+#define     ADC14INCH_14 0   /*  23 - P6.1_A14 */
+#define     ADC14INCH_13 0   /*  24 - P4.0_A13 */
+#define     ADC14INCH_11 0   /*  25 - P4.2_A11 */
+#define     ADC14INCH_9 0    /*  26 - P4.4_A9 */
+#define     ADC14INCH_8 0    /*  27 - P4.5_A8 */
+#define     ADC14INCH_6 0    /*  28 - P4.7_A6 */
+#define     ADC14INCH_1 0    /*  29 - P5.4_IO */
+#define     ADC14INCH_0 0    /*  30 - P5.5_IO */
+#define     ADC14INCH_4 0    /*  33 - P5.1_IO */
+#define     ADC14INCH_20 0   /*  41 - P8.5 */
+#define     ADC14INCH_17 0   /*  42 - P9.0 */
+#define     ADC14INCH_21 0   /*  43 - P8.4 */
+#define     ADC14INCH_23 0   /*  44 - P8.2 */
+#define     ADC14INCH_19 0   /*  57 - P8.6 */
+#define     ADC14INCH_18 0   /*  58 - P8.7 */
+#define     ADC14INCH_16 0   /*  59 - P9.1 */
+#define     ADC14INCH_22 0   /*  60 - P8.3 */
+#define     ADC14INCH_2 0    /*  61 - P5.3 */
+#endif
 /*
  * mapping of pins to an ADC channel
  */

@@ -82,6 +82,8 @@ const uint8_t mappable_pwms[] = {
 /* port number to PXMAP translation */
 const uint8_t pxmap[] = {
     0,
+#warning the following symbols need to be replaced with the new driverlib symbols
+#if 0
     P1MAP,
     P2MAP,
     P3MAP,
@@ -89,6 +91,7 @@ const uint8_t pxmap[] = {
     P5MAP,
     P6MAP,
     P7MAP,
+#endif
 };
 
 /* Current PWM timer GPIO mappings */
@@ -177,6 +180,7 @@ void analogWrite(uint8_t pin, int val)
             /* derive pinNum from pinMask */
             pinNum = 0;
             while (((1 << pinNum) & pinMask) == 0) pinNum++;
+#if 0
             /* the following code was extracted from PMAP_configurePort() */
 
             /* Get write-access to port mapping registers: */
@@ -190,6 +194,9 @@ void analogWrite(uint8_t pin, int val)
 
             /* Disable write-access to port mapping registers: */
             PMAP->rKEYID = 0;
+#else
+            #warning PMAP compatibility break
+#endif
         }
 
         PWM_Params_init(&params);
@@ -239,6 +246,7 @@ void stopAnalogWrite(uint8_t pin)
         /* derive pinNum from pinMask */
         pinNum = 0;
         while (((1 << pinNum) & pinMask) == 0) pinNum++;
+#if 0
         /* the following code was extracted from PMAP_configurePort() */
 
         //Get write-access to port mapping registers:
@@ -252,6 +260,9 @@ void stopAnalogWrite(uint8_t pin)
 
         //Disable write-access to port mapping registers:
         PMAP->rKEYID = 0;
+#else
+            #warning PMAP compatibility break
+#endif
         hwiKey = Hwi_disable();
 
         /* restore pin table entry with port/pin info */
