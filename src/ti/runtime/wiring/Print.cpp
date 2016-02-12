@@ -17,11 +17,11 @@
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
  Modified 23 November 2006 by David A. Mellis
- Modified for msp403 2012 by Robert Wessels
+ Modified for msp430 2012 by Robert Wessels
  */
 
 #include <stdlib.h>
-#include <stdio.h>
+//#include <stdio.h>
 #include <string.h>
 #include <math.h>
 #include "Energia.h"

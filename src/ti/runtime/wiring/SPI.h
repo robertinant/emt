@@ -34,7 +34,6 @@
 #define _SPI_H_INCLUDED
 
 #include <inttypes.h>
-#include <stdio.h>
 
 #include <ti/drivers/SPI.h>
 #include <ti/sysbios/gates/GateMutex.h>

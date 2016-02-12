@@ -31,7 +31,7 @@
  */
 
 #include <stdlib.h>
-#include <stdio.h>
+//#include <stdio.h>
 #include <string.h>
 #include "wiring_private.h"
 #include "Wire.h"
