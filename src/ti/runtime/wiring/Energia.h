@@ -53,6 +53,8 @@
 
 #include <ti/drivers/bsp/Board.h>
 
+//#define _POSIX_SOURCE /* prevent conflicting #defines of FD_SET, fd_set, ... from arm compiler's sys/types.h and simplelink.h */
+
 #ifdef __cplusplus
 extern "C" {
 #endif

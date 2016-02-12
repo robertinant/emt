@@ -31,7 +31,6 @@
  */
 
 #include <stdlib.h>
-//#include <stdio.h>
 #include <string.h>
 
 #include <ti/sysbios/family/arm/m3/Hwi.h>
