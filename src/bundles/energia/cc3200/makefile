@@ -24,7 +24,9 @@ PLATFORM = ti.platforms.emt3200
 TARGET   = gnu.targets.arm.M4
 CCOPTS   = --compileOptions "-gdwarf-3 -gstrict-dwarf -fno-exceptions"
 
-VARIANTS  = $(EMTROOT)/ti/runtime/wiring/cc3200/variants
+RUNTIME   = ti/runtime/wiring/cc3200
+VARIANTS  = $(EMTROOT)/$(RUNTIME)/variants
+LIBRARIES = $(EMTROOT)/$(RUNTIME)/libraries
 
 ifneq (,$(wildcard $(XDCROOT)/bin/rm.exe))
     RMDIR = $(XDCROOT)/bin/rm -rf
@@ -51,11 +53,13 @@ all: .debug closure
 closure: configPkg
 	@$(RMDIR) $@
 	@echo xs xdc.tools.closure -d $@ $< ...
-	$(XDCROOT)/xs xdc.tools.closure -d $@ -i ti.drivers.bsp $<
+#	$(XDCROOT)/xs xdc.tools.closure -d $@ -i ti.drivers.bsp $<
+	$(XDCROOT)/xs xdc.tools.closure --filter=0 -d $@ -i ti.drivers.bsp $<
 
 	$(XDCROOT)/bin/xdccpp $(wildcard $(VARIANTS)/*) $@
 
 	@echo patching $@ ...
+	cp -r $(LIBRARIES)/WiFi $@/$(RUNTIME)/libraries
 	@$(CURDIR)/../patch.ksh $@ ./src $<
 
 # create a fixed configuration of TI-RTOS from energia.cfg
