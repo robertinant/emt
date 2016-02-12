@@ -45,15 +45,16 @@
 #include <ti/sysbios/interfaces/IHwi.h>
 
 #include <msp432.h>
-#include <MSP432P4xx/rom.h>
-#include <MSP432P4xx/rom_map.h>
-#include <MSP432P4xx/dma.h>
-#include <MSP432P4xx/gpio.h>
-#include <MSP432P4xx/i2c.h>
-#include <MSP432P4xx/spi.h>
-#include <MSP432P4xx/timer_a.h>
-#include <MSP432P4xx/uart.h>
-#include <MSP432P4xx/wdt_a.h>
+#include <driverlib/MSP432P4xx/rom.h>
+#include <driverlib/MSP432P4xx/rom_map.h>
+#include <driverlib/MSP432P4xx/dma.h>
+#include <driverlib/MSP432P4xx/interrupt.h>
+#include <driverlib/MSP432P4xx/gpio.h>
+#include <driverlib/MSP432P4xx/i2c.h>
+#include <driverlib/MSP432P4xx/spi.h>
+#include <driverlib/MSP432P4xx/timer_a.h>
+#include <driverlib/MSP432P4xx/uart.h>
+#include <driverlib/MSP432P4xx/wdt_a.h>
 
 #include "Board.h"
 
@@ -331,6 +332,15 @@ const GPIOMSP432_Config GPIOMSP432_config = {
     .numberOfCallbacks = sizeof(gpioCallbackFunctions)/sizeof(GPIO_CallbackFxn),
     .intPriority = (~0),
 };
+
+#if 1
+#warning the following symbols need to be replaced with the new driverlib symbols
+int     PSSKEY = 0;
+int     PSSCTL0 = 0;         /* 823 (14) uA -> 809 (3) uA */
+int     SYSCTL_SRAM_BANKRET; /* TODO: remove once TI-RTOS (or the device) does this by default */
+#define SVSLOFF 0
+#define SVSMHOFF 0
+#endif
 
 /*
  *  ======== Board_initGPIO ========

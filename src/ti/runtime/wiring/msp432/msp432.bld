@@ -16,7 +16,7 @@ var DEFS = '-Dxdc__nolocalstring=1 -D__MSP432P401R__ -DTARGET_IS_MSP432P4XX ';
 var INCS = '-I"' + DLIBROOT + '" '
        + '-I"' + DLIBROOT + '/inc" '
        + '-I"' + DLIBROOT + '/inc/CMSIS" '
-       + '-I"' + DLIBROOT + '/MSP432P4xx" ';
+       + '-I"' + DLIBROOT + '/driverlib/MSP432P4xx" ';
 
 var DEF_OPTS = {name: null, defs: "", incs: ""};
 
