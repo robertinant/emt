@@ -1,4 +1,4 @@
-				emt-b05
+				emt-b06
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -125,17 +125,26 @@ Librarian releases
 
 ADDITIONS
 
-ti.runtime.wiring.cc3200
-    add SLFS to WiFi library for CC3200
-
-
 DELETIONS
 
 CHANGES
 
-bundles/energia/cc3200/libraries/WiFi
-    use full package name in includes as a step to eliminating the need for 
-    makefile -I changes (need to change tidrivers/mw/wifi next)
+./imports.mak
+	move to TI-RTOS 2.16 and XDCtools 3.32.latest
+
+*
+	migrate (almost) to latest MSP432 driverlib:
+	  WARNING: the new MSP432 driverlib is breaks compatibility and, as a
+	  result the MSP432 is badly broken until we can move to the new APIs>
+
+
+	migrate to TI-RTOS pre-built CC3200 WiFi libraray (with include and 
+	BSD clash fixes)
+
+ti.runtime.wiring.msp432
+	Analog pin A2 should be assigned to pin 61 and mapped to ADC14INCH_2
+
+	Abide by dynamic changes to analogReference()
 
 
 MRS
