@@ -1,4 +1,4 @@
-				emt-b06
+				emt-b07
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -132,19 +132,7 @@ CHANGES
 ./imports.mak
 	move to TI-RTOS 2.16 and XDCtools 3.32.latest
 
-*
-	migrate (almost) to latest MSP432 driverlib:
-	  WARNING: the new MSP432 driverlib is breaks compatibility and, as a
-	  result the MSP432 is badly broken until we can move to the new APIs>
-
-
-	migrate to TI-RTOS pre-built CC3200 WiFi libraray (with include and 
-	BSD clash fixes)
-
 ti.runtime.wiring.msp432
-	Analog pin A2 should be assigned to pin 61 and mapped to ADC14INCH_2
-
-	Abide by dynamic changes to analogReference()
-
+	Rework MSP432 sources to work with msp432_driverlib_3_10_00_09
 
 MRS
