@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Texas Instruments Incorporated
+ * Copyright (c) 2015-2016, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -39,10 +39,11 @@
 #include <stdbool.h>
 
 #include <xdc/std.h>
-#include <xdc/runtime/Error.h>
+
 #include <xdc/runtime/System.h>
-#include <ti/sysbios/family/arm/m3/Hwi.h>
-#include <ti/sysbios/interfaces/IHwi.h>
+
+#include <ti/drivers/ports/DebugP.h>
+#include <ti/drivers/ports/HwiP.h>
 
 #include <msp432.h>
 #include <driverlib/MSP432P4xx/rom.h>
@@ -62,26 +63,24 @@
  *  =============================== DMA ===============================
  */
 #if defined(__TI_COMPILER_VERSION__)
-#pragma DATA_ALIGN(Board_DMAControlTable, 1024)
+#pragma DATA_ALIGN(dmaControlTable, 256)
 #elif defined(__IAR_SYSTEMS_ICC__)
-#pragma data_alignment=1024
+#pragma data_alignment=256
 #elif defined(__GNUC__)
-__attribute__ ((aligned (1024)))
+__attribute__ ((aligned (256)))
 #endif
-static DMA_ControlTable Board_DMAControlTable[32];
-static Bool DMA_initialized = false;
-
-/* Hwi_Struct used in the initDMA Hwi_construct call */
-static Hwi_Struct dmaHwiStruct;
+static DMA_ControlTable dmaControlTable[8];
+static bool dmaInitialized = false;
 
 /*
  *  ======== Board_errorDMAHwi ========
  */
-static Void Board_errorDMAHwi(UArg arg)
+static void dmaErrorHwi(uintptr_t arg)
 {
-//    System_printf("DMA error code: %d\n", MAP_DMA_getErrorStatus());
+    DebugP_log1("DMA error code: %d\n", MAP_DMA_getErrorStatus());
     MAP_DMA_clearErrorStatus();
-    System_abort("DMA error!!");
+    DebugP_log0("DMA error!!\n");
+    while(1);
 }
 
 /*
@@ -89,21 +88,21 @@ static Void Board_errorDMAHwi(UArg arg)
  */
 void Board_initDMA(void)
 {
-    Error_Block eb;
-    Hwi_Params  hwiParams;
+    HwiP_Params hwiParams;
+    HwiP_Handle dmaErrorHwiHandle;
 
-    if (!DMA_initialized) {
-        Error_init(&eb);
-        Hwi_Params_init(&hwiParams);
-        Hwi_construct(&(dmaHwiStruct), INT_DMA_ERR,
-                      Board_errorDMAHwi, &hwiParams, &eb);
-        if (Error_check(&eb)) {
-            System_abort("Couldn't construct DMA error hwi");
+    if (!dmaInitialized) {
+        HwiP_Params_init(&hwiParams);
+        dmaErrorHwiHandle = HwiP_create(INT_DMA_ERR, dmaErrorHwi, &hwiParams);
+        if (dmaErrorHwiHandle == NULL) {
+            DebugP_log0("Failed to create DMA error Hwi!!\n");
+            while (1);
         }
-        MAP_DMA_enableModule();
-        MAP_DMA_setControlBase(Board_DMAControlTable);
 
-        DMA_initialized = true;
+        MAP_DMA_enableModule();
+        MAP_DMA_setControlBase(dmaControlTable);
+
+        dmaInitialized = true;
     }
 }
 
@@ -120,10 +119,6 @@ void Board_initGeneral(void) {
 /*
  *  =============================== GPIO ===============================
  */
-
-#include <ti/drivers/GPIO.h>
-#include <ti/drivers/gpio/GPIOMSP432.h>
-
 /* Place into subsections to allow the TI linker to remove items properly */
 #if defined(__TI_COMPILER_VERSION__)
 #pragma DATA_SECTION(GPIOMSP432_config, ".const:GPIOMSP432_config")
@@ -131,6 +126,17 @@ void Board_initGeneral(void) {
 #pragma DATA_SECTION(gpioCallbackFunctions, ".data:gpioCallbackFunctions")
 #endif
 
+#include <ti/drivers/GPIO.h>
+#include <ti/drivers/gpio/GPIOMSP432.h>
+
+/*
+ * Array of Pin configurations
+ * NOTE: The order of the pin configurations must coincide with what was
+ *       defined in MSP_EXP432P401R.h
+ * NOTE: Pins not used for interrupts should be placed at the end of the
+ *       array.  Callback entries can be omitted from callbacks array to
+ *       reduce memory usage.
+ */
 GPIO_PinConfig gpioPinConfigs[] = {
     /* port_pin */
     GPIOMSP432_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  0  - dummy */
@@ -228,6 +234,13 @@ GPIO_PinConfig gpioPinConfigs[] = {
     GPIOMSP432_P1_0 | GPIO_DO_NOT_CONFIG,       /*  78 - P1.0 LED1 */
 };
 
+/*
+ * Array of callback function pointers
+ * NOTE: The order of the pin configurations must coincide with what was
+ *       defined in MSP_EXP432P401R.h
+ * NOTE: Pins not used for interrupts can be omitted from callbacks array to
+ *       reduce memory usage (if placed at end of gpioPinConfigs array).
+ */
 GPIO_CallbackFxn gpioCallbackFunctions[] = {
     /* port_pin */
     NULL,  /*  0  - dummy */
@@ -330,17 +343,12 @@ const GPIOMSP432_Config GPIOMSP432_config = {
     .callbacks = (GPIO_CallbackFxn *)gpioCallbackFunctions,
     .numberOfPinConfigs = sizeof(gpioPinConfigs)/sizeof(GPIO_PinConfig),
     .numberOfCallbacks = sizeof(gpioCallbackFunctions)/sizeof(GPIO_CallbackFxn),
-    .intPriority = (~0),
+    .intPriority = (~0)
 };
 
-#if 1
-#warning the following symbols need to be replaced with the new driverlib symbols
-int     PSSKEY = 0;
-int     PSSCTL0 = 0;         /* 823 (14) uA -> 809 (3) uA */
-int     SYSCTL_SRAM_BANKRET; /* TODO: remove once TI-RTOS (or the device) does this by default */
-#define SVSLOFF 0
-#define SVSMHOFF 0
-#endif
+/* Not sure why the SVSLOFF bit is undefined in the latest driverlib msp432p401r.h file */
+
+#define SVSLOFF 0x00000100
 
 /*
  *  ======== Board_initGPIO ========
@@ -367,9 +375,9 @@ void Board_initGPIO(void)
     PJSEL1 &= ~(BIT0 | BIT1);
 
     /* Turn off PSS high-side & low-side supervisors */
-    PSSKEY = PSS_KEY_KEY_VAL;
-    PSSCTL0 |= SVSMHOFF | SVSLOFF;         /* 823 (14) uA -> 809 (3) uA */
-    PSSKEY = 0;
+    PSS->KEY = PSS_KEY_KEY_VAL;
+    PSS->CTL0 |= PSS_CTL0_SVSMHOFF | SVSLOFF;         /* 823 (14) uA -> 809 (3) uA */
+    PSS->KEY = 0;
 
     /* Configure Port PJ.4 and PJ.5 */
     ; /* do nothing (the reset default is to support JTAG) */
@@ -398,7 +406,7 @@ const I2CMSP432_HWAttrs i2cMSP432HWAttrs[Board_I2CCOUNT] = {
     {
         .baseAddr = EUSCI_B1_BASE,
         .intNum = INT_EUSCIB1,
-        .intPriority = ~(0),
+        .intPriority = (~0),
         .clockSource = EUSCI_B_I2C_CLOCKSOURCE_SMCLK
     }
 };
@@ -443,6 +451,30 @@ I2C_Handle Board_openI2C(UInt i2cPortIndex, I2C_Params *i2cParams)
 }
 
 /*
+ *  =============================== Power ===============================
+ */
+
+#include <ti/drivers/Power.h>
+#include <ti/drivers/power/PowerMSP432.h>
+
+const PowerMSP432_Config PowerMSP432_config = {
+    .policyInitFxn = PowerMSP432_initPolicy,
+    .policyFxn = PowerMSP432_sleepPolicy,
+    .initialPerfLevel = 2,
+    .enablePolicy = false,
+    .enablePerf = true
+};
+
+/*
+ *  ======== Board_initPower ========
+ */
+void Board_initPower(void)
+{
+    Power_init();
+    Power_enablePolicy();
+}
+
+/*
  *  =============================== PWM ===============================
  */
 /* Place into subsections to allow the TI linker to remove items properly */
@@ -450,6 +482,7 @@ I2C_Handle Board_openI2C(UInt i2cPortIndex, I2C_Params *i2cParams)
 #pragma DATA_SECTION(PWM_config, ".const:PWM_config")
 #pragma DATA_SECTION(pwmTimerMSP432HWAttrs, ".const:pwmTimerMSP432HWAttrs")
 #endif
+
 #include <ti/drivers/PWM.h>
 #include <ti/drivers/pwm/PWMTimerMSP432.h>
 
@@ -829,33 +862,6 @@ UART_Handle  Board_openUART(UInt uartPortIndex, UART_Params *uartParams)
 
     /* open the UART */
     return (UART_open(uartPortIndex, uartParams));
-}
-
-/*
- *  =============================== Power ===============================
- */
-
-#include <ti/drivers/Power.h>
-#include <ti/drivers/power/PowerMSP432.h>
-
-const PowerMSP432_Config PowerMSP432_config = {
-    .policyInitFxn = PowerMSP432_initPolicy,
-    .policyFxn = PowerMSP432_sleepPolicy,
-    .initialPerfLevel = 2,
-    .enablePolicy = false,
-    .enablePerf = true
-};
-
-/*
- *  ======== Board_initPower ========
- */
-void Board_initPower(void)
-{
-    /* Retain all SRAM banks prior to going to LPM3 (Deep-sleep) */
-    SYSCTL_SRAM_BANKRET |= 0xff; /* TODO: remove once TI-RTOS (or the device) does this by default */
-    
-    Power_init();
-    Power_enablePolicy();
 }
 
 /*

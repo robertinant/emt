@@ -82,16 +82,13 @@ const uint8_t mappable_pwms[] = {
 /* port number to PXMAP translation */
 const uint8_t pxmap[] = {
     0,
-#warning the following symbols need to be replaced with the new driverlib symbols
-#if 0
-    P1MAP,
-    P2MAP,
-    P3MAP,
-    P4MAP,
-    P5MAP,
-    P6MAP,
-    P7MAP,
-#endif
+    PMAP_P1MAP,
+    PMAP_P2MAP,
+    PMAP_P3MAP,
+    PMAP_P4MAP,
+    PMAP_P5MAP,
+    PMAP_P6MAP,
+    PMAP_P7MAP,
 };
 
 /* Current PWM timer GPIO mappings */
@@ -180,23 +177,20 @@ void analogWrite(uint8_t pin, int val)
             /* derive pinNum from pinMask */
             pinNum = 0;
             while (((1 << pinNum) & pinMask) == 0) pinNum++;
-#if 0
+
             /* the following code was extracted from PMAP_configurePort() */
 
             /* Get write-access to port mapping registers: */
-            PMAP->rKEYID = PMAP_KEYID_VAL;
+            PMAP->KEYID = PMAP_KEYID_VAL;
 
             /* Enable reconfiguration during runtime */
-            PMAP->rCTL.r = (PMAP->rCTL.r & ~PMAPRECFG) | PMAP_ENABLE_RECONFIGURATION;
+            PMAP->CTL = (PMAP->CTL & ~PMAP_CTL_PRECFG) | PMAP_ENABLE_RECONFIGURATION;
 
             /* Configure Port Mapping for this pin: */
             HWREG8(PMAP_BASE + pinNum + pxmap[port]) = mappable_pwms[pwmIndex];
 
             /* Disable write-access to port mapping registers: */
-            PMAP->rKEYID = 0;
-#else
-            #warning PMAP compatibility break
-#endif
+            PMAP->KEYID = 0;
         }
 
         PWM_Params_init(&params);
@@ -246,23 +240,21 @@ void stopAnalogWrite(uint8_t pin)
         /* derive pinNum from pinMask */
         pinNum = 0;
         while (((1 << pinNum) & pinMask) == 0) pinNum++;
-#if 0
+
         /* the following code was extracted from PMAP_configurePort() */
 
         //Get write-access to port mapping registers:
-        PMAP->rKEYID = PMAP_KEYID_VAL;
+        PMAP->KEYID = PMAP_KEYID_VAL;
 
         //Enable reconfiguration during runtime
-        PMAP->rCTL.r = (PMAP->rCTL.r & ~PMAPRECFG) | PMAP_ENABLE_RECONFIGURATION;
+        PMAP->CTL = (PMAP->CTL & ~PMAP_CTL_PRECFG) | PMAP_ENABLE_RECONFIGURATION;
 
         //Undo Port Mapping for this pin:
         HWREG8(PMAP_BASE + pinNum + pxmap[port]) = PM_NONE;
 
         //Disable write-access to port mapping registers:
-        PMAP->rKEYID = 0;
-#else
-            #warning PMAP compatibility break
-#endif
+        PMAP->KEYID = 0;
+
         hwiKey = Hwi_disable();
 
         /* restore pin table entry with port/pin info */

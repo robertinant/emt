@@ -230,33 +230,6 @@ uint16_t digital_pin_to_pwm_index[] = {
     NOT_MAPPABLE,       /*  78 - P1.0 LED1 */
 };
 
-#if 1
-#warning the following ADC14INCH symbols need to be replaced with new driverlib names
-#define     ADC14INCH_15 0   /*  2  - P6.0_A15 */
-#define     ADC14INCH_12 0   /*  5  - P4.1_IO_A12 */
-#define     ADC14INCH_10 0   /*  6  - P4.3_A10 */
-#define     ADC14INCH_7 0    /*  8  - P4.6_IO_A7 */
-#define     ADC14INCH_3 0    /*  12 - P5.2_IO */
-#define     ADC14INCH_5 0    /*  13 - P5.0_IO */
-#define     ADC14INCH_14 0   /*  23 - P6.1_A14 */
-#define     ADC14INCH_13 0   /*  24 - P4.0_A13 */
-#define     ADC14INCH_11 0   /*  25 - P4.2_A11 */
-#define     ADC14INCH_9 0    /*  26 - P4.4_A9 */
-#define     ADC14INCH_8 0    /*  27 - P4.5_A8 */
-#define     ADC14INCH_6 0    /*  28 - P4.7_A6 */
-#define     ADC14INCH_1 0    /*  29 - P5.4_IO */
-#define     ADC14INCH_0 0    /*  30 - P5.5_IO */
-#define     ADC14INCH_4 0    /*  33 - P5.1_IO */
-#define     ADC14INCH_20 0   /*  41 - P8.5 */
-#define     ADC14INCH_17 0   /*  42 - P9.0 */
-#define     ADC14INCH_21 0   /*  43 - P8.4 */
-#define     ADC14INCH_23 0   /*  44 - P8.2 */
-#define     ADC14INCH_19 0   /*  57 - P8.6 */
-#define     ADC14INCH_18 0   /*  58 - P8.7 */
-#define     ADC14INCH_16 0   /*  59 - P9.1 */
-#define     ADC14INCH_22 0   /*  60 - P8.3 */
-#define     ADC14INCH_2 0    /*  61 - P5.3 */
-#endif
 /*
  * mapping of pins to an ADC channel
  */
@@ -266,20 +239,20 @@ const uint8_t digital_pin_to_adc_index[] = {
 
     /* pins 1-10 */
     NOT_ON_ADC,     /*  1  - 3.3V */
-    ADC14INCH_15,   /*  2  - P6.0_A15 */
+    ADC_INPUT_A15,   /*  2  - P6.0_A15 */
     NOT_ON_ADC,     /*  3  - P3.2_URXD */
     NOT_ON_ADC,     /*  4  - P3.3_UTXD */
-    ADC14INCH_12,   /*  5  - P4.1_IO_A12 */
-    ADC14INCH_10,   /*  6  - P4.3_A10 */
+    ADC_INPUT_A12,   /*  5  - P4.1_IO_A12 */
+    ADC_INPUT_A10,   /*  6  - P4.3_A10 */
     NOT_ON_ADC,     /*  7  - P1.5_SPICLK */
-    ADC14INCH_7,    /*  8  - P4.6_IO_A7 */
+    ADC_INPUT_A7,    /*  8  - P4.6_IO_A7 */
     NOT_ON_ADC,     /*  9  - P6.5_I2CSCL */
     NOT_ON_ADC,     /*  10 - P6.4_I2CSDA */
 
     /* pins 11-20 */
     NOT_ON_ADC,     /*  11 - P3.6_IO */
-    ADC14INCH_3,    /*  12 - P5.2_IO */
-    ADC14INCH_5,    /*  13 - P5.0_IO */
+    ADC_INPUT_A3,    /*  12 - P5.2_IO */
+    ADC_INPUT_A5,    /*  13 - P5.0_IO */
     NOT_ON_ADC,     /*  14 - P1.7_SPIMISO */
     NOT_ON_ADC,     /*  15 - P1.6_SPIMOSI */
     NOT_ON_ADC,     /*  16 - RESET */
@@ -291,19 +264,19 @@ const uint8_t digital_pin_to_adc_index[] = {
     /* pins 21-30 */
     NOT_ON_ADC,     /*  21 - 5V */
     NOT_ON_ADC,     /*  22 - GND */
-    ADC14INCH_14,   /*  23 - P6.1_A14 */
-    ADC14INCH_13,   /*  24 - P4.0_A13 */
-    ADC14INCH_11,   /*  25 - P4.2_A11 */
-    ADC14INCH_9,    /*  26 - P4.4_A9 */
-    ADC14INCH_8,    /*  27 - P4.5_A8 */
-    ADC14INCH_6,    /*  28 - P4.7_A6 */
-    ADC14INCH_1,    /*  29 - P5.4_IO */
-    ADC14INCH_0,    /*  30 - P5.5_IO */
+    ADC_INPUT_A14,   /*  23 - P6.1_A14 */
+    ADC_INPUT_A13,   /*  24 - P4.0_A13 */
+    ADC_INPUT_A11,   /*  25 - P4.2_A11 */
+    ADC_INPUT_A9,    /*  26 - P4.4_A9 */
+    ADC_INPUT_A8,    /*  27 - P4.5_A8 */
+    ADC_INPUT_A6,    /*  28 - P4.7_A6 */
+    ADC_INPUT_A1,    /*  29 - P5.4_IO */
+    ADC_INPUT_A0,    /*  30 - P5.5_IO */
 
     /* pins 31-40 */
     NOT_ON_ADC,     /*  31 - P3.7_IO */
     NOT_ON_ADC,     /*  32 - P3.5_IO */
-    ADC14INCH_4,    /*  33 - P5.1_IO */
+    ADC_INPUT_A4,    /*  33 - P5.1_IO */
     NOT_ON_ADC,     /*  34 - P2.3_IO */
     NOT_ON_ADC,     /*  35 - P6.7_IO_CAPT */
     NOT_ON_ADC,     /*  36 - P6.6_IO_CAPT */
@@ -313,10 +286,10 @@ const uint8_t digital_pin_to_adc_index[] = {
     NOT_ON_ADC,     /*  40 - P2.7_PWM */
 
     /* pins 41-56 */
-    ADC14INCH_20,   /*  41 - P8.5 */
-    ADC14INCH_17,   /*  42 - P9.0 */
-    ADC14INCH_21,   /*  43 - P8.4 */
-    ADC14INCH_23,   /*  44 - P8.2 */
+    ADC_INPUT_A20,   /*  41 - P8.5 */
+    ADC_INPUT_A17,   /*  42 - P9.0 */
+    ADC_INPUT_A21,   /*  43 - P8.4 */
+    ADC_INPUT_A23,   /*  44 - P8.2 */
     NOT_ON_ADC,     /*  45 - P9.2 */
     NOT_ON_ADC,     /*  46 - P6.2 */
     NOT_ON_ADC,     /*  47 - P7.3 */
@@ -331,11 +304,11 @@ const uint8_t digital_pin_to_adc_index[] = {
     NOT_ON_ADC,     /*  56 - P10.4 */
 
     /* pins 57-72 */
-    ADC14INCH_19,   /*  57 - P8.6 */
-    ADC14INCH_18,   /*  58 - P8.7 */
-    ADC14INCH_16,   /*  59 - P9.1 */
-    ADC14INCH_22,   /*  60 - P8.3 */
-    ADC14INCH_2,    /*  61 - P5.3 */
+    ADC_INPUT_A19,   /*  57 - P8.6 */
+    ADC_INPUT_A18,   /*  58 - P8.7 */
+    ADC_INPUT_A16,   /*  59 - P9.1 */
+    ADC_INPUT_A22,   /*  60 - P8.3 */
+    ADC_INPUT_A2,    /*  61 - P5.3 */
     NOT_ON_ADC,     /*  62 - P9.3 */
     NOT_ON_ADC,     /*  63 - P6.3 */
     NOT_ON_ADC,     /*  64 - P7.2 */
