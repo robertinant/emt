@@ -143,6 +143,9 @@ unsigned long millis();
 
 void setDelayResolution(uint32_t milliseconds);
 
+/* our interrupt APIs take pin numbers */
+#define digitalPinToInterrupt(pin) pin
+
 /* implemented in WInterrupts.c */
 void attachInterrupt(uint8_t, void (*)(void), int mode);
 void detachInterrupt(uint8_t);
