@@ -369,10 +369,13 @@ void LCD_SharpBoosterPack_SPI::flush (void)
     {
         SPI.transfer((char)reverse(xj + 1));
 
-        for(xi=0; xi<(LCD_HORIZONTAL_MAX>>3); xi++)
-        {
-            SPI.transfer((char)*(pucData++));
-        }
+        SPI.transfer(pucData, LCD_HORIZONTAL_MAX>>3);
+        pucData += LCD_HORIZONTAL_MAX>>3;
+
+//        for(xi=0; xi<(LCD_HORIZONTAL_MAX>>3); xi++)
+//        {
+//            SPI.transfer((char)*(pucData++));
+//        }
         SPI.transfer(SHARP_LCD_TRAILER_BYTE);
     }
 
