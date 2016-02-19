@@ -138,9 +138,99 @@ void SPIClass::setClockDivider(uint8_t divider)
     }
 }
 
+uint8_t SPIClass::reverseBits(uint8_t rxtxData)
+{
+#if (defined(xdc_target__isaCompatible_v7M) || defined(xdc_target__isaCompatible_v7A))  \
+     &&  defined(__TI_COMPILER_VERSION__)
+	rxtxData = __rbit(rxtxData);
+        rxtxData = __rev(rxtxData);
+#elif (defined(xdc_target__isaCompatible_v7M) || defined(xdc_target__isaCompatible_v7A))  \
+     && defined(__GNUC__)
+        /* reverse order of 32 bits */
+        asm("rbit %0, %1" : "=r" (rxtxData) : "r" (rxtxData));
+        /* reverse order of bytes to get original bits into lowest byte */
+        asm("rev %0, %1" : "=r" (rxtxData) : "r" (rxtxData));
+#else
+    static  const uint8_t reverse_data[] =
+        { 0x0, 0x8, 0x4, 0xC,
+          0x2, 0xA, 0x6, 0xE,
+          0x1, 0x9, 0x5, 0xD,
+          0x3, 0xB, 0x7, 0xF
+        };
+
+    uint8_t b = 0;
+
+    b  = reverse_data[x & 0xF] << 4;
+    b |= reverse_data[(x & 0xF0) >> 4];
+    rxtxData = b;
+#endif
+    return (rxtxData);
+}
+
+uint8_t *SPIClass::transfer(uint8_t *buffer, size_t size)
+{
+    uint32_t taskKey, hwiKey;
+    uint8_t i;
+
+    if (spi == NULL) {
+        return (0);
+    }
+    
+    /* protect single 'transaction' content from re-rentrancy */
+    taskKey = Task_disable();
+
+    hwiKey = Hwi_disable();
+
+    /* disable all interrupts registered with SPI.usingInterrupt() */
+    for (i = 0; i < numUsingInterrupts; i++) {
+        disablePinInterrupt(usingInterruptPins[i]);
+    }
+
+    Hwi_restore(hwiKey);
+
+    if (bitOrder == LSBFIRST) {
+        for (i = 0; i < size; i++) {
+            buffer[i] = reverseBits(buffer[i]);
+        }
+    }
+
+    transaction.txBuf = buffer;
+    transaction.rxBuf = buffer;
+    transaction.count = size;
+    transferComplete = 0;
+
+    /* kick off the SPI transaction */
+    SPI_transfer(spi, &transaction);
+
+    /* wait for transfer to complete (ie for callback to be called) */
+    while (transferComplete == 0) {
+        ;
+    }
+
+    /* now that the transaction is finished, allow other threads to pre-empt */
+
+    hwiKey = Hwi_disable();
+
+    /* re-enable all interrupts registered with SPI.usingInterrupt() */
+    for (i = 0; i < numUsingInterrupts; i++) {
+        enablePinInterrupt(usingInterruptPins[i]);
+    }
+
+    Hwi_restore(hwiKey);
+
+    if (bitOrder == LSBFIRST) {
+        for (i = 0; i < size; i++) {
+            buffer[i] = reverseBits(buffer[i]);
+        }
+    }
+
+    Task_restore(taskKey);
+
+    return (buffer);
+}
+
 uint8_t SPIClass::transfer(uint8_t ssPin, uint8_t data_out, uint8_t transferMode)
 {
-    uint32_t rxtxData;
     uint8_t data_in;
     uint8_t i;
     uint32_t taskKey, hwiKey;
@@ -150,21 +240,7 @@ uint8_t SPIClass::transfer(uint8_t ssPin, uint8_t data_out, uint8_t transferMode
     }
     
     if (bitOrder == LSBFIRST) {
-        rxtxData = data_out;
-#if (defined(xdc_target__isaCompatible_v7M) || defined(xdc_target__isaCompatible_v7A)) 
-#if defined(__TI_COMPILER_VERSION__)
-	rxtxData = __rbit(rxtxData);
-        rxtxData = __rev(rxtxData);
-#elif defined(__GNUC__)
-        /* reverse order of 32 bits */
-        asm("rbit %0, %1" : "=r" (rxtxData) : "r" (rxtxData));
-        /* reverse order of bytes to get original bits into lowest byte */
-        asm("rev %0, %1" : "=r" (rxtxData) : "r" (rxtxData));
-#else
-#warning LSB first SPI transfers are not supported for this target
-#endif
-#endif
-        data_out = (uint8_t) rxtxData;
+        data_out = reverseBits(data_out);
     }
 
     /* protect single 'transaction' content from re-rentrancy */
@@ -216,21 +292,7 @@ uint8_t SPIClass::transfer(uint8_t ssPin, uint8_t data_out, uint8_t transferMode
     Task_restore(taskKey);
 
     if (bitOrder == LSBFIRST) {
-        rxtxData = data_in;
-#if (defined(xdc_target__isaCompatible_v7M) || defined(xdc_target__isaCompatible_v7A)) 
-#if defined(__TI_COMPILER_VERSION__)
-        rxtxData = __rbit(rxtxData);
-        rxtxData = __rev(rxtxData);
-#elif defined(__GNUC__)
-        /* reverse order of 32 bits */
-        asm("rbit %0, %1" : "=r" (rxtxData) : "r" (rxtxData));
-        /* reverse order of bytes to get original bits into lowest byte */
-        asm("rev %0, %1" : "=r" (rxtxData) : "r" (rxtxData));
-#else
-#warning LSB first SPI transfers are not supported for this target
-#endif
-#endif
-        data_in = (uint8_t) rxtxData;
+        data_in = reverseBits(data_in);
     }
 
     return ((uint8_t)data_in);

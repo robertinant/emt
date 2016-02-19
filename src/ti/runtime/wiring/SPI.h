@@ -74,6 +74,7 @@ class SPIClass
         SPI_Transaction transaction;
         GateMutex_Struct gate;
         void init(unsigned long);
+        uint8_t reverseBits(uint8_t);
 
     public:
         volatile bool transferComplete;
@@ -94,6 +95,7 @@ class SPIClass
         uint8_t transfer(uint8_t);
         uint8_t transfer(uint8_t, uint8_t);
         uint8_t transfer(uint8_t, uint8_t, uint8_t);
+        uint8_t *transfer(uint8_t *, size_t);
 
         void setModule(uint8_t);
         void usingInterrupt(uint8_t);
