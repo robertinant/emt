@@ -1,12 +1,12 @@
-#include <cc3200/libraries/WiFi/WiFi.h>
-#include <cc3200/libraries/WiFi/WiFiClient.h>
-#include <cc3200/libraries/WiFi/WiFiServer.h>
+#include "WiFi.h"
+#include "WiFiClient.h"
+#include "WiFiServer.h"
+
+#include <inc/hw_types.h>
+#include <driverlib/prcm.h>
 
 #include <ti/drivers/Power.h>
 #include <ti/drivers/power/PowerCC3200.h>
-
-//#include "WiFi.h"
-#include <Wire.h>
 
 // your network name also called SSID
 char ssid[] = "TINK-NET";
@@ -20,30 +20,51 @@ WiFiClient client;
 char server[] = "energia.nu";
 
 extern void lpds_init(void (*restore)(void));
-extern void goto_sleep(uint32_t time);
+
 uint32_t lastConnected = 0;
 uint32_t totalSleepTime = 0;
 uint32_t myMillis = 0;
+uint32_t myRTC;
+
 #define SLEEP_INTERVAL_SEC 10
 #define CONNECTION_INTERVAL_MS 20000 // Connect every 10 secs
 
-void setupPeripherals();
 void connectToWiFi();
 void disconnectFromWiFi();
 boolean httpRequest();
 
 void lp3p0_back_up_soc_data();
 
+#define COUNT_WITHIN_TRESHOLD(a, b, c, th) \
+        ((((b) - (a)) <= (th)) ? (b) : (c))
+
+/*
+ *  ======== getCountsRTC ========
+ */
+static uint32_t getCountsRTC()
+{
+    uint64_t count[3];
+    uint64_t curr;
+    uint32_t i;
+
+    for (i = 0; i < 3; i++) {
+        count[i] = PRCMSlowClkCtrFastGet();
+    }
+    curr = COUNT_WITHIN_TRESHOLD(count[0], count[1], count[2], 1);
+
+    return ((uint32_t) curr);
+}
+
 int lpSleep()
 {
-//    digitalWrite(RED_LED, 0);
+    digitalWrite(RED_LED, 0);
     lp3p0_back_up_soc_data();
     return (Power_NOTIFYDONE);
 }
 
 int lpAwake()
 {
-//    digitalWrite(RED_LED, 1);
+    digitalWrite(RED_LED, 1);
 
     /* Trigger JTAG */
 //    if (!(HWREG(0x4402DC30) & 0x2)) {
@@ -60,13 +81,12 @@ static Power_NotifyObj powerAwakeNotifyObj;
 void lp_setup() {
 //  digitalWrite(RED_LED, 1);
   Serial.begin(115200);
-  setupPeripherals();
   WiFi.init();
   Serial.print("FW Version: ");
   Serial.println(WiFi.firmwareVersion());
   connectToWiFi();
   disconnectFromWiFi();
-  lpds_init(setupPeripherals);
+  lpds_init(NULL);
   Power_registerNotify(&powerSleepNotifyObj,
             PowerCC3200_ENTERING_LPDS,
             (Power_NotifyFxn)lpSleep, (uintptr_t) NULL);
@@ -88,10 +108,15 @@ void lp_loop() {
   Serial.println("Wakeup!!");
 
   myMillis = millis();
-  
+  myRTC = getCountsRTC();
+
+  Serial.print("Clock tick: ");
+  Serial.println(myMillis);
+  Serial.print("RTC: ");
+  Serial.println(getCountsRTC());
+
   if(myMillis - lastConnected > CONNECTION_INTERVAL_MS) {
     lastConnected = myMillis;
-Serial.println(lastConnected);
     connectToWiFi();
 //    httpRequest();
     disconnectFromWiFi();
@@ -136,8 +161,8 @@ boolean httpRequest() {
     client.println();
 
     uint32_t now = millis();
-    while(!client.available()) {
-      if(millis() - now > 10000) {
+    while (!client.available()) {
+      if (millis() - now > 10000) {
         Serial.println("Timeout waiting for data");
         break;
       }
@@ -150,7 +175,8 @@ boolean httpRequest() {
 
     client.stop();    
     ret = true;
-  } else {
+  }
+  else {
     // if you couldn't make a connection:
     Serial.println("connection failed");
     ret = false;
@@ -160,17 +186,8 @@ boolean httpRequest() {
 }
 
 // ----------------------------
-void setupPeripherals()
-{
-  Serial.begin(115200);
-  Serial.println("Setting up peripherals\n");
-}
-
-// ----------------------------
 void connectToWiFi() {
-//  sl_WlanPolicySet(SL_POLICY_CONNECTION , SL_CONNECTION_POLICY(1,1,0,0,0), 0, 0);
-    // attempt to connect to Wifi network:
-//  digitalWrite(YELLOW_LED, 1);
+  // attempt to connect to Wifi network:
   Serial.print("Attempting to connect to Network named: ");
   // print the network name (SSID);
   Serial.println(ssid);
@@ -181,9 +198,7 @@ void connectToWiFi() {
   else {
       WiFi.begin((char *)ssid);
   }
-//  digitalWrite(YELLOW_LED, 0);
-//  digitalWrite(GREEN_LED, 1);
-  while ( WiFi.status() != WL_CONNECTED) {
+  while (WiFi.status() != WL_CONNECTED) {
     // print dots while we wait to connect
     Serial.print(".");
     delay(300);
@@ -211,9 +226,8 @@ void disconnectFromWiFi() {
   WiFi.end();
 
   /* the Serial port being active keeps us from going into lpds in this loop */
-  while(WiFi.status() == WL_CONNECTED) {
+  while (WiFi.status() == WL_CONNECTED) {
     delay(10);
   }
-  delay(10);
 }
 

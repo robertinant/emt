@@ -1,16 +1,8 @@
 #include "WiFi.h"
 
 extern "C" {
-#include "inc/hw_ints.h"
 #include "inc/hw_types.h"
-#include <simplelink/include/device.h>
 #include "utility/cc_io_park.h"
-#include "driverlib/prcm.h"
-#include "driverlib/interrupt.h"
-#include "driverlib/cpu.h"
-#include "driverlib/rom_map.h"
-#include "driverlib/rom.h"
-#include "driverlib/systick.h"
 }
 
 #define LSI_SLEEP_DURATION_IN_MSEC (2000)
