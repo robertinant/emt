@@ -52,6 +52,7 @@ void lcdSetup() {
     digitalWrite(22, 0);
 
     /* put flash into power down mode */
+    SPI.setClockDivider(2);
     SPI.begin();
     SPI.transfer((uint8_t)32, 0xb9);
     SPI.end();
@@ -108,6 +109,20 @@ void printTime()
     hours   = (int) ((curSeconds / (60*60)) % 24);
     days    = (int) (curSeconds / (60*60*24));
 
+    /* print days */
+    buf = "";
+    if (days < 100) {
+        buf += "0";
+    }
+    if (days < 10) {
+        buf += "0";
+    }
+    buf += days;
+    buf += ":";
+    myScreen.text(1, 30, buf);
+
+    /* print HH:MM:SS */
+    buf = "";
     if (hours < 10) {
         buf += "0";
     }
@@ -123,13 +138,9 @@ void printTime()
     }
     buf += seconds;
     myScreen.text(1, 50, buf);
+
     myScreen.text(25, 70, "Time");
-    buf = "";
-    if (days < 100) buf += "0";
-    if (days < 10) buf += "0";
-    buf += days;
-    buf += ":";
-    myScreen.text(1, 30, buf);
+
     myScreen.flush();
 
     SPI.end(); /* to save Power */
@@ -140,14 +151,14 @@ void lcdLoop() {
     Semaphore_pend(mySem, BIOS_WAIT_FOREVER);
 
     /* Advance quickly */
-    while(digitalRead(PUSH2) == 0) {
+    while (digitalRead(PUSH2) == 0) {
         secondsOffset += 100;
         Seconds_set(secondsOffset);
         printTime();
     }
 
     /* reverse more slowly */
-    while(digitalRead(PUSH1) == 0) {
+    while (digitalRead(PUSH1) == 0) {
         secondsOffset -= 10;
         Seconds_set(secondsOffset);
         printTime();
