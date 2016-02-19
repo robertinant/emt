@@ -56,6 +56,10 @@
 extern PWM_Config PWM_config[];
 extern const GPIOCC26XX_Config GPIOCC26XX_config;
 
+/* Carefully selected hal Timer IDs for tone and servo */
+uint32_t toneTimerId = (~0);  /* use Timer_ANY for tone timer */
+uint32_t servoTimerId = (~0); /* use Timer_ANY for servo timer */
+
 #define NOT_IN_USE 0
 
 /* Current PWM timer GPIO mappings */

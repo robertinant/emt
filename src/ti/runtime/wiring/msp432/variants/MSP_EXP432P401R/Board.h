@@ -95,6 +95,10 @@ typedef enum Board_PWMName {
     Board_PWM5,
     Board_PWM6,
     Board_PWM7,
+    Board_PWM8,
+    Board_PWM9,
+    Board_PWM10,
+    Board_PWM11,
 
     Board_PWMCOUNT
 } Board_PWMName;

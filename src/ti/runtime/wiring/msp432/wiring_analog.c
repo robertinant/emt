@@ -34,6 +34,14 @@
 
 #include <ti/runtime/wiring/wiring_private.h>
 #include "wiring_analog.h"
+
+#include <ti/drivers/PWM.h>
+#include <ti/drivers/GPIO.h>
+#include <ti/drivers/gpio/GPIOMSP432.h>
+
+#include <ti/sysbios/family/arm/m3/Hwi.h>
+#include <ti/sysbios/family/arm/msp432/Timer.h>
+
 #include <rom.h>
 #include <rom_map.h>
 #include <timer_a.h>
@@ -42,30 +50,19 @@
 #include <pmap.h>
 #include <gpio.h>
 
-#include <ti/drivers/PWM.h>
-#include <ti/drivers/GPIO.h>
-#include <ti/drivers/gpio/GPIOMSP432.h>
-
-#include <ti/sysbios/family/arm/m3/Hwi.h>
-
-#define NOT_IN_USE 0xffff
+#define PWM_NOT_IN_USE 0xffff
+#define PWM_IN_USE     0xfffe
 
 /*
  * analogWrite() support
  */
 
 extern PWM_Config PWM_config[];
+extern const GPIOMSP432_Config GPIOMSP432_config;
 
-const uint16_t pwm_to_port_pin[] = {
-    GPIOMSP432_P2_4,
-    GPIOMSP432_P2_5,
-    GPIOMSP432_P2_6,
-    GPIOMSP432_P2_7,
-    GPIOMSP432_P5_6,
-    GPIOMSP432_P5_7,
-    GPIOMSP432_P6_6,
-    GPIOMSP432_P6_7,
-};
+/* Carefully selected hal Timer IDs for tone and servo */
+uint32_t toneTimerId = (~0);  /* use Timer_ANY for tone timer */
+uint32_t servoTimerId = (~0); /* use Timer_ANY for servo timer */
 
 /* Mappable PWM Timer capture pins */
 const uint8_t mappable_pwms[] = {
@@ -81,7 +78,7 @@ const uint8_t mappable_pwms[] = {
 
 /* port number to PXMAP translation */
 const uint8_t pxmap[] = {
-    0,
+    0,               /* Port numbers start at 1 */
     PMAP_P1MAP,
     PMAP_P2MAP,
     PMAP_P3MAP,
@@ -93,14 +90,32 @@ const uint8_t pxmap[] = {
 
 /* Current PWM timer GPIO mappings */
 uint16_t used_pwm_port_pins[] = {
-    NOT_IN_USE,
-    NOT_IN_USE,
-    NOT_IN_USE,
-    NOT_IN_USE,
-    NOT_IN_USE,
-    NOT_IN_USE,
-    NOT_IN_USE,
-    NOT_IN_USE,
+    PWM_NOT_IN_USE,   /* Timer 0, CCR 1 */
+    PWM_NOT_IN_USE,   /* Timer 0, CCR 2 */
+    PWM_NOT_IN_USE,   /* Timer 0, CCR 3 */
+    PWM_NOT_IN_USE,   /* Timer 0, CCR 4 */
+    PWM_NOT_IN_USE,   /* Timer 1, CCR 1 */
+    PWM_NOT_IN_USE,   /* Timer 1, CCR 2 */
+    PWM_NOT_IN_USE,   /* Timer 1, CCR 3 */
+    PWM_NOT_IN_USE,   /* Timer 1, CCR 4 */
+    PWM_NOT_IN_USE,   /* Timer 2, CCR 1 Fixed mapping */
+    PWM_NOT_IN_USE,   /* Timer 2, CCR 2 Fixed mapping */
+    PWM_NOT_IN_USE,   /* Timer 2, CCR 3 Fixed mapping */
+    PWM_NOT_IN_USE,   /* Timer 2, CCR 4 Fixed mapping */
+};
+
+/*
+ * Keep track of the number of Capture Compare Registers are used
+ * for each of 4 timers. There are 4 CCs available for each timer.
+ * When the first CCR is used by PWM, inform Timer module that that
+ * timer is in use. When the last CCR of a timer is released, inform
+ * the Timer module that the timer is available.
+ *
+ *  0 -> 1  Timer_setAvailMask(1)
+ *  1 -> 0  Timer_setAvailMask(0)
+ */
+uint8_t timer_ccrs_in_use[] = {
+    0, 0, 0, 0
 };
 
 /*
@@ -117,7 +132,8 @@ uint16_t used_pwm_port_pins[] = {
 
 void analogWrite(uint8_t pin, int val)
 {
-    uint16_t pwmIndex, pinId, pinNum;
+    uint16_t pinId, pinNum;
+    uint8_t pwmIndex, timerId;
     uint_fast8_t port;
     uint_fast16_t pinMask;
     uint32_t hwiKey;
@@ -129,7 +145,8 @@ void analogWrite(uint8_t pin, int val)
     }
     else {
         /* re-configure pin if possible */
-        PWM_Params params;
+        PWM_Params pwmParams;
+        PWM_Handle pwmHandle;
 
         /*
          * The pwmIndex fetched from the pin_to_pwm_index[] table
@@ -137,27 +154,32 @@ void analogWrite(uint8_t pin, int val)
          * if the pin has already been mapped to a PWM resource,
          * or a mappable port/pin ID, or NOT_MAPPABLE.
          */
-        pinId = digital_pin_to_pwm_index[pin];
+        pwmIndex = digital_pin_to_pwm_index[pin];
 
-        if (pinId == NOT_MAPPABLE) {
+        if (pwmIndex == PWM_NOT_MAPPABLE) {
             Hwi_restore(hwiKey);
             return; /* can't get there from here */
         }
 
-        if (pinId < PWM_AVAILABLE_PWMS) { /* fixed mapping */
-            pwmIndex = pinId;
-            if (used_pwm_port_pins[pwmIndex] != NOT_IN_USE) {
+        pinId = GPIOMSP432_config.pinConfigs[pin] & 0xffff;
+        port = pinId >> 8;
+        pinMask = pinId & 0xff;
+
+        if (pwmIndex < PWM_AVAILABLE_PWMS) { /* fixed mapping */
+            if (used_pwm_port_pins[pwmIndex] != PWM_NOT_IN_USE) {
                 return; /* PWM port already in use */
             }
-            port = pwm_to_port_pin[pwmIndex] >> 8;
-            pinMask = pwm_to_port_pin[pwmIndex] & 0xff;
-            /* flag to stopAnalogWrite() that this is a fixed mapped pin */
+            /*
+             * encode port/pin to inform stopAnalogWrite() that
+             * this is a fixed mapped pin
+             */
+
             used_pwm_port_pins[pwmIndex] = pwmIndex;
         }
         else {
             /* find an unused PWM resource and port map it */
             for (pwmIndex = 0; pwmIndex < PWM_AVAILABLE_PWMS; pwmIndex++) {
-                if (used_pwm_port_pins[pwmIndex] == NOT_IN_USE) {
+                if (used_pwm_port_pins[pwmIndex] == PWM_NOT_IN_USE) {
                     /* remember which pinId is being used by this PWM resource */
                     used_pwm_port_pins[pwmIndex] = pinId; /* save port/pin info */
                     /* remember which PWM resource is being used by this pin */
@@ -170,9 +192,6 @@ void analogWrite(uint8_t pin, int val)
                 Hwi_restore(hwiKey);
                 return; /* no unused PWM ports */
             }
-
-            port = pinId >> 8;
-            pinMask = pinId & 0xff;
 
             /* derive pinNum from pinMask */
             pinNum = 0;
@@ -193,16 +212,40 @@ void analogWrite(uint8_t pin, int val)
             PMAP->KEYID = 0;
         }
 
-        PWM_Params_init(&params);
+        PWM_Params_init(&pwmParams);
 
         /* Open the PWM port */
-        params.period = 2040; /* arduino period is 2.04ms (490Hz) */
-        params.dutyMode = PWM_DUTY_COUNTS;
-        PWM_open(pwmIndex, &params);
+        pwmParams.period = 2040; /* arduino period is 2.04ms (490Hz) */
+        pwmParams.dutyMode = PWM_DUTY_COUNTS;
+
+        /* PWM_open() will fail if the timer's CCR is already in use */
+        pwmHandle = PWM_open(pwmIndex, &pwmParams);
+
+        /*
+         * Assume that the timer was already in use by someone else.
+         * mark all associated CCRs busy so we don't keep re-trying this
+		 * timer's pwmIndexes.
+         */
+        if (pwmHandle == NULL) {
+		    pwmIndex &= 0xfc; /* start at base of this timer's PWM indexes */
+		    used_pwm_port_pins[pwmIndex++] = PWM_IN_USE;
+		    used_pwm_port_pins[pwmIndex++] = PWM_IN_USE;
+		    used_pwm_port_pins[pwmIndex++] = PWM_IN_USE;
+		    used_pwm_port_pins[pwmIndex] = PWM_IN_USE;
+            Hwi_restore(hwiKey);
+            return;
+        }
 
         /* Enable PWM output on GPIO pins */
         MAP_GPIO_setAsPeripheralModuleFunctionOutputPin(port, pinMask,
                                                     GPIO_PRIMARY_MODULE_FUNCTION);
+
+        /* remove timer from pool of available timers if not in use */
+        timerId = pwmIndex >> 2;
+        timer_ccrs_in_use[timerId] += 1;
+        if (timer_ccrs_in_use[timerId] == 1) {
+            Timer_setAvailMask(Timer_getAvailMask() & ~(1 << timerId));
+        }
 
         digital_pin_to_pin_function[pin] = PIN_FUNC_ANALOG_OUTPUT;
     }
@@ -223,6 +266,7 @@ void analogWrite(uint8_t pin, int val)
 void stopAnalogWrite(uint8_t pin)
 {
     uint16_t pwmIndex = digital_pin_to_pwm_index[pin];
+    uint8_t timerId;
     uint_fast8_t port;
     uint_fast16_t pinMask;
     uint16_t pinNum;
@@ -230,6 +274,8 @@ void stopAnalogWrite(uint8_t pin)
 
     /* Close PWM port */
     PWM_close((PWM_Handle)&(PWM_config[pwmIndex]));
+
+    hwiKey = Hwi_disable();
 
     /* if PWM is assigned to a dynamically mapped pin */
     if (used_pwm_port_pins[pwmIndex] >= PWM_AVAILABLE_PWMS) {
@@ -255,20 +301,24 @@ void stopAnalogWrite(uint8_t pin)
         //Disable write-access to port mapping registers:
         PMAP->KEYID = 0;
 
-        hwiKey = Hwi_disable();
-
-        /* restore pin table entry with port/pin info */
-        digital_pin_to_pwm_index[pin] = used_pwm_port_pins[pwmIndex];
-
-        /* free up pwm resource */
-        used_pwm_port_pins[pwmIndex] = NOT_IN_USE;
-
-        Hwi_restore(hwiKey);
+        /* restore pin_to_pwm_index table entry to PWM_MAPPABLE */
+        digital_pin_to_pwm_index[pin] = PWM_MAPPABLE;
     }
-    else {
-        /* free up pwm resource */
-        used_pwm_port_pins[pwmIndex] = NOT_IN_USE;
+
+    /* free up pwm resource */
+    used_pwm_port_pins[pwmIndex] = PWM_NOT_IN_USE;
+
+    /* put timer back in pool of available timers if not in use */
+    timerId = pwmIndex >> 2;
+
+    if (timer_ccrs_in_use[timerId]) {
+        timer_ccrs_in_use[timerId] -= 1;
+        if (timer_ccrs_in_use[timerId] == 0) {
+            Timer_setAvailMask(Timer_getAvailMask() | (1 << timerId));
+        }
     }
+
+    Hwi_restore(hwiKey);
 }
 
 /*
@@ -322,7 +372,7 @@ void analogReference(uint16_t mode)
 
     hwiKey = Hwi_disable();
 
-    adcReferenceMode = mode; 
+    adcReferenceMode = mode;
 
     switch (mode) {
         default:

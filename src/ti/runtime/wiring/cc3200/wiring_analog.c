@@ -51,6 +51,10 @@
 
 extern PWM_Config PWM_config[];
 
+/* Carefully selected hal Timer IDs for tone and servo */
+uint32_t toneTimerId = (~0);  /* use Timer_ANY for tone timer */
+uint32_t servoTimerId = (~0); /* use Timer_ANY for servo timer */
+
 /*
  * For the CC3200, the timers used for PWM are clocked at 80MHz.
  * The period is set to 2.04ms in the PWM_open() calls in Board_init().

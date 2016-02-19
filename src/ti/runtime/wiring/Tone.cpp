@@ -31,9 +31,12 @@
  */
 
 #include "Energia.h"
+
 #include <ti/sysbios/hal/Timer.h>
 #include <xdc/runtime/Types.h>
 #include <xdc/runtime/Error.h>
+
+extern uint32_t toneTimerId;
 
 static Timer_Params timerParams;
 static Timer_Handle timerHandle;
@@ -99,7 +102,7 @@ void tone(uint8_t _pin, unsigned int frequency, unsigned long duration)
         Timer_Params_init(&timerParams);
         timerParams.period = (1000000L / frequency) / 2;
         timerParams.runMode = Timer_RunMode_CONTINUOUS;
-        timerHandle = Timer_create(Timer_ANY, ToneIntHandler, &timerParams, &eb);
+        timerHandle = Timer_create(toneTimerId, ToneIntHandler, &timerParams, &eb);
         initTimer = false;
     }
 

@@ -490,6 +490,7 @@ PWMTimerMSP432_Object pwmTimerMSP432Objects[Board_PWMCOUNT];
 
 /* PWM configuration structure */
 const PWMTimerMSP432_HWAttrs pwmTimerMSP432HWAttrs[Board_PWMCOUNT] = {
+    /* pin mappable PWM channels */
     {
         .baseAddr = TIMER_A0_BASE,
         .compareRegister = TIMER_A_CAPTURECOMPARE_REGISTER_1
@@ -506,6 +507,23 @@ const PWMTimerMSP432_HWAttrs pwmTimerMSP432HWAttrs[Board_PWMCOUNT] = {
         .baseAddr = TIMER_A0_BASE,
         .compareRegister = TIMER_A_CAPTURECOMPARE_REGISTER_4
     },
+    {
+        .baseAddr = TIMER_A1_BASE,
+        .compareRegister = TIMER_A_CAPTURECOMPARE_REGISTER_1
+    },
+    {
+        .baseAddr = TIMER_A1_BASE,
+        .compareRegister = TIMER_A_CAPTURECOMPARE_REGISTER_2
+    },
+    {
+        .baseAddr = TIMER_A1_BASE,
+        .compareRegister = TIMER_A_CAPTURECOMPARE_REGISTER_3
+    },
+    {
+        .baseAddr = TIMER_A1_BASE,
+        .compareRegister = TIMER_A_CAPTURECOMPARE_REGISTER_4
+    },
+	/* fixed pin mapped PWM channels */
     {
         .baseAddr = TIMER_A2_BASE,
         .compareRegister = TIMER_A_CAPTURECOMPARE_REGISTER_1
@@ -564,6 +582,26 @@ const PWM_Config PWM_config[] = {
         .fxnTablePtr = &PWMTimerMSP432_fxnTable,
         .object = &pwmTimerMSP432Objects[7],
         .hwAttrs = &pwmTimerMSP432HWAttrs[7]
+    },
+    {
+        .fxnTablePtr = &PWMTimerMSP432_fxnTable,
+        .object = &pwmTimerMSP432Objects[8],
+        .hwAttrs = &pwmTimerMSP432HWAttrs[8]
+    },
+    {
+        .fxnTablePtr = &PWMTimerMSP432_fxnTable,
+        .object = &pwmTimerMSP432Objects[9],
+        .hwAttrs = &pwmTimerMSP432HWAttrs[9]
+    },
+    {
+        .fxnTablePtr = &PWMTimerMSP432_fxnTable,
+        .object = &pwmTimerMSP432Objects[10],
+        .hwAttrs = &pwmTimerMSP432HWAttrs[10]
+    },
+    {
+        .fxnTablePtr = &PWMTimerMSP432_fxnTable,
+        .object = &pwmTimerMSP432Objects[11],
+        .hwAttrs = &pwmTimerMSP432HWAttrs[11]
     },
     {NULL, NULL, NULL}
 };
