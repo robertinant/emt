@@ -35,12 +35,6 @@
 #include <ti/runtime/wiring/wiring_private.h>
 #include "wiring_analog.h"
 
-#include <ti/sysbios/family/arm/m3/Hwi.h>
-
-#include <driverlib/ioc.h>
-#include <driverlib/aux_adc.h>
-#include <driverlib/aux_wuc.h> 
-
 #include <ti/drivers/PWM.h>
 #include <ti/drivers/GPIO.h>
 #include <ti/drivers/Power.h>
@@ -48,6 +42,13 @@
 #include <ti/drivers/gpio/GPIOCC26XX.h>
 #include <ti/drivers/pwm/PWMTimerCC26XX.h>
 #include <ti/drivers/pin/PINCC26XX.h>
+
+#include <ti/sysbios/family/arm/m3/Hwi.h>
+#include <ti/sysbios/family/arm/lm4/Timer.h>
+
+#include <driverlib/ioc.h>
+#include <driverlib/aux_adc.h>
+#include <driverlib/aux_wuc.h> 
 
 /*
  * analogWrite() support
@@ -60,16 +61,18 @@ extern const GPIOCC26XX_Config GPIOCC26XX_config;
 uint32_t toneTimerId = (~0);  /* use Timer_ANY for tone timer */
 uint32_t servoTimerId = (~0); /* use Timer_ANY for servo timer */
 
-#define NOT_IN_USE 0
+#define PWM_NOT_IN_USE 0
 
 /* Current PWM timer GPIO mappings */
 uint8_t used_pwm_port_pins[] = {
-    NOT_IN_USE,
-    NOT_IN_USE,
-    NOT_IN_USE,
-    NOT_IN_USE,
-    NOT_IN_USE,
-    NOT_IN_USE,
+    PWM_NOT_IN_USE,
+    PWM_NOT_IN_USE,
+    PWM_NOT_IN_USE,
+    PWM_NOT_IN_USE,
+    PWM_NOT_IN_USE,
+    PWM_NOT_IN_USE,
+    PWM_NOT_IN_USE,
+    PWM_NOT_IN_USE,
 };
 
 /*
@@ -131,7 +134,8 @@ void analogWrite(uint8_t pin, int val)
     }
     else {
         /* re-configure pin if possible */
-        PWM_Params params;
+        PWM_Params pwmParams;
+        PWM_Handle pwmHandle;
         PWMTimerCC26XX_PWMPinCfg pwmPinCfg;
         uint8_t numPwmChannels = sizeof(used_pwm_port_pins)/sizeof(uint8_t);
         
@@ -143,45 +147,53 @@ void analogWrite(uint8_t pin, int val)
         /* extract 16bit pinID from pin */
         pwmPinId = GPIOCC26XX_config.pinConfigs[pin] & 0xff;
         
-        /* find an unused PWM resource and port map it */
+		/* undo pin's current plumbing */
+		switch (digital_pin_to_pin_function[pin]) {
+			case PIN_FUNC_ANALOG_INPUT:
+				stopAnalogRead(pin);
+				break;
+			case PIN_FUNC_DIGITAL_INPUT:
+				stopDigitalRead(pin);
+				break;
+			case PIN_FUNC_DIGITAL_OUTPUT:
+				stopDigitalWrite(pin);
+				break;
+		}
+
+		/* find an unused PWM resource and port map it */
         for (pwmIndex = 0; pwmIndex < numPwmChannels; pwmIndex++) {
-            if (used_pwm_port_pins[pwmIndex] == NOT_IN_USE) {
-                /* remember which pinId is being used by this PWM resource */
-                used_pwm_port_pins[pwmIndex] = pwmPinId; /* save pwm pin info */
-                /* remember which PWM resource is being used by this pin */
-                digital_pin_to_pwm_index[pin] = pwmIndex; /* save pwm index */
-                break;
+            if (used_pwm_port_pins[pwmIndex] == PWM_NOT_IN_USE) {
+				
+				/* Open the PWM port */
+				PWM_Params_init(&pwmParams);
+
+				pwmParams.period = 2040; /* arduino period is 2.04ms (490Hz) */
+				pwmParams.dutyMode = PWM_DUTY_COUNTS;
+				pwmPinCfg.pwmPinId = pwmPinId; /* override HWAttrs pwmPinId */
+				pwmParams.custom = (uintptr_t)&pwmPinCfg;
+				
+                /* PWM_open() will fail if the timer's CCR is already in use */
+                pwmHandle = PWM_open(pwmIndex, &pwmParams);
+
+				if (pwmHandle != NULL) {
+                    /* remember which pinId is being used by this PWM resource */
+                    used_pwm_port_pins[pwmIndex] = pwmPinId; /* save pwm pin info */
+                    /* remember which PWM resource is being used by this pin */
+                    digital_pin_to_pwm_index[pin] = pwmIndex; /* save pwm index */
+				    digital_pin_to_pin_function[pin] = PIN_FUNC_ANALOG_OUTPUT;
+					/* success! */
+                    break;
+				}
+				else {
+				    /* try next PWM index */
+				}
             }
         }
 
         if (pwmIndex > (numPwmChannels-1)) {
             Hwi_restore(hwiKey);
-            return; /* no unused PWM ports */
+            return; /* no available PWM ports */
         }
-
-        /* undo pin's current plumbing */
-        switch (digital_pin_to_pin_function[pin]) {
-            case PIN_FUNC_ANALOG_INPUT:
-                stopAnalogRead(pin);
-                break;
-            case PIN_FUNC_DIGITAL_INPUT:
-                stopDigitalRead(pin);
-                break;
-            case PIN_FUNC_DIGITAL_OUTPUT:
-                stopDigitalWrite(pin);
-                break;
-        }
-        
-        /* Open the PWM port */
-        PWM_Params_init(&params);
-
-        params.period = 2040; /* arduino period is 2.04ms (490Hz) */
-        params.dutyMode = PWM_DUTY_COUNTS;
-        pwmPinCfg.pwmPinId = pwmPinId; /* override HWAttrs pwmPinId */
-        params.custom = (uintptr_t)&pwmPinCfg;
-        
-        PWM_open(pwmIndex, &params);
-        digital_pin_to_pin_function[pin] = PIN_FUNC_ANALOG_OUTPUT;
     }
 
     Hwi_restore(hwiKey);
@@ -205,7 +217,7 @@ void stopAnalogWrite(uint8_t pin)
     /* restore pin table entry with port/pin info */
     digital_pin_to_pwm_index[pin] = used_pwm_port_pins[pwmIndex];
     /* free up pwm resource */
-    used_pwm_port_pins[pwmIndex] = NOT_IN_USE;
+    used_pwm_port_pins[pwmIndex] = PWM_NOT_IN_USE;
 }
 
 /*
