@@ -553,6 +553,8 @@ const PWMTimerCC26XX_HWAttrs pwmCC26xxHWAttrs[CC2650_PWMCOUNT] = {
     {GPT1_BASE, TIMER_B, PowerCC26XX_PERIPH_GPT1, IOID_3},
     {GPT2_BASE, TIMER_A, PowerCC26XX_PERIPH_GPT2, IOID_4},
     {GPT2_BASE, TIMER_B, PowerCC26XX_PERIPH_GPT2, IOID_5},
+    {GPT3_BASE, TIMER_A, PowerCC26XX_PERIPH_GPT3, IOID_6},
+    {GPT3_BASE, TIMER_B, PowerCC26XX_PERIPH_GPT3, IOID_7}
 };
 
 const PWM_Config PWM_config[] = {
@@ -562,6 +564,8 @@ const PWM_Config PWM_config[] = {
     {&PWMTimerCC26XX_fxnTable, &pwmCC26xxObjects[3], &pwmCC26xxHWAttrs[3]},
     {&PWMTimerCC26XX_fxnTable, &pwmCC26xxObjects[4], &pwmCC26xxHWAttrs[4]},
     {&PWMTimerCC26XX_fxnTable, &pwmCC26xxObjects[5], &pwmCC26xxHWAttrs[5]},
+    {&PWMTimerCC26XX_fxnTable, &pwmCC26xxObjects[6], &pwmCC26xxHWAttrs[6]},
+    {&PWMTimerCC26XX_fxnTable, &pwmCC26xxObjects[7], &pwmCC26xxHWAttrs[7]},
     {NULL, NULL, NULL}
 };
 
