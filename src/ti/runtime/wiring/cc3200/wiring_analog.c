@@ -34,6 +34,11 @@
 
 #include <ti/runtime/wiring/wiring_private.h>
 #include "wiring_analog.h"
+
+#include <ti/drivers/PWM.h>
+#include <ti/sysbios/family/arm/m3/Hwi.h>
+#include <ti/sysbios/family/arm/lm4/Timer.h>
+
 #include <inc/hw_types.h>
 #include <inc/hw_memmap.h>
 #include <driverlib/prcm.h>
@@ -41,9 +46,6 @@
 #include <driverlib/pin.h>
 #include <driverlib/timer.h>
 #include <driverlib/adc.h>
-
-#include <ti/drivers/PWM.h>
-#include <ti/sysbios/family/arm/m3/Hwi.h>
 
 /*
  * analogWrite() support
@@ -54,6 +56,8 @@ extern PWM_Config PWM_config[];
 /* Carefully selected hal Timer IDs for tone and servo */
 uint32_t toneTimerId = (~0);  /* use Timer_ANY for tone timer */
 uint32_t servoTimerId = (~0); /* use Timer_ANY for servo timer */
+
+PWM_Handle pwmHandles[8];
 
 /*
  * For the CC3200, the timers used for PWM are clocked at 80MHz.
@@ -69,7 +73,7 @@ uint32_t servoTimerId = (~0); /* use Timer_ANY for servo timer */
 
 void analogWrite(uint8_t pin, int val) 
 {
-    uint8_t timer;
+    uint8_t timer, timerId, pwmBaseIndex;
     uint32_t hwiKey;
 
     hwiKey = Hwi_disable();
@@ -78,44 +82,81 @@ void analogWrite(uint8_t pin, int val)
 
     /* re-configure pin if necessary */
     if (digital_pin_to_pin_function[pin] != PIN_FUNC_ANALOG_OUTPUT) {
-        PWM_Params params;
+        PWM_Params pwmParams;
 
         if (timer == NOT_ON_TIMER) {
             Hwi_restore(hwiKey);
             return;
         }
 
-        uint16_t pnum = digital_pin_to_pin_num[pin]; 
+        uint32_t pnum = digital_pin_to_pin_num[pin];
+		uint32_t pmode;
+		uint32_t timerAvailMask;
+		bool weOwnTheTimer = false;
 
         switch (timer) {
             /* PWM0/1 */
             case TIMERA0A:
             case TIMERA0B:
-                MAP_PinTypeTimer(pnum, PIN_MODE_5);
+				pmode = PIN_MODE_5;
                 break;
             /* PWM2/3 */
             case TIMERA1A:
             case TIMERA1B:
-                MAP_PinTypeTimer(pnum, PIN_MODE_9);
+				pmode = PIN_MODE_9;
                 break;
             /* PWM4/5 */
             case TIMERA2A:
             case TIMERA2B:
-                MAP_PinTypeTimer(pnum, PIN_MODE_3);
+				pmode = PIN_MODE_3;
                 break;
             /* PWM6/7 */
             case TIMERA3A:
             case TIMERA3B:
-                MAP_PinTypeTimer(pnum, PIN_MODE_3);
+				pmode = PIN_MODE_3;
                 break;
         }
 
-        PWM_Params_init(&params);
+		timerId = timer >> 1;
+		pwmBaseIndex = timer & 0xfe;
+		weOwnTheTimer = (pwmHandles[pwmBaseIndex] != NULL) || (pwmHandles[pwmBaseIndex + 1] != NULL);
+		
+		/*
+		 * Verify that the timer is free for us to use
+		 * if timer is available then we can use it.
+		 * if timer is not available and one of our two corresponding
+		 * PWM handles is non-null, then we own the timer and can therefore
+		 * use it.
+		 */
+		timerAvailMask = Timer_getAvailMask();
+
+		if ((timerAvailMask && (1 << timerId)) == 0) {
+		    if (weOwnTheTimer == false) {
+                Hwi_restore(hwiKey);
+                return;
+			}
+		}
+
+		/* We are free to have our way with the pin */
+        MAP_PinTypeTimer(pnum, pmode);
+
+		PWM_Params_init(&pwmParams);
 
         /* Open the PWM port */
-        params.period = 2040; /* arduino period is 2.04ms (490Hz) */
-        params.dutyMode = PWM_DUTY_COUNTS;
-        PWM_open(timer, &params);
+        pwmParams.period = 2040; /* arduino period is 2.04ms (490Hz) */
+        pwmParams.dutyMode = PWM_DUTY_COUNTS;
+
+        pwmHandles[timer] = PWM_open(timer, &pwmParams);
+
+        /* 
+		 * Remove timer from pool of available timers if we
+		 * didn't own it before.
+		 * This will prevent tone() and servo() Timer creates
+		 * from clobbering PWM channels.
+		 */
+        if (weOwnTheTimer == false) {
+            Timer_setAvailMask(timerAvailMask & ~(1 << timerId));
+		}
 
         digital_pin_to_pin_function[pin] = PIN_FUNC_ANALOG_OUTPUT;
     }
@@ -136,9 +177,23 @@ void analogWrite(uint8_t pin, int val)
 void stopAnalogWrite(uint8_t pin)
 {
     uint16_t pwmIndex = digital_pin_to_timer[pin];
+    uint8_t timerId, pwmBaseIndex;
+	bool timerFree;
+	
 
     /* Close PWM port */
     PWM_close((PWM_Handle)&(PWM_config[pwmIndex]));
+
+    pwmHandles[pwmIndex] = NULL;
+
+    /* put timer back in pool of available timers if no longer in use */
+    timerId = pwmIndex >> 1;
+    pwmBaseIndex = pwmIndex & 0xfe;
+	timerFree = (pwmHandles[pwmBaseIndex] == NULL) && (pwmHandles[pwmBaseIndex + 1] == NULL);
+
+	if (timerFree) {
+        Timer_setAvailMask(Timer_getAvailMask() | (1 << timerId));
+	}
 }
 
 /*

@@ -41,6 +41,7 @@ extern "C" {
 
 #define NOT_ON_TIMER    128
 
+/* These timer definitions map directly to PWM indexes */
 #define TIMERA0A 0
 #define TIMERA0B 1
 #define TIMERA1A 2
