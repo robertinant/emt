@@ -1,4 +1,4 @@
-				emt-b07
+				emt-b08
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -129,10 +129,21 @@ DELETIONS
 
 CHANGES
 
-./imports.mak
-	move to TI-RTOS 2.16 and XDCtools 3.32.latest
+bundles/energia/{cc3200|msp432}
+	import Seconds module so users can take advantage of it
 
-ti.runtime.wiring.msp432
-	Rework MSP432 sources to work with msp432_driverlib_3_10_00_09
+bundles/energia/cc26xx
+	Do not reserve a timer for tone()
+
+ti.runtime.wiring.cc26xx
+	Rework to support 8 PWM channels and coordinate timer usage with 
+	servo() and tone()
+
+ti.runtime.wiring
+	add SPI.transfer(buffer,size) method to support more efficient
+	SPI transfers
+
+	Added the digitalPinToInterrupt() macro
+
 
 MRS
