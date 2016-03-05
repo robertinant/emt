@@ -1,6 +1,6 @@
 PROGNAME = wifi
 VARIANT  = RedBearLab_CC3200
-SOURCES  = wifi.cpp blink.cpp main.cpp
+SOURCES  = $(PROGNAME).cpp blink.cpp main.cpp
 
 include ../common.mak
 
