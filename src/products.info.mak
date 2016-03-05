@@ -1,6 +1,6 @@
 #
 # ======== products.mak ========
-# This file defines macros for the instalation folders of all of the 
+# This file defines macros for the installation folders of all of the 
 # prerequisite products required to build this tree
 #
 prefix = **

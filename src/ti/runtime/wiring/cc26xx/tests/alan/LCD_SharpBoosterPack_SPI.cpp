@@ -352,7 +352,7 @@ uint8_t reverse(uint8_t x)
 void LCD_SharpBoosterPack_SPI::flush (void)
 {
     unsigned char *pucData = &DisplayBuffer[0][0];
-    long xi =0;
+//    long xi = 0;
     long xj = 0;
     //image update mode(1X000000b)
     unsigned char command = SHARP_LCD_CMD_WRITE_LINE;
@@ -372,7 +372,7 @@ void LCD_SharpBoosterPack_SPI::flush (void)
         SPI.transfer(pucData, LCD_HORIZONTAL_MAX>>3);
         pucData += LCD_HORIZONTAL_MAX>>3;
 
-//        for(xi=0; xi<(LCD_HORIZONTAL_MAX>>3); xi++)
+//        for (xi=0; xi<(LCD_HORIZONTAL_MAX>>3); xi++)
 //        {
 //            SPI.transfer((char)*(pucData++));
 //        }
