@@ -53,8 +53,8 @@ all: .debug closure
 closure: configPkg
 	@$(RMDIR) $@
 	@echo xs xdc.tools.closure -d $@ $< ...
-#	$(XDCROOT)/xs xdc.tools.closure -d $@ -i ti.drivers.bsp $<
-	$(XDCROOT)/xs xdc.tools.closure --filter=0 -d $@ -i ti.drivers.bsp $<
+	$(XDCROOT)/xs xdc.tools.closure -d $@ -i ti.drivers.bsp $<
+#	$(XDCROOT)/xs xdc.tools.closure --filter=0 -d $@ -i ti.drivers.bsp $<
 
 	$(XDCROOT)/bin/xdccpp $(wildcard $(VARIANTS)/*) $@
 
