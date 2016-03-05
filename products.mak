@@ -25,6 +25,7 @@ CCSROOT := $(subst \,/,$(CCSROOT))
 
 TIRTOS  ?= $(call latest, c:/ti/tirtos_msp430_2_12_*)
 XDCROOT  = $(call latest, $(CCSROOT)/xdctools_*/.)
+INO2CPP  = $(call latest, $(CCSROOT)/energia-0101E0018*/.)/tools/ino2cpp/ino2cpp.sh
 
 DRVLIB.msp432 = $(wildcard $(TIRTOS)/products/MSPWare*)
 DRVLIB.cc3200 = $(wildcard $(TIRTOS)/products/CC32*)
@@ -37,11 +38,11 @@ ifeq (,$(XDCROOT))
     #
     # UNIX TISB tree build support
     #
+    INO2CPP = $(TREE_ROOT)/imports/ino2cpp/ino2cpp.sh
     XDCROOT = $(TOOLS)/vendors/xdc/xdctools_3_32_01_10_eng/$(BUILD_HOST_OS)
     TIRTOS  = $(firstword $(wildcard $(TREES)/zumaprod/zumaprod-j04/exports/tirtos_full_*))
     SYSBIOS = $(wildcard $(TIRTOS)/products/bios_6_*)
     TIDRIVERS = $(wildcard $(TIRTOS)/products/tidrivers_*)
-#    TIDRIVERS = /db/vtree/dr/drivers-dr/exports/tidrivers_full_2_15_00_26
 
     DRVLIB.msp432 = $(wildcard $(TIRTOS)/products/msp432_driverlib*)
     DRVLIB.cc3200 = $(wildcard $(TIRTOS)/products/CC32*)
@@ -61,15 +62,21 @@ gnu.targets.arm.M3     = $(gnu.targets.arm.M4F)
 ifeq (,$(wildcard $(XDCROOT)))
     $(error XDCROOT, '$(XDCROOT)', does not reference a valid directory)
 endif
-ifeq (,$(wildcard $(TIRTOS)))
+
+ifneq (,$(filter-out clean .clean,$(MAKECMDGOALS)))
+  ifeq (,$(wildcard $(INO2CPP)))
+    $(warning INO2CPP, '$(INO2CPP)', does not reference a valid file)
+  endif
+  ifeq (,$(wildcard $(TIRTOS)))
     $(error TIRTOS, '$(TIRTOS)', does not reference a valid directory)
-endif
-ifeq (,$(wildcard $(DRVLIB.msp432)))
+  endif
+  ifeq (,$(wildcard $(DRVLIB.msp432)))
     $(error DRVLIB.msp432, '$(DRVLIB.msp432)', does not reference a valid directory)
-endif
-ifeq (,$(wildcard $(DRVLIB.cc3200)))
+  endif
+  ifeq (,$(wildcard $(DRVLIB.cc3200)))
     $(error DRVLIB.cc3200, '$(DRVLIB.cc3200)', does not reference a valid directory)
-endif
-ifeq (,$(wildcard $(DRVLIB.cc26xx)))
+  endif
+  ifeq (,$(wildcard $(DRVLIB.cc26xx)))
     $(error DRVLIB.cc26xx, '$(DRVLIB.cc26xx)', does not reference a valid directory)
+  endif
 endif

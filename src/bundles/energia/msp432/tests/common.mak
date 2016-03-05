@@ -17,8 +17,10 @@ TREE_ROOT = $(firstword $(subst /src/, /src/,$(CURDIR)))
 include ../../tools.mak
 
 # look for portable sources in the energia/tests directory
-vpath %c ../../../tests/$(PROGNAME)
-vpath %cpp ../../../tests/$(PROGNAME)
+SRCDIR = ../../../tests/$(PROGNAME)
+vpath %.c $(SRCDIR)
+vpath %.cpp $(SRCDIR)
+vpath %.ino $(SRCDIR)
 
 # if not already defined, define the macros to work in the emt repo
 CLOSURE ?= ../../closure
@@ -26,6 +28,14 @@ CLOSURE ?= ../../closure
 # tell make where to find source files
 vpath %.c   $(CURDIR)
 vpath %.cpp $(CURDIR)
+
+# determine if we need to convert .ino files to cpp
+ISINO = "false"
+ifneq (,$(wildcard $(INO2CPP)))
+  ifneq (,$(wildcard $(SRCDIR)/*.ino))
+    ISINO = "true"
+  endif
+endif
 
 VARIANT ?= MSP_EXP432P401R
 PROGNAME ?= blink
@@ -59,7 +69,7 @@ ifeq (,$(OBJTOOL))
 endif
 
 ifeq (sh.exe,$(SHELL))
-    RM := cmd.exe /c DEL /F
+    RM := cmd.exe /c DEL /F/Q
     RMDIR := cmd.exe /c RMDIR /S/Q
 else
     RM := rm -f
@@ -68,8 +78,17 @@ endif
 
 OBJS = $(patsubst %.ino,%.obj,$(patsubst %.cpp,%.obj,$(SOURCES)))
 
+## ensure objects are not implicitly removed by make
+.PRECIOUS: $(OBJS)
+
 # build rules
 all: $(PROGNAME).out $(PROGNAME).size
+
+ifeq ("true",$(ISINO))
+  $(PROGNAME).cpp main.cpp: $(PROGNAME).ino 
+	@echo making $@ ...
+	$(INO2CPP) -E -o . $(SRCDIR) msp432:$(VARIANT)
+endif
 
 %.size: %.out makefile
 	-@$(OBJTOOL) -x $(CCROOT)/bin/arm-none-eabi-objdump $<
@@ -92,3 +111,7 @@ clean:
 	-@$(RM) *.out
 	-@$(RM) *.map
 	-@$(RM) *.size
+ifeq ("true",$(ISINO))
+	-@$(RM) $(PROGNAME).cpp main.cpp
+	-@$(RM) Variables.mk
+endif

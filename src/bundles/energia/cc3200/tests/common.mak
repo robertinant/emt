@@ -17,8 +17,10 @@ TREE_ROOT = $(firstword $(subst /src/, /src/,$(CURDIR)))
 include ../../tools.mak
 
 # look for portable sources in the energia/tests directory
-vpath %c ../../../tests/$(PROGNAME)
-vpath %cpp ../../../tests/$(PROGNAME)
+SRCDIR = ../../../tests/$(PROGNAME)
+vpath %.c $(SRCDIR)
+vpath %.cpp $(SRCDIR)
+vpath %.ino $(SRCDIR)
 
 # if not already defined, define the macros to work in the emt repo
 CLOSURE ?= ../../closure
@@ -26,6 +28,14 @@ CLOSURE ?= ../../closure
 # tell make where to find source files
 vpath %.c   $(CURDIR)
 vpath %.cpp $(CURDIR)
+
+# determine if we need to convert .ino files to cpp
+ISINO = "false"
+ifneq (,$(wildcard $(INO2CPP)))
+  ifneq (,$(wildcard $(SRCDIR)/*.ino))
+    ISINO = "true"
+  endif
+endif
 
 # Supported variants include:
 #    CC3200_LAUNCHXL	  - TI LaunchPad
@@ -73,8 +83,17 @@ endif
 
 OBJS = $(patsubst %.ino,%.obj,$(patsubst %.cpp,%.obj,$(SOURCES)))
 
+## ensure objects are not implicitly removed by make
+.PRECIOUS: $(OBJS)
+
 # build rules
 all: $(PROGNAME).out $(PROGNAME).size
+
+ifeq ("true",$(ISINO))
+  $(PROGNAME).cpp main.cpp: $(PROGNAME).ino 
+	@echo making $@ ...
+	$(INO2CPP) -E -o . $(SRCDIR) cc3200emt:$(VARIANT)
+endif
 
 %.bin: %.out
 	@echo making $@ ...
@@ -102,3 +121,7 @@ clean:
 	-@$(RM) *.map
 	-@$(RM) *.size
 	-@$(RM) $(PROGNAME).bin
+ifeq ("true",$(ISINO))
+	-@$(RM) $(PROGNAME).cpp main.cpp
+	-@$(RM) Variables.mk
+endif

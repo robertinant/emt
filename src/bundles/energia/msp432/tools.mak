@@ -3,6 +3,7 @@
 #      CCROOT  - an arm compiler (TI 5.2.5 or gcc 4.8)
 #      DRVLIB  - the MSP432 driverlib product install directory
 #      XDCROOT - XDCtools (version 3.30.05 or above)
+#      INO2CPP - command to convert .ino sketch files to .cpp files
 #      TIRTOS  - TI-RTOS for MSP432
 #      EMTROOT - the packages/ folder in the EMT product
 #
