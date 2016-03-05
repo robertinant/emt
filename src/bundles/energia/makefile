@@ -2,7 +2,7 @@
 PLATFORMS ?= cc26xx msp432 cc3200 
 
 ifeq (,$(TESTS))
-    TESTS        = blink hello alloc string
+    TESTS        = blink hello alloc string pstring MultiBlink 
     TESTS.cc3200 = zumo wifi
 endif
 
