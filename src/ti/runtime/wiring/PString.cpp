@@ -37,4 +37,3 @@ size_t PString::write(uint8_t b)
 
     return 0;
 }
-

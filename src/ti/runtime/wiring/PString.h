@@ -21,10 +21,7 @@
 #define PString_h
 
 #include "Print.h"
-#include <stdarg.h>
 #include <stddef.h>
-#include <stdio.h>
-#include <string.h>
 
 #define PSTRING_LIBRARY_VERSION 3
 
@@ -33,10 +30,10 @@ class PString : public Print
 private:
     char *_buf, *_cur;
     size_t _size;
-public:
-    virtual size_t write(uint8_t);
 
 public:
+    using Print::write; // lift all default implementations of write()
+    virtual size_t write(uint8_t); // override just write(uint8_t)
 
     // Basic constructor requires a preallocated buffer
     PString(char *buf, size_t size) : _buf(buf), _size(size)
@@ -50,11 +47,11 @@ public:
     { begin(); print(arg, modifier); }
 
     // returns the length of the current string, not counting the 0 terminator
-    inline const size_t length() 
+    inline size_t length() 
     { return _cur - _buf; }
 
     // returns the capacity of the string
-    inline const size_t capacity() 
+    inline size_t capacity() 
     { return _size; }
 
     // gives access to the internal string

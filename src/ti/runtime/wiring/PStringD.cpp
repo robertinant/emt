@@ -21,6 +21,7 @@
  * Put 'format' into its own file to avoid always bringing in System_vsnprintf()
  */
 #include "PString.h"
+#include <stdarg.h>
 #include <xdc/runtime/System.h>
 
 int PString::format(char *str, ...) 
