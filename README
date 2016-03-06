@@ -1,4 +1,4 @@
-				emt-b08
+				emt-b09
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -125,25 +125,24 @@ Librarian releases
 
 ADDITIONS
 
+ti.runtime.wiring
+	Added the PString library to enable much more efficient text line
+	assembly using standard Arduino print() and println() APIs.
+
+bundles
+	added INO2CPP build support
+
+	added PString and MultiBlink .ino tests
+
 DELETIONS
 
 CHANGES
 
-bundles/energia/{cc3200|msp432}
-	import Seconds module so users can take advantage of it
+bundles
+	misc makefile cleanup
 
-bundles/energia/cc26xx
-	Do not reserve a timer for tone()
-
-ti.runtime.wiring.cc26xx
-	Rework to support 8 PWM channels and coordinate timer usage with 
-	servo() and tone()
-
-ti.runtime.wiring
-	add SPI.transfer(buffer,size) method to support more efficient
-	SPI transfers
-
-	Added the digitalPinToInterrupt() macro
-
+ti.runtime.wiring.cc3200.tests
+	Modified the monitor source file to be easily compiled for either
+	Serial or Serial1.
 
 MRS

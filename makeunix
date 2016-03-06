@@ -9,7 +9,7 @@ TIRTOS_REPOS = $(TIRTOS)/packages;$(SYSBIOS)/packages;$(TIDRIVERS)/packages
 
 MYXDC = $(XDCROOT)/xdc XDCPATH="$(CURDIR)/src;$(TIRTOS_REPOS)"
 
-JOBS = --jobs=4
+JOBS = --jobs=1
 
 .all-files: .imports .exports .generated_files
 
