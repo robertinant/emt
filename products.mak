@@ -30,6 +30,7 @@ INO2CPP  = $(call latest, $(CCSROOT)/energia-0101E0018*/.)/tools/ino2cpp/ino2cpp
 DRVLIB.msp432 = $(wildcard $(TIRTOS)/products/MSPWare*)
 DRVLIB.cc3200 = $(wildcard $(TIRTOS)/products/CC32*)
 DRVLIB.cc26xx = $(wildcard $(TIRTOS)/products/cc26*)
+DRVLIB.cc13xx = $(wildcard $(TIRTOS)/products/cc13*)
 
 ti.targets.arm.elf.M4F = $(call latest,$(CCSROOT)/ccsv6/tools/compiler/*arm_5.*)
 gnu.targets.arm.M4F    = $(call latest,$(CCSROOT)/ccsv6/tools/compiler/gcc-arm-*)
@@ -47,6 +48,7 @@ ifeq (,$(XDCROOT))
     DRVLIB.msp432 = $(wildcard $(TIRTOS)/products/msp432_driverlib*)
     DRVLIB.cc3200 = $(wildcard $(TIRTOS)/products/CC32*)
     DRVLIB.cc26xx = $(wildcard $(TIRTOS)/products/cc26*)
+    DRVLIB.cc13xx = $(wildcard $(TIRTOS)/products/cc13*)
     ti.targets.arm.elf.M4F = $(TOOLS)/vendors/ti/arm/5.2.2/$(BUILD_HOST_OS)
     gnu.targets.arm.M4F    = $(TOOLS)/vendors/linaro/4.8-2014q3/$(BUILD_HOST_OS)
 endif
@@ -78,5 +80,8 @@ ifneq (,$(filter-out clean .clean,$(MAKECMDGOALS)))
   endif
   ifeq (,$(wildcard $(DRVLIB.cc26xx)))
     $(error DRVLIB.cc26xx, '$(DRVLIB.cc26xx)', does not reference a valid directory)
+  endif
+  ifeq (,$(wildcard $(DRVLIB.cc13xx)))
+    $(error DRVLIB.cc26xx, '$(DRVLIB.cc13xx)', does not reference a valid directory)
   endif
 endif

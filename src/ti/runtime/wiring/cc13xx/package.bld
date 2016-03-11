@@ -1,0 +1,6 @@
+/*
+ *  ======== package.bld ========
+ */
+var cc13xx = xdc.loadCapsule("cc13xx.bld");
+
+cc13xx.addLibs([".", "..", "../avr"], {name: "lib/wiring_cc13xx"});

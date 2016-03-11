@@ -1,5 +1,5 @@
 # define default set of platforms, compiler toolchains, and tests to build
-PLATFORMS ?= cc26xx msp432 cc3200 
+PLATFORMS ?= cc13xx cc26xx msp432 cc3200 
 
 ifeq (,$(TESTS))
     TESTS        = blink hello alloc string pstring MultiBlink 

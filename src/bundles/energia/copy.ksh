@@ -33,7 +33,7 @@ else
     mkdir $EMTDIR
 fi
 
-FILES="cc3200/closure msp432/closure cc26xx/closure"
+FILES="cc3200/closure msp432/closure cc26xx/closure cc13xx/closure"
 
 for FILE in $FILES; do
     echo $FILE
