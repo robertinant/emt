@@ -82,6 +82,6 @@ ifneq (,$(filter-out clean .clean,$(MAKECMDGOALS)))
     $(error DRVLIB.cc26xx, '$(DRVLIB.cc26xx)', does not reference a valid directory)
   endif
   ifeq (,$(wildcard $(DRVLIB.cc13xx)))
-    $(error DRVLIB.cc26xx, '$(DRVLIB.cc13xx)', does not reference a valid directory)
+    $(error DRVLIB.cc13xx, '$(DRVLIB.cc13xx)', does not reference a valid directory)
   endif
 endif

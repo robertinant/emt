@@ -27,7 +27,7 @@ JOBS = --jobs=1
 
 # ======== .local-release ========
 # Builds all packages and releases
-.local-release: .local-all imports.mak
+.local-release: .local-all imports.mak .imports
 	@echo making emt_src bundle ...
 	make -C src/bundles/emt_src release
 	@echo making energia closures ...
