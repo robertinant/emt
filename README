@@ -1,4 +1,4 @@
-				emt-b09
+				emt-b10
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -125,24 +125,12 @@ Librarian releases
 
 ADDITIONS
 
-ti.runtime.wiring
-	Added the PString library to enable much more efficient text line
-	assembly using standard Arduino print() and println() APIs.
-
-bundles
-	added INO2CPP build support
-
-	added PString and MultiBlink .ino tests
+*
+	Added cc13xx support (minus .ino test support: Energia updates are 
+	needed)
 
 DELETIONS
 
 CHANGES
-
-bundles
-	misc makefile cleanup
-
-ti.runtime.wiring.cc3200.tests
-	Modified the monitor source file to be easily compiled for either
-	Serial or Serial1.
 
 MRS
