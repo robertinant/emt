@@ -79,6 +79,15 @@ gnuTargets.M4.lnkOpts.suffix  += " -Wl,--no-wchar-size-warning";
 gnuTargets.M3.lnkOpts.suffix  += " -Wl,--no-wchar-size-warning";
 
 /* define the set of targets for which to build */
+gnuTargets.M3.platform = "ti.platforms.emt26xx";
+tiTargets.M3.platform =  "ti.platforms.emt26xx";
+
+gnuTargets.M4F.platform = "ti.platforms.emt432";
+tiTargets.M4F.platform =  "ti.platforms.emt432";
+
+gnuTargets.M4.platform = "ti.platforms.emt3200";
+tiTargets.M4.platform =  "ti.platforms.emt3200";
+
 if (Pkg.name.match(/432/)) {
     if (gnuTargets.M4F.rootDir != null) Build.targets.$add(gnuTargets.M4F);
     if (tiTargets.M4F.rootDir != null)  Build.targets.$add(tiTargets.M4F);
@@ -86,14 +95,14 @@ if (Pkg.name.match(/432/)) {
 else if (Pkg.name.match(/3200/)) {
     if (gnuTargets.M4.rootDir != null) Build.targets.$add(gnuTargets.M4);
     if (tiTargets.M4.rootDir != null)  Build.targets.$add(tiTargets.M4);
-    gnuTargets.M3.platform = "ti.platforms.emt26xx";
-    tiTargets.M3.platform =  "ti.platforms.emt26xx";
 }
-else if (Pkg.name.match(/26xx/) || Pkg.name.match(/13xx/)) {
+else if (Pkg.name.match(/26xx/) || (Pkg.name.match(/13xx/))) {
     if (gnuTargets.M3.rootDir != null) Build.targets.$add(gnuTargets.M3);
     if (tiTargets.M3.rootDir != null)  Build.targets.$add(tiTargets.M3);
-    gnuTargets.M3.platform = "ti.platforms.emt13xx";
-    tiTargets.M3.platform =  "ti.platforms.emt13xx";
+    if (Pkg.name.match(/13xx/)) {
+	gnuTargets.M3.platform = "ti.platforms.emt13xx";
+	tiTargets.M3.platform =  "ti.platforms.emt13xx";
+    }
 }
 else if (Pkg.name.match(/\.runtime\./)) {
     if (gnuTargets.M4F.rootDir != null) Build.targets.$add(gnuTargets.M4F);
@@ -109,11 +118,6 @@ else {
     Build.useTargets = null;
 }
 
-gnuTargets.M4F.platform = "ti.platforms.emt432";
-tiTargets.M4F.platform =  "ti.platforms.emt432";
-
-gnuTargets.M4.platform = "ti.platforms.emt3200";
-tiTargets.M4.platform =  "ti.platforms.emt3200";
 
 
 /* For now, the default is to export everthing */
