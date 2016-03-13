@@ -2,8 +2,10 @@
 PLATFORMS ?= cc13xx cc26xx msp432 cc3200 
 
 ifeq (,$(TESTS))
-    TESTS        = blink hello alloc string pstring MultiBlink 
-    TESTS.cc3200 = zumo wifi
+    TESTS        = blink hello alloc string 
+    TESTS.cc3200 = zumo wifi pstring MultiBlink 
+    TESTS.msp432 = pstring MultiBlink 
+    TESTS.cc26xx = pstring MultiBlink 
 endif
 
 # define (optional) tools to run on output files to summarize footprint
