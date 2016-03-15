@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Texas Instruments Incorporated
+ * Copyright (c) 2016, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,9 +32,7 @@
 /** ============================================================================
  *  @file       Board.h
  *
- *  @brief      CC2650SENSORTAG Board Specific header file.
- *
- *  NB! This is the board file for PCB version 1.2
+ *  @brief      CC2650 LaunchPad Board Specific header file.
  *
  *  The CC2650 header file should be included in an application as follows:
  *  @code
@@ -46,8 +44,17 @@
 #ifndef __BOARD_H__
 #define __BOARD_H__
 
+#include <ti/drivers/UART.h>
+#include <ti/drivers/I2C.h>
+#include <ti/drivers/SPI.h>
+
 #ifdef __cplusplus
 extern "C" {
+#endif
+
+#ifndef __TI_COMPILER_VERSION__
+#undef gcc
+#define gcc 1
 #endif
 
 /** ============================================================================
@@ -66,93 +73,66 @@ extern PIN_Config BoardGpioInitTable[];
  *  ==========================================================================*/
 
 /* Symbol by generic Board.c to include the correct PCB  specific Board.c */
-#define CC2650ST_0120
 
-/* Identify as SensorTag */
-#define CC2650ST_7ID
-
-/* This PCB version supports magnetometer */
-#define FEATURE_MAGNETOMETER
-
-/* External flash manufacturer and device ID */
-#define EXT_FLASH_MAN_ID            0xEF
-#define EXT_FLASH_DEV_ID            0x12
+/* Same RF Configuration as 7x7 EM */
+#define CC2650EM_7ID
 
 /* Mapping of pins to board signals using general board aliases
  *      <board signal alias>                <pin mapping>
  */
 
 /* Discrete outputs */
-#define Board_LED1                  IOID_10
-#define Board_LED2                  IOID_15
-#define Board_BUZZER                IOID_21
+#define Board_LED1                  IOID_6
+#define Board_LED2                  IOID_7
+#define Board_RLED                  IOID_6
+#define Board_GLED                  IOID_7
 #define Board_LED_ON                1
 #define Board_LED_OFF               0
-#define Board_BUZZER_ON             1
-#define Board_BUZZER_OFF            0
 
 /* Discrete inputs */
-#define Board_KEY_LEFT              IOID_0
-#define Board_KEY_RIGHT             IOID_4
-#define Board_RELAY                 IOID_3
-
-/* Sensor outputs */
-#define Board_MPU_INT               IOID_7
-#define Board_TMP_RDY               IOID_1
+#define Board_BTN1                  IOID_13
+#define Board_BTN2                  IOID_14
 
 /* I2C */
 #define Board_I2C0_SDA0             IOID_5
-#define Board_I2C0_SCL0             IOID_6
-#define Board_I2C0_SDA1             IOID_8
-#define Board_I2C0_SCL1             IOID_9
+#define Board_I2C0_SCL0             IOID_4
 
 /* SPI */
-#define Board_SPI_FLASH_CS          IOID_14
-#define Board_SPI_DEVPK_CS          IOID_20
-#define Board_FLASH_CS_ON           0
-#define Board_FLASH_CS_OFF          1
+#define Board_SPI0_MISO             IOID_8
+#define Board_SPI0_MOSI             IOID_9
+#define Board_SPI0_CLK              IOID_10
+#define Board_SPI0_CSN              PIN_UNASSIGNED
 
-#define Board_SPI0_MISO             IOID_18
-#define Board_SPI0_MOSI             IOID_19
-#define Board_SPI0_CLK              IOID_17
+#define Board_SPI1_MISO             PIN_UNASSIGNED
+#define Board_SPI1_MOSI             PIN_UNASSIGNED
+#define Board_SPI1_CLK              PIN_UNASSIGNED
+#define Board_SPI1_CSN              PIN_UNASSIGNED
 
-/* UART (when connected to SRF06EB) */
-#define Board_EB_UART_TX            IOID_16
-#define Board_EB_UART_RX            IOID_17
+/* PWM pins */
+#define Board_PWM0_PIN              IOID_0
+#define Board_PWM1_PIN              IOID_1
+#define Board_PWM2_PIN              IOID_2
+#define Board_PWM3_PIN              IOID_3
+#define Board_PWM4_PIN              IOID_4
+#define Board_PWM5_PIN              IOID_5
+#define Board_PWM6_PIN              IOID_6
+#define Board_PWM7_PIN              IOID_7
 
-/* DevPack */
-#define Board_AUDIOFS_TDO           IOID_16
-#define Board_AUDIODO               IOID_22
-#define Board_DP2                   IOID_23
-#define Board_DP1                   IOID_24
-#define Board_DP0                   IOID_25
-#define Board_DP3                   IOID_27
-#define Board_DP4_UARTRX            IOID_28
-#define Board_DP5_UARTTX            IOID_29
-#define Board_DEVPK_ID              IOID_30
-
-/* Power control */
-#define Board_MPU_POWER             IOID_12
-#define Board_MPU_POWER_ON          1
-#define Board_MPU_POWER_OFF         0
-
-/* Audio */
-#define Board_MIC_POWER             IOID_13
-#define Board_MIC_POWER_ON          1
-#define Board_MIC_POWER_OFF         0
-#define Board_AUDIO_DI              IOID_2
-#define Board_AUDIO_CLK             IOID_11
-
+/* UART pins used by driver */
+#define Board_UART_TX               IOID_3
+#define Board_UART_RX               IOID_2
 
 /** ============================================================================
  *  Instance identifiers
  *  ==========================================================================*/
 /* Generic I2C instance identifiers */
-#define Board_I2C                   CC2650_I2C0
+#define Board_I2C                   CC2650_LAUNCHXL_I2C0
 /* Generic SPI instance identifiers */
-#define Board_SPI0                  CC2650_SPI0
+#define Board_SPI0                  CC2650_LAUNCHXL_SPI0
 /* Generic UART instance identifiers */
-#define Board_UART                  CC2650_UART0
+#define Board_UART                  CC2650_LAUNCHXL_UART0
+/* Generic PWM instance identifiers */
+#define Board_PWM                   CC2650_LAUNCHXL_PWM0
 
 
 /** ============================================================================
@@ -163,40 +143,79 @@ extern PIN_Config BoardGpioInitTable[];
  *  @def    CC2650_I2CName
  *  @brief  Enum of I2C names on the CC2650 dev board
  */
-typedef enum CC2650_I2CName {
-    CC2650_I2C0 = 0,
-    CC2650_I2CCOUNT
-} CC2650_I2CName;
+typedef enum CC2650_LAUNCHXL_I2CName {
+    CC2650_LAUNCHXL_I2C0 = 0,
+    CC2650_LAUNCHXL_I2CCOUNT
+} CC2650_LAUNCHXL_I2CName;
+
+/*!
+ *  @def    CC2650_CryptoName
+ *  @brief  Enum of Crypto names on the CC2650 dev board
+ */
+typedef enum CC2650_LAUNCHXL_CryptoName {
+    CC2650_LAUNCHXL_CRYPTO0 = 0,
+    CC2650_LAUNCHXL_CRYPTOCOUNT
+} CC2650_LAUNCHXL_CryptoName;
+
 
 /*!
  *  @def    CC2650_SPIName
  *  @brief  Enum of SPI names on the CC2650 dev board
  */
-typedef enum CC2650_SPIName {
-    CC2650_SPI0 = 0,
-    CC2650_SPICOUNT
-} CC2650_SPIName;
+typedef enum CC2650_LAUNCHXL_SPIName {
+    CC2650_LAUNCHXL_SPI0 = 0,
+    CC2650_LAUNCHXL_SPICOUNT
+} CC2650_LAUNCHXL_SPIName;
 
 /*!
  *  @def    CC2650_UARTName
  *  @brief  Enum of UARTs on the CC2650 dev board
  */
-typedef enum CC2650_UARTName {
-    CC2650_UART0 = 0,
-    CC2650_UARTCOUNT
-} CC2650_UARTName;
+typedef enum CC2650_LAUNCHXL_UARTName {
+    CC2650_LAUNCHXL_UART0 = 0,
+    CC2650_LAUNCHXL_UARTCOUNT
+} CC2650_LAUNCHXL_UARTName;
 
 /*!
  *  @def    CC2650_UdmaName
  *  @brief  Enum of DMA buffers
  */
-typedef enum CC2650_UdmaName {
-    CC2650_UDMA0 = 0,
-    CC2650_UDMACOUNT
-} CC2650_UdmaName;
+typedef enum CC2650_LAUNCHXL_UdmaName {
+    CC2650_LAUNCHXL_UDMA0 = 0,
+    CC2650_LAUNCHXL_UDMACOUNT
+} CC2650_LAUNCHXL_UdmaName;
+
+/*!
+ *  @def    CC2650_PWMName
+ *  @brief  Enum of PWM pin names on the CC2650 dev board
+ */
+typedef enum CC2650_LAUNCHXL_PWMName {
+    CC2650_LAUNCHXL_PWM0 = 0, /* PWM output from TIMERA0 side A */
+    CC2650_LAUNCHXL_PWM1 = 1, /* PWM output from TIMERA0 side B */
+    CC2650_LAUNCHXL_PWM2 = 2, /* PWM output from TIMERA1 side A */
+    CC2650_LAUNCHXL_PWM3 = 3, /* PWM output from TIMERA1 side B */
+    CC2650_LAUNCHXL_PWM4 = 4, /* PWM output from TIMERA2 side A */
+    CC2650_LAUNCHXL_PWM5 = 5, /* PWM output from TIMERA2 side B */
+    CC2650_LAUNCHXL_PWM6 = 6, /* PWM output from TIMERA3 side A */
+    CC2650_LAUNCHXL_PWM7 = 7, /* PWM output from TIMERA3 side B */
+    CC2650_LAUNCHXL_PWMCOUNT
+} CC2650_LAUNCHXL_PWMName;
 
 #ifdef __cplusplus
 }
 #endif
+
+/* These #defines allow us to reuse TI-RTOS across other device families */
+#define     Board_LED0              Board_LED1
+
+#define     Board_BUTTON0           Board_BTN1
+#define     Board_BUTTON1           Board_BTN2
+
+#define     Board_I2C0              Board_I2C
+#define     Board_UART0             Board_UART
+#define     Board_WATCHDOG0         Board_WATCHDOG
+
+#define     Board_initGeneral()     PIN_init(BoardGpioInitTable)
+#define     Board_initWatchdog()    Watchdog_init()
 
 #endif /* __BOARD_H__ */
