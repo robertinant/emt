@@ -224,14 +224,14 @@ void analogWrite(uint8_t pin, int val)
         /*
          * Assume that the timer was already in use by someone else.
          * mark all associated CCRs busy so we don't keep re-trying this
-		 * timer's pwmIndexes.
+         * timer's pwmIndexes.
          */
         if (pwmHandle == NULL) {
-		    pwmIndex &= 0xfc; /* start at base of this timer's PWM indexes */
-		    used_pwm_port_pins[pwmIndex++] = PWM_IN_USE;
-		    used_pwm_port_pins[pwmIndex++] = PWM_IN_USE;
-		    used_pwm_port_pins[pwmIndex++] = PWM_IN_USE;
-		    used_pwm_port_pins[pwmIndex] = PWM_IN_USE;
+            pwmIndex &= 0xfc; /* start at base of this timer's PWM indexes */
+            used_pwm_port_pins[pwmIndex++] = PWM_IN_USE;
+            used_pwm_port_pins[pwmIndex++] = PWM_IN_USE;
+            used_pwm_port_pins[pwmIndex++] = PWM_IN_USE;
+            used_pwm_port_pins[pwmIndex] = PWM_IN_USE;
             Hwi_restore(hwiKey);
             return;
         }
