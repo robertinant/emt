@@ -45,7 +45,7 @@
 #define WW_CMD 1     /* Wire write cmd */
 #define SPI_CMD 1    /* SPI transfer cmd */
 #define PRI_CMD 1    /* Set Task priority cmd */
-#define STATS_CMD 0  /* CPU and task utilzation stats cmd */
+#define STATS_CMD 1  /* CPU and task utilzation stats cmd */
 #define ALOG_CMD 1   /* log analog value cmd */
 
 #define MAX_COMMAND_LEN 48
