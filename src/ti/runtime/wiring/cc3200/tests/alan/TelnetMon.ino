@@ -1,4 +1,5 @@
 #include <Energia.h>
+#include <Wire.h>
 #include <WiFi.h>
 
 #include <xdc/std.h>
@@ -31,6 +32,8 @@
 #define WM_CMD 1     /* write to memory cmd */
 #define DRW_CMDS 1   /* digital read/write cmds */
 #define ARW_CMDS 1   /* analog read/write cmds */
+#define WR_CMD 1     /* Wire read cmd */
+#define WW_CMD 1     /* Wire write cmd */
 #define SPI_CMD 1    /* SPI transfer cmd */
 #define PRI_CMD 1    /* Set Task priority cmd */
 #define STATS_CMD 1  /* CPU and task utilzation stats cmd */
@@ -81,6 +84,18 @@ static int consoleHandler_stats(const char *line);
 static int consoleHandler_spi(const char *line);
 #endif
 
+#if WW_CMD == 1
+static int consoleHandler_ww(const char *line);
+#endif
+
+#if WR_CMD == 1
+static int consoleHandler_wr(const char *line);
+#endif
+
+#if (WR_CMD == 1) || (WW_CMD == 1)
+static bool wireBegun = false;
+#endif
+
 #if PRI_CMD == 1
 static int consoleHandler_pri(const char *line);
 #endif
@@ -128,6 +143,12 @@ static const struct {
 #if SPI_CMD == 1
     GEN_COMMTABLE_ENTRY(spi,     "SPI transfer",                "usage: spi <cs pin> <data>"),
 #endif
+#if WR_CMD == 1
+    GEN_COMMTABLE_ENTRY(wr,      "Wire read",                   "usage: wr <addr>"),
+#endif
+#if WW_CMD == 1
+    GEN_COMMTABLE_ENTRY(ww,      "Wire write",                  "usage: ww <addr> <data> <data> <...>"),
+#endif
 #if STATS_CMD == 1
     GEN_COMMTABLE_ENTRY(stats,   "Print CPU utlization info",   "usage: stats"),
 #endif
@@ -135,8 +156,8 @@ static const struct {
     {NULL,NULL,NULL,NULL}   // Indicates end of table
 };
 
-void printWifiStatus1();
-void waitForTelnetClient();
+static void printWifiStatus();
+static void waitForTelnetClient();
 
 //#define ACCESS_POINT_MODE
 
@@ -158,8 +179,7 @@ WiFiClient client;
 
 //-------Setup---------------------------------------------------------
 void setupTelnetMon() {
-  Serial.begin(115200);   // Initialize Serial 9600 BAUD
-  while (!Serial) {;}     // Wait for Serial to connect
+    Serial.begin(115200);   // Initialize Serial 9600 BAUD
 
 #ifdef ACCESS_POINT_MODE
     Serial.print("Setting up Access Point named: ");
@@ -197,7 +217,7 @@ void setupTelnetMon() {
     }
 
     Serial.println("\nIP Address obtained");
-    printWifiStatus1();           // Print Connected Status
+    printWifiStatus();           // Print Connected Status
 
     Serial.println("Starting Telnet Server");
     telnetServer.begin();         // Start the Server
@@ -208,20 +228,22 @@ void setupTelnetMon() {
     waitForTelnetClient();
 }
 
-void waitForTelnetClient() {
+static void waitForTelnetClient() {
     Serial.println("Waiting for telnet connection.");
     while ((client = telnetServer.available()) == 0) {
         delay(30);
     }
 
-    // When the client sends the first byte, say hello:
-    client.flush();          // clead out the input buffer:
+//    client.available();      // pull in telnet settings info
+    client.flush();          // dump settings until I know how to process them
+    client.print(0xff), client.print(0xFE), client.print(0x23); // "DON'T" linemode 
+    client.print(0xff), client.print(0xFE), client.print(0x01);
     Serial.println("Telnet connection successful!");
     client.println("Welcome! This is the Telnet debug console.");
 }
 
 //-------Print WiFi Status Subroutine-------------------------------------------------
-void printWifiStatus1() {
+static void printWifiStatus() {
     Serial.print("WiFi.status(): ");
     Serial.println(WiFi.status());
 
@@ -257,17 +279,25 @@ void loopTelnetMon()
     int char_index = 0;
     bool line_end = false;
     int escape_index = 0;
-
+    int avail;
+    
     while (true) {
-        if ((client = telnetServer.available()) == 0) {
+        if (client.connected() == false) {
             Serial.println("Telnet client disconnected.");
-            printWifiStatus1();
+            printWifiStatus();
             waitForTelnetClient();
         }
 		
-        if (client.available() == false) continue;
-		
+        if ((avail = client.available()) == 0) continue;
+
+        Serial.print("avail = ");
+        Serial.print(avail);
+        Serial.print(" ");
+        
         char c = client.read();
+        Serial.print("c = ");
+        Serial.print(c,HEX);
+        Serial.println(" ");
 
         if (escape_index) {
             if (++escape_index == 3) {
@@ -289,6 +319,10 @@ void loopTelnetMon()
         }
 
         switch (c) {
+            case 0x00: // null
+            case 0x0a: // LF
+                continue;
+                
             case 0x1b: /* escape */
                 escape_index = 1;
                 continue;
@@ -309,7 +343,7 @@ void loopTelnetMon()
                 char_index = strlen(line[line_num]);
                 client.print(line[line_num]);
                 continue;
-            case '\r':
+            case 0x0d: // CR
                 client.println("");
                 if (char_index == 0) {
                     client.print("> ");
@@ -497,8 +531,9 @@ static int consoleHandler_help(const char *line){
 
 static void doRepeat(RepeatFunc func, uint32_t arg0, uint32_t arg1, uint32_t arg2, uint32_t arg3)
 {
+    client.flush(); /* clean out anyunprocessed chars */
     client.print(clear);
-    while (client = telnetServer.available()) {
+    while (client.connected()) {
         if (client.available()) {
             if (client.read() != 0) {
                 break;
@@ -638,7 +673,7 @@ static int consoleHandler_alog(const char *line)
 
     analogReadResolution(12);
 
-    while (client = telnetServer.available()) {
+    while (client.connected()) {
         if (client.available()) {
             if (client.read() == 'q') break;
         }
@@ -655,7 +690,8 @@ static int consoleHandler_alog(const char *line)
             }
         }
 
-        client.println("");
+        client.print(" ");
+        client.println(Clock_getTicks());
         delay(period);
     }
 
@@ -780,7 +816,6 @@ static int consoleHandler_dm(const char *line)
 
 #if WM_CMD == 1
 
-
 static int consoleHandler_wm(const char *line)
 {
     char *endptr;
@@ -854,6 +889,119 @@ static int consoleHandler_wm2(const char *line)
 }
 
 #endif /* WM_CMD */
+
+#if WR_CMD == 1
+
+static void doWr(uint8_t addr, uint8_t cfg, uint8_t num)
+{
+    unsigned int i, j;
+    uint8_t bytes[32];
+
+    if (wireBegun == false) {
+        Wire.begin();
+        wireBegun = true;
+    }
+
+    Wire.beginTransmission(addr);
+    Wire.write(cfg);
+    Wire.endTransmission();
+    Wire.requestFrom((int) addr, (int)num);
+    
+    i = 0;
+    while (Wire.available()) 
+    {
+        bytes[i++] = Wire.read();
+    }
+    
+    for (j = 0; j < i; j++) {
+        client.print(bytes[j], 16); client.print(" ");
+    }
+
+    client.println("");
+}
+
+static int consoleHandler_wr(const char *line)
+{
+    if (*line++ != ' ') {
+        return RETURN_FAIL_PRINT_USAGE;
+    }
+
+    char *endptr = NULL;
+    unsigned int i;
+    uint8_t bytes[3];
+
+    i = 0;
+    endptr = (char *)line;
+    do {
+        bytes[i] = strtoul(endptr, &endptr, 16);
+        if (++i == 3) break;
+    }
+    while (*endptr == ' ');
+    
+    if (i < 3) {
+        return RETURN_FAIL_PRINT_USAGE;
+    }
+    
+    if (wireBegun == false) {
+        Wire.begin();
+        wireBegun = true;
+    }
+
+    if (*endptr == ' ') {
+        doRepeat((RepeatFunc)doWr, bytes[0], bytes[1], bytes[2], 0);
+    }
+    else {
+        doWr(bytes[0], bytes[1], bytes[2]);
+    }
+
+    return RETURN_SUCCESS;
+}
+
+#endif /* WR_CMD */
+
+#if WW_CMD == 1
+
+static int consoleHandler_ww(const char *line)
+{
+
+    if (*line++ != ' ') {
+        return RETURN_FAIL_PRINT_USAGE;
+    }
+
+    char *endptr = NULL;
+
+    unsigned int i, j;
+    uint8_t bytes[33];
+
+    i = 0;
+    endptr = (char *)line;
+    do {
+        bytes[i] = strtoul(endptr, &endptr, 16);
+        if (++i == 33) break;
+    }
+    while (*endptr == ' ');
+    
+    if (i < 2) {
+        return RETURN_FAIL_PRINT_USAGE;
+    }
+    
+    if (wireBegun == false) {
+        Wire.begin();
+        wireBegun = true;
+    }
+
+    Wire.beginTransmission(bytes[0]);
+
+    for (j = 1; j < i; j++) {
+        Wire.write(bytes[j]);
+    }
+
+     Wire.endTransmission();
+
+    return RETURN_SUCCESS;
+}
+
+#endif /* WW_CMD */
 
 #if SPI_CMD == 1
 
