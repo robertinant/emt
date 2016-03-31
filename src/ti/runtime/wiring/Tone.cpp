@@ -75,10 +75,6 @@ void tone(uint8_t _pin, unsigned int frequency, unsigned long duration)
         return;
     }
 
-    if (frequency == currentFrequency) {
-        return;
-    }
-
     playing = true;
     toneDuration = duration;
 
@@ -115,7 +111,9 @@ void tone(uint8_t _pin, unsigned int frequency, unsigned long duration)
 
 void noTone(uint8_t _pin)
 {
-    Timer_stop(timerHandle);
-    digitalWrite(tonePin, LOW);
-    playing = false;
+    if (!initTimer) {
+        Timer_stop(timerHandle);
+        digitalWrite(tonePin, LOW);
+        playing = false;
+    }
 }
