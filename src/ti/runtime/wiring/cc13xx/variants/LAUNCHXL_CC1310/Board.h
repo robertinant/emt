@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Texas Instruments Incorporated
+ * Copyright (c) 2016, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,9 +32,7 @@
 /** ============================================================================
  *  @file       Board.h
  *
- *  @brief      CC1310SENSORTAG Board Specific header file.
- *
- *  NB! This is the board file for PCB version 1.2
+ *  @brief      CC1310 LaunchPad Board Specific header file.
  *
  *  The CC1310 header file should be included in an application as follows:
  *  @code

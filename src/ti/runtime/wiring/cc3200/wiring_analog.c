@@ -29,7 +29,7 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
+
 #define ARDUINO_MAIN
 
 #include <ti/runtime/wiring/wiring_private.h>
@@ -71,7 +71,7 @@ PWM_Handle pwmHandles[8];
 
 #define PWM_SCALE_FACTOR 163200/255
 
-void analogWrite(uint8_t pin, int val) 
+void analogWrite(uint8_t pin, int val)
 {
     uint8_t timer, timerId, pwmBaseIndex;
     uint32_t hwiKey;
@@ -90,57 +90,57 @@ void analogWrite(uint8_t pin, int val)
         }
 
         uint32_t pnum = digital_pin_to_pin_num[pin];
-		uint32_t pmode;
-		uint32_t timerAvailMask;
-		bool weOwnTheTimer = false;
+        uint32_t pmode;
+        uint32_t timerAvailMask;
+        bool weOwnTheTimer = false;
 
         switch (timer) {
             /* PWM0/1 */
             case TIMERA0A:
             case TIMERA0B:
-				pmode = PIN_MODE_5;
+                pmode = PIN_MODE_5;
                 break;
             /* PWM2/3 */
             case TIMERA1A:
             case TIMERA1B:
-				pmode = PIN_MODE_9;
+                pmode = PIN_MODE_9;
                 break;
             /* PWM4/5 */
             case TIMERA2A:
             case TIMERA2B:
-				pmode = PIN_MODE_3;
+                pmode = PIN_MODE_3;
                 break;
             /* PWM6/7 */
             case TIMERA3A:
             case TIMERA3B:
-				pmode = PIN_MODE_3;
+                pmode = PIN_MODE_3;
                 break;
         }
 
-		timerId = timer >> 1;
-		pwmBaseIndex = timer & 0xfe;
-		weOwnTheTimer = (pwmHandles[pwmBaseIndex] != NULL) || (pwmHandles[pwmBaseIndex + 1] != NULL);
-		
-		/*
-		 * Verify that the timer is free for us to use
-		 * if timer is available then we can use it.
-		 * if timer is not available and one of our two corresponding
-		 * PWM handles is non-null, then we own the timer and can therefore
-		 * use it.
-		 */
-		timerAvailMask = Timer_getAvailMask();
+        timerId = timer >> 1;
+        pwmBaseIndex = timer & 0xfe;
+        weOwnTheTimer = (pwmHandles[pwmBaseIndex] != NULL) || (pwmHandles[pwmBaseIndex + 1] != NULL);
 
-		if ((timerAvailMask && (1 << timerId)) == 0) {
-		    if (weOwnTheTimer == false) {
+        /*
+         * Verify that the timer is free for us to use
+         * if timer is available then we can use it.
+         * if timer is not available and one of our two corresponding
+         * PWM handles is non-null, then we own the timer and can therefore
+         * use it.
+         */
+        timerAvailMask = Timer_getAvailMask();
+
+        if ((timerAvailMask && (1 << timerId)) == 0) {
+            if (weOwnTheTimer == false) {
                 Hwi_restore(hwiKey);
                 return;
-			}
-		}
+            }
+        }
 
-		/* We are free to have our way with the pin */
+        /* We are free to have our way with the pin */
         MAP_PinTypeTimer(pnum, pmode);
 
-		PWM_Params_init(&pwmParams);
+        PWM_Params_init(&pwmParams);
 
         /* Open the PWM port */
         pwmParams.period = 2040; /* arduino period is 2.04ms (490Hz) */
@@ -148,27 +148,27 @@ void analogWrite(uint8_t pin, int val)
 
         pwmHandles[timer] = PWM_open(timer, &pwmParams);
 
-        /* 
-		 * Remove timer from pool of available timers if we
-		 * didn't own it before.
-		 * This will prevent tone() and servo() Timer creates
-		 * from clobbering PWM channels.
-		 */
+        /*
+         * Remove timer from pool of available timers if we
+         * didn't own it before.
+         * This will prevent tone() and servo() Timer creates
+         * from clobbering PWM channels.
+         */
         if (weOwnTheTimer == false) {
             Timer_setAvailMask(timerAvailMask & ~(1 << timerId));
-		}
+        }
 
         digital_pin_to_pin_function[pin] = PIN_FUNC_ANALOG_OUTPUT;
     }
 
     Hwi_restore(hwiKey);
-    
+
     PWM_setDuty((PWM_Handle)&(PWM_config[timer]), (val * PWM_SCALE_FACTOR));
 }
 
 /*
  * This internal API is used to de-configure a pin that has been
- * put in analogWrite() mode. 
+ * put in analogWrite() mode.
  *
  * It will free up the pin's PWM resource after
  * it is no longer being used to support analogWrite() on a different
@@ -178,8 +178,8 @@ void stopAnalogWrite(uint8_t pin)
 {
     uint16_t pwmIndex = digital_pin_to_timer[pin];
     uint8_t timerId, pwmBaseIndex;
-	bool timerFree;
-	
+    bool timerFree;
+
 
     /* Close PWM port */
     PWM_close((PWM_Handle)&(PWM_config[pwmIndex]));
@@ -189,11 +189,11 @@ void stopAnalogWrite(uint8_t pin)
     /* put timer back in pool of available timers if no longer in use */
     timerId = pwmIndex >> 1;
     pwmBaseIndex = pwmIndex & 0xfe;
-	timerFree = (pwmHandles[pwmBaseIndex] == NULL) && (pwmHandles[pwmBaseIndex + 1] == NULL);
+    timerFree = (pwmHandles[pwmBaseIndex] == NULL) && (pwmHandles[pwmBaseIndex + 1] == NULL);
 
-	if (timerFree) {
+    if (timerFree) {
         Timer_setAvailMask(Timer_getAvailMask() | (1 << timerId));
-	}
+    }
 }
 
 /*
@@ -256,7 +256,7 @@ uint16_t analogRead(uint8_t pin)
     MAP_ADCDisable(ADC_BASE);
     MAP_ADCChannelDisable(ADC_BASE, channel);
     MAP_ADCTimerDisable(ADC_BASE);
-    
+
     Hwi_restore(hwiKey);
 
     val = val >> analogReadShift;

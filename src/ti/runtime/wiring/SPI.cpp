@@ -326,8 +326,3 @@ void spiTransferCallback(SPI_Handle spi, SPI_Transaction * transaction)
 {
     SPI.transferComplete = 1;
 }
-
-/*
- * Pre-Initialize a SPI instances
- */
-SPIClass SPI(0);

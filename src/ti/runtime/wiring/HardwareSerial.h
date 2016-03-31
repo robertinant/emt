@@ -41,7 +41,7 @@
 #include <ti/sysbios/knl/Semaphore.h>
 #include <ti/sysbios/gates/GateMutex.h>
 
-#define SERIAL_BUFFER_SIZE     32
+#define SERIAL_BUFFER_SIZE  32
 
 class HardwareSerial : public Stream
 {
@@ -54,16 +54,17 @@ class HardwareSerial : public Stream
         unsigned long baudRate;
         uint8_t uartModule;
         UART_Handle uart;
+        UART_Callback rxCallback; 
         Semaphore_Struct rxSemaphore;
-        void init(unsigned long);
-        void flushAll(void);
         GateMutex_Struct gate;
+        void init(unsigned long module, UART_Callback callback);
+        void flushAll(void);
 
     public:
         operator bool();// Arduino compatibility (see StringLength example)
-        
         HardwareSerial(void);
         HardwareSerial(unsigned long);
+        HardwareSerial(unsigned long, UART_Callback);
         void begin(unsigned long);
         void setModule(unsigned long);
         void setPins(unsigned long);
@@ -80,11 +81,13 @@ class HardwareSerial : public Stream
         using Print::write; // pull in write(str) from Print
 };
 
-// Create new HardwareSerial called Serial for use in Sketch.
 extern HardwareSerial Serial;
 extern HardwareSerial Serial1;
 
 extern void serialEventRun(void) __attribute__((weak));
 extern void serialEventRun1(void) __attribute__((weak));
+
+extern void serialEvent() __attribute__((weak));
+extern void serialEvent1() __attribute__((weak));
 
 #endif

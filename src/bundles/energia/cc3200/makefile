@@ -54,13 +54,23 @@ closure: configPkg
 	@$(RMDIR) $@
 	@echo xs xdc.tools.closure -d $@ $< ...
 	$(XDCROOT)/xs xdc.tools.closure -d $@ -i ti.drivers.bsp $<
-#	$(XDCROOT)/xs xdc.tools.closure --filter=0 -d $@ -i ti.drivers.bsp $<
 
 	$(XDCROOT)/bin/xdccpp $(wildcard $(VARIANTS)/*) $@
 
 	@echo patching $@ ...
 	cp -r $(LIBRARIES)/WiFi $@/$(RUNTIME)/libraries
 	@$(CURDIR)/../patch.ksh $@ ./src $<
+
+closure-rov: configPkg
+	@$(RMDIR) $@
+	@echo xs xdc.tools.closure -d $@ $< ...
+	$(XDCROOT)/xs xdc.tools.closure --filter=0 -d $@ -i ti.drivers.bsp $<
+	@echo stripping $@ ...
+	@$(CURDIR)/stripc.ksh $@
+
+closure-rov.zip: closure-rov
+	@echo creating $@ ...
+	zip -rq $@ $<
 
 # create a fixed configuration of TI-RTOS from energia.cfg
 configPkg: energia.cfg
@@ -69,4 +79,4 @@ configPkg: energia.cfg
 
 # remove all generated files/directories
 clean:
-	@$(RMDIR) closure configPkg src closure.zip
+	@$(RMDIR) closure closure-rov configPkg src closure.zip closure-rov.zip

@@ -111,6 +111,7 @@ static int consoleHandler_pri(const char *line);
 
 #if ALOG_CMD == 1
 static int consoleHandler_alog(const char *line);
+static int consoleHandler_alogs(const char *line);
 #endif
 
 static char home[] = "\e[H";
@@ -145,6 +146,7 @@ static const struct {
 #endif
 #if ALOG_CMD == 1
     GEN_COMMTABLE_ENTRY(alog,    "log a pin's value",           "usage: alog <pin> <period>"),
+    GEN_COMMTABLE_ENTRY(alogs,   "analog input scale factor",   "usage: alogs (float)scaleFactor"),
 #endif
 #if PRI_CMD == 1
     GEN_COMMTABLE_ENTRY(pri,     "Set task priority",           "usage: pri <task handle> <priority>"),
@@ -167,8 +169,8 @@ static const struct {
 
 void MON_SETUP(void)
 {
-    Serial.begin(115200);
-    Serial.println("Welcome! This is the Serial debug console.");
+    SERIAL.begin(115200);
+    SERIAL.println("Welcome! This is the SERIAL debug console.");
 }
 
 #define UP_ARROW 0x0b    /* ctrl K */
@@ -178,7 +180,7 @@ void MON_LOOP()
 {
     // each loop iteration is one command
 
-    Serial.print("> ");
+    SERIAL.print("> ");
 
     // ------------------------------------- read line
     static char line[MAX_COMMAND_LINES][MAX_COMMAND_LEN];
@@ -189,7 +191,7 @@ void MON_LOOP()
     int escape_index = 0;
 
     while (true) {
-        char c = Serial.read();
+        char c = SERIAL.read();
 
         if (escape_index) {
             if (++escape_index == 3) {
@@ -219,22 +221,22 @@ void MON_LOOP()
                 if (--line_num < 0) { 
                     line_num = MAX_COMMAND_LINES - 1;
                 }
-                Serial.print("\r                         \r> ");
+                SERIAL.print("\r                         \r> ");
                 char_index = strlen(line[line_num]);
-                Serial.print(line[line_num]);
+                SERIAL.print(line[line_num]);
                 continue;
             case DOWN_ARROW:
                 if (++line_num == MAX_COMMAND_LINES) { 
                     line_num = 0;
                 }
-                Serial.print("\r                         \r> ");
+                SERIAL.print("\r                         \r> ");
                 char_index = strlen(line[line_num]);
-                Serial.print(line[line_num]);
+                SERIAL.print(line[line_num]);
                 continue;
             case '\r':
-                Serial.println("");
+                SERIAL.println("");
                 if (char_index == 0) {
-                    Serial.print("> ");
+                    SERIAL.print("> ");
                     continue;
                 }
                 else {
@@ -245,11 +247,11 @@ void MON_LOOP()
             case 0x7f:   /* Backspace */
                 if (char_index >= 1) {
                     char_index -= 1;
-                    Serial.print("\b \b");
+                    SERIAL.print("\b \b");
                 }
                 continue;
             case 3: /* control 'c' */
-                Serial.println("^C");
+                SERIAL.println("^C");
                 return;
         }
 
@@ -258,12 +260,12 @@ void MON_LOOP()
 
             if (char_index == MAX_COMMAND_LEN) {
                 // The user typed something too long; abort so they don't get surprise commands running
-                Serial.println("\r\nCommand too long.");
+                SERIAL.println("\r\nCommand too long.");
                 return;
             }
 
-            // default for Serial is ECHO_OFF, and there doesn't seem to be a way to change that
-            Serial.print(c);
+            // default for SERIAL is ECHO_OFF, and there doesn't seem to be a way to change that
+            SERIAL.print(c);
         }
         else {
             line[line_num][char_index] = 0;
@@ -298,14 +300,14 @@ void MON_LOOP()
     }
 
     if (commandIndex == -1) {
-        Serial.print("The command `");
-        Serial.print(cmdstr);
-        Serial.println("' was not recognized.");
+        SERIAL.print("The command `");
+        SERIAL.print(cmdstr);
+        SERIAL.println("' was not recognized.");
         return;
     }
 
     if (!_consoleCommandTable[commandIndex].handler) {
-        Serial.println("That command has not yet been implemented.");
+        SERIAL.println("That command has not yet been implemented.");
         return;
     }
 
@@ -325,12 +327,12 @@ void MON_LOOP()
                      ? _consoleCommandTable[commandIndex].detailedUsage
                      : _consoleCommandTable[commandIndex].description;
 
-            Serial.println(toPrint);
+            SERIAL.println(toPrint);
             break;
         }
 
         default:
-            Serial.println("Warning: unknown return value!");
+            SERIAL.println("Warning: unknown return value!");
             break;
     }
 }
@@ -366,15 +368,15 @@ static int consoleHandler_help(const char *line){
 
     if (!*line) {
         // No command in particular specified; just print them all
-        Serial.println("Available commands:");
+        SERIAL.println("Available commands:");
         for (i=0; _consoleCommandTable[i].name; i++) {
             if(!_consoleCommandTable[i].handler)    // if NYI, don't list
                 continue;
 
-            Serial.print("  ");
-            Serial.print(_consoleCommandTable[i].name);
-            Serial.print("\t  ");
-            Serial.println(_consoleCommandTable[i].description);
+            SERIAL.print("  ");
+            SERIAL.print(_consoleCommandTable[i].name);
+            SERIAL.print("\t  ");
+            SERIAL.println(_consoleCommandTable[i].description);
         }
     } else {
         // get past the space so we can parse the command
@@ -397,9 +399,9 @@ static int consoleHandler_help(const char *line){
         }
 
         if (commandIndex == -1) {
-            Serial.print("The command `");
-            Serial.print(cmdstr);
-            Serial.println("' was not recognized.");
+            SERIAL.print("The command `");
+            SERIAL.print(cmdstr);
+            SERIAL.println("' was not recognized.");
             return RETURN_FAIL;
         }
 
@@ -407,9 +409,9 @@ static int consoleHandler_help(const char *line){
                      ? _consoleCommandTable[i].detailedUsage
                      : _consoleCommandTable[i].description;
 
-        Serial.print(cmdstr);
-        Serial.print(": ");
-        Serial.println(toPrint);
+        SERIAL.print(cmdstr);
+        SERIAL.print(": ");
+        SERIAL.println(toPrint);
     }
 
     return RETURN_SUCCESS;
@@ -418,22 +420,22 @@ static int consoleHandler_help(const char *line){
 
 static void doRepeat(RepeatFunc func, uint32_t arg0, uint32_t arg1, uint32_t arg2, uint32_t arg3)
 {
-    Serial.print(clear);
-    while(!Serial.available()) {
-        Serial.print(home);
+    SERIAL.print(clear);
+    while(!SERIAL.available()) {
+        SERIAL.print(home);
         func(arg0, arg1, arg2, arg3);
     }
-    Serial.read(); /* remove char from input buf */
+    SERIAL.read(); /* remove char from input buf */
 }
 
 #if DRW_CMDS == 1
 
 static void doDr(uint32_t pin)
 {
-    Serial.print("digitalRead(");
-    Serial.print(pin);
-    Serial.print(") = ");
-    Serial.println(digitalRead(pin));
+    SERIAL.print("digitalRead(");
+    SERIAL.print(pin);
+    SERIAL.print(") = ");
+    SERIAL.println(digitalRead(pin));
 }
 
 static int consoleHandler_dr(const char *line)
@@ -461,11 +463,11 @@ static int consoleHandler_dw(const char *line)
     char *endptr = NULL;
     uint32_t pin = strtoul(line, &endptr, 10);
     int32_t val = strtol(endptr, NULL, 0);
-    Serial.print("Calling digitalWrite(");
-    Serial.print(pin);
-    Serial.print(", ");
-    Serial.print(val);
-    Serial.println(").");
+    SERIAL.print("Calling digitalWrite(");
+    SERIAL.print(pin);
+    SERIAL.print(", ");
+    SERIAL.print(val);
+    SERIAL.println(").");
     digitalWrite(pin, val);
     return RETURN_SUCCESS;
 }
@@ -476,10 +478,10 @@ static int consoleHandler_dw(const char *line)
 
 static void doAr(uint32_t pin)
 {
-    Serial.print("analogRead(");
-    Serial.print(pin);
-    Serial.print(") = ");
-    Serial.println(analogRead(pin));
+    SERIAL.print("analogRead(");
+    SERIAL.print(pin);
+    SERIAL.print(") = ");
+    SERIAL.println(analogRead(pin));
 }
 
 static int consoleHandler_ar(const char *line)
@@ -507,11 +509,11 @@ static int consoleHandler_aw(const char *line)
     char *endptr = NULL;
     uint32_t pin = strtol(line, &endptr, 10);
     int32_t val = strtol(endptr, NULL, 0);
-    Serial.print("Calling analogWrite(");
-    Serial.print(pin);
-    Serial.print(", ");
-    Serial.print(val);
-    Serial.println(").");
+    SERIAL.print("Calling analogWrite(");
+    SERIAL.print(pin);
+    SERIAL.print(", ");
+    SERIAL.print(val);
+    SERIAL.println(").");
     analogWrite(pin,val);
     return RETURN_SUCCESS;
 }
@@ -519,7 +521,26 @@ static int consoleHandler_aw(const char *line)
 #endif /* ARW_CMDS */
 
 #if ALOG_CMD == 1
-#define SCALE_FACTOR (2.7/1.2)
+
+/* assume 1.467V analog reference voltage for CC3200 */
+static float scaleFactor = 1.467;
+
+static int consoleHandler_alogs(const char *line)
+{
+    if (*line++ != ' ') {
+        return RETURN_FAIL_PRINT_USAGE;
+    }
+
+    char *endptr = NULL;
+
+    scaleFactor = strtof(line, &endptr);
+
+    SERIAL.print("Scale Factor = ");
+    SERIAL.println(scaleFactor);
+
+    return RETURN_SUCCESS;
+}
+
 static int consoleHandler_alog(const char *line)
 {
     if (*line++ != ' ') {
@@ -555,25 +576,28 @@ static int consoleHandler_alog(const char *line)
 
     analogReadResolution(12);
 
+    SERIAL.print("Scale Factor = ");
+    SERIAL.println(scaleFactor);
+
     while (true) {
-        if (Serial.available()) {
-            if (Serial.read() == 'q') break;
+        if (SERIAL.available()) {
+            if (SERIAL.read() == 'q') break;
         }
-        Serial.print(logNum++);
-        Serial.print(", ");
+        SERIAL.print(logNum++);
+        SERIAL.print(", ");
         for (i = 0; i < numPins; i++) {
             aveTotal[i] = 0;
             for (j = 0; j < aveNum; j++) {
                 aveTotal[i] += analogRead(pins[i]);
             }
-            Serial.print((float(SCALE_FACTOR * 1.467 * (float)aveTotal[i]/(float)aveNum)) / 4096.0, 3);
+            SERIAL.print((float(scaleFactor * (float)aveTotal[i]/(float)aveNum)) / 4096.0, 3);
             if (i < numPins - 1) {
-                Serial.print(", ");
+                SERIAL.print(", ");
             }
         }
 
-        Serial.print(" ");
-        Serial.println(Clock_getTicks());
+        SERIAL.print(" ");
+        SERIAL.println(Clock_getTicks());
         delay(period);
     }
 
@@ -606,7 +630,7 @@ static void dumpMemory(uint32_t *address, uint32_t len, uint32_t size)
                 addr[0], addr[1], addr[2], addr[3], addr[4], addr[5], addr[6], addr[7],
                 addr[8], addr[9], addr[10], addr[11], addr[12], addr[13], addr[14], addr[15],
                 asciiBytes);
-            Serial.println(response);
+            SERIAL.println(response);
         }
     }
 
@@ -627,7 +651,7 @@ static void dumpMemory(uint32_t *address, uint32_t len, uint32_t size)
                 (int)addr,
                 addr[0], addr[1], addr[2], addr[3], addr[4], addr[5], addr[6], addr[7],
                 asciiBytes);
-            Serial.println(response);
+            SERIAL.println(response);
         }
     }
 
@@ -648,7 +672,7 @@ static void dumpMemory(uint32_t *address, uint32_t len, uint32_t size)
                 (int)addr,
                 addr[0], addr[1], addr[2], addr[3],
                 asciiBytes);
-            Serial.println(response);
+            SERIAL.println(response);
         }
     }
 }
@@ -680,7 +704,7 @@ static int consoleHandler_dm(const char *line)
     }
 
     if (len <= 0) {
-        Serial.println("Bad number of bytes to dump.");
+        SERIAL.println("Bad number of bytes to dump.");
         return RETURN_FAIL_PRINT_USAGE;
     }
 
@@ -797,10 +821,10 @@ static void doWr(uint8_t addr, uint8_t cfg, uint8_t num)
     }
     
     for (j = 0; j < i; j++) {
-        Serial.print(bytes[j], 16); Serial.print(" ");
+        SERIAL.print(bytes[j], 16); SERIAL.print(" ");
     }
 
-    Serial.println("");
+    SERIAL.println("");
 }
 
 static int consoleHandler_wr(const char *line)
@@ -913,13 +937,13 @@ static int consoleHandler_spi(const char *line)
         data = strtol(endptr, &endptr, 10);
     }
 
-    Serial.print("Calling SPI.transfer(");
+    SERIAL.print("Calling SPI.transfer(");
     if (cs) {
-        Serial.print(cs);
-        Serial.print(", ");
+        SERIAL.print(cs);
+        SERIAL.print(", ");
     }
-    Serial.print(data);
-    Serial.println(").");
+    SERIAL.print(data);
+    SERIAL.println(").");
     
     if (cs) {
         SPI.transfer(cs, data);
@@ -982,7 +1006,7 @@ static void printTaskInfo(Task_Handle task)
           " task: %s/0x%x, pri: %d, stack usage: %d/%d, mode: %s load: %d.%1u",
           name, task, taskStat.priority, taskStat.used, taskStat.stackSize, getModeStr(taskStat.mode),
           loadInt, loadFrac);
-    Serial.println(buf);
+    SERIAL.println(buf);
 }
 
 void printUtilization()
@@ -1004,14 +1028,14 @@ void printUtilization()
     idleLoadInt = idleLoad;
     idleLoadFrac = 10.0*idleLoad - 10.0*idleLoadInt;
  
-    Serial.write("Total CPU Load: ");
-    Serial.print(idleLoadInt);
-    Serial.print(".");
-    Serial.println(idleLoadFrac);
-    Serial.println("");
+    SERIAL.write("Total CPU Load: ");
+    SERIAL.print(idleLoadInt);
+    SERIAL.print(".");
+    SERIAL.println(idleLoadFrac);
+    SERIAL.println("");
     
     /* collect stats on all statically Created tasks */
-    Serial.println("Task info:");
+    SERIAL.println("Task info:");
     for (i = 0; i < Task_Object_count(); i++) {
         tsk = Task_Object_get(NULL, i);
         printTaskInfo(tsk);
@@ -1023,20 +1047,20 @@ void printUtilization()
         printTaskInfo(tsk);
         tsk = Task_Object_next(tsk);
     }
-    Serial.println("");
+    SERIAL.println("");
 
     Hwi_getStackInfo(&hwiStackStat, TRUE);
-    Serial.print("Hwi stack usage: ");
-    Serial.print(hwiStackStat.hwiStackPeak);
-    Serial.print("/");
-    Serial.println(hwiStackStat.hwiStackSize);
-    Serial.println("");
+    SERIAL.print("Hwi stack usage: ");
+    SERIAL.print(hwiStackStat.hwiStackPeak);
+    SERIAL.print("/");
+    SERIAL.println(hwiStackStat.hwiStackSize);
+    SERIAL.println("");
     
     Memory_getStats(NULL, &memStat);
-    Serial.print("Heap usage: ");
-    Serial.print(memStat.totalSize - memStat.totalFreeSize);
-    Serial.print("/");
-    Serial.println(memStat.totalSize);
+    SERIAL.print("Heap usage: ");
+    SERIAL.print(memStat.totalSize - memStat.totalFreeSize);
+    SERIAL.print("/");
+    SERIAL.println(memStat.totalSize);
 }
 
 static int consoleHandler_stats(const char *line)
@@ -1067,7 +1091,7 @@ static int consoleHandler_pri(const char *line)
     pri = strtol(endptr, NULL, 10);
 
     if ((pri < -1) || (pri >= (int)Task_numPriorities)) {
-        Serial.println("Invalid priority!");
+        SERIAL.println("Invalid priority!");
         return RETURN_FAIL_PRINT_USAGE;
     }
     

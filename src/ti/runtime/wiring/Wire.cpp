@@ -348,6 +348,3 @@ void TwoWire::setModule(unsigned long _i2cModule)
         begin();
     }
 }
-
-//Pre-instantiate Object
-TwoWire Wire;
