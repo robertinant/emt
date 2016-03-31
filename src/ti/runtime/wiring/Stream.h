@@ -87,8 +87,7 @@ class Stream : public Print
 
     protected:
         long parseInt(char skipChar); // as above but the given skipChar is ignored
-        // as above but the given skipChar is ignored
-        // this allows format characters (typically commas) in values to be ignored
+                                      // this allows format characters (typically commas) in values to be ignored
 
         float parseFloat(char skipChar);  // as above but the given skipChar is ignored
 };
