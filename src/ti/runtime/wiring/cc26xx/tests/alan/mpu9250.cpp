@@ -27,8 +27,6 @@
 #define LED RED_LED
 #define BUZZER 23
 
-TwoWire Wire1(1);
-
 /*
  *  ======== I2Cread ========
  *  This function read Nbytes bytes from I2C device at address Address.

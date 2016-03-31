@@ -116,5 +116,6 @@ class TwoWire : public Stream
 };
 
 extern TwoWire Wire;
-extern "C" void I2CIntHandler(void);
+extern TwoWire Wire1;
+
 #endif

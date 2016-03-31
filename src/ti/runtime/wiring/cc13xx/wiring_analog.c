@@ -29,7 +29,7 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
+
 #define ARDUINO_MAIN
 
 #include <ti/runtime/wiring/wiring_private.h>
@@ -48,7 +48,7 @@
 
 #include <driverlib/ioc.h>
 #include <driverlib/aux_adc.h>
-#include <driverlib/aux_wuc.h> 
+#include <driverlib/aux_wuc.h>
 
 /*
  * analogWrite() support
@@ -121,14 +121,14 @@ void stopDigitalRead(uint8_t pin)
 
 #define PWM_SCALE_FACTOR 384
 
-void analogWrite(uint8_t pin, int val) 
+void analogWrite(uint8_t pin, int val)
 {
     uint8_t pwmIndex;
     uint8_t pwmPinId;
     uint32_t hwiKey;
 
     hwiKey = Hwi_disable();
-    
+
     if (digital_pin_to_pin_function[pin] == PIN_FUNC_ANALOG_OUTPUT) {
         pwmIndex = digital_pin_to_pwm_index[pin];
     }
@@ -138,55 +138,55 @@ void analogWrite(uint8_t pin, int val)
         PWM_Handle pwmHandle;
         PWMTimerCC26XX_PWMPinCfg pwmPinCfg;
         uint8_t numPwmChannels = sizeof(used_pwm_port_pins)/sizeof(uint8_t);
-        
+
         if (digital_pin_to_pin_function[pin] == PIN_FUNC_INVALID) {
             Hwi_restore(hwiKey);
             return; /* can't get there from here */
         }
-        
+
         /* extract 16bit pinID from pin */
         pwmPinId = GPIOCC26XX_config.pinConfigs[pin] & 0xff;
-        
-		/* undo pin's current plumbing */
-		switch (digital_pin_to_pin_function[pin]) {
-			case PIN_FUNC_ANALOG_INPUT:
-				stopAnalogRead(pin);
-				break;
-			case PIN_FUNC_DIGITAL_INPUT:
-				stopDigitalRead(pin);
-				break;
-			case PIN_FUNC_DIGITAL_OUTPUT:
-				stopDigitalWrite(pin);
-				break;
-		}
 
-		/* find an unused PWM resource and port map it */
+        /* undo pin's current plumbing */
+        switch (digital_pin_to_pin_function[pin]) {
+            case PIN_FUNC_ANALOG_INPUT:
+                stopAnalogRead(pin);
+                break;
+            case PIN_FUNC_DIGITAL_INPUT:
+                stopDigitalRead(pin);
+                break;
+            case PIN_FUNC_DIGITAL_OUTPUT:
+                stopDigitalWrite(pin);
+                break;
+        }
+
+        /* find an unused PWM resource and port map it */
         for (pwmIndex = 0; pwmIndex < numPwmChannels; pwmIndex++) {
             if (used_pwm_port_pins[pwmIndex] == PWM_NOT_IN_USE) {
-				
-				/* Open the PWM port */
-				PWM_Params_init(&pwmParams);
 
-				pwmParams.period = 2040; /* arduino period is 2.04ms (490Hz) */
-				pwmParams.dutyMode = PWM_DUTY_COUNTS;
-				pwmPinCfg.pwmPinId = pwmPinId; /* override HWAttrs pwmPinId */
-				pwmParams.custom = (uintptr_t)&pwmPinCfg;
-				
+                /* Open the PWM port */
+                PWM_Params_init(&pwmParams);
+
+                pwmParams.period = 2040; /* arduino period is 2.04ms (490Hz) */
+                pwmParams.dutyMode = PWM_DUTY_COUNTS;
+                pwmPinCfg.pwmPinId = pwmPinId; /* override HWAttrs pwmPinId */
+                pwmParams.custom = (uintptr_t)&pwmPinCfg;
+
                 /* PWM_open() will fail if the timer's CCR is already in use */
                 pwmHandle = PWM_open(pwmIndex, &pwmParams);
 
-				if (pwmHandle != NULL) {
+                if (pwmHandle != NULL) {
                     /* remember which pinId is being used by this PWM resource */
                     used_pwm_port_pins[pwmIndex] = pwmPinId; /* save pwm pin info */
                     /* remember which PWM resource is being used by this pin */
                     digital_pin_to_pwm_index[pin] = pwmIndex; /* save pwm index */
-				    digital_pin_to_pin_function[pin] = PIN_FUNC_ANALOG_OUTPUT;
-					/* success! */
+                    digital_pin_to_pin_function[pin] = PIN_FUNC_ANALOG_OUTPUT;
+                    /* success! */
                     break;
-				}
-				else {
-				    /* try next PWM index */
-				}
+                }
+                else {
+                    /* try next PWM index */
+                }
             }
         }
 
@@ -203,7 +203,7 @@ void analogWrite(uint8_t pin, int val)
 
 /*
  * This internal API is used to de-configure a pin that has been
- * put in analogWrite() mode. 
+ * put in analogWrite() mode.
  *
  * It will free up the pin's PWM resource after
  * it is no longer being used to support analogWrite() on a different
@@ -250,17 +250,17 @@ uint16_t analogRead(uint8_t pin)
 {
     uint32_t hwiKey;
     uint32_t adcSample;
-    
+
     hwiKey = Hwi_disable();
-    
+
     if (digital_pin_to_pin_function[pin] != PIN_FUNC_ANALOG_INPUT) {
         /* adcPinId must be 16 bits to compare with EMPTY_PIN */
         uint8_t adcPinId;
         adcPinId = GPIOCC26XX_config.pinConfigs[pin] & 0xff;
 
         /* for 7x7 packages, only IOIDs 23-30 are tied to AUXIO channels */
-        if ((adcPinId < 23) || 
-            (adcPinId > 30) || 
+        if ((adcPinId < 23) ||
+            (adcPinId > 30) ||
             (digital_pin_to_pin_function[pin] == PIN_FUNC_INVALID)) {
             Hwi_restore(hwiKey);
             return (0); /* can't get there from here */
@@ -271,7 +271,7 @@ uint16_t analogRead(uint8_t pin)
             PIN_close(adcPinHandle);
             digital_pin_to_pin_function[adcPin] = PIN_FUNC_UNUSED;
         }
-        
+
         /* undo pin's current plumbing */
         switch (digital_pin_to_pin_function[pin]) {
             case PIN_FUNC_ANALOG_OUTPUT:
@@ -289,18 +289,18 @@ uint16_t analogRead(uint8_t pin)
         adcPinTable[0] = adcPinId | PIN_INPUT_DIS | PIN_GPIO_OUTPUT_DIS;
         adcPinTable[1] = PIN_TERMINATE;
         adcPinHandle = PIN_open(&adcPinState, adcPinTable);
-        
+
         /* get trim gain and offset */
         adcTrimGain = AUXADCGetAdjustmentGain(AUXADC_REF_VDDS_REL);
         adcTrimOffset = AUXADCGetAdjustmentOffset(AUXADC_REF_VDDS_REL);
-        
+
         if (!adcPinHandle) {
             Hwi_restore(hwiKey);
             return (0); /* PIN is owned by someone else */
         }
-        
+
         adcAuxIo = ADC_COMPB_IN_AUXIO7 + (adcPinId - 23);
-        adcPin = pin;      
+        adcPin = pin;
         digital_pin_to_pin_function[pin] = PIN_FUNC_ANALOG_INPUT;
     }
 
@@ -315,7 +315,7 @@ uint16_t analogRead(uint8_t pin)
     // Trigger ADC sampling
     AUXADCGenManualTrigger();
     /* fetch the next sample */
-    adcSample = AUXADCAdjustValueForGainAndOffset(AUXADCReadFifo(), 
+    adcSample = AUXADCAdjustValueForGainAndOffset(AUXADCReadFifo(),
                         adcTrimGain, adcTrimOffset);
     // Disable ADC
     AUXADCDisable();

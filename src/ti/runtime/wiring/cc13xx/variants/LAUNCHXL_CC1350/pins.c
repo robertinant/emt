@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Texas Instruments Incorporated
+ * Copyright (c) 2016, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,15 +38,16 @@
 
 uint8_t digital_pin_to_pin_function[] = {
     PIN_FUNC_INVALID,   /*  dummy */
+
     PIN_FUNC_INVALID,   /*  1  - 3.3V */
-    PIN_FUNC_INVALID,   /*  2  - DIO_23 */
+    PIN_FUNC_UNUSED,    /*  2  - DIO_23 */
     PIN_FUNC_UNUSED,    /*  3  - DIO_02 */
     PIN_FUNC_UNUSED,    /*  4  - DIO_03 */
     PIN_FUNC_UNUSED,    /*  5  - DIO_22 */
     PIN_FUNC_UNUSED,    /*  6  - DIO_24 */
     PIN_FUNC_UNUSED,    /*  7  - DIO_10 */
     PIN_FUNC_UNUSED,    /*  8  - DIO_21 */
-    PIN_FUNC_INVALID,   /*  9  - DIO_04 */
+    PIN_FUNC_UNUSED,    /*  9  - DIO_04 */
     PIN_FUNC_UNUSED,    /*  10 - DIO_05 */
 	
     PIN_FUNC_UNUSED,    /*  11 - DIO_15 */
@@ -54,14 +55,14 @@ uint8_t digital_pin_to_pin_function[] = {
     PIN_FUNC_UNUSED,    /*  13 - DIO_13 */
     PIN_FUNC_UNUSED,    /*  14 - DIO_08 */
     PIN_FUNC_UNUSED,    /*  15 - DIO_09 */
-    PIN_FUNC_UNUSED,    /*  16 - LPRST */
-    PIN_FUNC_UNUSED,    /*  17 - NC */
+    PIN_FUNC_INVALID,   /*  16 - LPRST */
+    PIN_FUNC_INVALID,   /*  17 - NC */
     PIN_FUNC_UNUSED,    /*  18 - DIO_11 */
-    PIN_FUNC_INVALID,   /*  19 - DIO_12 */
-    PIN_FUNC_UNUSED,    /*  20 - GND */
+    PIN_FUNC_UNUSED,    /*  19 - DIO_12 */
+    PIN_FUNC_INVALID,   /*  20 - GND */
 	
-    PIN_FUNC_UNUSED,    /*  21 - 5V */
-    PIN_FUNC_UNUSED,    /*  22 - GND */
+    PIN_FUNC_INVALID,   /*  21 - 5V */
+    PIN_FUNC_INVALID,   /*  22 - GND */
     PIN_FUNC_UNUSED,    /*  23 - DIO_25 */
     PIN_FUNC_UNUSED,    /*  24 - DIO_26 */
     PIN_FUNC_UNUSED,    /*  25 - DIO_27 */
@@ -73,9 +74,9 @@ uint8_t digital_pin_to_pin_function[] = {
 	
     PIN_FUNC_UNUSED,    /*  31 - DIO_17 */
     PIN_FUNC_UNUSED,    /*  32 - DIO_16 */
-    PIN_FUNC_UNUSED,    /*  33 - TCK */
-    PIN_FUNC_UNUSED,    /*  34 - TMS */
-    PIN_FUNC_UNUSED,    /*  35 - BPRST */
+    PIN_FUNC_INVALID,   /*  33 - TCK */
+    PIN_FUNC_INVALID,   /*  34 - TMS */
+    PIN_FUNC_INVALID,   /*  35 - BPRST */
     PIN_FUNC_UNUSED,    /*  36 - DIO_18 */
     PIN_FUNC_UNUSED,    /*  37 - DIO_19 */
     PIN_FUNC_UNUSED,    /*  38 - DIO_20 */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Texas Instruments Incorporated
+ * Copyright (c) 2016, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -43,12 +43,13 @@ static const uint8_t YELLOW_LED = 0; /* no Yellow LED */
 static const uint8_t PUSH1 = 13;
 static const uint8_t PUSH2 = 12;
 
-static const uint8_t A0 = 20;
-static const uint8_t A1 = 18;
-static const uint8_t A2 = 16;
-static const uint8_t A3 = 14;
-static const uint8_t A4 = 12;
-static const uint8_t A5 = 17;
-static const uint8_t A6 = 10;
+static const uint8_t A0 = 2;
+static const uint8_t A1 = 6;
+static const uint8_t A2 = 23;
+static const uint8_t A3 = 24;
+static const uint8_t A4 = 25;
+static const uint8_t A5 = 26;
+static const uint8_t A6 = 27;
+static const uint8_t A7 = 28;
 
 #endif
