@@ -36,6 +36,9 @@ endef
 TREE_ROOT = $(firstword $(subst /src/, /src/,$(CURDIR)))
 TREE_NAME = $(notdir $(TREE_ROOT))
 
+ZUMA_TREE = $(firstword $(subst /, ,$(lastword $(subst /zumaprod/, ,$(TIRTOS)))))
+ZUMA_TREE = zumaprod-j08
+
 # ensure "all" is the default build goal
 all: makefile
 
@@ -45,6 +48,11 @@ closure-$(TREE_NAME).tar.gz: $(TREE_ROOT)/exports/emt_src.zip $(CLOSURE_ZIPS)
 	@echo making $@ ...
 	rm -f $@
 	./copy.ksh $<
+
+# rule to make the loadable board .zip archive
+msp432-$(TREE_NAME).zip: $(TREE_ROOT)/exports/emt_src.zip
+	@echo making $@ ...
+	./msp432/mkbrd.ksh $< $(ZUMA_TREE)
 
 # rule for device-specific closure zips; used to create the "universal closure"
 %/closure.zip: | all
@@ -59,4 +67,5 @@ closure-$(TREE_NAME).tar.gz: $(TREE_ROOT)/exports/emt_src.zip $(CLOSURE_ZIPS)
 
 clean:
 	rm -f closure-$(TREE_NAME).tar.gz
+	rm -r msp432-$(TREE_NAME).zip
 	$(call BUILD_ALL,clean)

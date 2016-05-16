@@ -32,6 +32,8 @@ JOBS = --jobs=1
 	make -C src/bundles/emt_src release
 	@echo making energia closures ...
 	make -C src/bundles/energia all closure-$(notdir $(CURDIR)).tar.gz
+	@echo "making msp432 board 'package' ..."
+	make -C src/bundles/energia all msp432-$(notdir $(CURDIR)).zip
 
 # ======== .local-all ========
 # Builds all packages

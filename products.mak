@@ -41,7 +41,7 @@ ifeq (,$(XDCROOT))
     #
     INO2CPP = $(TREE_ROOT)/imports/ino2cpp/ino2cpp.sh
     XDCROOT = $(TOOLS)/vendors/xdc/xdctools_3_32_01_10_eng/$(BUILD_HOST_OS)
-    TIRTOS  = $(firstword $(wildcard $(TREES)/zumaprod/zumaprod-j04/exports/tirtos_full_*))
+    TIRTOS  = $(firstword $(wildcard $(TREES)/zumaprod/zumaprod-j08/exports/tirtos_full_*))
     SYSBIOS = $(wildcard $(TIRTOS)/products/bios_6_*)
     TIDRIVERS = $(wildcard $(TIRTOS)/products/tidrivers_*)
 
