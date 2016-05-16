@@ -66,6 +66,6 @@ msp432-$(TREE_NAME).zip: $(TREE_ROOT)/exports/emt_src.zip
 	$(call BUILD_ALL,$@)
 
 clean:
-	rm -f closure-$(TREE_NAME).tar.gz
-	rm -r msp432-$(TREE_NAME).zip
+	-rm -f closure-$(TREE_NAME).tar.gz
+	-rm -f msp432-$(TREE_NAME).zip
 	$(call BUILD_ALL,clean)
