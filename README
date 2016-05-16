@@ -1,4 +1,4 @@
-				emt-b11
+				emt-b12
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -125,26 +125,15 @@ Librarian releases
 
 ADDITIONS
 
-ti.runtime.wiring.cc26xx.variants.CC2650_LAUNCHXL
-	Added CC2650 launchpad variant
-
 DELETIONS
 
 CHANGES
 
-ti.runtme.wiring
-	fixed two issues with tone(): calling tone() with same frequency
-	causes it to (eventually) stop, and calling noTone() prior to calling 
-        tone() dereferences a NULL pointer(!)
+bundles/energia/msp432
+bundles/energia
+    added generation of Energia 18 msp432 board archive
 
-	Moved SPI, Wire, and Serial instantiations into variant libraries.
-
-	Reworked HardwareSerial to support blocking rx mode for MSP432 and
-	CC3200.
-
-bundles/energia/cc26xx
-bundles/energia/cc13xx
-	Stopped using CC2650 ROM since we will probably never be burdened by
-	the BLE stack footprint.
+./makefile and push.ksh
+    added build and push of msp432 board archive
 
 MRS
