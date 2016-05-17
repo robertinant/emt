@@ -1,4 +1,4 @@
-				emt-b12
+				emt-b13
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -130,10 +130,6 @@ DELETIONS
 CHANGES
 
 bundles/energia/msp432
-bundles/energia
-    added generation of Energia 18 msp432 board archive
-
-./makefile and push.ksh
-    added build and push of msp432 board archive
+    fixed up generation of Energia 18 msp432 "core package"
 
 MRS
