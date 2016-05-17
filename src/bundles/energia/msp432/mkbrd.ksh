@@ -71,6 +71,9 @@ echo CORE = $CORE
 echo "unzipping emt sources to $DSTDIR/cores ..."
 EMTDIR="$DSTDIR/cores/$CORE"
 unzip -q $srczip -d $DSTDIR/cores
+rm -rf $DSTDIR/cores/emt/ti/runtime/wiring/cc3200
+rm -rf $DSTDIR/cores/emt/ti/runtime/wiring/cc26xx
+rm -rf $DSTDIR/cores/emt/ti/runtime/wiring/cc13xx
 mv $DSTDIR/cores/emt $EMTDIR
 
 # copy driverlib library from TI-RTOS product tree to DSTDIR/system
@@ -107,11 +110,13 @@ find ./ti/runtime/wiring/*/variants -depth -maxdepth 6 -type f \( -name "*.c" -o
 echo "Copy linker script and compiler options to ti/runtime/wiring/$CORE"
 cp linker.cmd compiler.opt $EMTDIR/ti/runtime/wiring/$CORE
 
-echo "Copy configPkg files to to ti/runtime/wiring/$CORE"
-find ./configPkg/package/cfg/ -type f \( -name "*.rov.xs" -o -name "*.h" -o -name "*.c" -o -name "*pm3g.om3g" -o -name "*pm4fg.om4fg" -o -name "*pm4g.om4g" \) | cpio -pudm $EMTDIR/ti/runtime/wiring/$CORE
+echo "Copy configPkg files to ti/runtime/wiring/$CORE"
+find ./configPkg/package/cfg/ -type f \( -name "*.rov.xs" -o -name "*.h" -o -name "*pm3g.om3g" -o -name "*pm4fg.om4fg" -o -name "*pm4g.om4g" \) | cpio -pudm $EMTDIR/ti/runtime/wiring/$CORE
 
 # create board archive and cleanup
 echo "Creating board package archive"
 cd $TMPDIR
+mkdir -p $SEMVERS/variants/MSP_EXP432P401R
+echo "This directory is intensionally empty (almost)" > $SEMVERS/variants/MSP_EXP432P401R/readme.txt
 rm -f $cwd/msp432-$VERSION.*
 zip -rq $cwd/msp432-$VERSION.zip $SEMVERS
