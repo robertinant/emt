@@ -4,7 +4,7 @@
 # "identical except for device" energia configurations and adding emt
 # sources.
 #
-#  Usage: copy <path_to_emt_sour_archive>
+#  Usage: copy <path_to_emt_source_archive>
 #
 if [ $# -lt 1 ]; then
 	echo "Error: Illegal number of parameters"
