@@ -12,7 +12,8 @@ status=0
 #  push file $1 to energia as file $2
 #
 function push {
-    put "$1" "$2" | lftp -u "energiamt,$PASSWORD" energia.nu
+    echo put "$1" -o "$2" 
+    echo put "$1" -o "$2" | lftp -u "energiamt,$PASSWORD" energia.nu
     if [ "$?" != "0" ]; then
         status=1
     fi
