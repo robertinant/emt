@@ -1,4 +1,4 @@
-				emt-b13
+				emt-b14
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -129,7 +129,9 @@ DELETIONS
 
 CHANGES
 
-bundles/energia/msp432
-    fixed up generation of Energia 18 msp432 "core package"
+bundles/energia
+    added lpush to push closures via lftp
+
+    added basic build script to build using the new arduino-builder
 
 MRS
