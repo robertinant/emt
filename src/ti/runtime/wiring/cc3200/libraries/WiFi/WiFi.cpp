@@ -125,6 +125,7 @@ bool WiFiClass::init()
     //
     // initialize TI-RTOS WiFi driver
     //
+    Board_initWiFi(); /* WiFi requires initializion of SPI and DMA */
     WiFi_init();
 
     //
