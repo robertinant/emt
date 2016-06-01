@@ -1,4 +1,4 @@
-				emt-b14
+				emt-b145
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -130,8 +130,11 @@ DELETIONS
 CHANGES
 
 bundles/energia
-    added lpush to push closures via lftp
+	fixed lpush
 
-    added basic build script to build using the new arduino-builder
+ti.runtime.wiring.cc3200
+	fixed libraries/WiFi/WiFi.cpp to call Board_initWiFi to ensure DMA
+	and SPI are initialized (fixes critical bug when transfers are 
+	greater the 396 bytes
 
 MRS
