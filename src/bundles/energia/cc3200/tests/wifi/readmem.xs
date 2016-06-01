@@ -56,7 +56,8 @@ function main(args)
 
 	/* pause to _really_ give the network socket */
         java.lang.Thread.sleep(250);
-   }
+    }
+
     if (log) {
         logLine("-------------- done ---------------");
         log.flush();
@@ -84,12 +85,12 @@ function logLine(line)
  */
 function readmem(ins, out, start, data)
 {
-    cmd = start.toString(16) + "," + data.length;
+    var cmd = start.toString(16) + "," + data.length;
     out.println(cmd);
-    print("sent: " +cmd);
+    print("sent: " + cmd);
     ins.readFully(data);
     var result = "";
-    for (j = 0; j < data.length; j++) {
+    for (var j = 0; j < data.length; j++) {
         var b = (0xff & data[j]).toString(16);
 	result += b + " ";
     }
