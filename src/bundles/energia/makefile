@@ -37,7 +37,7 @@ TREE_ROOT = $(firstword $(subst /src/, /src/,$(CURDIR)))
 TREE_NAME = $(notdir $(TREE_ROOT))
 
 ZUMA_TREE = $(firstword $(subst /, ,$(lastword $(subst /zumaprod/, ,$(TIRTOS)))))
-ZUMA_TREE = zumaprod-j08
+ZUMA_TREE = zumaprod-n05
 
 # ensure "all" is the default build goal
 all: makefile
