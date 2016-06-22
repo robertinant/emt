@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Texas Instruments Incorporated
+ * Copyright (c) 2015-2016, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -50,12 +50,20 @@
 #include <driverlib/aux_adc.h>
 #include <driverlib/aux_wuc.h>
 
+/* !!! Hack to workaround unilateral 'const' modifier in CC26xx HwAttrs typedef !!! */
+typedef struct myPWMTimerCC26XX_HwAttrs
+{
+    PIN_Id  pwmPin;               /*!< PIN to output PWM signal on */
+    uint8_t gpTimerUnit;          /*!< GPTimer unit index (0A, 0B, 1A..) */
+} myPWMTimerCC26XX_HwAttrs;
+
 /*
  * analogWrite() support
  */
 
 extern PWM_Config PWM_config[];
 extern const GPIOCC26XX_Config GPIOCC26XX_config;
+extern myPWMTimerCC26XX_HwAttrs pwmtimerCC26xxHWAttrs[];
 
 /* Carefully selected hal Timer IDs for tone and servo */
 uint32_t toneTimerId = (~0);  /* use Timer_ANY for tone timer */
@@ -136,7 +144,6 @@ void analogWrite(uint8_t pin, int val)
         /* re-configure pin if possible */
         PWM_Params pwmParams;
         PWM_Handle pwmHandle;
-        PWMTimerCC26XX_PWMPinCfg pwmPinCfg;
         uint8_t numPwmChannels = sizeof(used_pwm_port_pins)/sizeof(uint8_t);
 
         if (digital_pin_to_pin_function[pin] == PIN_FUNC_INVALID) {
@@ -167,10 +174,10 @@ void analogWrite(uint8_t pin, int val)
                 /* Open the PWM port */
                 PWM_Params_init(&pwmParams);
 
-                pwmParams.period = 2040; /* arduino period is 2.04ms (490Hz) */
-                pwmParams.dutyMode = PWM_DUTY_COUNTS;
-                pwmPinCfg.pwmPinId = pwmPinId; /* override HWAttrs pwmPinId */
-                pwmParams.custom = (uintptr_t)&pwmPinCfg;
+                pwmParams.periodUnits = PWM_PERIOD_US;
+                pwmParams.periodValue = 2040; /* arduino period is 2.04ms (490Hz) */
+                pwmParams.dutyUnits = PWM_DUTY_COUNTS;
+                pwmtimerCC26xxHWAttrs[pwmIndex].pwmPin = pwmPinId;
 
                 /* PWM_open() will fail if the timer's CCR is already in use */
                 pwmHandle = PWM_open(pwmIndex, &pwmParams);
@@ -194,6 +201,9 @@ void analogWrite(uint8_t pin, int val)
             Hwi_restore(hwiKey);
             return; /* no available PWM ports */
         }
+
+        /* start Timer */
+        PWM_start(pwmHandle);
     }
 
     Hwi_restore(hwiKey);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Texas Instruments Incorporated
+ * Copyright (c) 2015-2016, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -506,36 +506,232 @@ const CryptoCC26XX_Config CryptoCC26XX_config[] = {
 };
 
 /*
- * ======== PWM driver ========
+ *  ============================ GPTimer begin =================================
+ *  Remove unused entries to reduce flash usage both in Board.c and Board.h
  */
+
+#include <ti/drivers/timer/GPTimerCC26XX.h>
+
+/* Place into subsections to allow the TI linker to remove items properly */
+#if defined(__TI_COMPILER_VERSION__)
+#pragma DATA_SECTION(GPTimerCC26XX_config, ".const:GPTimerCC26XX_config")
+#pragma DATA_SECTION(gptimerCC26xxHWAttrs, ".const:gptimerCC26xxHWAttrs")
+#endif
+
+/* GPTimer hardware attributes, one per timer part (Timer 0A, 0B, 1A, 1B..) */
+const GPTimerCC26XX_HWAttrs gptimerCC26xxHWAttrs[CC1350_LAUNCHXL_GPTIMERPARTSCOUNT] = {
+    { .baseAddr = GPT0_BASE, .intNum = INT_GPT0A, .intPriority = (~0), .powerMngrId = PowerCC26XX_PERIPH_GPT0, .pinMux = GPT_PIN_0A, },
+    { .baseAddr = GPT0_BASE, .intNum = INT_GPT0B, .intPriority = (~0), .powerMngrId = PowerCC26XX_PERIPH_GPT0, .pinMux = GPT_PIN_0B, },
+    { .baseAddr = GPT1_BASE, .intNum = INT_GPT1A, .intPriority = (~0), .powerMngrId = PowerCC26XX_PERIPH_GPT1, .pinMux = GPT_PIN_1A, },
+    { .baseAddr = GPT1_BASE, .intNum = INT_GPT1B, .intPriority = (~0), .powerMngrId = PowerCC26XX_PERIPH_GPT1, .pinMux = GPT_PIN_1B, },
+    { .baseAddr = GPT2_BASE, .intNum = INT_GPT2A, .intPriority = (~0), .powerMngrId = PowerCC26XX_PERIPH_GPT2, .pinMux = GPT_PIN_2A, },
+    { .baseAddr = GPT2_BASE, .intNum = INT_GPT2B, .intPriority = (~0), .powerMngrId = PowerCC26XX_PERIPH_GPT2, .pinMux = GPT_PIN_2B, },
+    { .baseAddr = GPT3_BASE, .intNum = INT_GPT3A, .intPriority = (~0), .powerMngrId = PowerCC26XX_PERIPH_GPT3, .pinMux = GPT_PIN_3A, },
+    { .baseAddr = GPT3_BASE, .intNum = INT_GPT3B, .intPriority = (~0), .powerMngrId = PowerCC26XX_PERIPH_GPT3, .pinMux = GPT_PIN_3B, },
+};
+
+/*  GPTimer objects, one per full-width timer (A+B) (Timer 0, Timer 1..) */
+GPTimerCC26XX_Object gptimerCC26XXObjects[CC1350_LAUNCHXL_GPTIMERCOUNT];
+
+/* GPTimer configuration (used as GPTimer_Handle by driver and application) */
+const GPTimerCC26XX_Config GPTimerCC26XX_config[CC1350_LAUNCHXL_GPTIMERPARTSCOUNT] = {
+    { &gptimerCC26XXObjects[0], &gptimerCC26xxHWAttrs[0], GPT_A },
+    { &gptimerCC26XXObjects[0], &gptimerCC26xxHWAttrs[1], GPT_B },
+    { &gptimerCC26XXObjects[1], &gptimerCC26xxHWAttrs[2], GPT_A },
+    { &gptimerCC26XXObjects[1], &gptimerCC26xxHWAttrs[3], GPT_B },
+    { &gptimerCC26XXObjects[2], &gptimerCC26xxHWAttrs[4], GPT_A },
+    { &gptimerCC26XXObjects[2], &gptimerCC26xxHWAttrs[5], GPT_B },
+    { &gptimerCC26XXObjects[3], &gptimerCC26xxHWAttrs[6], GPT_A },
+    { &gptimerCC26XXObjects[3], &gptimerCC26xxHWAttrs[7], GPT_B },
+};
+
+/*
+ *  ============================ GPTimer end ===================================
+ */
+
+/*
+ *  ============================= PWM begin ====================================
+ *  Remove unused entries to reduce flash usage both in Board.c and Board.h
+ */
+
 #include <ti/drivers/PWM.h>
 #include <ti/drivers/pwm/PWMTimerCC26XX.h>
 #include <driverlib/timer.h>
 
-PWMTimerCC26XX_Object pwmCC26xxObjects[CC1350_LAUNCHXL_PWMCOUNT];
+/* !!! Hack to workaround unilateral 'const' modifier in CC26xx HwAttrs typedef !!! */
+typedef struct myPWMTimerCC26XX_HwAttrs
+{
+    PIN_Id  pwmPin;               /*!< PIN to output PWM signal on */
+    uint8_t gpTimerUnit;          /*!< GPTimer unit index (0A, 0B, 1A..) */
+} myPWMTimerCC26XX_HwAttrs;
 
-const PWMTimerCC26XX_HWAttrs pwmCC26xxHWAttrs[CC1350_LAUNCHXL_PWMCOUNT] = {
-    {GPT0_BASE, TIMER_A, PowerCC26XX_PERIPH_GPT0, IOID_0},
-    {GPT0_BASE, TIMER_B, PowerCC26XX_PERIPH_GPT0, IOID_1},
-    {GPT1_BASE, TIMER_A, PowerCC26XX_PERIPH_GPT1, IOID_2},
-    {GPT1_BASE, TIMER_B, PowerCC26XX_PERIPH_GPT1, IOID_3},
-    {GPT2_BASE, TIMER_A, PowerCC26XX_PERIPH_GPT2, IOID_4},
-    {GPT2_BASE, TIMER_B, PowerCC26XX_PERIPH_GPT2, IOID_5},
-    {GPT3_BASE, TIMER_A, PowerCC26XX_PERIPH_GPT3, IOID_6},
-    {GPT3_BASE, TIMER_B, PowerCC26XX_PERIPH_GPT3, IOID_7}
+
+/* Place into subsections to allow the TI linker to remove items properly */
+#if defined(__TI_COMPILER_VERSION__)
+#pragma DATA_SECTION(PWM_config, ".const:PWM_config")
+#pragma DATA_SECTION(pwmtimerCC26xxHWAttrs, ".const:pwmtimerCC26xxHWAttrs")
+#endif
+
+/* PWM configuration, one per PWM output.   */
+myPWMTimerCC26XX_HwAttrs pwmtimerCC26xxHWAttrs[CC1350_LAUNCHXL_PWMCOUNT] = {
+    { .pwmPin = Board_PWMPIN0, .gpTimerUnit = Board_GPTIMER0A },
+    { .pwmPin = Board_PWMPIN1, .gpTimerUnit = Board_GPTIMER0B },
+    { .pwmPin = Board_PWMPIN2, .gpTimerUnit = Board_GPTIMER1A },
+    { .pwmPin = Board_PWMPIN3, .gpTimerUnit = Board_GPTIMER1B },
+    { .pwmPin = Board_PWMPIN4, .gpTimerUnit = Board_GPTIMER2A },
+    { .pwmPin = Board_PWMPIN5, .gpTimerUnit = Board_GPTIMER2B },
+    { .pwmPin = Board_PWMPIN6, .gpTimerUnit = Board_GPTIMER3A },
+    { .pwmPin = Board_PWMPIN7, .gpTimerUnit = Board_GPTIMER3B },
 };
 
-const PWM_Config PWM_config[] = {
-    {&PWMTimerCC26XX_fxnTable, &pwmCC26xxObjects[0], &pwmCC26xxHWAttrs[0]},
-    {&PWMTimerCC26XX_fxnTable, &pwmCC26xxObjects[1], &pwmCC26xxHWAttrs[1]},
-    {&PWMTimerCC26XX_fxnTable, &pwmCC26xxObjects[2], &pwmCC26xxHWAttrs[2]},
-    {&PWMTimerCC26XX_fxnTable, &pwmCC26xxObjects[3], &pwmCC26xxHWAttrs[3]},
-    {&PWMTimerCC26XX_fxnTable, &pwmCC26xxObjects[4], &pwmCC26xxHWAttrs[4]},
-    {&PWMTimerCC26XX_fxnTable, &pwmCC26xxObjects[5], &pwmCC26xxHWAttrs[5]},
-    {&PWMTimerCC26XX_fxnTable, &pwmCC26xxObjects[6], &pwmCC26xxHWAttrs[6]},
-    {&PWMTimerCC26XX_fxnTable, &pwmCC26xxObjects[7], &pwmCC26xxHWAttrs[7]},
-    {NULL, NULL, NULL}
+/* PWM object, one per PWM output */
+PWMTimerCC26XX_Object pwmtimerCC26xxObjects[CC1350_LAUNCHXL_PWMCOUNT];
+
+extern const PWM_FxnTable PWMTimerCC26XX_fxnTable;
+
+/* PWM configuration (used as PWM_Handle by driver and application) */
+const PWM_Config PWM_config[CC1350_LAUNCHXL_PWMCOUNT + 1] = {
+    { &PWMTimerCC26XX_fxnTable, &pwmtimerCC26xxObjects[0], &pwmtimerCC26xxHWAttrs[0] },
+    { &PWMTimerCC26XX_fxnTable, &pwmtimerCC26xxObjects[1], &pwmtimerCC26xxHWAttrs[1] },
+    { &PWMTimerCC26XX_fxnTable, &pwmtimerCC26xxObjects[2], &pwmtimerCC26xxHWAttrs[2] },
+    { &PWMTimerCC26XX_fxnTable, &pwmtimerCC26xxObjects[3], &pwmtimerCC26xxHWAttrs[3] },
+    { &PWMTimerCC26XX_fxnTable, &pwmtimerCC26xxObjects[4], &pwmtimerCC26xxHWAttrs[4] },
+    { &PWMTimerCC26XX_fxnTable, &pwmtimerCC26xxObjects[5], &pwmtimerCC26xxHWAttrs[5] },
+    { &PWMTimerCC26XX_fxnTable, &pwmtimerCC26xxObjects[6], &pwmtimerCC26xxHWAttrs[6] },
+    { &PWMTimerCC26XX_fxnTable, &pwmtimerCC26xxObjects[7], &pwmtimerCC26xxHWAttrs[7] },
+    { NULL,                NULL,                 NULL                 }
 };
+
+/*
+ *  ============================= PWM end ======================================
+ */
+
+/*
+ *  ========================== ADC begin =========================================
+ */
+/* Place into subsections to allow the TI linker to remove items properly */
+#if defined(__TI_COMPILER_VERSION__)
+#pragma DATA_SECTION(ADC_config, ".const:ADC_config")
+#pragma DATA_SECTION(adcCC26xxHWAttrs, ".const:adcCC26xxHWAttrs")
+#endif
+
+/* Include drivers */
+#include <ti/drivers/ADC.h>
+#include <ti/drivers/adc/ADCCC26XX.h>
+
+/* ADC objects */
+ADCCC26XX_Object adcCC26xxObjects[CC1350_LAUNCHXL_ADCCOUNT];
+
+
+const ADCCC26XX_HWAttrs adcCC26xxHWAttrs[CC1350_LAUNCHXL_ADCCOUNT] = {
+    {
+        .adcDIO = Board_DIO23_ANALOG,
+        .adcCompBInput = ADC_COMPB_IN_AUXIO7,
+        .refSource = ADCCC26XX_FIXED_REFERENCE,
+        .samplingDuration = ADCCC26XX_SAMPLING_DURATION_2P7_US,
+        .inputScalingEnabled = true,
+        .triggerSource = ADCCC26XX_TRIGGER_MANUAL
+    },
+    {
+        .adcDIO = Board_DIO24_ANALOG,
+        .adcCompBInput = ADC_COMPB_IN_AUXIO6,
+        .refSource = ADCCC26XX_FIXED_REFERENCE,
+        .samplingDuration = ADCCC26XX_SAMPLING_DURATION_2P7_US,
+        .inputScalingEnabled = true,
+        .triggerSource = ADCCC26XX_TRIGGER_MANUAL
+    },
+    {
+        .adcDIO = Board_DIO25_ANALOG,
+        .adcCompBInput = ADC_COMPB_IN_AUXIO5,
+        .refSource = ADCCC26XX_FIXED_REFERENCE,
+        .samplingDuration = ADCCC26XX_SAMPLING_DURATION_2P7_US,
+        .inputScalingEnabled = true,
+        .triggerSource = ADCCC26XX_TRIGGER_MANUAL
+    },
+    {
+        .adcDIO = Board_DIO26_ANALOG,
+        .adcCompBInput = ADC_COMPB_IN_AUXIO4,
+        .refSource = ADCCC26XX_FIXED_REFERENCE,
+        .samplingDuration = ADCCC26XX_SAMPLING_DURATION_2P7_US,
+        .inputScalingEnabled = true,
+        .triggerSource = ADCCC26XX_TRIGGER_MANUAL
+    },
+    {
+        .adcDIO = Board_DIO27_ANALOG,
+        .adcCompBInput = ADC_COMPB_IN_AUXIO3,
+        .refSource = ADCCC26XX_FIXED_REFERENCE,
+        .samplingDuration = ADCCC26XX_SAMPLING_DURATION_2P7_US,
+        .inputScalingEnabled = true,
+        .triggerSource = ADCCC26XX_TRIGGER_MANUAL
+    },
+    {
+        .adcDIO = Board_DIO28_ANALOG,
+        .adcCompBInput = ADC_COMPB_IN_AUXIO2,
+        .refSource = ADCCC26XX_FIXED_REFERENCE,
+        .samplingDuration = ADCCC26XX_SAMPLING_DURATION_2P7_US,
+        .inputScalingEnabled = true,
+        .triggerSource = ADCCC26XX_TRIGGER_MANUAL
+    },
+    {
+        .adcDIO = Board_DIO29_ANALOG,
+        .adcCompBInput = ADC_COMPB_IN_AUXIO1,
+        .refSource = ADCCC26XX_FIXED_REFERENCE,
+        .samplingDuration = ADCCC26XX_SAMPLING_DURATION_2P7_US,
+        .inputScalingEnabled = true,
+        .triggerSource = ADCCC26XX_TRIGGER_MANUAL
+    },
+    {
+        .adcDIO = Board_DIO30_ANALOG,
+        .adcCompBInput = ADC_COMPB_IN_AUXIO0,
+        .refSource = ADCCC26XX_FIXED_REFERENCE,
+        .samplingDuration = ADCCC26XX_SAMPLING_DURATION_10P9_MS,
+        .inputScalingEnabled = true,
+        .triggerSource = ADCCC26XX_TRIGGER_MANUAL
+    },
+    {
+        .adcDIO = PIN_UNASSIGNED,
+        .adcCompBInput = ADC_COMPB_IN_DCOUPL,
+        .refSource = ADCCC26XX_FIXED_REFERENCE,
+        .samplingDuration = ADCCC26XX_SAMPLING_DURATION_2P7_US,
+        .inputScalingEnabled = true,
+        .triggerSource = ADCCC26XX_TRIGGER_MANUAL
+    },
+    {
+        .adcDIO = PIN_UNASSIGNED,
+        .adcCompBInput = ADC_COMPB_IN_VSS,
+        .refSource = ADCCC26XX_FIXED_REFERENCE,
+        .samplingDuration = ADCCC26XX_SAMPLING_DURATION_2P7_US,
+        .inputScalingEnabled = true,
+        .triggerSource = ADCCC26XX_TRIGGER_MANUAL
+    },
+    {
+        .adcDIO = PIN_UNASSIGNED,
+        .adcCompBInput = ADC_COMPB_IN_VDDS,
+        .refSource = ADCCC26XX_FIXED_REFERENCE,
+        .samplingDuration = ADCCC26XX_SAMPLING_DURATION_2P7_US,
+        .inputScalingEnabled = true,
+        .triggerSource = ADCCC26XX_TRIGGER_MANUAL
+    }
+};
+
+const ADC_Config ADC_config[] = {
+    {&ADCCC26XX_fxnTable, &adcCC26xxObjects[0], &adcCC26xxHWAttrs[0]},
+    {&ADCCC26XX_fxnTable, &adcCC26xxObjects[1], &adcCC26xxHWAttrs[1]},
+    {&ADCCC26XX_fxnTable, &adcCC26xxObjects[2], &adcCC26xxHWAttrs[2]},
+    {&ADCCC26XX_fxnTable, &adcCC26xxObjects[3], &adcCC26xxHWAttrs[3]},
+    {&ADCCC26XX_fxnTable, &adcCC26xxObjects[4], &adcCC26xxHWAttrs[4]},
+    {&ADCCC26XX_fxnTable, &adcCC26xxObjects[5], &adcCC26xxHWAttrs[5]},
+    {&ADCCC26XX_fxnTable, &adcCC26xxObjects[6], &adcCC26xxHWAttrs[6]},
+    {&ADCCC26XX_fxnTable, &adcCC26xxObjects[7], &adcCC26xxHWAttrs[7]},
+    {&ADCCC26XX_fxnTable, &adcCC26xxObjects[8], &adcCC26xxHWAttrs[8]},
+    {&ADCCC26XX_fxnTable, &adcCC26xxObjects[9], &adcCC26xxHWAttrs[9]},
+    {&ADCCC26XX_fxnTable, &adcCC26xxObjects[10], &adcCC26xxHWAttrs[10]},
+    {NULL, NULL, NULL},
+};
+
+/*
+ *  ========================== ADC end =========================================
+ */
 
 /* 
  *  =============================== Power ===============================

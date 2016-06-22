@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Texas Instruments Incorporated
+ * Copyright (c) 2015-2016, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -137,15 +137,44 @@ extern PIN_Config BoardGpioInitTable[];
 #define Board_EB_UART_TX            IOID_16
 #define Board_EB_UART_RX            IOID_17
 
-/* PWM pins */
-#define Board_PWM0_PIN              IOID_0
-#define Board_PWM1_PIN              IOID_1
-#define Board_PWM2_PIN              IOID_2
-#define Board_PWM3_PIN              IOID_3
-#define Board_PWM4_PIN              IOID_4
-#define Board_PWM5_PIN              IOID_5
-#define Board_PWM6_PIN              IOID_6
-#define Board_PWM7_PIN              IOID_7
+/* Generic GPTimer instance identifiers */
+#define Board_GPTIMER0A             CC2650STK_GPTIMER0A
+#define Board_GPTIMER0B             CC2650STK_GPTIMER0B
+#define Board_GPTIMER1A             CC2650STK_GPTIMER1A
+#define Board_GPTIMER1B             CC2650STK_GPTIMER1B
+#define Board_GPTIMER2A             CC2650STK_GPTIMER2A
+#define Board_GPTIMER2B             CC2650STK_GPTIMER2B
+#define Board_GPTIMER3A             CC2650STK_GPTIMER3A
+#define Board_GPTIMER3B             CC2650STK_GPTIMER3B
+
+/* Generic PWM instance identifiers */
+#define Board_PWM0                  CC2650STK_PWM0
+#define Board_PWM1                  CC2650STK_PWM1
+#define Board_PWM2                  CC2650STK_PWM2
+#define Board_PWM3                  CC2650STK_PWM3
+#define Board_PWM4                  CC2650STK_PWM4
+#define Board_PWM5                  CC2650STK_PWM5
+#define Board_PWM6                  CC2650STK_PWM6
+#define Board_PWM7                  CC2650STK_PWM7
+
+/* PWM outputs */
+#define Board_PWMPIN0                       PIN_UNASSIGNED
+#define Board_PWMPIN1                       PIN_UNASSIGNED
+#define Board_PWMPIN2                       PIN_UNASSIGNED
+#define Board_PWMPIN3                       PIN_UNASSIGNED
+#define Board_PWMPIN4                       PIN_UNASSIGNED
+#define Board_PWMPIN5                       PIN_UNASSIGNED
+#define Board_PWMPIN6                       PIN_UNASSIGNED
+#define Board_PWMPIN7                       PIN_UNASSIGNED
+
+#define Board_DIO23_ANALOG          IOID_23
+#define Board_DIO24_ANALOG          IOID_24
+#define Board_DIO25_ANALOG          IOID_25
+#define Board_DIO26_ANALOG          IOID_26
+#define Board_DIO27_ANALOG          IOID_27
+#define Board_DIO28_ANALOG          IOID_28
+#define Board_DIO29_ANALOG          IOID_29
+#define Board_DIO30_ANALOG          IOID_30
 
 /* DevPack */
 #define Board_AUDIOFS_TDO           IOID_16
@@ -241,20 +270,69 @@ typedef enum CC2650_UdmaName {
 } CC2650_UdmaName;
 
 /*!
- *  @def    CC2650_PWMName
- *  @brief  Enum of PWM pin names on the CC3200_LP dev board
+ *  @def    CC2650STK_GPTimerName
+ *  @brief  Enum of GPTimer parts
  */
-typedef enum CC2650_PWMName {
-    CC2650_PWM0 = 0, /* PWM output from TIMERA0 side A */
-    CC2650_PWM1 = 1, /* PWM output from TIMERA0 side B */
-    CC2650_PWM2 = 2, /* PWM output from TIMERA1 side A */
-    CC2650_PWM3 = 3, /* PWM output from TIMERA1 side B */
-    CC2650_PWM4 = 4, /* PWM output from TIMERA2 side A */
-    CC2650_PWM5 = 5, /* PWM output from TIMERA2 side B */
-    CC2650_PWM6 = 6, /* PWM output from TIMERA3 side A */
-    CC2650_PWM7 = 7, /* PWM output from TIMERA3 side B */
-    CC2650_PWMCOUNT
-} CC2650_PWMName;
+typedef enum CC2650STK_GPTimerName
+{
+    CC2650STK_GPTIMER0A = 0,
+    CC2650STK_GPTIMER0B,
+    CC2650STK_GPTIMER1A,
+    CC2650STK_GPTIMER1B,
+    CC2650STK_GPTIMER2A,
+    CC2650STK_GPTIMER2B,
+    CC2650STK_GPTIMER3A,
+    CC2650STK_GPTIMER3B,
+    CC2650STK_GPTIMERPARTSCOUNT
+} CC2650STK_GPTimerName;
+
+/*!
+ *  @def    CC2650STK_GPTimers
+ *  @brief  Enum of GPTimers
+ */
+typedef enum CC2650STK_GPTimers
+{
+    CC2650STK_GPTIMER0 = 0,
+    CC2650STK_GPTIMER1,
+    CC2650STK_GPTIMER2,
+    CC2650STK_GPTIMER3,
+    CC2650STK_GPTIMERCOUNT
+} CC2650STK_GPTimers;
+
+/*!
+ *  @def    CC2650_PWMName
+ *  @brief  Enum of PWM pin names on the CC2650 dev board
+ */
+typedef enum CC2650STK_PWMName {
+    CC2650STK_PWM0 = 0, /* PWM output from TIMERA0 side A */
+    CC2650STK_PWM1 = 1, /* PWM output from TIMERA0 side B */
+    CC2650STK_PWM2 = 2, /* PWM output from TIMERA1 side A */
+    CC2650STK_PWM3 = 3, /* PWM output from TIMERA1 side B */
+    CC2650STK_PWM4 = 4, /* PWM output from TIMERA2 side A */
+    CC2650STK_PWM5 = 5, /* PWM output from TIMERA2 side B */
+    CC2650STK_PWM6 = 6, /* PWM output from TIMERA3 side A */
+    CC2650STK_PWM7 = 7, /* PWM output from TIMERA3 side B */
+    CC2650STK_PWMCOUNT
+} CC2650STK_PWMName;
+
+/*!
+ *  @def    CC2650STK_ADCName
+ *  @brief  Enum of ADCs
+ */
+typedef enum CC2650STK_ADCName {
+    CC2650STK_ADC0 = 0,
+    CC2650STK_ADC1,
+    CC2650STK_ADC2,
+    CC2650STK_ADC3,
+    CC2650STK_ADC4,
+    CC2650STK_ADC5,
+    CC2650STK_ADC6,
+    CC2650STK_ADC7,
+    CC2650STK_ADCDCOUPL,
+    CC2650STK_ADCVSS,
+    CC2650STK_ADCVDDS,
+    CC2650STK_ADCCOUNT
+} CC2650STK_ADCName;
 
 #ifdef __cplusplus
 }
