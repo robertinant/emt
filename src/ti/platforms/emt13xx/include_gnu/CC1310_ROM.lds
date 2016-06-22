@@ -49,21 +49,55 @@ SECTIONS {
         . += _rom_data_size;
     } > REGION_DATA
 
-    /* these hard-coded addrs are needed by the TI-RTOS SPICC26XXDMA driver
-     * and must match appropriate offsets from UDMACC26XX_CONFIG_BASE defined
+    /*
+     * UDMACC26XX_CONFIG_BASE below must match UDMACC26XX_CONFIG_BASE defined
      * by ti/drivers/dma/UDMACC26XX.h
+     * The user is allowed to change UDMACC26XX_CONFIG_BASE to move it away from
+     * the default address 0x2000_0400, but remember it must be 1024 bytes aligned.
      */
-    UDMACC26XX_dmaRxControlTableEntry0_is_placed = 0;
-    .dmaRxControlTableEntry0 0x20000430 : AT (0x20000430) {*(.dmaRxControlTableEntry0)} > REGION_DATA
+    UDMACC26XX_CONFIG_BASE = 0x20000400;
 
-    UDMACC26XX_dmaTxControlTableEntry0_is_placed = 0;
-    .dmaTxControlTableEntry0 0x20000440 : AT (0x20000440) {*(.dmaTxControlTableEntry0)} > REGION_DATA
+    /*
+     * Define absolute addresses for the DMA channels.
+     * DMA channels must always be allocated at a fixed offset from the DMA base address.
+     * --------- DO NOT MODIFY -----------
+     */
+    DMA_SPI0_RX_CONTROL_TABLE_ENTRY_ADDRESS   = (UDMACC26XX_CONFIG_BASE + 0x30);
+    DMA_SPI0_TX_CONTROL_TABLE_ENTRY_ADDRESS   = (UDMACC26XX_CONFIG_BASE + 0x40);
+    DMA_ADC_PRI_CONTROL_TABLE_ENTRY_ADDRESS   = (UDMACC26XX_CONFIG_BASE + 0x70);
+    DMA_GPT0A_PRI_CONTROL_TABLE_ENTRY_ADDRESS = (UDMACC26XX_CONFIG_BASE + 0x90);
+    DMA_SPI1_RX_CONTROL_TABLE_ENTRY_ADDRESS   = (UDMACC26XX_CONFIG_BASE + 0x100);
+    DMA_SPI1_TX_CONTROL_TABLE_ENTRY_ADDRESS   = (UDMACC26XX_CONFIG_BASE + 0x110);
+    DMA_ADC_ALT_CONTROL_TABLE_ENTRY_ADDRESS   = (UDMACC26XX_CONFIG_BASE + 0x270);
+    DMA_GPT0A_ALT_CONTROL_TABLE_ENTRY_ADDRESS = (UDMACC26XX_CONFIG_BASE + 0x290);
 
-    UDMACC26XX_dmaRxControlTableEntry1_is_placed = 0;
-    .dmaRxControlTableEntry1 0x20000500 : AT (0x20000500) {*(.dmaRxControlTableEntry1)} > REGION_DATA
+    /*
+     * Allocate SPI0, SPI1, ADC, and GPTimer0 DMA descriptors at absolute addresses.
+     * --------- DO NOT MODIFY -----------
+     */
+    UDMACC26XX_dmaSpi0RxControlTableEntry_is_placed = 0;
+    .dmaSpi0RxControlTableEntry DMA_SPI0_RX_CONTROL_TABLE_ENTRY_ADDRESS : AT (DMA_SPI0_RX_CONTROL_TABLE_ENTRY_ADDRESS) {*(.dmaSpi0RxControlTableEntry)} > REGION_DATA
 
-    UDMACC26XX_dmaTxControlTableEntry1_is_placed = 0;
-    .dmaTxControlTableEntry1 0x20000510 : AT (0x20000510) {*(.dmaTxControlTableEntry1)} > REGION_DATA
+    UDMACC26XX_dmaSpi0TxControlTableEntry_is_placed = 0;
+    .dmaSpi0TxControlTableEntry DMA_SPI0_TX_CONTROL_TABLE_ENTRY_ADDRESS : AT (DMA_SPI0_TX_CONTROL_TABLE_ENTRY_ADDRESS) {*(.dmaSpi0TxControlTableEntry)} > REGION_DATA
+
+    UDMACC26XX_dmaADCPriControlTableEntry_is_placed = 0;
+    .dmaADCPriControlTableEntry DMA_ADC_PRI_CONTROL_TABLE_ENTRY_ADDRESS : AT (DMA_ADC_PRI_CONTROL_TABLE_ENTRY_ADDRESS) {*(.dmaADCPriControlTableEntry)} > REGION_DATA
+
+    UDMACC26XX_dmaGPT0APriControlTableEntry_is_placed = 0;
+    .dmaGPT0APriControlTableEntry DMA_GPT0A_PRI_CONTROL_TABLE_ENTRY_ADDRESS : AT (DMA_GPT0A_PRI_CONTROL_TABLE_ENTRY_ADDRESS) {*(.dmaGPT0APriControlTableEntry)} > REGION_DATA
+
+    UDMACC26XX_dmaSpi1RxControlTableEntry_is_placed = 0;
+    .dmaSpi1RxControlTableEntry DMA_SPI1_RX_CONTROL_TABLE_ENTRY_ADDRESS : AT (DMA_SPI1_RX_CONTROL_TABLE_ENTRY_ADDRESS) {*(.dmaSpi1RxControlTableEntry)} > REGION_DATA
+
+    UDMACC26XX_dmaSpi1TxControlTableEntry_is_placed = 0;
+    .dmaSpi1TxControlTableEntry DMA_SPI1_TX_CONTROL_TABLE_ENTRY_ADDRESS : AT (DMA_SPI1_TX_CONTROL_TABLE_ENTRY_ADDRESS) {*(.dmaSpi1TxControlTableEntry)} > REGION_DATA
+
+    UDMACC26XX_dmaADCAltControlTableEntry_is_placed = 0;
+    .dmaADCAltControlTableEntry DMA_ADC_ALT_CONTROL_TABLE_ENTRY_ADDRESS : AT (DMA_ADC_ALT_CONTROL_TABLE_ENTRY_ADDRESS) {*(.dmaADCAltControlTableEntry)} > REGION_DATA
+
+    UDMACC26XX_dmaGPT0AAltControlTableEntry_is_placed = 0;
+    .dmaGPT0AAltControlTableEntry DMA_GPT0A_ALT_CONTROL_TABLE_ENTRY_ADDRESS : AT (DMA_GPT0A_ALT_CONTROL_TABLE_ENTRY_ADDRESS) {*(.dmaGPT0AAltControlTableEntry)} > REGION_DATA
 
     /* if a ROM-only symbol is present, then ROM is being used.
      * Reserve memory for surgically placed config constants.
