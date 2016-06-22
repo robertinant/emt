@@ -457,7 +457,6 @@ I2C_Handle Board_openI2C(UInt i2cPortIndex, I2C_Params *i2cParams)
 
 const PowerMSP432_ConfigV1 PowerMSP432_config = {
     .policyInitFxn = PowerMSP432_initPolicy,
-//    .policyFxn = PowerMSP432_sleepPolicy,
     .policyFxn = PowerMSP432_deepSleepPolicy,
     .initialPerfLevel = 2,
     .enablePolicy = true,
