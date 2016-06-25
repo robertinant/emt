@@ -48,7 +48,6 @@
 #include <inc/hw_ints.h>
 #include <inc/hw_memmap.h>
 #include <inc/hw_types.h>
-//#include <inc/hw_gpio.h>
 
 #include <driverlib/rom.h>
 #include <driverlib/rom_map.h>
@@ -59,6 +58,17 @@
 
 #include "Board.h"
 
+/*
+ *  =============================== DMA ===============================
+ */
+/* Place into subsections to allow the TI linker to remove items properly */
+#if defined(__TI_COMPILER_VERSION__)
+#pragma DATA_SECTION(UDMACC3200_config, ".const:UDMACC3200_config")
+#pragma DATA_SECTION(udmaCC3200HWAttrs, ".const:udmaCC3200HWAttrs")
+#endif
+
+#include <ti/drivers/dma/UDMACC3200.h>
+
 #if defined(__TI_COMPILER_VERSION__)
 #pragma DATA_ALIGN(dmaControlTable, 1024)
 #elif defined(__IAR_SYSTEMS_ICC__)
@@ -67,46 +77,35 @@
 __attribute__ ((aligned (1024)))
 #endif
 static tDMAControlTable dmaControlTable[64];
-static bool dmaInitialized = false;
-
-/* Hwi_Struct used in the initDMA Hwi_construct call */
-static Hwi_Struct dmaHwiStruct;
 
 /*
- *  ======== Board_errorDMAHwi ========
+ *  ======== dmaErrorFxn ========
+ *  This is the handler for the uDMA error interrupt.
  */
-static Void Board_errorDMAHwi(UArg arg)
+static void dmaErrorFxn(uintptr_t arg)
 {
-//    System_printf("DMA error code: %d\n", MAP_uDMAErrorStatusGet());
+    int status = MAP_uDMAErrorStatusGet();
     MAP_uDMAErrorStatusClear();
-    System_abort("DMA error!!");
+
+    /* Suppress unused variable warning */
+    (void)status;
+
+    while (1);
 }
 
-/*
- *  ======== Board_initDMA ========
- */
-void Board_initDMA(void)
-{
-    Error_Block eb;
-    Hwi_Params  hwiParams;
+UDMACC3200_Object udmaCC3200Object;
 
-    if (!dmaInitialized) {
-        Error_init(&eb);
-        Hwi_Params_init(&hwiParams);
-        Hwi_construct(&(dmaHwiStruct), INT_UDMAERR, Board_errorDMAHwi,
-                      &hwiParams, &eb);
-        if (Error_check(&eb)) {
-            System_abort("Couldn't construct DMA error hwi");
-        }
+const UDMACC3200_HWAttrs udmaCC3200HWAttrs = {
+        .controlBaseAddr = (void *)dmaControlTable,
+        .dmaErrorFxn = (UDMACC3200_ErrorFxn)dmaErrorFxn,
+        .intNum = INT_UDMAERR,
+        .intPriority = (~0)
+};
 
-        MAP_PRCMPeripheralClkEnable(PRCM_UDMA, PRCM_RUN_MODE_CLK | PRCM_SLP_MODE_CLK);
-        MAP_PRCMPeripheralReset(PRCM_UDMA);
-        MAP_uDMAEnable();
-        MAP_uDMAControlBaseSet(dmaControlTable);
-
-        dmaInitialized = true;
-    }
-}
+const UDMACC3200_Config UDMACC3200_config = {
+    .object = &udmaCC3200Object,
+    .hwAttrs = &udmaCC3200HWAttrs
+};
 
 /*
  *  ======== Board_initGeneral ========
@@ -357,15 +356,71 @@ I2C_Handle Board_openI2C(UInt i2cPortIndex, I2C_Params *i2cParams)
 
 PWMTimerCC3200_Object pwmCC3200Objects[Board_PWMCOUNT];
 
-const PWMTimerCC3200_HWAttrs pwmCC3200HWAttrs[Board_PWMCOUNT] = {
-    {TIMERA0_BASE, TIMER_A},
-    {TIMERA0_BASE, TIMER_B},
-    {TIMERA1_BASE, TIMER_A},
-    {TIMERA1_BASE, TIMER_B},
-    {TIMERA2_BASE, TIMER_A},
-    {TIMERA2_BASE, TIMER_B},
-    {TIMERA3_BASE, TIMER_A},
-    {TIMERA3_BASE, TIMER_B}
+PWMTimerCC3200_HWAttrsV1 pwmCC3200HWAttrs[Board_PWMCOUNT] = {
+    {
+	    .timerBaseAddr = TIMERA0_BASE,
+		.halfTimer = TIMER_A,
+        .pinTimerPwmMode = PIN_MODE_5,
+        .pinId = PIN_01,
+        .gpioBaseAddr = GPIOA1_BASE,
+        .gpioPinIndex = GPIO_PIN_2
+	},
+    {
+	    .timerBaseAddr = TIMERA0_BASE,
+		.halfTimer = TIMER_B,
+        .pinTimerPwmMode = PIN_MODE_5,
+        .pinId = PIN_01,
+        .gpioBaseAddr = GPIOA1_BASE,
+        .gpioPinIndex = GPIO_PIN_2
+	},
+    {
+	    .timerBaseAddr = TIMERA1_BASE,
+		.halfTimer = TIMER_A,
+        .pinTimerPwmMode = PIN_MODE_9,
+        .pinId = PIN_01,
+        .gpioBaseAddr = GPIOA1_BASE,
+        .gpioPinIndex = GPIO_PIN_2
+	},
+    {
+	    .timerBaseAddr = TIMERA1_BASE,
+		.halfTimer = TIMER_B,
+        .pinTimerPwmMode = PIN_MODE_9,
+        .pinId = PIN_01,
+        .gpioBaseAddr = GPIOA1_BASE,
+        .gpioPinIndex = GPIO_PIN_2
+	},
+    {
+	    .timerBaseAddr = TIMERA2_BASE,
+		.halfTimer = TIMER_A,
+        .pinTimerPwmMode = PIN_MODE_3,
+        .pinId = PIN_01,
+        .gpioBaseAddr = GPIOA1_BASE,
+        .gpioPinIndex = GPIO_PIN_2
+	},
+    {
+	    .timerBaseAddr = TIMERA2_BASE,
+		.halfTimer = TIMER_B,
+        .pinTimerPwmMode = PIN_MODE_3,
+        .pinId = PIN_01,
+        .gpioBaseAddr = GPIOA1_BASE,
+        .gpioPinIndex = GPIO_PIN_2
+	},
+    {
+	    .timerBaseAddr = TIMERA3_BASE,
+		.halfTimer = TIMER_A,
+        .pinTimerPwmMode = PIN_MODE_3,
+        .pinId = PIN_01,
+        .gpioBaseAddr = GPIOA1_BASE,
+        .gpioPinIndex = GPIO_PIN_2
+	},
+    {
+	    .timerBaseAddr = TIMERA3_BASE,
+		.halfTimer = TIMER_B,
+        .pinTimerPwmMode = PIN_MODE_3,
+        .pinId = PIN_01,
+        .gpioBaseAddr = GPIOA1_BASE,
+        .gpioPinIndex = GPIO_PIN_2
+	},
 };
 
 const PWM_Config PWM_config[] = {
@@ -459,8 +514,6 @@ const SPI_Config SPI_config[] = {
  */
 SPI_Handle Board_openSPI(UInt spiPortIndex, SPI_Params *spiParams)
 {
-    Board_initDMA();
-
     /* Initialize the SPI driver */
     /* By design, SPI_init() is idempotent */
     SPI_init();
@@ -620,23 +673,88 @@ UART_Handle Board_openUART(UInt uartPortIndex, UART_Params *uartParams)
 #include <ti/drivers/Power.h>
 #include <ti/drivers/power/PowerCC3200.h>
 
+/* Place into subsections to allow the TI linker to remove items properly */
+#if defined(__TI_COMPILER_VERSION__)
+#pragma DATA_SECTION(PowerCC3200_config, ".const:PowerCC3200_config")
+#endif
+
 /*
- *  ======== PowerCC3200_config ========
+ * This table defines the parking state to be set for each parkable pin
+ * during LPDS. (Device pins must be parked during LPDS to achieve maximum
+ * power savings.)  If the pin should be left unparked, specify the state
+ * PowerCC3200_DONT_PARK.  For example, for a UART TX pin, the device
+ * will automatically park the pin in a high state during transition to LPDS,
+ * so the Power Manager does not need to explictly park the pin.  So the
+ * corresponding entries in this table should indicate PowerCC3200_DONT_PARK.
  */
-const PowerCC3200_Config PowerCC3200_config = {
-    .policyInitFxn = PowerCC3200_initPolicy,
-    .policyFxn = PowerCC3200_sleepPolicy,
+PowerCC3200_ParkInfo parkInfo[] = {
+/*          PIN                    PARK STATE              PIN ALIAS (FUNCTION)
+     -----------------  ------------------------------     -------------------- */
+    {PowerCC3200_PIN01, PowerCC3200_WEAK_PULL_DOWN_STD}, /* GPIO10              */
+    {PowerCC3200_PIN02, PowerCC3200_WEAK_PULL_DOWN_STD}, /* GPIO11              */
+    {PowerCC3200_PIN03, PowerCC3200_WEAK_PULL_DOWN_STD}, /* GPIO12              */
+    {PowerCC3200_PIN04, PowerCC3200_WEAK_PULL_DOWN_STD}, /* GPIO13              */
+    {PowerCC3200_PIN05, PowerCC3200_WEAK_PULL_DOWN_STD}, /* GPIO14              */
+    {PowerCC3200_PIN06, PowerCC3200_WEAK_PULL_DOWN_STD}, /* GPIO15              */
+    {PowerCC3200_PIN07, PowerCC3200_DONT_PARK},          /* GPIO16 (UART1_TX)   */
+    {PowerCC3200_PIN08, PowerCC3200_WEAK_PULL_DOWN_STD}, /* GPIO17              */
+    {PowerCC3200_PIN11, PowerCC3200_WEAK_PULL_DOWN_STD}, /* FLASH_SPI_CLK       */
+    {PowerCC3200_PIN12, PowerCC3200_WEAK_PULL_DOWN_STD}, /* FLASH_SPI_DOUT      */
+    {PowerCC3200_PIN13, PowerCC3200_WEAK_PULL_DOWN_STD}, /* FLASH_SPI_DIN       */
+    {PowerCC3200_PIN14, PowerCC3200_WEAK_PULL_DOWN_STD}, /* FLASH_SPI_CS        */
+    {PowerCC3200_PIN15, PowerCC3200_WEAK_PULL_DOWN_STD}, /* GPIO22              */
+    {PowerCC3200_PIN16, PowerCC3200_WEAK_PULL_DOWN_STD}, /* TDI (JTAG DEBUG)    */
+    {PowerCC3200_PIN17, PowerCC3200_WEAK_PULL_DOWN_STD}, /* TDO (JTAG DEBUG)    */
+    {PowerCC3200_PIN19, PowerCC3200_WEAK_PULL_DOWN_STD}, /* TCK (JTAG DEBUG)    */
+    {PowerCC3200_PIN20, PowerCC3200_WEAK_PULL_DOWN_STD}, /* TMS (JTAG DEBUG)    */
+    {PowerCC3200_PIN18, PowerCC3200_WEAK_PULL_DOWN_STD}, /* GPIO28              */
+    {PowerCC3200_PIN21, PowerCC3200_WEAK_PULL_DOWN_STD}, /* SOP2                */
+    {PowerCC3200_PIN29, PowerCC3200_WEAK_PULL_DOWN_STD}, /* ANTSEL1             */
+    {PowerCC3200_PIN30, PowerCC3200_WEAK_PULL_DOWN_STD}, /* ANTSEL2             */
+    {PowerCC3200_PIN45, PowerCC3200_WEAK_PULL_DOWN_STD}, /* DCDC_ANA2_SW_P      */
+    {PowerCC3200_PIN50, PowerCC3200_WEAK_PULL_DOWN_STD}, /* GPIO0               */
+    {PowerCC3200_PIN52, PowerCC3200_WEAK_PULL_DOWN_STD}, /* RTC_XTAL_N          */
+    {PowerCC3200_PIN53, PowerCC3200_WEAK_PULL_DOWN_STD}, /* GPIO30              */
+    {PowerCC3200_PIN55, PowerCC3200_DONT_PARK},          /* GPIO1 (UART0_TX)    */
+    {PowerCC3200_PIN57, PowerCC3200_WEAK_PULL_DOWN_STD}, /* GPIO2               */
+    {PowerCC3200_PIN58, PowerCC3200_WEAK_PULL_DOWN_STD}, /* GPIO3               */
+    {PowerCC3200_PIN59, PowerCC3200_WEAK_PULL_DOWN_STD}, /* GPIO4               */
+    {PowerCC3200_PIN60, PowerCC3200_WEAK_PULL_DOWN_STD}, /* GPIO5               */
+    {PowerCC3200_PIN61, PowerCC3200_WEAK_PULL_DOWN_STD}, /* GPIO6               */
+    {PowerCC3200_PIN62, PowerCC3200_WEAK_PULL_DOWN_STD}, /* GPIO7               */
+    {PowerCC3200_PIN63, PowerCC3200_WEAK_PULL_DOWN_STD}, /* GPIO8               */
+    {PowerCC3200_PIN64, PowerCC3200_WEAK_PULL_DOWN_STD}, /* GPIO9               */
+};
+
+/*
+ *  This structure defines the configuration for the Power Manager.
+ *
+ *  In this configuration the Power policy is disabled by default (because
+ *  enablePolicy is set to false).  The Power policy can be enabled dynamically
+ *  at runtime by calling Power_enablePolicy(), or at build time, by changing
+ *  enablePolicy to true in this structure.
+ */
+const PowerCC3200_ConfigV1 PowerCC3200_config = {
+    .policyInitFxn = &PowerCC3200_initPolicy,
+    .policyFxn = &PowerCC3200_sleepPolicy,
     .enterLPDSHookFxn = NULL,
     .resumeLPDSHookFxn = NULL,
     .enablePolicy = true,
     .enableGPIOWakeupLPDS = true,
     .enableGPIOWakeupShutdown = false,
-    .enableNetworkWakeupLPDS = true,
+    .enableNetworkWakeupLPDS = false,
     .wakeupGPIOSourceLPDS = PRCM_LPDS_GPIO13,
     .wakeupGPIOTypeLPDS = PRCM_LPDS_FALL_EDGE,
+    .wakeupGPIOFxnLPDS = NULL,
+    .wakeupGPIOFxnLPDSArg = 0,
     .wakeupGPIOSourceShutdown = 0,
     .wakeupGPIOTypeShutdown = 0,
-    .ramRetentionMaskLPDS = PRCM_SRAM_COL_1|PRCM_SRAM_COL_2|PRCM_SRAM_COL_3|PRCM_SRAM_COL_4
+    .ramRetentionMaskLPDS = PRCM_SRAM_COL_1 | PRCM_SRAM_COL_2 |
+        PRCM_SRAM_COL_3 | PRCM_SRAM_COL_4,
+    .keepDebugActiveDuringLPDS = false,
+    .ioRetentionShutdown = PRCM_IO_RET_GRP_1,
+    .pinParkDefs = parkInfo,
+    .numPins = sizeof(parkInfo) / sizeof(PowerCC3200_ParkInfo)
 };
 
 /*
@@ -645,7 +763,12 @@ const PowerCC3200_Config PowerCC3200_config = {
 void Board_initPower(void)
 {
     Power_init();
-//    Power_setConstraint(PowerCC3200_DISALLOW_LPDS);
+
+    /* !!! Workaround for 2.20.0 GPIO_setConfig() does not call Power_setDependency !!! */
+    Power_setDependency(PowerCC3200_PERIPH_GPIOA0);
+    Power_setDependency(PowerCC3200_PERIPH_GPIOA1);
+    Power_setDependency(PowerCC3200_PERIPH_GPIOA2);
+    Power_setDependency(PowerCC3200_PERIPH_GPIOA3);
 }
 
 /*
@@ -682,7 +805,6 @@ const WiFi_Config WiFi_config[] = {
  */
 void Board_initWiFi(void)
 {
-    Board_initDMA();
     SPI_init();
 
     WiFi_init();

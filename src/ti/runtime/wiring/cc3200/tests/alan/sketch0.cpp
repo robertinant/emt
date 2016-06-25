@@ -7,12 +7,12 @@ extern void loopTelnetMon();
 
 void setup0()
 {
-    lp_setup();
-//    setupTelnetMon();
+//    lp_setup();
+    setupTelnetMon();
 }
 
 void loop0()
 {
-    lp_loop();
-//    loopTelnetMon();
+//    lp_loop();
+    loopTelnetMon();
 }

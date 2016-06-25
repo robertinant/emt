@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Texas Instruments Incorporated
+ * Copyright (c) 2015-2016, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -108,15 +108,44 @@ extern PIN_Config BoardGpioInitTable[];
 #define Board_SPI1_CLK              PIN_UNASSIGNED
 #define Board_SPI1_CSN              PIN_UNASSIGNED
 
-/* PWM pins */
-#define Board_PWM0_PIN              IOID_0
-#define Board_PWM1_PIN              IOID_1
-#define Board_PWM2_PIN              IOID_2
-#define Board_PWM3_PIN              IOID_3
-#define Board_PWM4_PIN              IOID_4
-#define Board_PWM5_PIN              IOID_5
-#define Board_PWM6_PIN              IOID_6
-#define Board_PWM7_PIN              IOID_7
+/* Generic GPTimer instance identifiers */
+#define Board_GPTIMER0A             CC1310_LAUNCHXL_GPTIMER0A
+#define Board_GPTIMER0B             CC1310_LAUNCHXL_GPTIMER0B
+#define Board_GPTIMER1A             CC1310_LAUNCHXL_GPTIMER1A
+#define Board_GPTIMER1B             CC1310_LAUNCHXL_GPTIMER1B
+#define Board_GPTIMER2A             CC1310_LAUNCHXL_GPTIMER2A
+#define Board_GPTIMER2B             CC1310_LAUNCHXL_GPTIMER2B
+#define Board_GPTIMER3A             CC1310_LAUNCHXL_GPTIMER3A
+#define Board_GPTIMER3B             CC1310_LAUNCHXL_GPTIMER3B
+
+/* Generic PWM instance identifiers */
+#define Board_PWM0                  CC1310_LAUNCHXL_PWM0
+#define Board_PWM1                  CC1310_LAUNCHXL_PWM1
+#define Board_PWM2                  CC1310_LAUNCHXL_PWM2
+#define Board_PWM3                  CC1310_LAUNCHXL_PWM3
+#define Board_PWM4                  CC1310_LAUNCHXL_PWM4
+#define Board_PWM5                  CC1310_LAUNCHXL_PWM5
+#define Board_PWM6                  CC1310_LAUNCHXL_PWM6
+#define Board_PWM7                  CC1310_LAUNCHXL_PWM7
+
+/* PWM outputs */
+#define Board_PWMPIN0                       PIN_UNASSIGNED
+#define Board_PWMPIN1                       PIN_UNASSIGNED
+#define Board_PWMPIN2                       PIN_UNASSIGNED
+#define Board_PWMPIN3                       PIN_UNASSIGNED
+#define Board_PWMPIN4                       PIN_UNASSIGNED
+#define Board_PWMPIN5                       PIN_UNASSIGNED
+#define Board_PWMPIN6                       PIN_UNASSIGNED
+#define Board_PWMPIN7                       PIN_UNASSIGNED
+
+#define Board_DIO23_ANALOG          IOID_23
+#define Board_DIO24_ANALOG          IOID_24
+#define Board_DIO25_ANALOG          IOID_25
+#define Board_DIO26_ANALOG          IOID_26
+#define Board_DIO27_ANALOG          IOID_27
+#define Board_DIO28_ANALOG          IOID_28
+#define Board_DIO29_ANALOG          IOID_29
+#define Board_DIO30_ANALOG          IOID_30
 
 /* UART pins used by driver */
 #define Board_UART_TX               IOID_3
@@ -186,6 +215,36 @@ typedef enum CC1310_LAUNCHXL_UdmaName {
 } CC1310_LAUNCHXL_UdmaName;
 
 /*!
+ *  @def    CC1310_LAUNCHXL_GPTimerName
+ *  @brief  Enum of GPTimer parts
+ */
+typedef enum CC1310_LAUNCHXL_GPTimerName
+{
+    CC1310_LAUNCHXL_GPTIMER0A = 0,
+    CC1310_LAUNCHXL_GPTIMER0B,
+    CC1310_LAUNCHXL_GPTIMER1A,
+    CC1310_LAUNCHXL_GPTIMER1B,
+    CC1310_LAUNCHXL_GPTIMER2A,
+    CC1310_LAUNCHXL_GPTIMER2B,
+    CC1310_LAUNCHXL_GPTIMER3A,
+    CC1310_LAUNCHXL_GPTIMER3B,
+    CC1310_LAUNCHXL_GPTIMERPARTSCOUNT
+} CC1310_LAUNCHXL_GPTimerName;
+
+/*!
+ *  @def    CC1310_LAUNCHXL_GPTimers
+ *  @brief  Enum of GPTimers
+ */
+typedef enum CC1310_LAUNCHXL_GPTimers
+{
+    CC1310_LAUNCHXL_GPTIMER0 = 0,
+    CC1310_LAUNCHXL_GPTIMER1,
+    CC1310_LAUNCHXL_GPTIMER2,
+    CC1310_LAUNCHXL_GPTIMER3,
+    CC1310_LAUNCHXL_GPTIMERCOUNT
+} CC1310_LAUNCHXL_GPTimers;
+
+/*!
  *  @def    CC1310_PWMName
  *  @brief  Enum of PWM pin names on the CC1310 dev board
  */
@@ -200,6 +259,25 @@ typedef enum CC1310_LAUNCHXL_PWMName {
     CC1310_LAUNCHXL_PWM7 = 7, /* PWM output from TIMERA3 side B */
     CC1310_LAUNCHXL_PWMCOUNT
 } CC1310_LAUNCHXL_PWMName;
+
+/*!
+ *  @def    CC1310_LAUNCHXL_ADCName
+ *  @brief  Enum of ADCs
+ */
+typedef enum CC1310_LAUNCHXL_ADCName {
+    CC1310_LAUNCHXL_ADC0 = 0,
+    CC1310_LAUNCHXL_ADC1,
+    CC1310_LAUNCHXL_ADC2,
+    CC1310_LAUNCHXL_ADC3,
+    CC1310_LAUNCHXL_ADC4,
+    CC1310_LAUNCHXL_ADC5,
+    CC1310_LAUNCHXL_ADC6,
+    CC1310_LAUNCHXL_ADC7,
+    CC1310_LAUNCHXL_ADCDCOUPL,
+    CC1310_LAUNCHXL_ADCVSS,
+    CC1310_LAUNCHXL_ADCVDDS,
+    CC1310_LAUNCHXL_ADCCOUNT
+} CC1310_LAUNCHXL_ADCName;
 
 #ifdef __cplusplus
 }

@@ -33,7 +33,9 @@
 /*
  *  ====================== Board.c =============================================
  *  This file is responsible for setting up the board specific items for the
- *  CC1350 LaunchPad.
+ *  CC1350 SensorTag.
+ *
+ *  NB! This board file is for PCB version 1.2
  */
 
 
@@ -57,26 +59,39 @@
  *  From main, PIN_init(BoardGpioInitTable) should be called to setup safe
  *  settings for this board.
  *  When a pin is allocated and then de-allocated, it will revert to the state
- *  configured in this table.
-*/
-
-/*
- *  ========================= IO driver initialization =========================
- *  From main, PIN_init(BoardGpioInitTable) should be called to setup safe
- *  settings for this board.
- *  When a pin is allocated and then de-allocated, it will revert to the state
  *  configured in this table
 */
 #include <ti/drivers/PIN.h>
 #include  <ti/drivers/pin/PINCC26XX.h>
 
-PIN_Config BoardGpioInitTable[] = {
-    Board_RLED   | PIN_GPIO_OUTPUT_EN | PIN_GPIO_LOW | PIN_PUSHPULL | PIN_DRVSTR_MAX,         /* LED initially off             */
-    Board_GLED   | PIN_GPIO_OUTPUT_EN | PIN_GPIO_LOW | PIN_PUSHPULL | PIN_DRVSTR_MAX,         /* LED initially off             */
-    Board_BTN1   | PIN_INPUT_EN | PIN_PULLUP | PIN_IRQ_BOTHEDGES | PIN_HYSTERESIS,            /* Button is active low          */
-    Board_BTN2   | PIN_INPUT_EN | PIN_PULLUP | PIN_IRQ_BOTHEDGES | PIN_HYSTERESIS,            /* Button is active low          */
-    Board_UART_RX | PIN_INPUT_EN | PIN_PULLDOWN,                                              /* UART RX via debugger back channel */
-    Board_UART_TX | PIN_GPIO_OUTPUT_EN | PIN_GPIO_HIGH | PIN_PUSHPULL,                        /* UART TX via debugger back channel */
+#if defined(__TI_COMPILER_VERSION__)
+#pragma DATA_SECTION(BoardGpioInitTable, ".const:BoardGpioInitTable")
+#pragma DATA_SECTION(PINCC26XX_hwAttrs, ".const:PINCC26XX_hwAttrs")
+#endif
+
+const PIN_Config BoardGpioInitTable[] = {
+
+    Board_STK_LED1   | PIN_GPIO_OUTPUT_EN | PIN_GPIO_LOW | PIN_PUSHPULL | PIN_DRVSTR_MAX,     /* LED initially off             */
+    Board_KEY_LEFT   | PIN_INPUT_EN | PIN_PULLUP | PIN_IRQ_BOTHEDGES | PIN_HYSTERESIS,        /* Button is active low          */
+    Board_KEY_RIGHT  | PIN_INPUT_EN | PIN_PULLUP | PIN_IRQ_BOTHEDGES | PIN_HYSTERESIS,        /* Button is active low          */
+    Board_RELAY      | PIN_INPUT_EN | PIN_PULLDOWN | PIN_IRQ_BOTHEDGES | PIN_HYSTERESIS,      /* Relay is active high          */
+    Board_MPU_INT    | PIN_INPUT_EN | PIN_PULLDOWN | PIN_IRQ_NEGEDGE | PIN_HYSTERESIS,        /* MPU_INT is active low         */
+    Board_TMP_RDY    | PIN_INPUT_EN | PIN_PULLUP | PIN_HYSTERESIS,                            /* TMP_RDY is active high        */
+    Board_BUZZER     | PIN_GPIO_OUTPUT_EN | PIN_GPIO_LOW | PIN_PUSHPULL | PIN_DRVSTR_MAX,     /* Buzzer initially off          */
+    Board_MPU_POWER  | PIN_GPIO_OUTPUT_EN | PIN_GPIO_HIGH | PIN_PUSHPULL | PIN_DRVSTR_MAX,    /* MPU initially on              */
+    Board_MIC_POWER  | PIN_GPIO_OUTPUT_EN | PIN_GPIO_LOW | PIN_PUSHPULL | PIN_DRVSTR_MIN,     /* MIC initially off             */
+    Board_SPI_FLASH_CS | PIN_GPIO_OUTPUT_EN | PIN_GPIO_HIGH | PIN_PUSHPULL | PIN_DRVSTR_MIN,  /* External flash chip select    */
+    Board_SPI_DEVPK_CS | PIN_GPIO_OUTPUT_EN | PIN_GPIO_LOW | PIN_PUSHPULL | PIN_DRVSTR_MIN,   /* DevPack chip select           */
+    Board_AUDIO_DI | PIN_INPUT_EN | PIN_PULLDOWN,                                             /* Audio DI                      */
+    Board_AUDIODO | PIN_GPIO_OUTPUT_EN | PIN_GPIO_HIGH | PIN_PUSHPULL | PIN_DRVSTR_MIN,       /* Audio data out                */
+    Board_AUDIO_CLK | PIN_INPUT_EN | PIN_PULLDOWN,                                            /* DevPack */
+    Board_DP2 | PIN_INPUT_EN | PIN_PULLDOWN,                                                  /* DevPack */
+    Board_DP1 | PIN_INPUT_EN | PIN_PULLDOWN,                                                  /* DevPack */
+    Board_DP0 | PIN_INPUT_EN | PIN_PULLDOWN,                                                  /* DevPack */
+    Board_DP3 | PIN_INPUT_EN | PIN_PULLDOWN,                                                  /* DevPack */
+    Board_UART_TX | PIN_GPIO_OUTPUT_EN | PIN_GPIO_HIGH | PIN_PUSHPULL,                        /* DevPack */
+    Board_UART_RX | PIN_INPUT_EN | PIN_PULLDOWN,                                              /* DevPack */
+    Board_DEVPK_ID | PIN_INPUT_EN | PIN_NOPULL,                                               /* Device pack ID - external PU  */
     Board_SPI0_MOSI | PIN_INPUT_EN | PIN_PULLDOWN,                                            /* SPI master out - slave in */
     Board_SPI0_MISO | PIN_INPUT_EN | PIN_PULLDOWN,                                            /* SPI master in - slave out */
     Board_SPI0_CLK | PIN_INPUT_EN | PIN_PULLDOWN,                                             /* SPI clock */
@@ -111,52 +126,44 @@ GPIO_PinConfig gpioPinConfigs[] = {
     GPIOCC26XX_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  0  - dummy */
                           
     /* pins 1-10 */
-    GPIOCC26XX_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  1  - 3.3V */
-    GPIOCC26XX_DIO_23 | GPIO_DO_NOT_CONFIG,     /*  2  - DIO_23 */
-    GPIOCC26XX_DIO_02 | GPIO_DO_NOT_CONFIG,     /*  3  - DIO_02 */
-    GPIOCC26XX_DIO_03 | GPIO_DO_NOT_CONFIG,     /*  4  - DIO_03 */
-    GPIOCC26XX_DIO_22 | GPIO_DO_NOT_CONFIG,     /*  5  - DIO_22 */
-    GPIOCC26XX_DIO_24 | GPIO_DO_NOT_CONFIG,     /*  6  - DIO_24 */
-    GPIOCC26XX_DIO_10 | GPIO_DO_NOT_CONFIG,     /*  7  - DIO_10 */
-    GPIOCC26XX_DIO_21 | GPIO_DO_NOT_CONFIG,     /*  8  - DIO_21 */
-    GPIOCC26XX_DIO_04 | GPIO_DO_NOT_CONFIG,     /*  9  - DIO_04 */
-    GPIOCC26XX_DIO_05 | GPIO_DO_NOT_CONFIG,     /*  10 - DIO_05 */
+    GPIOCC26XX_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  1  - VDD */
+    GPIOCC26XX_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  2  - GND */
+    GPIOCC26XX_DIO_06 | GPIO_DO_NOT_CONFIG,     /*  3  - DIO_06 SCL */
+    GPIOCC26XX_DIO_05 | GPIO_DO_NOT_CONFIG,     /*  4  - DIO_05 SDA */
+    GPIOCC26XX_DIO_16 | GPIO_DO_NOT_CONFIG,     /*  5  - DIO_16 DP12/AUDIO FS/TD0 */
+    GPIOCC26XX_DIO_03 | GPIO_DO_NOT_CONFIG,     /*  6  - DIO_03 DP7/AUDIO CLK */
+    GPIOCC26XX_DIO_20 | GPIO_DO_NOT_CONFIG,     /*  7  - DIO_20 DP11/CSN */
+    GPIOCC26XX_DIO_22 | GPIO_DO_NOT_CONFIG,     /*  8  - DIO_22 DP6/AUDIO DO */
+    GPIOCC26XX_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  9  - VDD */
+    GPIOCC26XX_DIO_29 | GPIO_DO_NOT_CONFIG,     /*  10 - DIO_29 DP5/UART_TX */
                           
     /* pins 11-20 */
-    GPIOCC26XX_DIO_15 | GPIO_DO_NOT_CONFIG,     /*  11 - DIO_15 */
-    GPIOCC26XX_DIO_14 | GPIO_DO_NOT_CONFIG,     /*  12 - DIO_14 */
-    GPIOCC26XX_DIO_13 | GPIO_DO_NOT_CONFIG,     /*  13 - DIO_13 */
-    GPIOCC26XX_DIO_08 | GPIO_DO_NOT_CONFIG,     /*  14 - DIO_08 */
-    GPIOCC26XX_DIO_09 | GPIO_DO_NOT_CONFIG,     /*  15 - DIO_09 */
-    GPIOCC26XX_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  16 - LPRST */
-    GPIOCC26XX_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  17 - NC */
-    GPIOCC26XX_DIO_11 | GPIO_DO_NOT_CONFIG,     /*  18 - DIO_11 */
-    GPIOCC26XX_DIO_12 | GPIO_DO_NOT_CONFIG,     /*  19 - DIO_12 */
-    GPIOCC26XX_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  20 - GND */
+    GPIOCC26XX_DIO_19 | GPIO_DO_NOT_CONFIG,     /*  11 - DIO_19 DP10/MOSI */
+    GPIOCC26XX_DIO_28 | GPIO_DO_NOT_CONFIG,     /*  12 - DIO_28 DP4/UART_RX */
+    GPIOCC26XX_DIO_18 | GPIO_DO_NOT_CONFIG,     /*  13 - DIO_18 DP9/MISO */
+    GPIOCC26XX_DIO_27 | GPIO_DO_NOT_CONFIG,     /*  14 - DIO_27 DP3 */
+    GPIOCC26XX_DIO_17 | GPIO_DO_NOT_CONFIG,     /*  15 - DIO_17 DP8/SCLK/TDI */
+    GPIOCC26XX_DIO_23 | GPIO_DO_NOT_CONFIG,     /*  16 - DIO_23 DP2  */
+    GPIOCC26XX_DIO_30 | GPIO_DO_NOT_CONFIG,     /*  17 - DIO_30 DP_ID */
+    GPIOCC26XX_DIO_24 | GPIO_DO_NOT_CONFIG,     /*  18 - DIO_24 DP1 */
+    GPIOCC26XX_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  19 - POWER_GOOD */
+    GPIOCC26XX_DIO_25 | GPIO_DO_NOT_CONFIG,     /*  20 - DIO_25 DP0 */
                           
-    /* pins 21-30 */
-    GPIOCC26XX_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  21 - 5V */
-    GPIOCC26XX_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  22 - GND */
-    GPIOCC26XX_DIO_25 | GPIO_DO_NOT_CONFIG,     /*  23 - DIO_25 */
-    GPIOCC26XX_DIO_26 | GPIO_DO_NOT_CONFIG,     /*  24 - DIO_26 */
-    GPIOCC26XX_DIO_27 | GPIO_DO_NOT_CONFIG,     /*  25 - DIO_27 */
-    GPIOCC26XX_DIO_28 | GPIO_DO_NOT_CONFIG,     /*  26 - DIO_28 */
-    GPIOCC26XX_DIO_29 | GPIO_DO_NOT_CONFIG,     /*  27 - DIO_29 */
-    GPIOCC26XX_DIO_30 | GPIO_DO_NOT_CONFIG,     /*  28 - DIO_30 */
-    GPIOCC26XX_DIO_00 | GPIO_DO_NOT_CONFIG,     /*  29 - DIO_00 */
-    GPIOCC26XX_DIO_01 | GPIO_DO_NOT_CONFIG,     /*  30 - DIO_01 */
+    /* virtual pins 21-30 */
+    GPIOCC26XX_DIO_02 | GPIO_DO_NOT_CONFIG,     /*  21 - DIO_02 AUDIO DI */
+    GPIOCC26XX_DIO_12 | GPIO_DO_NOT_CONFIG,     /*  22 - DIO_12 MPU PWR */
+    GPIOCC26XX_DIO_21 | GPIO_DO_NOT_CONFIG,     /*  23 - DIO_21 BUZZER */
+    GPIOCC26XX_DIO_01 | GPIO_DO_NOT_CONFIG,     /*  24 - DIO_01 REED */
+    GPIOCC26XX_DIO_04 | GPIO_DO_NOT_CONFIG,     /*  25 - DIO_04 BUTTON1 */
+    GPIOCC26XX_DIO_11 | GPIO_DO_NOT_CONFIG,     /*  26 - DIO_11 TMP RDY */
+    GPIOCC26XX_DIO_10 | GPIO_DO_NOT_CONFIG,     /*  27 - DIO_10 LED1 */
+    GPIOCC26XX_DIO_07 | GPIO_DO_NOT_CONFIG,     /*  28 - DIO_07 MPU INT */
+    GPIOCC26XX_DIO_13 | GPIO_DO_NOT_CONFIG,     /*  29 - DIO_13 MIC PWR */
+    GPIOCC26XX_DIO_15 | GPIO_DO_NOT_CONFIG,     /*  30 - DIO_15 BUTTON2 */
                           
-    /* pins 31-40 */
-    GPIOCC26XX_DIO_17 | GPIO_DO_NOT_CONFIG,     /*  31 - DIO_17 */
-    GPIOCC26XX_DIO_16 | GPIO_DO_NOT_CONFIG,     /*  32 - DIO_16 */
-    GPIOCC26XX_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  32 - TCK */
-    GPIOCC26XX_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  33 - TMS */
-    GPIOCC26XX_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  34 - BPRST */
-    GPIOCC26XX_DIO_18 | GPIO_DO_NOT_CONFIG,     /*  35 - DIO_18 */
-    GPIOCC26XX_DIO_19 | GPIO_DO_NOT_CONFIG,     /*  36 - DIO_19 */
-    GPIOCC26XX_DIO_20 | GPIO_DO_NOT_CONFIG,     /*  37 - DIO_20 */
-    GPIOCC26XX_DIO_06 | GPIO_DO_NOT_CONFIG,     /*  38 - DIO_06 */
-    GPIOCC26XX_DIO_07 | GPIO_DO_NOT_CONFIG,     /*  39 - DIO_07 */
+    /* virtual pin 31 */
+    GPIOCC26XX_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  31 - dummy (LED2 on CC2650 STK) */
+    GPIOCC26XX_DIO_14 | GPIO_DO_NOT_CONFIG,     /*  32 - DIO_14 FLASH CS */
 };
 
 GPIO_CallbackFxn gpioCallbackFunctions[] = {
@@ -164,52 +171,44 @@ GPIO_CallbackFxn gpioCallbackFunctions[] = {
     NULL,  /*  0  - dummy */
 
     /* pins 1-10 */
-    NULL,  /*  1  - 3.3V */
-    NULL,  /*  2  - DIO_23 */
-    NULL,  /*  3  - DIO_02 */
-    NULL,  /*  4  - DIO_03 */
-    NULL,  /*  5  - DIO_22 */
-    NULL,  /*  6  - DIO_24 */
-    NULL,  /*  7  - DIO_10 */
-    NULL,  /*  8  - DIO_21 */
-    NULL,  /*  9  - DIO_04 */
-    NULL,  /*  10 - DIO_05 */
+    NULL,  /*  1  - VDD */
+    NULL,  /*  2  - GND */
+    NULL,  /*  3  - DIO_06 SCL */
+    NULL,  /*  4  - DIO_05 SDA */
+    NULL,  /*  5  - DIO_16 DP12/AUDIO FS/TD0 */
+    NULL,  /*  6  - DIO_03 DP7/AUDIO CLK */
+    NULL,  /*  7  - DIO_20 DP11/CSN */
+    NULL,  /*  8  - DIO_22 DP6/AUDIO DO */
+    NULL,  /*  9  - VDD */
+    NULL,  /*  10 - DIO_29 DP5/UART_TX */
                     
     /* pins 11-20 */
-    NULL,  /*  11 - DIO_15 */
-    NULL,  /*  12 - DIO_14 */
-    NULL,  /*  13 - DIO_13 */
-    NULL,  /*  14 - DIO_08 */
-    NULL,  /*  15 - DIO_09 */
-    NULL,  /*  16 - LPRST */
-    NULL,  /*  17 - NC */
-    NULL,  /*  18 - DIO_11 */
-    NULL,  /*  19 - DIO_12 */
-    NULL,  /*  20 - GND */
+    NULL,  /*  11 - DIO_19 DP10/MOSI */
+    NULL,  /*  12 - DIO_28 DP4/UART_RX */
+    NULL,  /*  13 - DIO_18 DP9/MISO */
+    NULL,  /*  14 - DIO_27 DP3 */
+    NULL,  /*  15 - DIO_17 DP8/SCLK/TDI */
+    NULL,  /*  16 - DIO_23 DP2  */
+    NULL,  /*  17 - DIO_30 DP_ID */
+    NULL,  /*  18 - DIO_24 DP1 */
+    NULL,  /*  19 - POWER_GOOD */
+    NULL,  /*  20 - DIO_25 DP0 */
                     
     /* pins 21-30 */
-    NULL,  /*  21 - 5V */
-    NULL,  /*  22 - GND */
-    NULL,  /*  23 - DIO_25 */
-    NULL,  /*  24 - DIO_26 */
-    NULL,  /*  25 - DIO_27 */
-    NULL,  /*  26 - DIO_28 */
-    NULL,  /*  27 - DIO_29 */
-    NULL,  /*  28 - DIO_30 */
-    NULL,  /*  29 - DIO_00 */
-    NULL,  /*  30 - DIO_01 */
+    NULL,  /*  21 - DIO_02 AUDIO DI */
+    NULL,  /*  22 - DIO_12 MPU PWR */
+    NULL,  /*  23 - DIO_21 BUZZER */
+    NULL,  /*  24 - DIO_01 REED */
+    NULL,  /*  25 - DIO_04 BUTTON1 */
+    NULL,  /*  26 - DIO_11 TMP RDY */
+    NULL,  /*  27 - DIO_10 LED1 */
+    NULL,  /*  28 - DIO_07 MPU INT */
+    NULL,  /*  29 - DIO_13 MIC PWR */
+    NULL,  /*  30 - DIO_15 BUTTON2 */
                     
-    /* pins 31-40 */
-    NULL,  /*  31 - DIO_17 */
-    NULL,  /*  32 - DIO_16 */
-    NULL,  /*  31 - TCK */
-    NULL,  /*  32 - TMS */
-    NULL,  /*  31 - BPRST */
-    NULL,  /*  32 - DIO_18 */
-    NULL,  /*  31 - DIO_19 */
-    NULL,  /*  32 - DIO_20 */
-    NULL,  /*  31 - DIO_06 */
-    NULL,  /*  32 - DIO_07 */
+    /* pin 31 */
+    NULL,  /*  31 - Dummy (LED2 on CC2650 STK) */
+    NULL,  /*  32 - DIO_14 FLASH CS */
 };
 
 /* User requested callback functions for the GPIO input signals */
@@ -245,18 +244,18 @@ void Board_initGPIO(void)
 #include <ti/drivers/uart/UARTCC26XX.h>
 
 /* UART objects */
-UARTCC26XX_Object uartCC26XXObjects[CC1350_LAUNCHXL_UARTCOUNT];
+UARTCC26XX_Object uartCC26XXObjects[CC1350_UARTCOUNT];
 
 /* UART hardware parameter structure, also used to assign UART pins */
-const UARTCC26XX_HWAttrsV1 uartCC26XXHWAttrs[CC1350_LAUNCHXL_UARTCOUNT] = {
-    {   /* CC1350_LAUNCHXL_UART0 */
+const UARTCC26XX_HWAttrsV1 uartCC26XXHWAttrs[CC1350_UARTCOUNT] = {
+    {   /* CC1350_UART0 */
         .baseAddr = UART0_BASE,
         .powerMngrId = PowerCC26XX_PERIPH_UART0,
         .intNum = INT_UART0_COMB,    /* <driverlib>/inc/hw_ints.h */
         .intPriority = (~0),
         .swiPriority = 0,
-        .txPin = Board_UART_TX,
-        .rxPin = Board_UART_RX,
+        .txPin = Board_DP5_UARTTX,
+        .rxPin = Board_DP4_UARTRX,
         .ctsPin = PIN_UNASSIGNED,
         .rtsPin = PIN_UNASSIGNED
     },
@@ -314,10 +313,10 @@ UART_Handle Board_openUART(UInt uartPortIndex, UART_Params *uartParams)
 #include <ti/drivers/dma/UDMACC26XX.h>
 
 /* UDMA objects */
-UDMACC26XX_Object udmaObjects[CC1350_LAUNCHXL_UDMACOUNT];
+UDMACC26XX_Object udmaObjects[CC1350_UDMACOUNT];
 
 /* UDMA configuration structure */
-const UDMACC26XX_HWAttrs udmaHWAttrs[CC1350_LAUNCHXL_UDMACOUNT] = {
+const UDMACC26XX_HWAttrs udmaHWAttrs[CC1350_UDMACOUNT] = {
     {
         .baseAddr = UDMA0_BASE, 
         .powerMngrId = PowerCC26XX_PERIPH_UDMA,
@@ -351,11 +350,11 @@ const UDMACC26XX_Config UDMACC26XX_config[] = {
 #include <ti/drivers/spi/SPICC26XXDMA.h>
 
 /* SPI objects */
-SPICC26XXDMA_Object spiCC26XXDMAObjects[CC1350_LAUNCHXL_SPICOUNT];
+SPICC26XXDMA_Object spiCC26XXDMAObjects[CC1350_SPICOUNT];
 
 /* SPI configuration structure, describing which pins are to be used */
-const SPICC26XXDMA_HWAttrsV1 spiCC26XXDMAHWAttrs[CC1350_LAUNCHXL_SPICOUNT] = {
-    {   /* SENSORTAG_CC1350_LAUNCHXL_SPI0 */
+const SPICC26XXDMA_HWAttrsV1 spiCC26XXDMAHWAttrs[CC1350_SPICOUNT] = {
+    {   /* SENSORTAG_CC1350_SPI0 */
         .baseAddr = SSI0_BASE,
         .intNum = INT_SSI0_COMB,   /* <driverlib>/inc/hw_ints.h */
         .intPriority = 0xC0,       /* make SPI interrupt one priority higher than default */
@@ -367,13 +366,28 @@ const SPICC26XXDMA_HWAttrsV1 spiCC26XXDMAHWAttrs[CC1350_LAUNCHXL_SPICOUNT] = {
         .misoPin = Board_SPI0_MISO,
         .clkPin = Board_SPI0_CLK,
         .csnPin = PIN_UNASSIGNED     /* External flash / DevPk uses SPI0 */
+    },
+    {   /* SENSORTAG_CC1350_SPI1 */
+        .baseAddr = SSI1_BASE,
+        .intNum = INT_SSI1_COMB,     /* <driverlib>/inc/hw_ints.h */
+        .intPriority = ~0,
+        .defaultTxBufValue = 0,
+        .powerMngrId = PowerCC26XX_PERIPH_SSI1,
+        .rxChannelBitMask  = 1<<UDMA_CHAN_SSI1_RX,
+        .txChannelBitMask  = 1<<UDMA_CHAN_SSI1_TX,
+        .mosiPin = Board_SPI1_MOSI,
+        .misoPin = Board_SPI1_MISO,
+        .clkPin = Board_SPI1_CLK,
+        .csnPin = Board_SPI1_CSN
     }
 };
 
 /* SPI configuration structure */
 const SPI_Config SPI_config[] = {
-    /* SENSORTAG_CC1350_LAUNCHXL_SPI0 */
+    /* SENSORTAG_CC1350_SPI0 */
     {&SPICC26XXDMA_fxnTable, &spiCC26XXDMAObjects[0], &spiCC26XXDMAHWAttrs[0]},
+    /* SENSORTAG_CC1350_SPI1 */
+    {&SPICC26XXDMA_fxnTable, &spiCC26XXDMAObjects[1], &spiCC26XXDMAHWAttrs[1]},
     {NULL, NULL, NULL},
 };
 
@@ -389,6 +403,7 @@ SPI_Handle Board_openSPI(UInt spiPortIndex, SPI_Params *spiParams)
     /* initialize the pins associated with the respective UART */
     switch(spiPortIndex) {
         case 0:
+        case 1:
             break;
 
         default:
@@ -416,10 +431,10 @@ SPI_Handle Board_openSPI(UInt spiPortIndex, SPI_Params *spiParams)
 #include <ti/drivers/i2c/I2CCC26XX.h>
 
 /* I2C objects */
-I2CCC26XX_Object i2cCC26xxObjects[CC1350_LAUNCHXL_I2CCOUNT];
+I2CCC26XX_Object i2cCC26xxObjects[CC1350_I2CCOUNT];
 
 /* I2C configuration structure, describing which pins are to be used */
-const I2CCC26XX_HWAttrsV1 i2cCC26xxHWAttrs[CC1350_LAUNCHXL_I2CCOUNT] = {
+const I2CCC26XX_HWAttrsV1 i2cCC26xxHWAttrs[CC1350_I2CCOUNT] = {
     {
         .baseAddr = I2C0_BASE,
         .powerMngrId = PowerCC26XX_PERIPH_I2C0,
@@ -429,6 +444,15 @@ const I2CCC26XX_HWAttrsV1 i2cCC26xxHWAttrs[CC1350_LAUNCHXL_I2CCOUNT] = {
         .sdaPin = Board_I2C0_SDA0,
         .sclPin = Board_I2C0_SCL0,
     },
+    {
+        .baseAddr = I2C0_BASE,
+        .powerMngrId = PowerCC26XX_PERIPH_I2C0,
+        .intNum = INT_I2C_IRQ,    /* <driverlib>/inc/hw_ints.h */
+        .intPriority = (~0),
+        .swiPriority = 0,
+        .sdaPin = Board_I2C0_SDA1,
+        .sclPin = Board_I2C0_SCL1,
+    }
 };
 
 const I2C_Config I2C_config[] = {
@@ -436,6 +460,11 @@ const I2C_Config I2C_config[] = {
         .fxnTablePtr = &I2CCC26XX_fxnTable,
         .object = &i2cCC26xxObjects[0],
         .hwAttrs = &i2cCC26xxHWAttrs[0]
+    },
+    {
+        .fxnTablePtr = &I2CCC26XX_fxnTable,
+        .object = &i2cCC26xxObjects[1],
+        .hwAttrs = &i2cCC26xxHWAttrs[1]
     },
     {NULL, NULL, NULL}
 };
@@ -456,6 +485,7 @@ I2C_Handle Board_openI2C(UInt i2cPortIndex, I2C_Params *i2cParams)
     /* initialize the pins associated with the respective I2C */
     switch(i2cPortIndex) {
         case 0:
+        case 1:
             break;
 
         default:
@@ -484,10 +514,10 @@ I2C_Handle Board_openI2C(UInt i2cPortIndex, I2C_Params *i2cParams)
 #include <ti/drivers/crypto/CryptoCC26XX.h>
 
 /* Crypto objects */
-CryptoCC26XX_Object cryptoCC26XXObjects[CC1350_LAUNCHXL_CRYPTOCOUNT];
+CryptoCC26XX_Object cryptoCC26XXObjects[CC1350_CRYPTOCOUNT];
 
 /* Crypto configuration structure, describing which pins are to be used */
-const CryptoCC26XX_HWAttrs cryptoCC26XXHWAttrs[CC1350_LAUNCHXL_CRYPTOCOUNT] = {
+const CryptoCC26XX_HWAttrs cryptoCC26XXHWAttrs[CC1350_CRYPTOCOUNT] = {
     {
         .baseAddr = CRYPTO_BASE,
         .powerMngrId = PowerCC26XX_PERIPH_CRYPTO,
@@ -519,7 +549,7 @@ const CryptoCC26XX_Config CryptoCC26XX_config[] = {
 #endif
 
 /* GPTimer hardware attributes, one per timer part (Timer 0A, 0B, 1A, 1B..) */
-const GPTimerCC26XX_HWAttrs gptimerCC26xxHWAttrs[CC1350_LAUNCHXL_GPTIMERPARTSCOUNT] = {
+const GPTimerCC26XX_HWAttrs gptimerCC26xxHWAttrs[CC1350STK_GPTIMERPARTSCOUNT] = {
     { .baseAddr = GPT0_BASE, .intNum = INT_GPT0A, .intPriority = (~0), .powerMngrId = PowerCC26XX_PERIPH_GPT0, .pinMux = GPT_PIN_0A, },
     { .baseAddr = GPT0_BASE, .intNum = INT_GPT0B, .intPriority = (~0), .powerMngrId = PowerCC26XX_PERIPH_GPT0, .pinMux = GPT_PIN_0B, },
     { .baseAddr = GPT1_BASE, .intNum = INT_GPT1A, .intPriority = (~0), .powerMngrId = PowerCC26XX_PERIPH_GPT1, .pinMux = GPT_PIN_1A, },
@@ -531,10 +561,10 @@ const GPTimerCC26XX_HWAttrs gptimerCC26xxHWAttrs[CC1350_LAUNCHXL_GPTIMERPARTSCOU
 };
 
 /*  GPTimer objects, one per full-width timer (A+B) (Timer 0, Timer 1..) */
-GPTimerCC26XX_Object gptimerCC26XXObjects[CC1350_LAUNCHXL_GPTIMERCOUNT];
+GPTimerCC26XX_Object gptimerCC26XXObjects[CC1350STK_GPTIMERCOUNT];
 
 /* GPTimer configuration (used as GPTimer_Handle by driver and application) */
-const GPTimerCC26XX_Config GPTimerCC26XX_config[CC1350_LAUNCHXL_GPTIMERPARTSCOUNT] = {
+const GPTimerCC26XX_Config GPTimerCC26XX_config[CC1350STK_GPTIMERPARTSCOUNT] = {
     { &gptimerCC26XXObjects[0], &gptimerCC26xxHWAttrs[0], GPT_A },
     { &gptimerCC26XXObjects[0], &gptimerCC26xxHWAttrs[1], GPT_B },
     { &gptimerCC26XXObjects[1], &gptimerCC26xxHWAttrs[2], GPT_A },
@@ -573,7 +603,7 @@ typedef struct myPWMTimerCC26XX_HwAttrs
 #endif
 
 /* PWM configuration, one per PWM output.   */
-myPWMTimerCC26XX_HwAttrs pwmtimerCC26xxHWAttrs[CC1350_LAUNCHXL_PWMCOUNT] = {
+myPWMTimerCC26XX_HwAttrs pwmtimerCC26xxHWAttrs[CC1350STK_PWMCOUNT] = {
     { .pwmPin = Board_PWMPIN0, .gpTimerUnit = Board_GPTIMER0A },
     { .pwmPin = Board_PWMPIN1, .gpTimerUnit = Board_GPTIMER0B },
     { .pwmPin = Board_PWMPIN2, .gpTimerUnit = Board_GPTIMER1A },
@@ -585,12 +615,12 @@ myPWMTimerCC26XX_HwAttrs pwmtimerCC26xxHWAttrs[CC1350_LAUNCHXL_PWMCOUNT] = {
 };
 
 /* PWM object, one per PWM output */
-PWMTimerCC26XX_Object pwmtimerCC26xxObjects[CC1350_LAUNCHXL_PWMCOUNT];
+PWMTimerCC26XX_Object pwmtimerCC26xxObjects[CC1350STK_PWMCOUNT];
 
 extern const PWM_FxnTable PWMTimerCC26XX_fxnTable;
 
 /* PWM configuration (used as PWM_Handle by driver and application) */
-const PWM_Config PWM_config[CC1350_LAUNCHXL_PWMCOUNT + 1] = {
+const PWM_Config PWM_config[CC1350STK_PWMCOUNT + 1] = {
     { &PWMTimerCC26XX_fxnTable, &pwmtimerCC26xxObjects[0], &pwmtimerCC26xxHWAttrs[0] },
     { &PWMTimerCC26XX_fxnTable, &pwmtimerCC26xxObjects[1], &pwmtimerCC26xxHWAttrs[1] },
     { &PWMTimerCC26XX_fxnTable, &pwmtimerCC26xxObjects[2], &pwmtimerCC26xxHWAttrs[2] },
@@ -620,10 +650,10 @@ const PWM_Config PWM_config[CC1350_LAUNCHXL_PWMCOUNT + 1] = {
 #include <ti/drivers/adc/ADCCC26XX.h>
 
 /* ADC objects */
-ADCCC26XX_Object adcCC26xxObjects[CC1350_LAUNCHXL_ADCCOUNT];
+ADCCC26XX_Object adcCC26xxObjects[CC1350STK_ADCCOUNT];
 
 
-const ADCCC26XX_HWAttrs adcCC26xxHWAttrs[CC1350_LAUNCHXL_ADCCOUNT] = {
+const ADCCC26XX_HWAttrs adcCC26xxHWAttrs[CC1350STK_ADCCOUNT] = {
     {
         .adcDIO = Board_DIO23_ANALOG,
         .adcCompBInput = ADC_COMPB_IN_AUXIO7,

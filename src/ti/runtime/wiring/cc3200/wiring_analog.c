@@ -35,7 +35,11 @@
 #include <ti/runtime/wiring/wiring_private.h>
 #include "wiring_analog.h"
 
+#include <ti/drivers/Power.h>
 #include <ti/drivers/PWM.h>
+#include <ti/drivers/pwm/PWMTimerCC3200.h>
+#include <ti/drivers/GPIO.h>
+#include <ti/drivers/gpio/GPIOCC3200.h>
 #include <ti/sysbios/family/arm/m3/Hwi.h>
 #include <ti/sysbios/family/arm/lm4/Timer.h>
 
@@ -52,6 +56,20 @@
  */
 
 extern PWM_Config PWM_config[];
+extern PWMTimerCC3200_HWAttrsV1 pwmCC3200HWAttrs[];
+
+extern const GPIOCC3200_Config GPIOCC3200_config;
+
+/*
+ * Table of port bases address. 
+ * Indexed by GPIO port number (0-3).
+ *
+ * This should be driverlib call!!!
+ */
+static const uint32_t gpioBaseAddresses[] = {
+    GPIOA0_BASE, GPIOA1_BASE,
+    GPIOA2_BASE, GPIOA3_BASE
+};
 
 /* Carefully selected hal Timer IDs for tone and servo */
 uint32_t toneTimerId = (~0);  /* use Timer_ANY for tone timer */
@@ -73,12 +91,15 @@ PWM_Handle pwmHandles[8];
 
 void analogWrite(uint8_t pin, int val)
 {
-    uint8_t timer, timerId, pwmBaseIndex;
+    uint8_t timer, pwmIndex, timerId, pwmBaseIndex;
     uint32_t hwiKey;
+    uint16_t pinId;
+    uint_fast8_t port;
+    uint_fast16_t pinMask;
 
     hwiKey = Hwi_disable();
 
-    timer = digital_pin_to_timer[pin];
+    pwmIndex = timer = digital_pin_to_timer[pin];
 
     /* re-configure pin if necessary */
     if (digital_pin_to_pin_function[pin] != PIN_FUNC_ANALOG_OUTPUT) {
@@ -90,32 +111,8 @@ void analogWrite(uint8_t pin, int val)
         }
 
         uint32_t pnum = digital_pin_to_pin_num[pin];
-        uint32_t pmode;
         uint32_t timerAvailMask;
         bool weOwnTheTimer = false;
-
-        switch (timer) {
-            /* PWM0/1 */
-            case TIMERA0A:
-            case TIMERA0B:
-                pmode = PIN_MODE_5;
-                break;
-            /* PWM2/3 */
-            case TIMERA1A:
-            case TIMERA1B:
-                pmode = PIN_MODE_9;
-                break;
-            /* PWM4/5 */
-            case TIMERA2A:
-            case TIMERA2B:
-                pmode = PIN_MODE_3;
-                break;
-            /* PWM6/7 */
-            case TIMERA3A:
-            case TIMERA3B:
-                pmode = PIN_MODE_3;
-                break;
-        }
 
         timerId = timer >> 1;
         pwmBaseIndex = timer & 0xfe;
@@ -137,16 +134,25 @@ void analogWrite(uint8_t pin, int val)
             }
         }
 
-        /* We are free to have our way with the pin */
-        MAP_PinTypeTimer(pnum, pmode);
-
+        pinId = GPIOCC3200_config.pinConfigs[pin] & 0xffff;
+        port = pinId >> 8;
+        pinMask = pinId & 0xff;
         PWM_Params_init(&pwmParams);
 
         /* Open the PWM port */
-        pwmParams.period = 2040; /* arduino period is 2.04ms (490Hz) */
-        pwmParams.dutyMode = PWM_DUTY_COUNTS;
+        pwmParams.periodUnits = PWM_PERIOD_US;
+        pwmParams.periodValue = 2040; /* arduino period is 2.04ms (490Hz) */
+        pwmParams.dutyUnits = PWM_DUTY_COUNTS;
+
+        /* override default pin definition in HwAttrs */
+        pwmCC3200HWAttrs[pwmIndex].pinId = pnum;
+        pwmCC3200HWAttrs[pwmIndex].gpioBaseAddr = gpioBaseAddresses[port];
+        pwmCC3200HWAttrs[pwmIndex].gpioPinIndex = pinMask;
 
         pwmHandles[timer] = PWM_open(timer, &pwmParams);
+
+        /* start the Timer */
+        PWM_start(pwmHandles[timer]);
 
         /*
          * Remove timer from pool of available timers if we

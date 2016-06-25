@@ -32,11 +32,11 @@
 /** ============================================================================
  *  @file       Board.h
  *
- *  @brief      CC2650SENSORTAG Board Specific header file.
+ *  @brief      CC1350SENSORTAG Board Specific header file.
  *
  *  NB! This is the board file for PCB version 1.2
  *
- *  The CC2650 header file should be included in an application as follows:
+ *  The CC1350 header file should be included in an application as follows:
  *  @code
  *  #include <Board.h>
  *  @endcode
@@ -68,20 +68,20 @@ extern "C" {
 /** ============================================================================
  *  Externs
  *  ==========================================================================*/
-extern PIN_Config BoardGpioInitTable[];
+extern const PIN_Config BoardGpioInitTable[];
 
 /** ============================================================================
  *  Defines
  *  ==========================================================================*/
 
 /* Symbol by generic Board.c to include the correct PCB  specific Board.c */
-#define CC2650ST_0120
+#define CC1350ST_0120
 
 /* Identify as SensorTag */
-#define CC2650ST_7ID
+#define CC1350ST_7ID
 
 /* Same RF Configuration as 7x7 EM */
-#define CC2650EM_7ID
+#define CC1350EM_7ID
 
 /* This PCB version supports magnetometer */
 #define FEATURE_MAGNETOMETER
@@ -95,8 +95,7 @@ extern PIN_Config BoardGpioInitTable[];
  */
 
 /* Discrete outputs */
-#define Board_LED1                  IOID_10
-#define Board_LED2                  IOID_15
+#define Board_STK_LED1              IOID_10
 #define Board_BUZZER                IOID_21
 #define Board_LED_ON                1
 #define Board_LED_OFF               0
@@ -104,13 +103,13 @@ extern PIN_Config BoardGpioInitTable[];
 #define Board_BUZZER_OFF            0
 
 /* Discrete inputs */
-#define Board_KEY_LEFT              IOID_0
+#define Board_KEY_LEFT              IOID_15
 #define Board_KEY_RIGHT             IOID_4
-#define Board_RELAY                 IOID_3
+#define Board_RELAY                 IOID_1
 
 /* Sensor outputs */
 #define Board_MPU_INT               IOID_7
-#define Board_TMP_RDY               IOID_1
+#define Board_TMP_RDY               IOID_11
 
 /* I2C */
 #define Board_I2C0_SDA0             IOID_5
@@ -138,24 +137,24 @@ extern PIN_Config BoardGpioInitTable[];
 #define Board_EB_UART_RX            IOID_17
 
 /* Generic GPTimer instance identifiers */
-#define Board_GPTIMER0A             CC2650STK_GPTIMER0A
-#define Board_GPTIMER0B             CC2650STK_GPTIMER0B
-#define Board_GPTIMER1A             CC2650STK_GPTIMER1A
-#define Board_GPTIMER1B             CC2650STK_GPTIMER1B
-#define Board_GPTIMER2A             CC2650STK_GPTIMER2A
-#define Board_GPTIMER2B             CC2650STK_GPTIMER2B
-#define Board_GPTIMER3A             CC2650STK_GPTIMER3A
-#define Board_GPTIMER3B             CC2650STK_GPTIMER3B
+#define Board_GPTIMER0A             CC1350STK_GPTIMER0A
+#define Board_GPTIMER0B             CC1350STK_GPTIMER0B
+#define Board_GPTIMER1A             CC1350STK_GPTIMER1A
+#define Board_GPTIMER1B             CC1350STK_GPTIMER1B
+#define Board_GPTIMER2A             CC1350STK_GPTIMER2A
+#define Board_GPTIMER2B             CC1350STK_GPTIMER2B
+#define Board_GPTIMER3A             CC1350STK_GPTIMER3A
+#define Board_GPTIMER3B             CC1350STK_GPTIMER3B
 
 /* Generic PWM instance identifiers */
-#define Board_PWM0                  CC2650STK_PWM0
-#define Board_PWM1                  CC2650STK_PWM1
-#define Board_PWM2                  CC2650STK_PWM2
-#define Board_PWM3                  CC2650STK_PWM3
-#define Board_PWM4                  CC2650STK_PWM4
-#define Board_PWM5                  CC2650STK_PWM5
-#define Board_PWM6                  CC2650STK_PWM6
-#define Board_PWM7                  CC2650STK_PWM7
+#define Board_PWM0                  CC1350STK_PWM0
+#define Board_PWM1                  CC1350STK_PWM1
+#define Board_PWM2                  CC1350STK_PWM2
+#define Board_PWM3                  CC1350STK_PWM3
+#define Board_PWM4                  CC1350STK_PWM4
+#define Board_PWM5                  CC1350STK_PWM5
+#define Board_PWM6                  CC1350STK_PWM6
+#define Board_PWM7                  CC1350STK_PWM7
 
 /* PWM outputs */
 #define Board_PWMPIN0                       PIN_UNASSIGNED
@@ -207,14 +206,14 @@ extern PIN_Config BoardGpioInitTable[];
  *  Instance identifiers
  *  ==========================================================================*/
 /* Generic I2C instance identifiers */
-#define Board_I2C                   CC2650_I2C0
+#define Board_I2C                   CC1350_I2C0
 /* Generic SPI instance identifiers */
-#define Board_SPI0                  CC2650_SPI0
-#define Board_SPI1                  CC2650_SPI1
+#define Board_SPI0                  CC1350_SPI0
+#define Board_SPI1                  CC1350_SPI1
 /* Generic UART instance identifiers */
-#define Board_UART                  CC2650_UART0
+#define Board_UART                  CC1350_UART0
 /* Generic PWM instance identifiers */
-#define Board_PWM                   CC2650_PWM0
+#define Board_PWM                   CC1350_PWM0
 
 
 /** ============================================================================
@@ -222,117 +221,117 @@ extern PIN_Config BoardGpioInitTable[];
  *  ==========================================================================*/
 
 /*!
- *  @def    CC2650_I2CName
- *  @brief  Enum of I2C names on the CC2650 dev board
+ *  @def    CC1350_I2CName
+ *  @brief  Enum of I2C names on the CC1350 dev board
  */
-typedef enum CC2650_I2CName {
-    CC2650_I2C0 = 0,
-    CC2650_I2C1,
-    CC2650_I2CCOUNT
-} CC2650_I2CName;
+typedef enum CC1350_I2CName {
+    CC1350_I2C0 = 0,
+    CC1350_I2C1,
+    CC1350_I2CCOUNT
+} CC1350_I2CName;
 
 /*!
- *  @def    CC2650_CryptoName
- *  @brief  Enum of Crypto names on the CC2650 dev board
+ *  @def    CC1350_CryptoName
+ *  @brief  Enum of Crypto names on the CC1350 dev board
  */
-typedef enum CC2650_CryptoName {
-    CC2650_CRYPTO0 = 0,
-    CC2650_CRYPTOCOUNT
-} CC2650_CryptoName;
+typedef enum CC1350_CryptoName {
+    CC1350_CRYPTO0 = 0,
+    CC1350_CRYPTOCOUNT
+} CC1350_CryptoName;
 
 
 /*!
- *  @def    CC2650_SPIName
- *  @brief  Enum of SPI names on the CC2650 dev board
+ *  @def    CC1350_SPIName
+ *  @brief  Enum of SPI names on the CC1350 dev board
  */
-typedef enum CC2650_SPIName {
-    CC2650_SPI0 = 0,
-    CC2650_SPI1,
-    CC2650_SPICOUNT
-} CC2650_SPIName;
+typedef enum CC1350_SPIName {
+    CC1350_SPI0 = 0,
+    CC1350_SPI1,
+    CC1350_SPICOUNT
+} CC1350_SPIName;
 
 /*!
- *  @def    CC2650_UARTName
- *  @brief  Enum of UARTs on the CC2650 dev board
+ *  @def    CC1350_UARTName
+ *  @brief  Enum of UARTs on the CC1350 dev board
  */
-typedef enum CC2650_UARTName {
-    CC2650_UART0 = 0,
-    CC2650_UARTCOUNT
-} CC2650_UARTName;
+typedef enum CC1350_UARTName {
+    CC1350_UART0 = 0,
+    CC1350_UARTCOUNT
+} CC1350_UARTName;
 
 /*!
- *  @def    CC2650_UdmaName
+ *  @def    CC1350_UdmaName
  *  @brief  Enum of DMA buffers
  */
-typedef enum CC2650_UdmaName {
-    CC2650_UDMA0 = 0,
-    CC2650_UDMACOUNT
-} CC2650_UdmaName;
+typedef enum CC1350_UdmaName {
+    CC1350_UDMA0 = 0,
+    CC1350_UDMACOUNT
+} CC1350_UdmaName;
 
 /*!
- *  @def    CC2650STK_GPTimerName
+ *  @def    CC1350STK_GPTimerName
  *  @brief  Enum of GPTimer parts
  */
-typedef enum CC2650STK_GPTimerName
+typedef enum CC1350STK_GPTimerName
 {
-    CC2650STK_GPTIMER0A = 0,
-    CC2650STK_GPTIMER0B,
-    CC2650STK_GPTIMER1A,
-    CC2650STK_GPTIMER1B,
-    CC2650STK_GPTIMER2A,
-    CC2650STK_GPTIMER2B,
-    CC2650STK_GPTIMER3A,
-    CC2650STK_GPTIMER3B,
-    CC2650STK_GPTIMERPARTSCOUNT
-} CC2650STK_GPTimerName;
+    CC1350STK_GPTIMER0A = 0,
+    CC1350STK_GPTIMER0B,
+    CC1350STK_GPTIMER1A,
+    CC1350STK_GPTIMER1B,
+    CC1350STK_GPTIMER2A,
+    CC1350STK_GPTIMER2B,
+    CC1350STK_GPTIMER3A,
+    CC1350STK_GPTIMER3B,
+    CC1350STK_GPTIMERPARTSCOUNT
+} CC1350STK_GPTimerName;
 
 /*!
- *  @def    CC2650STK_GPTimers
+ *  @def    CC1350STK_GPTimers
  *  @brief  Enum of GPTimers
  */
-typedef enum CC2650STK_GPTimers
+typedef enum CC1350STK_GPTimers
 {
-    CC2650STK_GPTIMER0 = 0,
-    CC2650STK_GPTIMER1,
-    CC2650STK_GPTIMER2,
-    CC2650STK_GPTIMER3,
-    CC2650STK_GPTIMERCOUNT
-} CC2650STK_GPTimers;
+    CC1350STK_GPTIMER0 = 0,
+    CC1350STK_GPTIMER1,
+    CC1350STK_GPTIMER2,
+    CC1350STK_GPTIMER3,
+    CC1350STK_GPTIMERCOUNT
+} CC1350STK_GPTimers;
 
 /*!
- *  @def    CC2650_PWMName
- *  @brief  Enum of PWM pin names on the CC2650 dev board
+ *  @def    CC1350_PWMName
+ *  @brief  Enum of PWM pin names on the CC1350 dev board
  */
-typedef enum CC2650STK_PWMName {
-    CC2650STK_PWM0 = 0, /* PWM output from TIMERA0 side A */
-    CC2650STK_PWM1 = 1, /* PWM output from TIMERA0 side B */
-    CC2650STK_PWM2 = 2, /* PWM output from TIMERA1 side A */
-    CC2650STK_PWM3 = 3, /* PWM output from TIMERA1 side B */
-    CC2650STK_PWM4 = 4, /* PWM output from TIMERA2 side A */
-    CC2650STK_PWM5 = 5, /* PWM output from TIMERA2 side B */
-    CC2650STK_PWM6 = 6, /* PWM output from TIMERA3 side A */
-    CC2650STK_PWM7 = 7, /* PWM output from TIMERA3 side B */
-    CC2650STK_PWMCOUNT
-} CC2650STK_PWMName;
+typedef enum CC1350STK_PWMName {
+    CC1350STK_PWM0 = 0, /* PWM output from TIMERA0 side A */
+    CC1350STK_PWM1 = 1, /* PWM output from TIMERA0 side B */
+    CC1350STK_PWM2 = 2, /* PWM output from TIMERA1 side A */
+    CC1350STK_PWM3 = 3, /* PWM output from TIMERA1 side B */
+    CC1350STK_PWM4 = 4, /* PWM output from TIMERA2 side A */
+    CC1350STK_PWM5 = 5, /* PWM output from TIMERA2 side B */
+    CC1350STK_PWM6 = 6, /* PWM output from TIMERA3 side A */
+    CC1350STK_PWM7 = 7, /* PWM output from TIMERA3 side B */
+    CC1350STK_PWMCOUNT
+} CC1350STK_PWMName;
 
 /*!
- *  @def    CC2650STK_ADCName
+ *  @def    CC1350STK_ADCName
  *  @brief  Enum of ADCs
  */
-typedef enum CC2650STK_ADCName {
-    CC2650STK_ADC0 = 0,
-    CC2650STK_ADC1,
-    CC2650STK_ADC2,
-    CC2650STK_ADC3,
-    CC2650STK_ADC4,
-    CC2650STK_ADC5,
-    CC2650STK_ADC6,
-    CC2650STK_ADC7,
-    CC2650STK_ADCDCOUPL,
-    CC2650STK_ADCVSS,
-    CC2650STK_ADCVDDS,
-    CC2650STK_ADCCOUNT
-} CC2650STK_ADCName;
+typedef enum CC1350STK_ADCName {
+    CC1350STK_ADC0 = 0,
+    CC1350STK_ADC1,
+    CC1350STK_ADC2,
+    CC1350STK_ADC3,
+    CC1350STK_ADC4,
+    CC1350STK_ADC5,
+    CC1350STK_ADC6,
+    CC1350STK_ADC7,
+    CC1350STK_ADCDCOUPL,
+    CC1350STK_ADCVSS,
+    CC1350STK_ADCVDDS,
+    CC1350STK_ADCCOUNT
+} CC1350STK_ADCName;
 
 #ifdef __cplusplus
 }

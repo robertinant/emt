@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Texas Instruments Incorporated
+ * Copyright (c) 2015-2016, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -108,15 +108,44 @@ extern PIN_Config BoardGpioInitTable[];
 #define Board_SPI1_CLK              PIN_UNASSIGNED
 #define Board_SPI1_CSN              PIN_UNASSIGNED
 
-/* PWM pins */
-#define Board_PWM0_PIN              IOID_0
-#define Board_PWM1_PIN              IOID_1
-#define Board_PWM2_PIN              IOID_2
-#define Board_PWM3_PIN              IOID_3
-#define Board_PWM4_PIN              IOID_4
-#define Board_PWM5_PIN              IOID_5
-#define Board_PWM6_PIN              IOID_6
-#define Board_PWM7_PIN              IOID_7
+/* Generic GPTimer instance identifiers */
+#define Board_GPTIMER0A             CC2650_LAUNCHXL_GPTIMER0A
+#define Board_GPTIMER0B             CC2650_LAUNCHXL_GPTIMER0B
+#define Board_GPTIMER1A             CC2650_LAUNCHXL_GPTIMER1A
+#define Board_GPTIMER1B             CC2650_LAUNCHXL_GPTIMER1B
+#define Board_GPTIMER2A             CC2650_LAUNCHXL_GPTIMER2A
+#define Board_GPTIMER2B             CC2650_LAUNCHXL_GPTIMER2B
+#define Board_GPTIMER3A             CC2650_LAUNCHXL_GPTIMER3A
+#define Board_GPTIMER3B             CC2650_LAUNCHXL_GPTIMER3B
+
+/* Generic PWM instance identifiers */
+#define Board_PWM0                  CC2650_LAUNCHXL_PWM0
+#define Board_PWM1                  CC2650_LAUNCHXL_PWM1
+#define Board_PWM2                  CC2650_LAUNCHXL_PWM2
+#define Board_PWM3                  CC2650_LAUNCHXL_PWM3
+#define Board_PWM4                  CC2650_LAUNCHXL_PWM4
+#define Board_PWM5                  CC2650_LAUNCHXL_PWM5
+#define Board_PWM6                  CC2650_LAUNCHXL_PWM6
+#define Board_PWM7                  CC2650_LAUNCHXL_PWM7
+
+/* PWM outputs */
+#define Board_PWMPIN0                       PIN_UNASSIGNED
+#define Board_PWMPIN1                       PIN_UNASSIGNED
+#define Board_PWMPIN2                       PIN_UNASSIGNED
+#define Board_PWMPIN3                       PIN_UNASSIGNED
+#define Board_PWMPIN4                       PIN_UNASSIGNED
+#define Board_PWMPIN5                       PIN_UNASSIGNED
+#define Board_PWMPIN6                       PIN_UNASSIGNED
+#define Board_PWMPIN7                       PIN_UNASSIGNED
+
+#define Board_DIO23_ANALOG          IOID_23
+#define Board_DIO24_ANALOG          IOID_24
+#define Board_DIO25_ANALOG          IOID_25
+#define Board_DIO26_ANALOG          IOID_26
+#define Board_DIO27_ANALOG          IOID_27
+#define Board_DIO28_ANALOG          IOID_28
+#define Board_DIO29_ANALOG          IOID_29
+#define Board_DIO30_ANALOG          IOID_30
 
 /* UART pins used by driver */
 #define Board_UART_TX               IOID_3
@@ -186,6 +215,36 @@ typedef enum CC2650_LAUNCHXL_UdmaName {
 } CC2650_LAUNCHXL_UdmaName;
 
 /*!
+ *  @def    CC2650_LAUNCHXL_GPTimerName
+ *  @brief  Enum of GPTimer parts
+ */
+typedef enum CC2650_LAUNCHXL_GPTimerName
+{
+    CC2650_LAUNCHXL_GPTIMER0A = 0,
+    CC2650_LAUNCHXL_GPTIMER0B,
+    CC2650_LAUNCHXL_GPTIMER1A,
+    CC2650_LAUNCHXL_GPTIMER1B,
+    CC2650_LAUNCHXL_GPTIMER2A,
+    CC2650_LAUNCHXL_GPTIMER2B,
+    CC2650_LAUNCHXL_GPTIMER3A,
+    CC2650_LAUNCHXL_GPTIMER3B,
+    CC2650_LAUNCHXL_GPTIMERPARTSCOUNT
+} CC2650_LAUNCHXL_GPTimerName;
+
+/*!
+ *  @def    CC2650_LAUNCHXL_GPTimers
+ *  @brief  Enum of GPTimers
+ */
+typedef enum CC2650_LAUNCHXL_GPTimers
+{
+    CC2650_LAUNCHXL_GPTIMER0 = 0,
+    CC2650_LAUNCHXL_GPTIMER1,
+    CC2650_LAUNCHXL_GPTIMER2,
+    CC2650_LAUNCHXL_GPTIMER3,
+    CC2650_LAUNCHXL_GPTIMERCOUNT
+} CC2650_LAUNCHXL_GPTimers;
+
+/*!
  *  @def    CC2650_PWMName
  *  @brief  Enum of PWM pin names on the CC2650 dev board
  */
@@ -200,6 +259,25 @@ typedef enum CC2650_LAUNCHXL_PWMName {
     CC2650_LAUNCHXL_PWM7 = 7, /* PWM output from TIMERA3 side B */
     CC2650_LAUNCHXL_PWMCOUNT
 } CC2650_LAUNCHXL_PWMName;
+
+/*!
+ *  @def    CC2650_LAUNCHXL_ADCName
+ *  @brief  Enum of ADCs
+ */
+typedef enum CC2650_LAUNCHXL_ADCName {
+    CC2650_LAUNCHXL_ADC0 = 0,
+    CC2650_LAUNCHXL_ADC1,
+    CC2650_LAUNCHXL_ADC2,
+    CC2650_LAUNCHXL_ADC3,
+    CC2650_LAUNCHXL_ADC4,
+    CC2650_LAUNCHXL_ADC5,
+    CC2650_LAUNCHXL_ADC6,
+    CC2650_LAUNCHXL_ADC7,
+    CC2650_LAUNCHXL_ADCDCOUPL,
+    CC2650_LAUNCHXL_ADCVSS,
+    CC2650_LAUNCHXL_ADCVDDS,
+    CC2650_LAUNCHXL_ADCCOUNT
+} CC2650_LAUNCHXL_ADCName;
 
 #ifdef __cplusplus
 }

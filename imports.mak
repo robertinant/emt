@@ -8,7 +8,7 @@ ENERGIA = /db/builds/xinstall/energia_nightly/Energia
 #
 # internal TISB trees containing imports
 #
-ZUMAPROD_TREE = $(TREES)/zumaprod/zumaprod-j08
+ZUMAPROD_TREE = $(TREES)/zumaprod/zumaprod-n05
 
 #
 # Specific required imports (referenced by makeunix, for example)

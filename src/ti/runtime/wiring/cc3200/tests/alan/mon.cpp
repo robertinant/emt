@@ -1009,7 +1009,7 @@ static void printTaskInfo(Task_Handle task)
     SERIAL.println(buf);
 }
 
-void printUtilization()
+static void printUtilization()
 {
     UInt i;
     Memory_Stats memStat;
