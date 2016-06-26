@@ -5,7 +5,7 @@ function getLibs(prog)
 {
     /* ensure platform supports specification of board variants */
     var platform = prog.platform.$orig;
-    if ((!"variant" in platform) || platform.variant == null) {
+    if (!("variant" in platform) || platform.variant == null) {
 	prog.$logError("platform: " + platform.$name 
             + " does not supply a variant name required for ti.runtime.wiring",
             this);
