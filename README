@@ -1,4 +1,4 @@
-				emt-b16
+				emt-c00
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -107,7 +107,7 @@ Librarian releases
 
     # clone the tree and merge/review user content
     ggentree -u d-russo@ti.com emt.git/
-    cd emt-b??
+    cd emt-c??
     git merge origin/dr
 
     # build the tree
@@ -116,7 +116,7 @@ Librarian releases
 
     # update README 
     emacs README
-    git commit -a -m emt-b??
+    git commit -a -m emt-c??
 
     # release the tree
     greltree -m "something brief and meaningful"
@@ -125,14 +125,20 @@ Librarian releases
 
 ADDITIONS
 
+ti.runtimewiring.cc13xx.variants
+	added CC1350STK (sensor tag) variant
+
 DELETIONS
 
 CHANGES
 
-bundles/energia
-	fixed makefiles to use reentrant libc from gnu.targets.arm
+./imports.mak ./products.mak
+    import latest TI-RTOS (2.20)
 
-ti.runtime.wiring.*
-	fixed device packages to properly support variants in package.bld 
+ti.runtime.wiring.*.variants
+    update to new TI-RTOS driver config params
+
+ti.platforms.*
+    update linker command files to use new DMA control table entry labels
 
 MRS
