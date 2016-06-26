@@ -1,4 +1,4 @@
-				emt-b145
+				emt-b16
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -130,11 +130,9 @@ DELETIONS
 CHANGES
 
 bundles/energia
-	fixed lpush
+	fixed makefiles to use reentrant libc from gnu.targets.arm
 
-ti.runtime.wiring.cc3200
-	fixed libraries/WiFi/WiFi.cpp to call Board_initWiFi to ensure DMA
-	and SPI are initialized (fixes critical bug when transfers are 
-	greater the 396 bytes
+ti.runtime.wiring.*
+	fixed device packages to properly support variants in package.bld 
 
 MRS
