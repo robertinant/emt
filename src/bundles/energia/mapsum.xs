@@ -379,7 +379,7 @@ function parseGnu(fileName)
         }
 
         /* ignore zero length sections or well-known non-loadable sections */
-        if (size == 0 || section.match(/^(\.(debug|comment|stab|ARM\.attr|TI\.section\.flag|TI\.symbol))|xdc\.|__TI_DW\.debug/) != null) {
+        if (size == 0 || section.match(/^(\.(debug|comment|stab|ARM\.attr|TI\.section\.flag|TI\.symbol))|xdc\.|__TI_DW\.debug|__TI_ICODE/) != null) {
             continue;
         }
 
