@@ -20,5 +20,6 @@ TREE_ROOT = $(firstword $(subst /src/, /src/,$(CURDIR)))
 include $(firstword $(wildcard $(TREE_ROOT)/src/products.mak $(TREE_ROOT)/products.mak))
 
 CCROOT  = $(gnu.targets.arm.M4)
+CRTLDIR = gnu/targets/arm/libs/install-native/arm-none-eabi/lib/armv7e-m
 EMTROOT ?= $(TREE_ROOT)/src
 

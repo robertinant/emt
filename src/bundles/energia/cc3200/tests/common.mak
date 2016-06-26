@@ -61,7 +61,7 @@ CFG_INCS = -I "$(CLOSURE)" -I "$(CLOSURE)/src" \
 #
 CCOPTS   = -Os @"$(CLOSURE)/compiler.opt" -gdwarf-3 -gstrict-dwarf -g -Dxdc__nolocalstring=1 -fno-exceptions $(BRD_DEFS)
 CC       = $(CCROOT)/bin/arm-none-eabi-gcc -c
-LINK     = $(CCROOT)/bin/arm-none-eabi-gcc $(CCOPTS) -nostartfiles -Wl,--no-wchar-size-warning -Wl,-static -Wl,--gc-sections -L"$(CLOSURE)" -L"$(BRD_LIBS)"
+LINK     = $(CCROOT)/bin/arm-none-eabi-gcc $(CCOPTS) -nostartfiles -Wl,--no-wchar-size-warning -Wl,-static -Wl,--gc-sections -L"$(CLOSURE)" -L"$(CLOSURE)/$(CRTLDIR)" -L"$(BRD_LIBS)"
 BINIFY   = $(CCROOT)/bin/arm-none-eabi-objcopy -O binary
 
 XDCROOT ?= $(wildcard $(TREES)/xdcprod/xdcprod-t67/product/Linux/xdctools*)
