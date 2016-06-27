@@ -55,7 +55,10 @@ for FILE in $FILES; do
     VERSION=${VERSIONLINE##* }
     echo $VERSION
 
-    echo "Copy libraries"
+    echo "Copy gnulib libraries ..."
+    find ./gnu/targets/arm/libs -type f | cpio -pudm $EMTDIR
+
+    echo "Copy package libraries"
     find . -type f \( -name "*.m3g.lib" -o -name "*.am3g" -o -name "*.lds" \) | cpio -pudm $EMTDIR
     find . -type f \( -name "*.m4fg.lib" -o -name "*.am4fg" \) | cpio -pudm $EMTDIR
     find . -type f \( -name "*.m4g.lib" -o -name "*.am4g" \) | cpio -pudm $EMTDIR
