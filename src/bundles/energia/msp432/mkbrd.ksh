@@ -18,7 +18,6 @@ SRCDIR=`dirname $0`
 SRCDIR=`cd $SRCDIR; /bin/pwd`
 
 TMPDIR="`mktemp -d -t brdpkgXXX`"
-TMPDIR="`/bin/pwd`/junk"
 
 if [ -z "$TMPDIR" ]; then
     echo temp directory could not be created
