@@ -1,4 +1,4 @@
-				emt-c00
+				emt-c01
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -132,13 +132,12 @@ DELETIONS
 
 CHANGES
 
-./imports.mak ./products.mak
-    import latest TI-RTOS (2.20)
+makeunix, imports.mak, products.mak
+    cleanup to ensure zumaprod is only specifed in top-level files
 
-ti.runtime.wiring.*.variants
-    update to new TI-RTOS driver config params
+bundles/energia
+    fix copy.ksh to include gnulib libs from gnu.targets.arm
 
-ti.platforms.*
-    update linker command files to use new DMA control table entry labels
+    fix makefiles to include gnulib headers from gnu/targets/arm/libs/...
 
 MRS
