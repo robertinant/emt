@@ -36,8 +36,15 @@ endef
 TREE_ROOT = $(firstword $(subst /src/, /src/,$(CURDIR)))
 TREE_NAME = $(notdir $(TREE_ROOT))
 
+ifeq (,$(TIRTOS))
+    $(warning "warning: importing ../../products.mak to get TIRTOS definition")
+    include ../../products.mak
+endif
+
 ZUMA_TREE = $(firstword $(subst /, ,$(lastword $(subst /zumaprod/, ,$(TIRTOS)))))
-ZUMA_TREE = zumaprod-n05
+ifeq (,$(ZUMA_TREE))
+    $(error "can't compute ZUMA_TREE from TIRTOS = '$(TIRTOS)'")
+endif
 
 # ensure "all" is the default build goal
 all: makefile
