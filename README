@@ -2,9 +2,9 @@
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
-         	    https://gitorious.design.ti.com/emt
+         	    ssh://git@bitbucket.itg.ti.com/sb/emt.git
 
-This tree provide a multi-threaded Wiring lbrary implementation bases on 
+This tree provide a multi-threaded Wiring library implementation based on 
 TI-RTOS.
 
 To Clone this Tree
