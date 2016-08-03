@@ -91,6 +91,9 @@ echo copying from `/bin/pwd` to $EMTDIR ...
 echo "    closure from $VERSION"
 cp version.txt $EMTDIR
 
+#echo "Copy gnulib libraries ..."
+#find ./gnu/targets/arm/libs -type f | cpio -pudm $EMTDIR
+
 echo "Copy libraries and linker scripts"
 find . -type f \( -name "*.m3g.lib" -o -name "*.am3g" -o -name "*.lds" \) | cpio -pudm $EMTDIR
 find . -type f \( -name "*.m4fg.lib" -o -name "*.am4fg" \) | cpio -pudm $EMTDIR
