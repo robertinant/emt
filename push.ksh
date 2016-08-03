@@ -1,6 +1,6 @@
 #!/bin/ksh
 
-if [ -r ./lastword ]; then
+if [ -r ./.lastword ]; then
     export PASSWORD="`cat ./.lastword`"
 fi
 
