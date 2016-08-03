@@ -56,10 +56,19 @@ closure-$(TREE_NAME).tar.gz: $(TREE_ROOT)/exports/emt_src.zip $(CLOSURE_ZIPS)
 	rm -f $@
 	./copy.ksh $<
 
-# rule to make the loadable board .zip archive
-msp432-$(TREE_NAME).zip: $(TREE_ROOT)/exports/emt_src.zip
+# rules to make the loadable board .zip archives
+.PHONY: board.msp432 board.cc3200
+boards: board.msp432 board.cc3200
+
+board.msp432: msp432-$(TREE_NAME).zip
+msp432-$(TREE_NAME).zip: $(TREE_ROOT)/exports/emt_src.zip msp432/closure.zip
 	@echo making $@ ...
 	./msp432/mkbrd.ksh $< $(ZUMA_TREE)
+
+board.cc3200: cc3200-$(TREE_NAME).zip
+cc3200-$(TREE_NAME).zip: $(TREE_ROOT)/exports/emt_src.zip cc3200/closure.zip
+	@echo making $@ ...
+	./cc3200/mkbrd.ksh $< $(ZUMA_TREE)
 
 # rule for device-specific closure zips; used to create the "universal closure"
 %/closure.zip: | all
@@ -75,4 +84,5 @@ msp432-$(TREE_NAME).zip: $(TREE_ROOT)/exports/emt_src.zip
 clean:
 	-rm -f closure-$(TREE_NAME).tar.gz
 	-rm -f msp432-$(TREE_NAME).zip
+	-rm -f cc3200-$(TREE_NAME).zip
 	$(call BUILD_ALL,clean)
