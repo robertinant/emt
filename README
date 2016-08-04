@@ -9,7 +9,7 @@ TI-RTOS.
 
 To Clone this Tree
 ------------------
-    o you must already have a https://bitbucket.itg.ti.com, then
+    o you must already have a https://bitbucket.itg.ti.com account, then
     o clone the tree using git:
         git clone ssh://git@bitbucket.itg.ti.com/sb/emt.git ./emt
 
