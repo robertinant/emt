@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Create Arduino board package for the MSP432
+# Create Arduino board package for the CC3200
 #
 #  Usage: mkbrd <path_to_emt_source_archive> <ti-rtos_product_tree_name>
 #
@@ -70,7 +70,7 @@ echo CORE = $CORE
 echo "unzipping emt sources to $DSTDIR/cores ..."
 EMTDIR="$DSTDIR/cores/$CORE"
 unzip -q $srczip -d $DSTDIR/cores
-rm -rf $DSTDIR/cores/emt/ti/runtime/wiring/cc3200
+rm -rf $DSTDIR/cores/emt/ti/runtime/wiring/msp432
 rm -rf $DSTDIR/cores/emt/ti/runtime/wiring/cc26xx
 rm -rf $DSTDIR/cores/emt/ti/runtime/wiring/cc13xx
 mv $DSTDIR/cores/emt $EMTDIR
@@ -78,10 +78,10 @@ mv $DSTDIR/cores/emt $EMTDIR
 # copy driverlib library from TI-RTOS product tree to DSTDIR/system
 cd $TMPDIR/closure
 echo "Copying driverlib to $DSTDIR/system ..."
-dlib="`ls -d $TREES/zumaprod/$zptree/exports/tirtos_full_2*/products/msp432_driverlib_*`"
-mkdir -p "$DSTDIR/system/driverlib/MSP432P4xx"
-cp "$dlib"/driverlib/MSP432P4xx/*.[ch] "$DSTDIR/system/driverlib/MSP432P4xx/"
-cp -r "$dlib/driverlib/MSP432P4xx/gcc" "$DSTDIR/system/driverlib/MSP432P4xx/"
+dlib="`ls -d $TREES/zumaprod/$zptree/exports/tirtos_full_2*/products/CC32XX_driverlib_*`"
+mkdir -p "$DSTDIR/system/driverlib/CC32xx"
+cp "$dlib"/driverlib/*.[ch] "$DSTDIR/system/driverlib/CC32xx/"
+cp -r "$dlib/driverlib/gcc" "$DSTDIR/system/driverlib/CC32xx/"
 cp -r "$dlib/inc" "$DSTDIR/system/"
 
 # selectively copy closure files to EMTDIR (inside DSTDIR)
@@ -118,7 +118,7 @@ find ./configPkg/package/cfg/ -type f \( -name "*.rov.xs" -o -name "*.h" -o -nam
 # create board archive and cleanup
 echo "Creating board package archive"
 cd $TMPDIR
-mkdir -p $SEMVERS/variants/MSP_EXP432P401R
-echo "This directory is intensionally empty (almost)" > $SEMVERS/variants/MSP_EXP432P401R/readme.txt
-rm -f $cwd/msp432-$VERSION.*
-zip -rq $cwd/msp432-$VERSION.zip $SEMVERS
+mkdir -p $SEMVERS/variants/CC3200_LAUNCHXL
+echo "This directory is intensionally empty (almost)" > $SEMVERS/variants/CC3200_LAUNCHXL/readme.txt
+rm -f $cwd/$CORE-$VERSION.*
+zip -rq $cwd/$CORE-$VERSION.zip $SEMVERS

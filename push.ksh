@@ -1,6 +1,6 @@
 #!/bin/ksh
 
-if [ -r ./lastword ]; then
+if [ -r ./.lastword ]; then
     export PASSWORD="`cat ./.lastword`"
 fi
 
@@ -22,7 +22,7 @@ base=./src/bundles/energia
 ctar="`ls $base/closure*.tar.gz 2> /dev/null`"
 if [ -z "$ctar" ]; then
 	echo "WARNING: energia push failed."
-	echo "    can't find closure archive $base/closure-*.tar.gz"
+	echo "    can't find 'universal' closure $base/closure-*.tar.gz"
 	exit 0
 fi
 
@@ -33,9 +33,20 @@ if [ -z "$msp432" ]; then
 	exit 0
 fi
 
+cc3200="`ls $base/cc3200-emt-*.zip 2> /dev/null`"
+if [ -z "$cc3200" ]; then
+	echo "WARNING: energia push failed."
+	echo "    can't find closure archive $base/cc3200-*.zip"
+	exit 0
+fi
+
+echo "pushing arduino board packages ..."
+$base/lpush.ksh $msp432  `basename $msp432` \
+                $cc3200  `basename $cc3200`
+
+echo "pushing energia_17 closures ..."
 $base/lpush.ksh $base/msp432/closure.zip msp432-closure.zip \
-               $msp432  `basename $msp432`                 \
-               $base/cc3200/closure.zip cc3200-closure.zip \
-               $base/cc26xx/closure.zip cc26xx-closure.zip \
-               $base/cc13xx/closure.zip cc13xx-closure.zip \
-               $ctar    `basename $ctar`
+                $base/cc3200/closure.zip cc3200-closure.zip \
+                $base/cc26xx/closure.zip cc26xx-closure.zip \
+                $base/cc13xx/closure.zip cc13xx-closure.zip \
+                $ctar    `basename $ctar`

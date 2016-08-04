@@ -1,17 +1,17 @@
-				emt-c01
+				emt-c02
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
-         	    https://gitorious.design.ti.com/emt
+         	    ssh://git@bitbucket.itg.ti.com/sb/emt.git
 
-This tree provide a multi-threaded Wiring lbrary implementation bases on 
+This tree provide a multi-threaded Wiring library implementation based on 
 TI-RTOS.
 
 To Clone this Tree
 ------------------
-    o you must already have a https://gitorious.design.ti.com account, then
+    o you must already have a https://bitbucket.itg.ti.com account, then
     o clone the tree using git:
-        git clone git@gitorious.design.ti.com:emt/emt.git ./emt
+        git clone ssh://git@bitbucket.itg.ti.com/sb/emt.git ./emt
 
 To Contribute
 -------------
@@ -32,7 +32,7 @@ The "normal" development cycle:
 	git add src/apps/robot/ti/drivers/wifi/WiFiTivaCC3000.c
 	git commit -m "fixed ..."
 
-    o push the changes from your local branch to the corresponding gitorious 
+    o push the changes from your local branch to the corresponding bitbucket
       repo's branch
         git push origin me:me
 
@@ -40,19 +40,19 @@ The "normal" development cycle:
         git fetch
 
 Weekly integrations: Your contributions will be periodically reviewed and
-merged into the gitorious repo's master branch.  To ensure your contributions
-can be easily merged on the gitorious master branch, you must 
+merged into the bitbucket repo's master branch.  To ensure your contributions
+can be easily merged on the bitbucket master branch, you must 
 
-    o get latest master branch from the gitorious repo
+    o get latest master branch from the bitbucket repo
         git fetch
 
     o merge any changes into your branch
         git merge origin/master
 
-    o push your local branch to the corresponding gitorious repo's branch
+    o push your local branch to the corresponding bitbucket repo's branch
         git push origin me:me
 
-To Create a Gitorious Account
+To Create a Bitbucket Account
 -----------------------------
     o download the git command line tools (Windows http://msysgit.github.io/)
 
@@ -63,34 +63,22 @@ To Create a Gitorious Account
       "cat ~/.ssh/id_rsa.pub". That's the public key that you are required 
       to copy and paste into your account on Gitorious. 
 
-    o browse to https://gitorious.design.ti.com and create an account using 
+    o browse to https://bitbucket.itg.ti.com and create an account using 
       the public key you just created; copy the contents of ~/.ssh/id_rsa.pub
       to the specified text box.
-
-To Create a Gitorous Project
-----------------------------
-This tree is hosted on the Gitorious server https://gitorious.design.ti.com
-and was initially created on Linux and pushed to Gitorious as follows:
-    cd <top of the initial tree>
-    git init
-    git add README src/
-    git commit -m "initial commit"
-    git remote add origin git@gitorious.design.ti.com:emt/emt.git
-    git push origin master
 
 Librarian repo creation
 -----------------------
 The emt.git repo was created to "track" the repo maintained at 
-gitoroius.ti.com and was created as follows:
-    git clone --bare git@gitorious.design.ti.com:emt/emt.git emt.git
+bitbucket.itg.ti.com and was created as follows:
+    git clone --bare ssh://git@bitbucket.itg.ti.com/sb/emt.git emt.git
     cd emt.git/
     git config remote.origin.fetch "+refs/heads/*:refs/heads/*"
     git tag emt-a00
     git push --tags
 
 Note: xlibrary must be given read/write access to the Gitorious repo cloning 
-of pushing any changes.  This must be done via the Gitoroius web interface 
-(blech!)
+of pushing any changes.  This must be done via the Bitbucket web interface.
 
 To enable gitweb access:
     cd /db/sanb_public/home/git
@@ -100,7 +88,7 @@ Librarian releases
 ------------------
     Build this tree from Linux using standard ggentree/SM-MAKE/greltree except
     for the addition of a step to update the local emt.repo with the content
-    from gitorious.
+    from bitbucket.
     
     # update local copy of the gitorous repo
     cd emt.git; git fetch; cd ..
@@ -125,19 +113,14 @@ Librarian releases
 
 ADDITIONS
 
-ti.runtimewiring.cc13xx.variants
-	added CC1350STK (sensor tag) variant
+bundles/energia
+	build cc3200 board package
 
 DELETIONS
 
 CHANGES
 
-makeunix, imports.mak, products.mak
-    cleanup to ensure zumaprod is only specifed in top-level files
-
-bundles/energia
-    fix copy.ksh to include gnulib libs from gnu.targets.arm
-
-    fix makefiles to include gnulib headers from gnu/targets/arm/libs/...
+ti.runtime.wiring.msp432
+	fix wiring.c to set power constraints for the use of timerA
 
 MRS
