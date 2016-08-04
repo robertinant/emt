@@ -70,9 +70,13 @@ echo CORE = $CORE
 echo "unzipping emt sources to $DSTDIR/cores ..."
 EMTDIR="$DSTDIR/cores/$CORE"
 unzip -q $srczip -d $DSTDIR/cores
-rm -rf $DSTDIR/cores/emt/ti/runtime/wiring/msp432
-rm -rf $DSTDIR/cores/emt/ti/runtime/wiring/cc26xx
-rm -rf $DSTDIR/cores/emt/ti/runtime/wiring/cc13xx
+echo "remove unrelated cores ..."
+for c in msp432 cc26xx cc13xx cc3200; do
+    if [ "$c" != "$CORE" ]; then
+	echo "    rm -rf $c ..."
+	rm -rf $DSTDIR/cores/emt/ti/runtime/wiring/$c
+    fi
+done
 mv $DSTDIR/cores/emt $EMTDIR
 
 # copy driverlib library from TI-RTOS product tree to DSTDIR/system
@@ -91,8 +95,8 @@ echo copying from `/bin/pwd` to $EMTDIR ...
 echo "    closure from $VERSION"
 cp version.txt $EMTDIR
 
-#echo "Copy gnulib libraries ..."
-#find ./gnu/targets/arm/libs -type f | cpio -pudm $EMTDIR
+echo "Copy reentrant gnulib libraries ..."
+find ./gnu/targets/arm/libs -type f | cpio -pudm $EMTDIR
 
 echo "Copy libraries and linker scripts"
 find . -type f \( -name "*.m3g.lib" -o -name "*.am3g" -o -name "*.lds" \) | cpio -pudm $EMTDIR
@@ -115,10 +119,14 @@ cp linker.cmd compiler.opt $EMTDIR/ti/runtime/wiring/$CORE
 echo "Copy configPkg files to ti/runtime/wiring/$CORE"
 find ./configPkg/package/cfg/ -type f \( -name "*.rov.xs" -o -name "*.h" -o -name "*pm3g.om3g" -o -name "*pm4fg.om4fg" -o -name "*pm4g.om4g" \) | cpio -pudm $EMTDIR/ti/runtime/wiring/$CORE
 
+# create top-level variant placeholders ...
+for v in `ls -d $EMTDIR/ti/runtime/wiring/$CORE/variants/*`; do
+    vname=`basename $v`
+    mkdir -p $DSTDIR/variants/$vname
+    echo "This directory is intensionally empty (almost)" > $DSTDIR/variants/$vname/readme.txt
+done
+
 # create board archive and cleanup
 echo "Creating board package archive"
-cd $TMPDIR
-mkdir -p $SEMVERS/variants/CC3200_LAUNCHXL
-echo "This directory is intensionally empty (almost)" > $SEMVERS/variants/CC3200_LAUNCHXL/readme.txt
 rm -f $cwd/$CORE-$VERSION.*
-zip -rq $cwd/$CORE-$VERSION.zip $SEMVERS
+cd $TMPDIR; zip -rq $cwd/$CORE-$VERSION.zip $SEMVERS
