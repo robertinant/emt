@@ -1,8 +1,26 @@
 #!/bin/bash
 #
-# Create Arduino board package for the CC3200
+# Create Arduino board package for the core specified by a closure
 #
 #  Usage: mkbrd <path_to_emt_source_archive> <ti-rtos_product_tree_name>
+#
+#  cc3200 uses the M4 target  => GCC libs install-native/*/lib/armv7e-m
+#  msp432 uses the M4F target => GCC libs install-native/*/lib/armv7e-m/fpu
+#  cc26xx uses the M3 target  => GCC libs install-native/*/lib/armv7-m
+#  cc13xx uses the M3 target  => GCC libs install-native/*/lib/armv7-m
+#
+#  CORE = the directory name appearing in <closure>/ti/runtime/wiring/<core>
+#
+#                      TMPDIR
+#  <vers>              DSTDIR
+#      cores/$CORE     EMTDIR
+#      system
+#          driverlib
+#          inc
+#      variants
+#          <board_1>
+#              :
+#          <board_n>
 #
 usage="usage: <path_to_emt_source_archive> <ti-rtos_product_tree_name>"
 
@@ -96,7 +114,9 @@ echo "    closure from $VERSION"
 cp version.txt $EMTDIR
 
 echo "Copy reentrant gnulib libraries ..."
-find ./gnu/targets/arm/libs -type f | cpio -pudm $EMTDIR
+gnulib=./gnu/targets/arm/libs/install-native/arm-none-eabi
+find $gnulib/include -type f | cpio -pudm $EMTDIR
+find $gnulib/lib/armv7e-m -type f | grep -v /fpu/ | cpio -pudm $EMTDIR
 
 echo "Copy libraries and linker scripts"
 find . -type f \( -name "*.m3g.lib" -o -name "*.am3g" -o -name "*.lds" \) | cpio -pudm $EMTDIR
@@ -116,7 +136,7 @@ find ./ti/runtime/wiring/*/variants -depth -maxdepth 6 -type f \( -name "*.c" -o
 echo "Copy linker script and compiler options to ti/runtime/wiring/$CORE"
 cp linker.cmd compiler.opt $EMTDIR/ti/runtime/wiring/$CORE
 
-echo "Copy configPkg files to ti/runtime/wiring/$CORE"
+echo "Copy selected configPkg files to ti/runtime/wiring/$CORE"
 find ./configPkg/package/cfg/ -type f \( -name "*.rov.xs" -o -name "*.h" -o -name "*pm3g.om3g" -o -name "*pm4fg.om4fg" -o -name "*pm4g.om4g" \) | cpio -pudm $EMTDIR/ti/runtime/wiring/$CORE
 
 # create top-level variant placeholders ...
@@ -126,7 +146,11 @@ for v in `ls -d $EMTDIR/ti/runtime/wiring/$CORE/variants/*`; do
     echo "This directory is intensionally empty (almost)" > $DSTDIR/variants/$vname/readme.txt
 done
 
-# create board archive and cleanup
-echo "Creating board package archive"
+# create board archive
+echo "Creating board package zip archive ..."
 rm -f $cwd/$CORE-$VERSION.*
 cd $TMPDIR; zip -rq $cwd/$CORE-$VERSION.zip $SEMVERS
+
+# cleanup
+chmod -R +w $DSTDIR/system
+rm -rf closure $DSTDIR
