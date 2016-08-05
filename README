@@ -1,4 +1,4 @@
-				emt-c02
+				emt-c03
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -113,14 +113,15 @@ Librarian releases
 
 ADDITIONS
 
-bundles/energia
-	build cc3200 board package
-
 DELETIONS
 
 CHANGES
 
-ti.runtime.wiring.msp432
-	fix wiring.c to set power constraints for the use of timerA
+bundles/energia
+	cleanup cc3200/msp432 board package creation
+        add device specific gnulib libraries
+
+bundles/energia/msp432
+	fix tools.mak to use the M4 gnulib libraries rather than the A* libs
 
 MRS
