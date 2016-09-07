@@ -39,6 +39,8 @@ JOBS = --jobs=1
 	make -C src/bundles/energia all msp432-$(notdir $(CURDIR)).zip
 	@echo "making cc3200 board 'package' ..."
 	make -C src/bundles/energia all cc3200-$(notdir $(CURDIR)).zip
+	@echo "making cc13xx board 'package' ..."
+	make -C src/bundles/energia all cc13xx-$(notdir $(CURDIR)).zip
 
 # ======== .local-all ========
 # Builds all packages
