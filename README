@@ -1,4 +1,4 @@
-				emt-c03
+				emt-c04
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -116,12 +116,10 @@ ADDITIONS
 DELETIONS
 
 CHANGES
+./makeunix
+	add CC13xx board package generation
 
-bundles/energia
-	cleanup cc3200/msp432 board package creation
-        add device specific gnulib libraries
-
-bundles/energia/msp432
-	fix tools.mak to use the M4 gnulib libraries rather than the A* libs
+bundles/energia/cc13xx
+	add board package generation
 
 MRS
