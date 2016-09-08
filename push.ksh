@@ -40,9 +40,17 @@ if [ -z "$cc3200" ]; then
 	exit 0
 fi
 
+cc13xx="`ls $base/cc13xx-emt-*.zip 2> /dev/null`"
+if [ -z "$cc13xx" ]; then
+	echo "WARNING: energia push failed."
+	echo "    can't find closure archive $base/cc13xx-*.zip"
+	exit 0
+fi
+
 echo "pushing arduino board packages ..."
 $base/lpush.ksh $msp432  `basename $msp432` \
-                $cc3200  `basename $cc3200`
+                $cc3200  `basename $cc3200` \
+                $cc13xx  `basename $cc13xx`
 
 echo "pushing energia_17 closures ..."
 $base/lpush.ksh $base/msp432/closure.zip msp432-closure.zip \
