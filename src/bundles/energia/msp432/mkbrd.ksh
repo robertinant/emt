@@ -88,6 +88,8 @@ echo CORE = $CORE
 echo "unzipping emt sources to $DSTDIR/cores ..."
 EMTDIR="$DSTDIR/cores/$CORE"
 unzip -q $srczip -d $DSTDIR/cores
+
+# remove sources that are unrelated to the core $CORE
 echo "remove unrelated cores ..."
 for c in msp432 cc26xx cc13xx cc3200; do
     if [ "$c" != "$CORE" ]; then
@@ -95,6 +97,11 @@ for c in msp432 cc26xx cc13xx cc3200; do
 	rm -rf $DSTDIR/cores/emt/ti/runtime/wiring/$c
     fi
 done
+
+# remove variant sources (we copy core-specific variants from the closure)
+echo "remove board variant sources ..."
+rm -rf $DSTDIR/cores/emt/ti/runtime/wiring/$CORE/variants
+
 mv $DSTDIR/cores/emt $EMTDIR
 
 # copy driverlib library from TI-RTOS product tree to DSTDIR/system
@@ -130,21 +137,20 @@ find ./ti/mw -type f -name "*.h" | cpio -pudm $EMTDIR
 find ./xdc -type f -name "*.h" | cpio -pudm $EMTDIR
 find ./gnu -type f -name "*.h" | cpio -pudm $EMTDIR
 
-echo "Copy variants directories"
-find ./ti/runtime/wiring/*/variants -depth -maxdepth 6 -type f \( -name "*.c" -o -name "*.cpp" -o -name "*.h" \) -print | cpio -pudm $EMTDIR
+echo "Copy board variant sources to Arduino variant directories"
+vfiles="`find ./ti/runtime/wiring/*/variants -depth -maxdepth 6 -type f \( -name "*.c" -o -name "*.cpp" -o -name "*.h" \) -print`"
+for f in $vfiles; do
+    suffix="`echo $f | egrep -o '/variants/.*'`"
+    vdir="$DSTDIR/`dirname $suffix`"
+    mkdir -p $vdir
+    cp $f $vdir
+done
 
 echo "Copy linker script and compiler options to ti/runtime/wiring/$CORE"
 cp linker.cmd compiler.opt $EMTDIR/ti/runtime/wiring/$CORE
 
 echo "Copy selected configPkg files to ti/runtime/wiring/$CORE"
 find ./configPkg/package/cfg/ -type f \( -name "*.rov.xs" -o -name "*.h" -o -name "*pm3g.om3g" -o -name "*pm4fg.om4fg" -o -name "*pm4g.om4g" \) | cpio -pudm $EMTDIR/ti/runtime/wiring/$CORE
-
-# create top-level variant placeholders ...
-for v in `ls -d $EMTDIR/ti/runtime/wiring/$CORE/variants/*`; do
-    vname=`basename $v`
-    mkdir -p $DSTDIR/variants/$vname
-    echo "This directory is intensionally empty (almost)" > $DSTDIR/variants/$vname/readme.txt
-done
 
 # create board archive
 echo "Creating board package zip archive ..."
