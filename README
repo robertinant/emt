@@ -1,4 +1,4 @@
-				emt-c04
+				emt-c05
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -116,10 +116,10 @@ ADDITIONS
 DELETIONS
 
 CHANGES
-./makeunix
-	add CC13xx board package generation
+./push.ksh
+	fix cc13xx push
 
-bundles/energia/cc13xx
-	add board package generation
+ti/runtime/wiring/cc13xx/variants
+	fix pins.c files to include cc13xx/wiring_analog.h (not cc26xx/*)
 
 MRS
