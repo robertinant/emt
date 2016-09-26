@@ -17,8 +17,24 @@ if [ "$PASSWORD" = "" ]; then
     echo "$PASSWORD" > ./.lastword
 fi
 
-echo "pushing to energia.nu ..."
+devices="msp432 cc13xx cc3200"
+if [ $# -gt 0 ]; then
+    devices="$@"
+fi
+
+echo "pushing board packages for \"$devices\" to energia.nu ..."
 base=./src/bundles/energia
+for dev in $devices; do
+    dzip="`ls $base/$dev-emt-*.zip 2> /dev/null`"
+    if [ -z "$dzip" ]; then
+	echo "WARNING: energia push failed."
+	echo "    can't find closure archive $base/$dev-emt-*.zip"
+	exit 0
+    fi
+    $base/lpush.ksh $dzip `basename $dzip`
+done
+
+echo "pushing energia_17 closures ..."
 ctar="`ls $base/closure*.tar.gz 2> /dev/null`"
 if [ -z "$ctar" ]; then
 	echo "WARNING: energia push failed."
@@ -26,33 +42,6 @@ if [ -z "$ctar" ]; then
 	exit 0
 fi
 
-msp432="`ls $base/msp432-emt-*.zip 2> /dev/null`"
-if [ -z "$msp432" ]; then
-	echo "WARNING: energia push failed."
-	echo "    can't find closure archive $base/msp432-*.zip"
-	exit 0
-fi
-
-cc3200="`ls $base/cc3200-emt-*.zip 2> /dev/null`"
-if [ -z "$cc3200" ]; then
-	echo "WARNING: energia push failed."
-	echo "    can't find closure archive $base/cc3200-*.zip"
-	exit 0
-fi
-
-cc13xx="`ls $base/cc13xx-emt-*.zip 2> /dev/null`"
-if [ -z "$cc13xx" ]; then
-	echo "WARNING: energia push failed."
-	echo "    can't find closure archive $base/cc13xx-*.zip"
-	exit 0
-fi
-
-echo "pushing arduino board packages ..."
-$base/lpush.ksh $msp432  `basename $msp432` \
-                $cc3200  `basename $cc3200` \
-                $cc13xx  `basename $cc13xx`
-
-echo "pushing energia_17 closures ..."
 $base/lpush.ksh $base/msp432/closure.zip msp432-closure.zip \
                 $base/cc3200/closure.zip cc3200-closure.zip \
                 $base/cc26xx/closure.zip cc26xx-closure.zip \
