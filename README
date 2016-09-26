@@ -1,4 +1,4 @@
-				emt-c05
+				emt-c06
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -117,9 +117,12 @@ DELETIONS
 
 CHANGES
 ./push.ksh
-	fix cc13xx push
+	cleanup copy-paste board packages support
 
-ti/runtime/wiring/cc13xx/variants
-	fix pins.c files to include cc13xx/wiring_analog.h (not cc26xx/*)
+bundles/energia
+	fixed mkbrd.ksh scripts to "properly" populate the variants directory
+	AND remove the variant sources from the core directory.  The arduino 
+	builder unconditionally compiles and links _ALL_ sources it finds 
+	under core (recursively) during a source build.
 
 MRS
