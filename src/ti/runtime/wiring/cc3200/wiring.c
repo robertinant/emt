@@ -42,10 +42,21 @@ unsigned long micros(void)
     Types_Timestamp64 time;
     uint64_t t64;
 
-    Timestamp_getFreq(&freq);
+    static bool firstTime = true;
+    static uint64_t scale;
+
+    /* no need to repeat this math on every call */
+    if (firstTime == true) {
+        Timestamp_getFreq(&freq);
+        scale = freq.lo / 1000000;
+        firstTime = false;
+    }
+
     Timestamp_get64(&time);
+
     t64 = ((uint64_t)time.hi << 32) | time.lo;
-    return (t64/(freq.lo/1000000));
+
+    return (t64/scale);
 }
 
 unsigned long millis(void)
