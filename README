@@ -1,4 +1,4 @@
-				emt-c06
+				emt-c07
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -116,13 +116,19 @@ ADDITIONS
 DELETIONS
 
 CHANGES
-./push.ksh
-	cleanup copy-paste board packages support
+ti.runtime.wiring.{cc13xx|cc26xx}/variants/*
+	Adapt to CC13/26xx UART ringbuffer
 
-bundles/energia
-	fixed mkbrd.ksh scripts to "properly" populate the variants directory
-	AND remove the variant sources from the core directory.  The arduino 
-	builder unconditionally compiles and links _ALL_ sources it finds 
-	under core (recursively) during a source build.
+ti.runtime.wiring.*/wiring_analog.c
+    -Properly handle negative shift of ADC value according to
+     analogReadResolution
+    -Adapt to new PWM driver interface
+
+ti.platforms.emt3200
+	Handle new BIOS placement of runtime vector table address
+
+
+
+	
 
 MRS
