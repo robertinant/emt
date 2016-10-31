@@ -113,8 +113,8 @@ GPIO_PinConfig gpioPinConfigs[] = {
     /* pins 1-10 */
     GPIOCC26XX_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  1  - 3.3V */
     GPIOCC26XX_DIO_23 | GPIO_DO_NOT_CONFIG,     /*  2  - DIO_23 */
-    GPIOCC26XX_DIO_02 | GPIO_DO_NOT_CONFIG,     /*  3  - DIO_02 */
-    GPIOCC26XX_DIO_03 | GPIO_DO_NOT_CONFIG,     /*  4  - DIO_03 */
+    GPIOCC26XX_DIO_03 | GPIO_DO_NOT_CONFIG,     /*  3  - DIO_03 */
+    GPIOCC26XX_DIO_02 | GPIO_DO_NOT_CONFIG,     /*  4  - DIO_02 */
     GPIOCC26XX_DIO_22 | GPIO_DO_NOT_CONFIG,     /*  5  - DIO_22 */
     GPIOCC26XX_DIO_24 | GPIO_DO_NOT_CONFIG,     /*  6  - DIO_24 */
     GPIOCC26XX_DIO_10 | GPIO_DO_NOT_CONFIG,     /*  7  - DIO_10 */
@@ -149,14 +149,14 @@ GPIO_PinConfig gpioPinConfigs[] = {
     /* pins 31-40 */
     GPIOCC26XX_DIO_17 | GPIO_DO_NOT_CONFIG,     /*  31 - DIO_17 */
     GPIOCC26XX_DIO_16 | GPIO_DO_NOT_CONFIG,     /*  32 - DIO_16 */
-    GPIOCC26XX_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  32 - TCK */
-    GPIOCC26XX_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  33 - TMS */
-    GPIOCC26XX_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  34 - BPRST */
-    GPIOCC26XX_DIO_18 | GPIO_DO_NOT_CONFIG,     /*  35 - DIO_18 */
-    GPIOCC26XX_DIO_19 | GPIO_DO_NOT_CONFIG,     /*  36 - DIO_19 */
-    GPIOCC26XX_DIO_20 | GPIO_DO_NOT_CONFIG,     /*  37 - DIO_20 */
-    GPIOCC26XX_DIO_06 | GPIO_DO_NOT_CONFIG,     /*  38 - DIO_06 */
-    GPIOCC26XX_DIO_07 | GPIO_DO_NOT_CONFIG,     /*  39 - DIO_07 */
+    GPIOCC26XX_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  33 - TCK */
+    GPIOCC26XX_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  34 - TMS */
+    GPIOCC26XX_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  35 - BPRST */
+    GPIOCC26XX_DIO_18 | GPIO_DO_NOT_CONFIG,     /*  36 - DIO_18 */
+    GPIOCC26XX_DIO_19 | GPIO_DO_NOT_CONFIG,     /*  37 - DIO_19 */
+    GPIOCC26XX_DIO_20 | GPIO_DO_NOT_CONFIG,     /*  38 - DIO_20 */
+    GPIOCC26XX_DIO_06 | GPIO_DO_NOT_CONFIG,     /*  39 - DIO_06 */
+    GPIOCC26XX_DIO_07 | GPIO_DO_NOT_CONFIG,     /*  40 - DIO_07 */
 };
 
 GPIO_CallbackFxn gpioCallbackFunctions[] = {
@@ -166,8 +166,8 @@ GPIO_CallbackFxn gpioCallbackFunctions[] = {
     /* pins 1-10 */
     NULL,  /*  1  - 3.3V */
     NULL,  /*  2  - DIO_23 */
-    NULL,  /*  3  - DIO_02 */
-    NULL,  /*  4  - DIO_03 */
+    NULL,  /*  3  - DIO_03 */
+    NULL,  /*  4  - DIO_02 */
     NULL,  /*  5  - DIO_22 */
     NULL,  /*  6  - DIO_24 */
     NULL,  /*  7  - DIO_10 */
@@ -202,14 +202,14 @@ GPIO_CallbackFxn gpioCallbackFunctions[] = {
     /* pins 31-40 */
     NULL,  /*  31 - DIO_17 */
     NULL,  /*  32 - DIO_16 */
-    NULL,  /*  31 - TCK */
-    NULL,  /*  32 - TMS */
-    NULL,  /*  31 - BPRST */
-    NULL,  /*  32 - DIO_18 */
-    NULL,  /*  31 - DIO_19 */
-    NULL,  /*  32 - DIO_20 */
-    NULL,  /*  31 - DIO_06 */
-    NULL,  /*  32 - DIO_07 */
+    NULL,  /*  33 - TCK */
+    NULL,  /*  34 - TMS */
+    NULL,  /*  35 - BPRST */
+    NULL,  /*  36 - DIO_18 */
+    NULL,  /*  37 - DIO_19 */
+    NULL,  /*  38 - DIO_20 */
+    NULL,  /*  39 - DIO_06 */
+    NULL,  /*  40 - DIO_07 */
 };
 
 /* User requested callback functions for the GPIO input signals */
@@ -246,9 +246,10 @@ void Board_initGPIO(void)
 
 /* UART objects */
 UARTCC26XX_Object uartCC26XXObjects[CC2650_LAUNCHXL_UARTCOUNT];
+unsigned char uartCC26XXRingBuffer[CC2650_LAUNCHXL_UARTCOUNT][32];
 
 /* UART hardware parameter structure, also used to assign UART pins */
-const UARTCC26XX_HWAttrsV1 uartCC26XXHWAttrs[CC2650_LAUNCHXL_UARTCOUNT] = {
+const UARTCC26XX_HWAttrsV2 uartCC26XXHWAttrs[CC2650_LAUNCHXL_UARTCOUNT] = {
     {   /* CC2650_LAUNCHXL_UART0 */
         .baseAddr = UART0_BASE,
         .powerMngrId = PowerCC26XX_PERIPH_UART0,
@@ -258,7 +259,9 @@ const UARTCC26XX_HWAttrsV1 uartCC26XXHWAttrs[CC2650_LAUNCHXL_UARTCOUNT] = {
         .txPin = Board_UART_TX,
         .rxPin = Board_UART_RX,
         .ctsPin = PIN_UNASSIGNED,
-        .rtsPin = PIN_UNASSIGNED
+        .rtsPin = PIN_UNASSIGNED,
+        .ringBufPtr     = uartCC26XXRingBuffer[0],
+        .ringBufSize    = sizeof(uartCC26XXRingBuffer[0])
     },
 };
 

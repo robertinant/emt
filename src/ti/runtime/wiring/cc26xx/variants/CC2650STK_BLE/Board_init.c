@@ -247,9 +247,10 @@ void Board_initGPIO(void)
 
 /* UART objects */
 UARTCC26XX_Object uartCC26XXObjects[CC2650_UARTCOUNT];
+unsigned char uartCC26XXRingBuffer[CC2650_UARTCOUNT][32];
 
 /* UART hardware parameter structure, also used to assign UART pins */
-const UARTCC26XX_HWAttrsV1 uartCC26XXHWAttrs[CC2650_UARTCOUNT] = {
+const UARTCC26XX_HWAttrsV2 uartCC26XXHWAttrs[CC2650_UARTCOUNT] = {
     {   /* CC2650_UART0 */
         .baseAddr = UART0_BASE,
         .powerMngrId = PowerCC26XX_PERIPH_UART0,
@@ -259,7 +260,9 @@ const UARTCC26XX_HWAttrsV1 uartCC26XXHWAttrs[CC2650_UARTCOUNT] = {
         .txPin = Board_DP5_UARTTX,
         .rxPin = Board_DP4_UARTRX,
         .ctsPin = PIN_UNASSIGNED,
-        .rtsPin = PIN_UNASSIGNED
+        .rtsPin = PIN_UNASSIGNED,
+        .ringBufPtr     = uartCC26XXRingBuffer[0],
+        .ringBufSize    = sizeof(uartCC26XXRingBuffer[0])
     },
 };
 
