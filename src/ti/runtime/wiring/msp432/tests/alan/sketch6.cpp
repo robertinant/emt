@@ -13,10 +13,10 @@
 #include <Energia.h>
 
 // most launchpads have a red LED
-#define LED RED_LED
+//#define LED RED_LED
 
 //see pins_energia.h for more LED definitions
-//#define LED GREEN_LED
+#define LED GREEN_LED
   
 // the setup routine runs once when you press reset:
 void setup6() {                

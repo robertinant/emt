@@ -47,6 +47,41 @@
 #define PRI_CMD 1    /* Set Task priority cmd */
 #define STATS_CMD 1  /* CPU and task utilzation stats cmd */
 #define ALOG_CMD 1   /* log analog value cmd */
+#define PI_CMD 1     /* pulseIn() cmd */
+#define ARTEST_CMD 1 /* analogRead() self test */
+#define AWTEST_CMD 1 /* analogWrite() self test */
+
+#if ARTEST_CMD == 1
+#if defined(BOARD_CC3200LP) || defined(BOARD_CC3200_LAUNCHXL)
+#define CC32XX_ARTEST_CMD 1
+#define MSP432_ARTEST_CMD 0
+#define CC26XX_ARTEST_CMD 0
+#elif defined(BOARD_MSP432LP) || defined(BOARD_MSP_EXP432P401R)
+#define CC32XX_ARTEST_CMD 0
+#define MSP432_ARTEST_CMD 1
+#define CC26XX_ARTEST_CMD 0
+#elif defined(BOARD_CC2650_LAUNCHXL) || defined(BOARD_LAUNCHXL_CC1310) || defined(BOARD_LAUNCHXL_CC1350)
+#define CC32XX_ARTEST_CMD 0
+#define MSP432_ARTEST_CMD 0
+#define CC26XX_ARTEST_CMD 1
+#endif
+#endif
+
+#if AWTEST_CMD == 1
+#if defined(BOARD_CC3200LP) || defined(BOARD_CC3200_LAUNCHXL)
+#define CC32XX_AWTEST_CMD 1
+#define MSP432_AWTEST_CMD 0
+#define CC26XX_AWTEST_CMD 0
+#elif defined(BOARD_MSP432LP) || defined(BOARD_MSP_EXP432P401R)
+#define CC32XX_AWTEST_CMD 0
+#define MSP432_AWTEST_CMD 1
+#define CC26XX_AWTEST_CMD 0
+#elif defined(BOARD_CC2650_LAUNCHXL) || defined(BOARD_LAUNCHXL_CC1310) || defined(BOARD_LAUNCHXL_CC1350)
+#define CC32XX_AWTEST_CMD 0
+#define MSP432_AWTEST_CMD 0
+#define CC26XX_AWTEST_CMD 1
+#endif
+#endif
 
 #define MAX_COMMAND_LEN 48
 #define MAX_COMMAND_NAME_LEN 8
@@ -94,14 +129,14 @@ static int consoleHandler_spi(const char *line);
 #endif
 
 #if WW_CMD == 1
-static int consoleHandler_ww(const char *line);
+static int consoleHandler_wwr(const char *line);
 #endif
 
 #if WR_CMD == 1
-static int consoleHandler_wr(const char *line);
+static int consoleHandler_wrd(const char *line);
 #endif
 
-#if (WR_CMD == 1) || (WW_CMD == 1)
+#if (WR_CMD == 1) || (WW_CMD == 1) || (ARTEST_CMD == 1)
 static bool wireBegun = false;
 #endif
 
@@ -109,9 +144,21 @@ static bool wireBegun = false;
 static int consoleHandler_pri(const char *line);
 #endif
 
+#if PI_CMD == 1
+static int consoleHandler_pi(const char *line);
+#endif
+
 #if ALOG_CMD == 1
 static int consoleHandler_alog(const char *line);
 static int consoleHandler_alogs(const char *line);
+#endif
+
+#if ARTEST_CMD == 1
+static int consoleHandler_artest(const char *line);
+#endif
+
+#if AWTEST_CMD == 1
+static int consoleHandler_awtest(const char *line);
 #endif
 
 static char home[] = "\e[H";
@@ -151,17 +198,26 @@ static const struct {
 #if PRI_CMD == 1
     GEN_COMMTABLE_ENTRY(pri,     "Set task priority",           "usage: pri <task handle> <priority>"),
 #endif
+#if PI_CMD == 1
+    GEN_COMMTABLE_ENTRY(pi,      "Pulse measurement",           "usage: pi <pin> <state> <timeout>"),
+#endif
 #if SPI_CMD == 1
     GEN_COMMTABLE_ENTRY(spi,     "SPI transfer",                "usage: spi <cs pin> <data>"),
 #endif
 #if WR_CMD == 1
-    GEN_COMMTABLE_ENTRY(wr,      "Wire read",                   "usage: wr <addr>"),
+    GEN_COMMTABLE_ENTRY(wrd,     "Wire read",                   "usage: wr <addr>"),
 #endif
 #if WW_CMD == 1
-    GEN_COMMTABLE_ENTRY(ww,      "Wire write",                  "usage: ww <addr> <data> <data> <...>"),
+    GEN_COMMTABLE_ENTRY(wwr,     "Wire write",                  "usage: ww <addr> <data> <data> <...>"),
 #endif
 #if STATS_CMD == 1
     GEN_COMMTABLE_ENTRY(stats,   "Print CPU utlization info",   "usage: stats"),
+#endif
+#if ARTEST_CMD == 1
+    GEN_COMMTABLE_ENTRY(artest,  "analogRead test",             "usage: artest"),
+#endif
+#if AWTEST_CMD == 1
+    GEN_COMMTABLE_ENTRY(awtest,  "analogWrite test",            "usage: awtest"),
 #endif
     GEN_COMMTABLE_ENTRY(help,    "Get information on commands. Usage: help [command]",  NULL),
     {NULL,NULL,NULL,NULL}   // Indicates end of table
@@ -799,19 +855,14 @@ static int consoleHandler_wm2(const char *line)
 
 #if WR_CMD == 1
 
-static void doWr(uint8_t addr, uint8_t cfg, uint8_t num)
+/*
+ * Wire read 'num' bytes from i2c at 'addr'
+ */
+static void doWrd(uint8_t addr, uint8_t num)
 {
     unsigned int i, j;
     uint8_t bytes[32];
 
-    if (wireBegun == false) {
-        Wire.begin();
-        wireBegun = true;
-    }
-
-    Wire.beginTransmission(addr);
-    Wire.write(cfg);
-    Wire.endTransmission();
     Wire.requestFrom((int) addr, (int)num);
     
     i = 0;
@@ -827,10 +878,37 @@ static void doWr(uint8_t addr, uint8_t cfg, uint8_t num)
     SERIAL.println("");
 }
 
-static int consoleHandler_wr(const char *line)
+/*
+ * Wire read 'num' bytes from 'cfg' register of i2c at 'addr'
+ */
+static void doWrdC(uint8_t addr, uint8_t cfg, uint8_t num)
 {
-    static bool wireBegun = false;
+    unsigned int i, j;
+    uint8_t bytes[32];
 
+    /* select internal address to read from */
+    Wire.beginTransmission(addr);
+    Wire.write(cfg);
+    Wire.endTransmission();
+
+    /* start read */
+    Wire.requestFrom((int) addr, (int)num);
+
+    i = 0;
+    while (Wire.available())
+    {
+        bytes[i++] = Wire.read();
+    }
+
+    for (j = 0; j < i; j++) {
+        SERIAL.print(bytes[j], 16); SERIAL.print(" ");
+    }
+
+    SERIAL.println("");
+}
+
+static int consoleHandler_wrd(const char *line)
+{
     if (*line++ != ' ') {
         return RETURN_FAIL_PRINT_USAGE;
     }
@@ -845,9 +923,9 @@ static int consoleHandler_wr(const char *line)
         bytes[i] = strtoul(endptr, &endptr, 16);
         if (++i == 3) break;
     }
-    while (*endptr == ' ');
+    while ((*endptr == ' ') && (*(endptr+1) != 0));
     
-    if (i < 3) {
+    if (i < 2) {
         return RETURN_FAIL_PRINT_USAGE;
     }
     
@@ -856,11 +934,21 @@ static int consoleHandler_wr(const char *line)
         wireBegun = true;
     }
 
-    if (*endptr == ' ') {
-        doRepeat((RepeatFunc)doWr, bytes[0], bytes[1], bytes[2], 0);
+    if (i == 3) {  /* read from an internal register */
+        if (*endptr == ' ') {
+            doRepeat((RepeatFunc)doWrdC, bytes[0], bytes[1], bytes[2], 0);
+        }
+        else {
+            doWrdC(bytes[0], bytes[1], bytes[2]);
+        }
     }
-    else {
-        doWr(bytes[0], bytes[1], bytes[2]);
+    else if (i == 2) { /* read from base address */
+        if (*endptr == ' ') {
+            doRepeat((RepeatFunc)doWrd, bytes[0], bytes[1], 0, 0);
+        }
+        else {
+            doWrd(bytes[0], bytes[1]);
+        }
     }
 
     return RETURN_SUCCESS;
@@ -870,7 +958,7 @@ static int consoleHandler_wr(const char *line)
 
 #if WW_CMD == 1
 
-static int consoleHandler_ww(const char *line)
+static int consoleHandler_wwr(const char *line)
 {
 
     if (*line++ != ' ') {
@@ -1101,3 +1189,389 @@ static int consoleHandler_pri(const char *line)
 }
 
 #endif /* PRI_CMD */
+
+#if PI_CMD == 1
+
+static int consoleHandler_pi(const char *line)
+{
+    uint8_t pin;
+    uint8_t state = 1; /* default leading edge is low to high */
+    uint32_t timeout = 1000000; /* default timeout is 1 ssecond */
+    uint32_t width;
+    char *endptr = NULL;
+    unsigned int i;
+    uint32_t args[4];
+
+    if (*line++ != ' ') {
+        return RETURN_FAIL_PRINT_USAGE;
+    }
+
+    i = 0;
+    endptr = (char *)line;
+    do {
+        args[i] = strtoul(endptr, &endptr, 10);
+        if (++i == 4) break;
+    }
+    while ((*endptr == ' ') && (*(endptr+1) != 0));
+
+    if (i == 4) {
+        return RETURN_FAIL_PRINT_USAGE;
+    }
+
+    pin = args[0];
+    
+    if (i > 1) state = args[1];
+    if (i > 2) timeout = args[2]; 
+
+    width = pulseIn(pin, state, timeout);
+    SERIAL.print("pulseIn(");
+    SERIAL.print(pin);
+    SERIAL.print(") = ");
+    SERIAL.print(width);
+    SERIAL.println(" us");
+
+    return RETURN_SUCCESS;
+}
+
+#endif
+
+#if (ARTEST_CMD == 1) || (AWTEST_CMD == 1)
+
+/*
+ * The analog MUX selection bits are tied to the LS 4 bits
+ * of a PCF8574A on the I2C bus.
+ *
+ * Two muxes share the channel selection bits.
+ *
+ * bit 4 = 0 enables lower 16 channels
+ * bit 5 = 0 enables upper 16 channels
+ */
+
+/* pin to channel map */
+uint8_t pin_to_channel[] = {
+    255, /* 0 */
+    255, /* 1 3.3V */
+    0,   /* 2 */
+    1,   /* 3 */
+    2,   /* 4 */
+    3,   /* 5 */
+    4,   /* 6 */
+    5,   /* 7 */
+    6,   /* 8 */
+    255, /* 9 SCL */
+    255, /* 10 SDA */
+    7,   /* 11 */
+    8,   /* 12 */
+    9,   /* 13 */
+    10,  /* 14 */
+    11,  /* 15 */
+    255, /* 16 reset */
+    12,  /* 17 */
+    13,  /* 18 */
+    14,  /* 19 */
+    255, /* 20 GND */
+    255, /* 21 5V */
+    255, /* 22 GND */
+    255, /* 23 Common mux signal, DAC output */
+    15,  /* 24 */
+    16,  /* 25 */
+    17,  /* 26 */
+    18,  /* 27 */
+    19,  /* 28 */
+    20,  /* 29 */
+    21,  /* 30 */
+    22,  /* 31 */
+    23,  /* 32 */
+    24,  /* 33 */
+    25,  /* 34 */
+    26,  /* 35 */
+    27,  /* 36 */
+    28,  /* 37 */
+    29,  /* 38 */
+    30,  /* 39 */
+    31   /* 40 */
+};
+
+#define PCF8574A_I2C_ADDR  (0x38)
+
+static void aMuxChannelEnable(unsigned int pin)
+{
+    uint8_t chan = pin_to_channel[pin];
+
+    if (wireBegun == false) {
+        Wire.begin();
+        wireBegun = true;
+    }
+
+    if (chan < 16) {
+        chan = 0x20 | (chan & 0x0f); /* enable lower 16 channels */
+    }
+    else if (chan < 32) {
+        chan = 0x10 | (chan & 0x0f); /* enable upper 16 channels */
+    }
+    else {
+        return;
+    }
+
+    Wire.beginTransmission(PCF8574A_I2C_ADDR);
+    Wire.write(chan);
+    Wire.endTransmission();
+}
+
+#endif
+
+#if ARTEST_CMD == 1
+
+#define MCP4726_I2C_ADDR     (0x62)
+#define MCP4726_CMD_WRITEDAC (0x40)
+#define MCP4726_CMD_DISABLEDAC (0x46)
+
+static void dacWrite(unsigned int output)
+{
+    if (wireBegun == false) {
+        Wire.begin();
+        wireBegun = true;
+    }
+
+    Wire.beginTransmission(MCP4726_I2C_ADDR);
+    Wire.write(MCP4726_CMD_WRITEDAC);
+    Wire.write(output / 16);         // Upper data bits   (D11.D10.D9.D8.D7.D6.D5.D4)
+    Wire.write((output % 16) << 4);  // Lower data bits   (D3.D2.D1.D0.x.x.x.x)
+    Wire.endTransmission();
+}
+
+/*
+ * disable the DAC output
+ */
+static void disableDac()
+{
+    Wire.beginTransmission(MCP4726_I2C_ADDR);
+    Wire.write(MCP4726_CMD_DISABLEDAC);
+    Wire.write(0);
+    Wire.write(0);
+    Wire.endTransmission();
+}
+
+#if MSP432_ARTEST_CMD == 1
+
+#define MAX_DAC_VALUE 2790  /* = 3.40V */
+
+/* Supported Ax pins */
+static uint8_t pinIds[] = {
+    A0,  A1,  A2,  A3,
+    A4,  A5,  A6,  A7,
+    A8,  A9,  A10, A11,
+    A12, A13, A14, A15
+};
+
+#endif  /* MSP432_ARTEST_CMD */
+
+#if CC32XX_ARTEST_CMD == 1
+
+#define MAX_DAC_VALUE 1192 /* = 1.455V */
+
+/* Supported Ax pins */
+static uint8_t pinIds[] = {
+    A0,  A1,  A2,  A3,
+};
+
+#endif  /* CC32XX_ARTEST_CMD */
+
+#if CC26XX_ARTEST_CMD == 1
+
+#define MAX_DAC_VALUE 2708  /* = 3.30V */
+
+/* Supported Ax pins */
+static uint8_t pinIds[] = {
+    A0,  A1,  A2,  A3,
+    A4,  A5,  A6,  A7,
+};
+
+#endif  /* CC26XX_ARTEST_CMD */
+
+static int consoleHandler_artest(const char * line)
+{
+    char *endptr;
+    uint32_t dacValue, dacValues[5];
+    uint8_t pinIdx, i, pin;
+    uint16_t aval[4];
+    static char response[80];
+
+    if (*line != ' ') {
+        dacValue = MAX_DAC_VALUE;
+    }
+    else {
+        dacValue = strtol(line , &endptr, 10);
+        if (dacValue > MAX_DAC_VALUE) {
+            dacValue = MAX_DAC_VALUE;
+        }
+    }
+
+    dacValues[0] = 0;
+    dacValues[1] = dacValue/4;
+    dacValues[2] = dacValue/2;
+    dacValues[3] = dacValue*3/4;
+    dacValues[4] = dacValue;
+
+    aMuxChannelEnable(0);
+
+    for (i = 0; i < 5; i++) {
+
+        dacWrite(dacValues[i]);
+
+        SERIAL.print("DAC Value = ");
+        SERIAL.println(dacValues[i]);
+
+        for (pinIdx = 0; pinIdx < sizeof(pinIds); pinIdx++ ) {
+            pin = pinIds[pinIdx];
+
+            aMuxChannelEnable(pin);
+
+            analogReadResolution(8);
+            aval[0] = analogRead(pin);
+
+            analogReadResolution(10);
+            aval[1] = analogRead(pin);
+
+            analogReadResolution(12);
+            aval[2] = analogRead(pin);
+
+            analogReadResolution(14);
+            aval[3] = analogRead(pin);
+
+            analogReadResolution(10);
+        
+            System_snprintf(response, sizeof(response),
+                " pin A%d = %8d  %8d  %8d  %8d", pinIdx, aval[0], aval[1], aval[2], aval[3]);
+
+            SERIAL.println(response);
+        }
+    }
+
+    return RETURN_SUCCESS;
+}
+
+#endif
+
+#if AWTEST_CMD == 1
+
+#if MSP432_AWTEST_CMD == 1
+
+/* Supported analogWrite pins */
+static uint8_t awPinIds[] = {
+    11,  18,  19,  31,
+    32,  34,  36,  39,
+    40
+};
+
+#endif  /* MSP432_AWTEST_CMD */
+
+
+#if CC32XX_AWTEST_CMD == 1
+
+/* Supported analogWrite pins */
+static uint8_t awPinIds[] = {
+    13,  29,  
+//  31,  /* GPIO_24 = JTAG TDO */
+//  36,  /* GPIO_25 = same as pin 13 */
+//  37,  /* GPIO_9 =  same as pin 29 */
+//  38,  /* GPIO_24 = JTAG TDO */
+//  39,  /* GPIO_10 = I2C */
+//  40   /* GPIO_11 = I2C */
+};
+
+#endif  /* CC32XX_AWTEST_CMD */
+
+
+#if CC26XX_AWTEST_CMD == 1
+#if defined(BOARD_CC2650_LAUNCHXL)
+
+/* Supported analogWrite pins */
+static uint8_t awPinIds[] = {
+    2,   5,
+    6,   7,   8,   11,
+    12,  13,  14,  15,
+    18,  19,  24,  25,
+    26,  27,  28,  29,
+    30,  36,
+    37,  39,  40
+};
+
+#elif defined(BOARD_LAUNCHXL_CC1310) || defined(BOARD_LAUNCHXL_CC1350)
+
+/* Supported analogWrite pins */
+static uint8_t awPinIds[] = {
+    2,   5,
+    6,   7,   8,   11,
+    12,  13,  14,  15,
+    18,  19,  24,  25,
+    26,  27,  28,
+    30,  36,
+    37,  39,  40
+};
+
+#endif
+#endif  /* CC26XX_AWTEST_CMD */
+
+static int consoleHandler_awtest(const char * line)
+{
+    char *endptr;
+    uint8_t pin, pinIdx;
+    uint16_t aval[7];
+    static char response[80];
+    bool doLoop = true;
+
+    if (*line == ' ') {
+        pin = strtol(line , &endptr, 10);
+        doLoop = false;
+    }
+
+    /* turn off the DAC so that mux routes output pins to pin 23 */
+    disableDac();
+
+    pinMode(23, INPUT);
+
+    aMuxChannelEnable(2);
+
+    for (pinIdx = 0; pinIdx < sizeof(awPinIds); pinIdx++ ) {
+
+        if (doLoop == true) {
+            pin = awPinIds[pinIdx];
+        }
+
+        aMuxChannelEnable(pin);
+
+        analogWrite(pin, 1);
+        aval[0] = pulseIn(23, 1, 10000);
+
+        analogWrite(pin, 128);
+        aval[1] = pulseIn(23, 1, 10000);
+
+        analogWrite(pin, 254);
+        aval[2] = pulseIn(23, 1, 10000);
+
+        analogWrite(pin, 0);
+        aval[3] = pulseIn(23, 1, 10000);
+        aval[4] = digitalRead(23);
+
+        analogWrite(pin, 255);
+        aval[5] = pulseIn(23, 1, 10000);
+        aval[6] = digitalRead(23);
+
+        /* release PWM resource */
+        pinMode(pin, INPUT);
+
+        System_snprintf(response, sizeof(response),
+            " pin %2d = %5d  %5d  %5d  %5d  %5d  %5d  %5d", pin,
+            aval[0], aval[1], aval[2], aval[3], aval[4], aval[5], aval[6]);
+
+        SERIAL.println(response);
+
+        if (doLoop == false) break;
+    }
+
+    return RETURN_SUCCESS;
+}
+
+#endif /* AWTEST_CMD */
+

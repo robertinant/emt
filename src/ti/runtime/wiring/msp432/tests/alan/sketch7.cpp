@@ -5,6 +5,8 @@ void buttonFxn0()
 {
     static bool off = true;
 
+    analogRead(A0);
+
     if (off) {
     	off = false;
     	digitalWrite(YELLOW_LED, 1);
@@ -58,7 +60,7 @@ void loop7()
 //    digitalWrite(RED_LED, 0);
     digitalWrite(RED_LED, 1);
 //    digitalWrite(RED_LED, 0);
-    delay(2500);
+    delay(2400);
     digitalWrite(RED_LED, 0);
 //    delay(2499);
 //    digitalWrite(RED_LED, 1);

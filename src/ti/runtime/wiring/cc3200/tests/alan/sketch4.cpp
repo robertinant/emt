@@ -1,14 +1,14 @@
 #include <Energia.h>
 
-extern void mon1_setup();
-extern void mon1_loop();
+extern void mon_setup1();
+extern void mon_loop1();
 
 void setup4()
 {
-    mon1_setup();
+    mon_setup1();
 }
 
 void loop4()
 {
-    mon1_loop();
+    mon_loop1();
 }
