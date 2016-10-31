@@ -180,13 +180,13 @@ GPIO_PinConfig gpioPinConfigs[] = {
     GPIOCC3200_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  16 - RESET */
     GPIOCC3200_GPIO_31 | GPIO_DO_NOT_CONFIG,    /*  17 - GPIO_31 */
     GPIOCC3200_GPIO_17 | GPIO_DO_NOT_CONFIG,    /*  18 - GPIO_17 */
-    GPIOCC3200_GPIO_28 | GPIO_DO_NOT_CONFIG,    /*  19 - GPIO_28 */
+    GPIOCC3200_GPIO_28 | GPIO_DO_NOT_CONFIG,    /*  19 - GPIO_28 JTAG_TCK */
     GPIOCC3200_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  20 - GND */
                           
     /* pins 21-30 */
     GPIOCC3200_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  21 - 5V */
     GPIOCC3200_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  22 - GND */
-    GPIOCC3200_GPIO_02 | GPIO_DO_NOT_CONFIG,    /*  23 - GPIO_02 */
+    GPIOCC3200_GPIO_02 | GPIO_DO_NOT_CONFIG,    /*  23 - GPIO_02 LP Detect */
     GPIOCC3200_GPIO_05 | GPIO_DO_NOT_CONFIG,    /*  24 - GPIO_05 */
     GPIOCC3200_GPIO_03 | GPIO_DO_NOT_CONFIG,    /*  25 - GPIO_03 */
     GPIOCC3200_GPIO_04 | GPIO_DO_NOT_CONFIG,    /*  26 - GPIO_04 */
@@ -196,14 +196,14 @@ GPIO_PinConfig gpioPinConfigs[] = {
     GPIOCC3200_GPIO_00 | GPIO_DO_NOT_CONFIG,    /*  30 - GPIO_00 */
                           
     /* pins 31-40 */
-    GPIOCC3200_GPIO_24 | GPIO_DO_NOT_CONFIG,    /*  31 - GPIO_24 */
-    GPIOCC3200_GPIO_23 | GPIO_DO_NOT_CONFIG,    /*  32 - GPIO_23 */
+    GPIOCC3200_GPIO_24 | GPIO_DO_NOT_CONFIG,    /*  31 - GPIO_24 JTAG_TDO */
+    GPIOCC3200_GPIO_23 | GPIO_DO_NOT_CONFIG,    /*  32 - GPIO_23 JTAG_TDI */
     GPIOCC3200_GPIO_05 | GPIO_DO_NOT_CONFIG,    /*  33 - GPIO_05 */
     GPIOCC3200_GPIO_07 | GPIO_DO_NOT_CONFIG,    /*  34 - GPIO_07 */
-    GPIOCC3200_GPIO_28 | GPIO_DO_NOT_CONFIG,    /*  35 - GPIO_28 */
+    GPIOCC3200_GPIO_28 | GPIO_DO_NOT_CONFIG,    /*  35 - GPIO_28 JTAG_TCK */
     GPIOCC3200_GPIO_25 | GPIO_DO_NOT_CONFIG,    /*  36 - GPIO_25 */
     GPIOCC3200_GPIO_09 | GPIO_DO_NOT_CONFIG,    /*  37 - GPIO_09 */
-    GPIOCC3200_GPIO_24 | GPIO_DO_NOT_CONFIG,    /*  38 - GPIO_24 */
+    GPIOCC3200_GPIO_24 | GPIO_DO_NOT_CONFIG,    /*  38 - GPIO_24 JTAG_TDO */
     GPIOCC3200_GPIO_10 | GPIO_DO_NOT_CONFIG,    /*  39 - GPIO_10 */
     GPIOCC3200_GPIO_11 | GPIO_DO_NOT_CONFIG,    /*  40 - GPIO_11 */
 };
@@ -221,8 +221,8 @@ GPIO_CallbackFxn gpioCallbackFunctions[] = {
     NULL,  /*  6  - GPIO_04 */
     NULL,  /*  7  - GPIO_14 */
     NULL,  /*  8  - GPIO_07 */
-    NULL,  /*  9  - GPIO_10 */
-    NULL,  /*  10 - GPIO_11 */
+    NULL,  /*  9  - GPIO_10 I2C SCL */
+    NULL,  /*  10 - GPIO_11 I2C SDA */
                     
     /* pins 11-20 */
     NULL,  /*  11 - GPIO_22 */
@@ -233,7 +233,7 @@ GPIO_CallbackFxn gpioCallbackFunctions[] = {
     NULL,  /*  16 - RESET */
     NULL,  /*  17 - GPIO_31 */
     NULL,  /*  18 - GPIO_17 */
-    NULL,  /*  19 - GPIO_28 */
+    NULL,  /*  19 - GPIO_28 JTAG_TCK */
     NULL,  /*  20 - GND */
                     
     /* pins 21-30 */
@@ -249,14 +249,14 @@ GPIO_CallbackFxn gpioCallbackFunctions[] = {
     NULL,  /*  30 - GPIO_00 */
                     
     /* pins 31-40 */
-    NULL,  /*  31 - GPIO_24 */
-    NULL,  /*  32 - GPIO_23 */
+    NULL,  /*  31 - GPIO_24 JTAG_TDO */
+    NULL,  /*  32 - GPIO_23 JTAG_TDI */
     NULL,  /*  33 - GPIO_05 */
     NULL,  /*  34 - GPIO_07 */
-    NULL,  /*  35 - GPIO_28 */
+    NULL,  /*  35 - GPIO_28 JTAG_TCK */
     NULL,  /*  36 - GPIO_25 */
     NULL,  /*  37 - GPIO_09 */
-    NULL,  /*  38 - GPIO_24 */
+    NULL,  /*  38 - GPIO_24 JTAG_TDO */
     NULL,  /*  39 - GPIO_10 */
     NULL,  /*  40 - GPIO_11 */
 };
@@ -356,71 +356,79 @@ I2C_Handle Board_openI2C(UInt i2cPortIndex, I2C_Params *i2cParams)
 
 PWMTimerCC3200_Object pwmCC3200Objects[Board_PWMCOUNT];
 
+/*
+ *  While 8 PWM channels are shown here, only 5 can ever be used simultaneously
+ *  8 channels allows the Timer Id to be used as an index into the PWM channel
+ *  table. While 8 TimerIDs are defined (TIMERA0A, TIMERA0B, TIMERA1A, thru
+ *  TIMERA3B), only 5 of those timers (TIMERA0A, TIMERA1A, TIMERA2B, TIMERA3A,
+ *  and TIMERA3B) are routed to external pins (PIN17, PIN21, PIN64, PIN01,
+ *  and PIN02, respectively).
+ */
 PWMTimerCC3200_HWAttrsV1 pwmCC3200HWAttrs[Board_PWMCOUNT] = {
     {
-	    .timerBaseAddr = TIMERA0_BASE,
-		.halfTimer = TIMER_A,
+        .timerBaseAddr = TIMERA0_BASE,
+        .halfTimer = TIMER_A,
         .pinTimerPwmMode = PIN_MODE_5,
         .pinId = PIN_01,
         .gpioBaseAddr = GPIOA1_BASE,
         .gpioPinIndex = GPIO_PIN_2
-	},
+    },
     {
-	    .timerBaseAddr = TIMERA0_BASE,
-		.halfTimer = TIMER_B,
+        .timerBaseAddr = TIMERA0_BASE,
+        .halfTimer = TIMER_B,
         .pinTimerPwmMode = PIN_MODE_5,
         .pinId = PIN_01,
         .gpioBaseAddr = GPIOA1_BASE,
         .gpioPinIndex = GPIO_PIN_2
-	},
+    },
     {
-	    .timerBaseAddr = TIMERA1_BASE,
-		.halfTimer = TIMER_A,
+        .timerBaseAddr = TIMERA1_BASE,
+        .halfTimer = TIMER_A,
         .pinTimerPwmMode = PIN_MODE_9,
         .pinId = PIN_01,
         .gpioBaseAddr = GPIOA1_BASE,
         .gpioPinIndex = GPIO_PIN_2
-	},
+    },
     {
-	    .timerBaseAddr = TIMERA1_BASE,
-		.halfTimer = TIMER_B,
+        .timerBaseAddr = TIMERA1_BASE,
+        .halfTimer = TIMER_B,
         .pinTimerPwmMode = PIN_MODE_9,
         .pinId = PIN_01,
         .gpioBaseAddr = GPIOA1_BASE,
         .gpioPinIndex = GPIO_PIN_2
-	},
+    },
     {
-	    .timerBaseAddr = TIMERA2_BASE,
-		.halfTimer = TIMER_A,
+        .timerBaseAddr = TIMERA2_BASE,
+        .halfTimer = TIMER_A,
         .pinTimerPwmMode = PIN_MODE_3,
         .pinId = PIN_01,
         .gpioBaseAddr = GPIOA1_BASE,
         .gpioPinIndex = GPIO_PIN_2
-	},
+    },
     {
-	    .timerBaseAddr = TIMERA2_BASE,
-		.halfTimer = TIMER_B,
+        .timerBaseAddr = TIMERA2_BASE,
+        .halfTimer = TIMER_B,
         .pinTimerPwmMode = PIN_MODE_3,
         .pinId = PIN_01,
         .gpioBaseAddr = GPIOA1_BASE,
         .gpioPinIndex = GPIO_PIN_2
-	},
+    },
     {
-	    .timerBaseAddr = TIMERA3_BASE,
-		.halfTimer = TIMER_A,
+        .timerBaseAddr = TIMERA3_BASE,
+        .halfTimer = TIMER_A,
         .pinTimerPwmMode = PIN_MODE_3,
         .pinId = PIN_01,
         .gpioBaseAddr = GPIOA1_BASE,
         .gpioPinIndex = GPIO_PIN_2
-	},
+    },
     {
-	    .timerBaseAddr = TIMERA3_BASE,
-		.halfTimer = TIMER_B,
+        .timerBaseAddr = TIMERA3_BASE,
+        .halfTimer = TIMER_B,
         .pinTimerPwmMode = PIN_MODE_3,
         .pinId = PIN_01,
         .gpioBaseAddr = GPIOA1_BASE,
         .gpioPinIndex = GPIO_PIN_2
-	},
+    },
 };
 
 const PWM_Config PWM_config[] = {
@@ -739,7 +747,7 @@ const PowerCC3200_ConfigV1 PowerCC3200_config = {
     .policyFxn = &PowerCC3200_sleepPolicy,
     .enterLPDSHookFxn = NULL,
     .resumeLPDSHookFxn = NULL,
-    .enablePolicy = true,
+    .enablePolicy = false,
     .enableGPIOWakeupLPDS = true,
     .enableGPIOWakeupShutdown = false,
     .enableNetworkWakeupLPDS = false,
