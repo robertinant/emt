@@ -36,6 +36,9 @@
 #include <ti/sysbios/knl/Clock.h>
 #include <ti/sysbios/knl/Task.h>
 
+/*
+ *  ======== micros ========
+ */
 unsigned long micros(void)
 {
     Types_FreqHz freq;
@@ -59,12 +62,18 @@ unsigned long micros(void)
     return (t64/scale);
 }
 
+/*
+ *  ======== millis ========
+ */
 unsigned long millis(void)
 {
     return (Clock_getTicks());
 }
 
-/* Delay for the given number of microseconds. */
+/*
+ *  ======== delayMicroseconds ========
+ *  Delay for the given number of microseconds
+ */
 void delayMicroseconds(unsigned int us)
 {
     if (us <7) {
@@ -97,6 +106,9 @@ void delayMicroseconds(unsigned int us)
     }
 }
 
+/*
+ *  ======== delay ========
+ */
 void delay(uint32_t milliseconds)
 {
     if (milliseconds == 0) {
