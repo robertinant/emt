@@ -37,9 +37,9 @@
 #include <stdint.h>
 
 static const uint8_t RED_LED = 29;
-static const uint8_t GREEN_LED = 10;
+static const uint8_t GREEN_LED = 10;  /* same as pin 40 */
 static const uint8_t BLUE_LED = 10; /* mapped to same as GREEN_LED */
-static const uint8_t YELLOW_LED = 9;
+static const uint8_t YELLOW_LED = 9;  /* same as pin 39  */
 
 static const uint8_t PUSH1 = 3;
 static const uint8_t PUSH2 = 11;
