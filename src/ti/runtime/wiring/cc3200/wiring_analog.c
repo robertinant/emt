@@ -224,6 +224,7 @@ void analogReference(uint16_t mode)
  */
 uint16_t analogRead(uint8_t pin)
 {
+    uint8_t sampleCount = 0;
     uint16_t channel, val;
     uint16_t pinNum = digital_pin_to_pin_num[pin];
     uint32_t hwiKey;
@@ -245,28 +246,34 @@ uint16_t analogRead(uint8_t pin)
         digital_pin_to_pin_function[pin] = PIN_FUNC_ANALOG_INPUT;
     }
 
-    /* flush the channel's FIFO if not empty */
-    while (MAP_ADCFIFOLvlGet(ADC_BASE, channel)) {
-        MAP_ADCFIFORead(ADC_BASE, channel);
-    }
-
     MAP_ADCChannelEnable(ADC_BASE, channel);
-    MAP_ADCTimerConfig(ADC_BASE, 0x1FFFF);
-    MAP_ADCTimerEnable(ADC_BASE);
     MAP_ADCEnable(ADC_BASE);
 
     /* Yikes! Poll for ADC value to appear with interrupts disabled! */
-    while (!MAP_ADCFIFOLvlGet(ADC_BASE, channel));
-    val = MAP_ADCFIFORead(ADC_BASE, channel) & 0x3FFF;
+    /*
+     * There is a known issue with the ADC on CC3200 where the first four
+     * samples are garbage.  Thus, the driver makes 5 conversions & returns
+     * the 5th sample.
+     */
+    while (sampleCount < 5) {
+        while (!MAP_ADCFIFOLvlGet(ADC_BASE, channel)) {
+            ;
+        }
+        val = MAP_ADCFIFORead(ADC_BASE, channel) & 0x3FFc;
+        sampleCount++;
+    }
 
     MAP_ADCDisable(ADC_BASE);
     MAP_ADCChannelDisable(ADC_BASE, channel);
-    MAP_ADCTimerDisable(ADC_BASE);
 
     Hwi_restore(hwiKey);
 
-    val = val >> analogReadShift;
-    return (val);
+    if (analogReadShift >= 0) {
+        return (val >> analogReadShift);
+    }
+    else {
+        return (val << -analogReadShift);
+    }
 }
 
 /*
