@@ -9,6 +9,7 @@
 MEMORY
 {
     SRAM (RWX) : origin = 0x20004000, length = 0x00040000 - 0x4000
+    SRAM2 (RWX) : origin = 0x20000000, length = 0x4000
 }
 
 /* The following command line options are set as part of the CCS project.    */
