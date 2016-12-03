@@ -118,3 +118,14 @@ void delay(uint32_t milliseconds)
 
     Task_sleep(milliseconds);
 }
+
+/*
+ * The following is a hack to force the usage of our local modified
+ * copy of UARTCC3200.c
+ */
+
+#include <ti/drivers/UART.h>
+#include <ti/drivers/uart/UARTCC3200.h>
+
+const UART_FxnTable *uartFxnTablePtr = &UARTCC3200_fxnTable;
+

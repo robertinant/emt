@@ -519,7 +519,7 @@ const UARTCC3200_HWAttrs uartCC3200HWAttrs[Board_UARTCOUNT] = {
     {
         .baseAddr = UARTA1_BASE, 
         .intNum = INT_UARTA1,
-        .intPriority = (~0),
+        .intPriority = (0xc0),
         .flowControl = UART_FLOWCONTROL_NONE,
         .ringBufPtr  = uartCC3200RingBuffer0,
         .ringBufSize = sizeof(uartCC3200RingBuffer0),
@@ -527,7 +527,7 @@ const UARTCC3200_HWAttrs uartCC3200HWAttrs[Board_UARTCOUNT] = {
     {
         .baseAddr = UARTA0_BASE, 
         .intNum = INT_UARTA0,
-        .intPriority = (~0),
+        .intPriority = (0xc0),
         .flowControl = UART_FLOWCONTROL_NONE,
         .ringBufPtr  = uartCC3200RingBuffer1,
         .ringBufSize = sizeof(uartCC3200RingBuffer1)

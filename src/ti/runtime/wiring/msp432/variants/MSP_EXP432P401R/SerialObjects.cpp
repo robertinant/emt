@@ -32,8 +32,33 @@
 
 #include <ti/runtime/wiring/HardwareSerial.h>
 
+#include <ti/drivers/uart/UARTMSP432.h>
+
+void uartReadCallback(UART_Handle uart, void *buf, size_t count)
+{
+    Serial.readCallback(uart, buf, count);
+}
+
+void uartReadCallback1(UART_Handle uart, void *buf, size_t count)
+{
+    Serial1.readCallback(uart, buf, count);
+}
+
+void uartWriteCallback(UART_Handle uart, void *buf, size_t count)
+{
+    Serial.writeCallback(uart, buf, count);
+}
+
+void uartWriteCallback1(UART_Handle uart, void *buf, size_t count)
+{
+    Serial1.writeCallback(uart, buf, count);
+}
+
 /*
  * Pre-Initialize Serial instances
  */
-HardwareSerial Serial(0);
-HardwareSerial Serial1(1);
+HardwareSerial Serial(0, uartReadCallback, uartWriteCallback);
+HardwareSerial Serial1(1, uartReadCallback1, uartWriteCallback1);
+
+
+

@@ -254,7 +254,7 @@ const UARTCC26XX_HWAttrsV2 uartCC26XXHWAttrs[CC1310_LAUNCHXL_UARTCOUNT] = {
         .baseAddr = UART0_BASE,
         .powerMngrId = PowerCC26XX_PERIPH_UART0,
         .intNum = INT_UART0_COMB,    /* <driverlib>/inc/hw_ints.h */
-        .intPriority = (~0),
+        .intPriority = (0xc0),
         .swiPriority = 0,
         .txPin = Board_UART_TX,
         .rxPin = Board_UART_RX,
@@ -750,7 +750,7 @@ const PowerCC26XX_Config PowerCC26XX_config = {
     .policyInitFxn = NULL,
     .policyFxn = PowerCC26XX_standbyPolicy,
     .calibrateFxn = PowerCC26XX_calibrate,
-    .enablePolicy = TRUE,
+    .enablePolicy = FALSE,
     .calibrateRCOSC_LF = TRUE,
     .calibrateRCOSC_HF = TRUE
 };

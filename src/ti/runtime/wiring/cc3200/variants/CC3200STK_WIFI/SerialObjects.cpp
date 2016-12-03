@@ -32,7 +32,17 @@
 
 #include <ti/runtime/wiring/HardwareSerial.h>
 
+void uartReadCallback(UART_Handle uart, void *buf, size_t count)
+{
+    Serial.readCallback(uart, buf, count);
+}
+
+void uartWriteCallback(UART_Handle uart, void *buf, size_t count)
+{
+    Serial.writeCallback(uart, buf, count);
+}
+
 /*
  * Pre-Initialize Serial instances
  */
-HardwareSerial Serial(0);
+HardwareSerial Serial(0, uartReadCallback, uartWriteCallback);

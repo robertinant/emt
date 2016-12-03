@@ -873,7 +873,7 @@ const UARTMSP432_HWAttrs uartMSP432HWAttrs[Board_UARTCOUNT] = {
     {
         .baseAddr = EUSCI_A0_BASE,
         .intNum = INT_EUSCIA0,
-        .intPriority = (~0),
+        .intPriority = (0xc0),
         .clockSource = EUSCI_A_UART_CLOCKSOURCE_SMCLK,
         .bitOrder = EUSCI_A_UART_LSB_FIRST,
         .numBaudrateEntries = sizeof(uartMSP432Baudrates) /
@@ -885,7 +885,7 @@ const UARTMSP432_HWAttrs uartMSP432HWAttrs[Board_UARTCOUNT] = {
     {
         .baseAddr = EUSCI_A2_BASE,
         .intNum = INT_EUSCIA2,
-        .intPriority = (~0),
+        .intPriority = (0xc0),
         .clockSource = EUSCI_A_UART_CLOCKSOURCE_SMCLK,
         .bitOrder = EUSCI_A_UART_LSB_FIRST,
         .numBaudrateEntries = sizeof(uartMSP432Baudrates) /

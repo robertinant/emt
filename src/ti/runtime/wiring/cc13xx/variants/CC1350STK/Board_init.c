@@ -76,12 +76,12 @@ const PIN_Config BoardGpioInitTable[] = {
     Board_KEY_RIGHT  | PIN_INPUT_EN | PIN_PULLUP | PIN_IRQ_BOTHEDGES | PIN_HYSTERESIS,        /* Button is active low          */
     Board_RELAY      | PIN_INPUT_EN | PIN_PULLDOWN | PIN_IRQ_BOTHEDGES | PIN_HYSTERESIS,      /* Relay is active high          */
     Board_MPU_INT    | PIN_INPUT_EN | PIN_PULLDOWN | PIN_IRQ_NEGEDGE | PIN_HYSTERESIS,        /* MPU_INT is active low         */
-    Board_TMP_RDY    | PIN_INPUT_EN | PIN_PULLUP | PIN_HYSTERESIS,                            /* TMP_RDY is active high        */
+    Board_TMP_RDY    | PIN_INPUT_EN | PIN_NOPULL | PIN_HYSTERESIS,                            /* TMP_RDY is active high        */
     Board_BUZZER     | PIN_GPIO_OUTPUT_EN | PIN_GPIO_LOW | PIN_PUSHPULL | PIN_DRVSTR_MAX,     /* Buzzer initially off          */
-    Board_MPU_POWER  | PIN_GPIO_OUTPUT_EN | PIN_GPIO_HIGH | PIN_PUSHPULL | PIN_DRVSTR_MAX,    /* MPU initially on              */
+    Board_MPU_POWER  | PIN_GPIO_OUTPUT_EN | PIN_GPIO_LOW | PIN_PUSHPULL | PIN_DRVSTR_MAX,     /* MPU initially off             */
     Board_MIC_POWER  | PIN_GPIO_OUTPUT_EN | PIN_GPIO_LOW | PIN_PUSHPULL | PIN_DRVSTR_MIN,     /* MIC initially off             */
     Board_SPI_FLASH_CS | PIN_GPIO_OUTPUT_EN | PIN_GPIO_HIGH | PIN_PUSHPULL | PIN_DRVSTR_MIN,  /* External flash chip select    */
-    Board_SPI_DEVPK_CS | PIN_GPIO_OUTPUT_EN | PIN_GPIO_LOW | PIN_PUSHPULL | PIN_DRVSTR_MIN,   /* DevPack chip select           */
+    Board_SPI_DEVPK_CS | PIN_GPIO_OUTPUT_EN | PIN_GPIO_HIGH | PIN_PUSHPULL | PIN_DRVSTR_MIN,  /* DevPack chip select           */
     Board_AUDIO_DI | PIN_INPUT_EN | PIN_PULLDOWN,                                             /* Audio DI                      */
     Board_AUDIODO | PIN_GPIO_OUTPUT_EN | PIN_GPIO_HIGH | PIN_PUSHPULL | PIN_DRVSTR_MIN,       /* Audio data out                */
     Board_AUDIO_CLK | PIN_INPUT_EN | PIN_PULLDOWN,                                            /* DevPack */
@@ -89,12 +89,12 @@ const PIN_Config BoardGpioInitTable[] = {
     Board_DP1 | PIN_INPUT_EN | PIN_PULLDOWN,                                                  /* DevPack */
     Board_DP0 | PIN_INPUT_EN | PIN_PULLDOWN,                                                  /* DevPack */
     Board_DP3 | PIN_INPUT_EN | PIN_PULLDOWN,                                                  /* DevPack */
-    Board_UART_TX | PIN_GPIO_OUTPUT_EN | PIN_GPIO_HIGH | PIN_PUSHPULL,                        /* DevPack */
-    Board_UART_RX | PIN_INPUT_EN | PIN_PULLDOWN,                                              /* DevPack */
-    Board_DEVPK_ID | PIN_INPUT_EN | PIN_NOPULL,                                               /* Device pack ID - external PU  */
-    Board_SPI0_MOSI | PIN_INPUT_EN | PIN_PULLDOWN,                                            /* SPI master out - slave in */
+    Board_UART_RX   | PIN_INPUT_EN | PIN_PULLDOWN,                                            /* DevPack */
+    Board_UART_TX   | PIN_INPUT_DIS | PIN_PUSHPULL | PIN_GPIO_OUTPUT_EN | PIN_GPIO_HIGH,      /* DevPack */
+    Board_DEVPK_ID  | PIN_INPUT_EN | PIN_NOPULL,                                              /* Device pack ID - external PU  */
+    Board_SPI0_MOSI | PIN_INPUT_DIS | PIN_PULLDOWN,                                           /* SPI master out - slave in */
+    Board_SPI0_CLK  | PIN_INPUT_DIS | PIN_PULLDOWN,                                           /* SPI clock */
     Board_SPI0_MISO | PIN_INPUT_EN | PIN_PULLDOWN,                                            /* SPI master in - slave out */
-    Board_SPI0_CLK | PIN_INPUT_EN | PIN_PULLDOWN,                                             /* SPI clock */
 
     PIN_TERMINATE
 };
@@ -253,7 +253,7 @@ const UARTCC26XX_HWAttrsV2 uartCC26XXHWAttrs[CC1350_UARTCOUNT] = {
         .baseAddr = UART0_BASE,
         .powerMngrId = PowerCC26XX_PERIPH_UART0,
         .intNum = INT_UART0_COMB,    /* <driverlib>/inc/hw_ints.h */
-        .intPriority = (~0),
+        .intPriority = (0xc0),
         .swiPriority = 0,
         .txPin = Board_DP5_UARTTX,
         .rxPin = Board_DP4_UARTRX,
