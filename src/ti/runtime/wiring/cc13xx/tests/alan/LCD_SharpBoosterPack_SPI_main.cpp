@@ -69,7 +69,7 @@ void lcdSetup() {
   
     Clock_Params_init(&myClkParams);
 
-    myClkParams.period = 100000; /* one second */
+    myClkParams.period = 1000000; /* one second */
     myClkParams.startFlag = true;
 
     /* comment out for steady state power testing */

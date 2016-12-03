@@ -225,7 +225,7 @@ static const struct {
 
 void MON_SETUP(void)
 {
-    SERIAL.begin(115200);
+    SERIAL.begin(115200, true);
     SERIAL.println("Welcome! This is the SERIAL debug console.");
 }
 
@@ -247,6 +247,9 @@ void MON_LOOP()
     int escape_index = 0;
 
     while (true) {
+
+//        while (SERIAL.available() == 0) delay(10);
+
         char c = SERIAL.read();
 
         if (escape_index) {
@@ -1298,11 +1301,6 @@ static void aMuxChannelEnable(unsigned int pin)
 {
     uint8_t chan = pin_to_channel[pin];
 
-    if (wireBegun == false) {
-        Wire.begin();
-        wireBegun = true;
-    }
-
     if (chan < 16) {
         chan = 0x20 | (chan & 0x0f); /* enable lower 16 channels */
     }
@@ -1328,11 +1326,6 @@ static void aMuxChannelEnable(unsigned int pin)
 
 static void dacWrite(unsigned int output)
 {
-    if (wireBegun == false) {
-        Wire.begin();
-        wireBegun = true;
-    }
-
     Wire.beginTransmission(MCP4726_I2C_ADDR);
     Wire.write(MCP4726_CMD_WRITEDAC);
     Wire.write(output / 16);         // Upper data bits   (D11.D10.D9.D8.D7.D6.D5.D4)
@@ -1396,6 +1389,8 @@ static int consoleHandler_artest(const char * line)
     uint8_t pinIdx, i, pin;
     uint16_t aval[4];
     static char response[80];
+
+    Wire.begin();
 
     if (*line != ' ') {
         dacValue = MAX_DAC_VALUE;
@@ -1525,6 +1520,8 @@ static int consoleHandler_awtest(const char * line)
         pin = strtol(line , &endptr, 10);
         doLoop = false;
     }
+
+    Wire.begin();
 
     /* turn off the DAC so that mux routes output pins to pin 23 */
     disableDac();
