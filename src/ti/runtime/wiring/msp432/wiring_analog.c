@@ -170,6 +170,7 @@ void analogWrite(uint8_t pin, int val)
 
         if (pwmIndex < PWM_AVAILABLE_PWMS) { /* fixed mapping */
             if (used_pwm_port_pins[pwmIndex] != PWM_NOT_IN_USE) {
+                Hwi_restore(hwiKey);
                 return; /* PWM port already in use */
             }
             /*
