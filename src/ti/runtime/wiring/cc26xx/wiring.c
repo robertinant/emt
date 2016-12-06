@@ -150,7 +150,7 @@ void myClock_doTick(UArg arg) {
  * Make cc26xx Timer interrupt higher priority than GPIO interrupts
  * so that they will nest user "attachInterrupt()" pin interrupts.
  */
-void energiaFirstFxn() {
+void energiaLastFxn() {
     Hwi_setPriority(20, 0xc0);
     Clock_TimerProxy_setFunc(Clock_getTimerHandle(), myClock_doTick, 0);
 }
