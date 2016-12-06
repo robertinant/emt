@@ -1,4 +1,4 @@
-				emt-c07
+				emt-c08
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -116,19 +116,29 @@ ADDITIONS
 DELETIONS
 
 CHANGES
-ti.runtime.wiring.{cc13xx|cc26xx}/variants/*
-	Adapt to CC13/26xx UART ringbuffer
+bundles/energia/cc13xx
+	added support for CC1350STK and CC1350_LAUNCHXL boards
 
-ti.runtime.wiring.*/wiring_analog.c
-    -Properly handle negative shift of ADC value according to
-     analogReadResolution
-    -Adapt to new PWM driver interface
+ti.runtime.wiring.*
+	rework UART to address ENERGIAMT-2 Change UART to UART_MODE_CALLBACK
+	  -Default to using UART callback mode so that Serial.write() can be
+           called from an ISR.
+	  -Optionally support blocking mode by providing a new
+	   Serial.begin(baud, callbackModeEnabled) form of Serial.begin().
+	  -Work around issues with CC3200 UART driver that would invoke the
+	   tx callback before the last character has been sent.
+	  -Work around issues with CC26XX UART driver resulting from tx
+	   callback being invoked from a Clock Swi rather than interrupt 
+	   context.
+	  -The above two issues should be resolved in a future TI-DRIVERS
+	   release.
+	  -Work around missing CC26XX UART_control commands (PEEK and
+	   GETRXCOUNT)
 
-ti.platforms.emt3200
-	Handle new BIOS placement of runtime vector table address
-
-
-
-	
+ti.runtime.wiring.msp432
+	Add Hwi_restore() to analogWrite() error return path to prevent
+        interrupt lockup.
 
 MRS
+
+ENERGIAMT-2 Change UART to UART_MODE_CALLBACK
