@@ -43,13 +43,13 @@
 #include <ti/sysbios/family/arm/m3/Hwi.h>
 #include <ti/sysbios/family/arm/msp432/Timer.h>
 
-#include <rom.h>
-#include <rom_map.h>
-#include <timer_a.h>
-#include <adc14.h>
-#include <ref_a.h>
-#include <pmap.h>
-#include <gpio.h>
+#include <driverlib/rom.h>
+#include <driverlib/rom_map.h>
+#include <driverlib/timer_a.h>
+#include <driverlib/adc14.h>
+#include <driverlib/ref_a.h>
+#include <driverlib/pmap.h>
+#include <driverlib/gpio.h>
 
 #define PWM_NOT_IN_USE 0xffff
 #define PWM_IN_USE     0xfffe
@@ -59,7 +59,7 @@
  */
 
 extern PWM_Config PWM_config[];
-extern PWMTimerMSP432_HWAttrsV1 pwmTimerMSP432HWAttrs[];
+extern PWMTimerMSP432_HWAttrsV2 pwmTimerMSP432HWAttrs[];
 
 extern const GPIOMSP432_Config GPIOMSP432_config;
 

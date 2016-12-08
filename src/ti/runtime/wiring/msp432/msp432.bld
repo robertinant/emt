@@ -11,11 +11,11 @@ Pkg.attrs.exportAll = true;
 var COPTS   = {ti: "--gcc --diag_warning=225", gnu: ""};
 var CXXOPTS = {ti: "",                         gnu: "-fno-rtti"};
 
-var DEFS = '-Dxdc__nolocalstring=1 -D__MSP432P401R__ -DTARGET_IS_MSP432P4XX ';
+var DEFS = '-Dxdc__nolocalstring=1 -D__MSP432P401R__ ';
 
 var INCS = '-I"' + DLIBROOT + '" '
        + '-I"' + DLIBROOT + '/inc" '
-       + '-I"' + DLIBROOT + '/inc/CMSIS" '
+       + '-I"' + DLIBROOT + '/../../../third_party/CMSIS/Include" '
        + '-I"' + DLIBROOT + '/driverlib/MSP432P4xx" ';
 
 var DEF_OPTS = {name: null, defs: "", incs: ""};

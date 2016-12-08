@@ -33,7 +33,7 @@
 #include <ti/runtime/wiring/wiring_private.h>
 #include <ti/runtime/wiring/msp432/wiring_analog.h>
 
-#include <adc14.h>
+#include <driverlib/adc14.h>
 
 #include <ti/drivers/PWM.h>
 #include <ti/drivers/GPIO.h>

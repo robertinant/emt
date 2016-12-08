@@ -42,9 +42,9 @@
 #include <ti/drivers/Power.h>
 #include <ti/drivers/power/PowerMSP432.h>
 
-#include <rom.h>
-#include <rom_map.h>
-#include <wdt_a.h>
+#include <driverlib/rom.h>
+#include <driverlib/rom_map.h>
+#include <driverlib/wdt_a.h>
 
 static uint8_t delayMode = 0; /* determines  which tick source is driving Clock_tick */
 

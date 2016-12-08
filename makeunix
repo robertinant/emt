@@ -5,7 +5,7 @@
 
 include ./imports.mak
 
-TIRTOS_REPOS = $(TIRTOS)/packages;$(SYSBIOS)/packages;$(TIDRIVERS)/packages
+TIRTOS_REPOS = $(TIRTOS.msp432);$(TIDRIVERS.msp432)
 
 # required by bundles/energia/makefile
 export TIRTOS
@@ -33,23 +33,27 @@ JOBS = --jobs=1
 .local-release: .local-all imports.mak .imports
 	@echo making emt_src bundle ...
 	make -C src/bundles/emt_src release
-	@echo making energia closures ...
-	make -C src/bundles/energia all closure-$(notdir $(CURDIR)).tar.gz
+#	@echo making energia closures ...
+#	make -C src/bundles/energia all closure-$(notdir $(CURDIR)).tar.gz
 	@echo "making msp432 board 'package' ..."
 	make -C src/bundles/energia all msp432-$(notdir $(CURDIR)).zip
-	@echo "making cc3200 board 'package' ..."
-	make -C src/bundles/energia all cc3200-$(notdir $(CURDIR)).zip
-	@echo "making cc13xx board 'package' ..."
-	make -C src/bundles/energia all cc13xx-$(notdir $(CURDIR)).zip
+#	@echo "making cc3200 board 'package' ..."
+#	make -C src/bundles/energia all cc3200-$(notdir $(CURDIR)).zip
+#	@echo "making cc13xx board 'package' ..."
+#	make -C src/bundles/energia all cc13xx-$(notdir $(CURDIR)).zip
+
+PKGS = $(shell $(XDCROOT)/bin/xdcpkg -r ./src |egrep -v '3200|26xx|13xx')
 
 # ======== .local-all ========
 # Builds all packages
 .local-all: .imports imports.mak
 	-@mkdir -p exports
 	@echo "Building platforms ..."
-	$(MYXDC) $(JOBS) release -P $(wildcard src/ti/platforms/*)
+#	$(MYXDC) $(JOBS) release -P $(wildcard src/ti/platforms/*)
+	$(MYXDC) $(JOBS) release -P src/ti/platforms/launchpad src/ti/platforms/emt432
 	@echo "Building packages ..."
-	$(MYXDC) $(JOBS) release -Pr src
+#	$(MYXDC) $(JOBS) release -Pr src
+	$(MYXDC) $(JOBS) -k release -P $(PKGS)
 
 .local-make:
 	$(MYXDC) $(JOBS) .make -Pr src
@@ -58,7 +62,8 @@ JOBS = --jobs=1
 # Test the packages in this tree
 .regress: .local-regress
 .local-regress: .imports .local-all
-	$(MYXDC) test -Pr ./src
+#	$(MYXDC) test -Pr ./src
+	$(MYXDC) test -P $(PKGS)
 
 # ======== .clean ========
 # Clean the entire tree

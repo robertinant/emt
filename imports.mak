@@ -8,14 +8,15 @@ ENERGIA = /db/builds/xinstall/energia_nightly/Energia
 #
 # internal TISB trees containing imports
 #
-ZUMAPROD_TREE = $(TREES)/zumaprod/zumaprod-o06
+MCPI_TREE = $(TREES)/mcpi/mcpi-b17
 
 #
 # Specific required imports (referenced by makeunix, for example)
 #
-TIRTOS  = $(firstword $(wildcard $(ZUMAPROD_TREE)/exports/tirtos_full_*))
-SYSBIOS = $(wildcard $(TIRTOS)/products/bios_6*)
-TIDRIVERS = $(wildcard $(TIRTOS)/products/tidrivers_full_*)
+SDK.msp432 = $(firstword $(wildcard $(MCPI_TREE)/exports/coresdk_msp432_*))
+
+TIRTOS.msp432    = $(SDK.msp432)/kernel/tirtos/packages
+TIDRIVERS.msp432 = $(SDK.msp432)/source
 
 INO2CPP = $(wildcard $(ENERGIA)/app/src/processing/app/ino2cpp/exports/ino2cp*)
 
@@ -29,4 +30,4 @@ endif
 IMPORT_ARCHIVES = $(INO2CPP)
 IMPORT_PACKAGES =
 
-REFERENCED_REPOS = $(TIRTOS) $(SYSBIOS)
+REFERENCED_REPOS = $(TIRTOS.msp432) $(TIDRIVERS.msp432)

@@ -28,10 +28,10 @@ tiTargets.M4.ccOpts.suffix  += " -ms --relaxed_ansi --display_error_number ";
 tiTargets.M4F.ccOpts.suffix += " -ms --relaxed_ansi --display_error_number ";
 tiTargets.M3.ccOpts.suffix  += " -ms --relaxed_ansi --display_error_number ";
 if (tiTargets.M4F.rootDir == null) {
-    tiTargets.M4F.rootDir = vtools + "/ti/arm/5.2.4/" + os;
+    tiTargets.M4F.rootDir = vtools + "/ti/arm/16.9.0/" + os;
 }
-tiTargets.M3.rootDir = tiTargets.M4F.rootDir;
-tiTargets.M4.rootDir = tiTargets.M4F.rootDir;
+//tiTargets.M3.rootDir = tiTargets.M4F.rootDir;
+//tiTargets.M4.rootDir = tiTargets.M4F.rootDir;
 
 /* Gnu compiler configuration settings */
 var gnuTargets = xdc.loadPackage('gnu.targets.arm');
@@ -39,10 +39,11 @@ gnuTargets.M4.LONGNAME  = "bin/arm-none-eabi-gcc";
 gnuTargets.M4F.LONGNAME = gnuTargets.M4.LONGNAME;
 gnuTargets.M3.LONGNAME  = gnuTargets.M4.LONGNAME;
 if (os == "Linux" && gnuTargets.M4F.rootDir == null) {
-    gnuTargets.M4F.rootDir = vtools + "/linaro/4.8-2014q3/" + os;
+    gnuTargets.M4F.rootDir =
+        vtools + "/linaro/gcc-arm-none-eabi-4_9-2015q3/";
 }
-gnuTargets.M4.rootDir  = gnuTargets.M4F.rootDir;
-gnuTargets.M3.rootDir  = gnuTargets.M4F.rootDir;
+//gnuTargets.M4.rootDir  = gnuTargets.M4F.rootDir;
+//gnuTargets.M3.rootDir  = gnuTargets.M4F.rootDir;
 
 /* manage exceptions and dwarf compatibility */
 if (false) {
