@@ -224,8 +224,9 @@ void analogWrite(uint8_t pin, int val)
         pwmParams.dutyUnits = PWM_DUTY_COUNTS;
 
         /* override default pin definition in HwAttrs */
-        pwmTimerMSP432HWAttrs[pwmIndex].gpioPort = port;
-        pwmTimerMSP432HWAttrs[pwmIndex].gpioPinIndex = pinMask;
+#warning HACK: to get past compile error, must port to V2 attrs
+        //pwmTimerMSP432HWAttrs[pwmIndex].gpioPort = port;
+        //pwmTimerMSP432HWAttrs[pwmIndex].gpioPinIndex = pinMask;
 
         /* PWM_open() will fail if the timer's CCR is already in use */
         pwmHandle = PWM_open(pwmIndex, &pwmParams);
