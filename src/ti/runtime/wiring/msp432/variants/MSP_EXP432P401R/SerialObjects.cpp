@@ -32,6 +32,8 @@
 
 #include <ti/runtime/wiring/HardwareSerial.h>
 
+#include <ti/drivers/UART.h>
+
 void uartReadCallback(UART_Handle uart, void *buf, size_t count)
 {
     Serial.readCallback(uart, buf, count);
