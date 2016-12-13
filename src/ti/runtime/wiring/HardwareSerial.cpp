@@ -90,6 +90,8 @@ void HardwareSerial::begin(unsigned long baud)
 
     baudRate = baud;
 
+    UART_init();
+    
     UART_Params_init(&uartParams);
 
     if (blockingModeEnabled == true) {
@@ -114,7 +116,7 @@ void HardwareSerial::begin(unsigned long baud)
     uartParams.writeDataMode = UART_DATA_BINARY;
     uartParams.baudRate = baud;
 
-    uart = Board_openUART(uartModule, &uartParams);
+    uart = UART_open(uartModule, &uartParams);
 
     if (uart != NULL) {
         GateMutex_construct(&gate, NULL);

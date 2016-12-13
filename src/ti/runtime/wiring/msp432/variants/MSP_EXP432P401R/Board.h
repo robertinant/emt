@@ -58,6 +58,17 @@ extern "C" {
 #define Board_LED_ON  (~0)
 
 /*!
+ *  @def    Board_ADCName
+ *  @brief  Enum of ADC channels on the MSP_EXP432P401R dev board
+ */
+typedef enum Board_ADCName {
+    Board_ADC0 = 0,
+    Board_ADC1,
+
+    Board_ADCCOUNT
+} Board_ADCName;
+
+/*!
  *  @def    Board_GPIOName
  *  @brief  Enum of GPIO names on the MSP_EXP432P401R Launch Pad dev board
  */
@@ -78,6 +89,7 @@ typedef enum Board_GPIOName {
  */
 typedef enum Board_I2CName {
     Board_I2CB0 = 0,
+    Board_I2CB1,
 
     Board_I2CCOUNT
 } Board_I2CName;
@@ -123,6 +135,20 @@ typedef enum Board_SPIName {
 
     Board_SPICOUNT
 } Board_SPIName;
+
+/*!
+ *  @def    Board_TimerName
+ *  @brief  Enum of Timer names on the MSP_EXP432P401R dev board
+ */
+typedef enum Board_TimerName {
+    Board_TIMER_T32_0 = 0,
+    Board_TIMER_T32_1,
+    Board_TIMER_TA_1,
+    Board_TIMER_TA_2,
+    Board_TIMER_TA_3,
+
+    Board_TIMERCOUNT
+} Board_TimerName;
 
 /*!
  *  @def    Board_UARTName

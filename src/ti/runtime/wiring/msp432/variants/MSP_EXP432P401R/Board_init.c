@@ -38,26 +38,64 @@
 
 #include <stdbool.h>
 
-#include <xdc/std.h>
+#include <ti/drivers/Power.h>
+#include <ti/drivers/power/PowerMSP432.h>
 
-#include <xdc/runtime/System.h>
-
-#include <ti/drivers/ports/DebugP.h>
-#include <ti/drivers/ports/HwiP.h>
-
-#include <msp432.h>
-#include <driverlib/MSP432P4xx/rom.h>
-#include <driverlib/MSP432P4xx/rom_map.h>
-#include <driverlib/MSP432P4xx/dma.h>
-#include <driverlib/MSP432P4xx/interrupt.h>
-#include <driverlib/MSP432P4xx/gpio.h>
-#include <driverlib/MSP432P4xx/i2c.h>
-#include <driverlib/MSP432P4xx/spi.h>
-#include <driverlib/MSP432P4xx/timer_a.h>
-#include <driverlib/MSP432P4xx/uart.h>
-#include <driverlib/MSP432P4xx/wdt_a.h>
+#include <ti/devices/msp432p4xx/inc/msp.h>
+#include <ti/devices/msp432p4xx/driverlib/rom.h>
+#include <ti/devices/msp432p4xx/driverlib/rom_map.h>
+#include <ti/devices/msp432p4xx/driverlib/adc14.h>
+#include <ti/devices/msp432p4xx/driverlib/dma.h>
+#include <ti/devices/msp432p4xx/driverlib/gpio.h>
+#include <ti/devices/msp432p4xx/driverlib/i2c.h>
+#include <ti/devices/msp432p4xx/driverlib/interrupt.h>
+#include <ti/devices/msp432p4xx/driverlib/pmap.h>
+#include <ti/devices/msp432p4xx/driverlib/ref_a.h>
+#include <ti/devices/msp432p4xx/driverlib/spi.h>
+#include <ti/devices/msp432p4xx/driverlib/timer_a.h>
+#include <ti/devices/msp432p4xx/driverlib/timer32.h>
+#include <ti/devices/msp432p4xx/driverlib/uart.h>
+#include <ti/devices/msp432p4xx/driverlib/wdt_a.h>
 
 #include "Board.h"
+
+/*
+ *  =============================== ADC ===============================
+ */
+#include <ti/drivers/ADC.h>
+#include <ti/drivers/adc/ADCMSP432.h>
+
+/* ADC objects */
+ADCMSP432_Object adcMSP432Objects[Board_ADCCOUNT];
+
+/* ADC configuration structure */
+const ADCMSP432_HWAttrsV1 adcMSP432HWAttrs[Board_ADCCOUNT] = {
+    {
+        .adcPin = ADCMSP432_P5_5_A0,
+        .refVoltage = REF_A_VREF2_5V,
+        .resolution = ADC_14BIT
+    },
+    {
+        .adcPin = ADCMSP432_P5_4_A1,
+        .refVoltage = REF_A_VREF1_45V,
+        .resolution = ADC_8BIT
+    }
+};
+
+const ADC_Config ADC_config[Board_ADCCOUNT] = {
+    {
+        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .object = &adcMSP432Objects[Board_ADC0],
+        .hwAttrs = &adcMSP432HWAttrs[Board_ADC0]
+    },
+    {
+        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .object = &adcMSP432Objects[Board_ADC1],
+        .hwAttrs = &adcMSP432HWAttrs[Board_ADC1]
+    }
+};
+
+const uint_least8_t ADC_count = Board_ADCCOUNT;
 
 /*
  *  =============================== DMA ===============================
@@ -111,18 +149,14 @@ const UDMAMSP432_Config UDMAMSP432_config = {
 /*
  *  ======== Board_initGeneral ========
  */
-void Board_initGeneral(void) {
+void Board_initGeneral(void)
+{
+    Power_init();
 }
 
 /*
  *  =============================== GPIO ===============================
  */
-/* Place into subsections to allow the TI linker to remove items properly */
-#if defined(__TI_COMPILER_VERSION__)
-#pragma DATA_SECTION(GPIOMSP432_config, ".const:GPIOMSP432_config")
-#pragma DATA_SECTION(gpioPinConfigs, ".data:gpioPinConfigs")
-#pragma DATA_SECTION(gpioCallbackFunctions, ".data:gpioCallbackFunctions")
-#endif
 
 #include <ti/drivers/GPIO.h>
 #include <ti/drivers/gpio/GPIOMSP432.h>
@@ -388,10 +422,6 @@ void Board_initGPIO(void)
  *  =============================== I2C ===============================
  */
 /* Place into subsections to allow the TI linker to remove items properly */
-#if defined(__TI_COMPILER_VERSION__)
-#pragma DATA_SECTION(I2C_config, ".const:I2C_config")
-#pragma DATA_SECTION(i2cMSP432HWAttrs, ".const:i2cMSP432HWAttrs")
-#endif
 
 #include <ti/drivers/I2C.h>
 #include <ti/drivers/i2c/I2CMSP432.h>
@@ -400,12 +430,22 @@ void Board_initGPIO(void)
 I2CMSP432_Object i2cMSP432Objects[Board_I2CCOUNT];
 
 /* I2C configuration structure */
-const I2CMSP432_HWAttrs i2cMSP432HWAttrs[Board_I2CCOUNT] = {
+const I2CMSP432_HWAttrsV1 i2cMSP432HWAttrs[Board_I2CCOUNT] = {
     {
         .baseAddr = EUSCI_B1_BASE,
         .intNum = INT_EUSCIB1,
         .intPriority = (~0),
-        .clockSource = EUSCI_B_I2C_CLOCKSOURCE_SMCLK
+        .clockSource = EUSCI_B_I2C_CLOCKSOURCE_SMCLK,
+        .dataPin = I2CMSP432_P6_4_UCB1SDA,
+        .clkPin = I2CMSP432_P6_5_UCB1SCL
+    },
+    {
+        .baseAddr = EUSCI_B0_BASE,
+        .intNum = INT_EUSCIB0,
+        .intPriority = (~0),
+        .clockSource = EUSCI_B_I2C_CLOCKSOURCE_SMCLK,
+        .dataPin = I2CMSP432_P1_6_UCB0SDA,
+        .clkPin = I2CMSP432_P1_7_UCB0SCL
     }
 };
 
@@ -415,38 +455,15 @@ const I2C_Config I2C_config[] = {
         .object = &i2cMSP432Objects[0],
         .hwAttrs = &i2cMSP432HWAttrs[0]
     },
+    {
+        .fxnTablePtr = &I2CMSP432_fxnTable,
+        .object = &i2cMSP432Objects[1],
+        .hwAttrs = &i2cMSP432HWAttrs[1]
+    },
     {NULL, NULL, NULL}
 };
 
-/*
- *  ======== Board_openI2C ========
- *  Initialize the I2C driver.
- *  Initialize the I2C port's pins.
- *  Open the I2C port.
- */
-I2C_Handle Board_openI2C(UInt i2cPortIndex, I2C_Params *i2cParams)
-{
-    
-    /* Initialize the I2C driver */
-    /* By design, I2C_init() is idempotent */
-    I2C_init();
-    
-    /* initialize the pins associated with the respective I2C */
-    switch(i2cPortIndex) {
-        case 0:
-            /* Configure Pins 6.4 & 6.5 as SDA & SCL, respectively. */
-            MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P6,
-                                                           GPIO_PIN4 | GPIO_PIN5,
-                                                           GPIO_PRIMARY_MODULE_FUNCTION);
-            break;
-
-        default:
-            return (NULL);
-    }
-
-    /* open the I2C */
-    return (I2C_open(i2cPortIndex, i2cParams));
-}
+const uint_least8_t I2C_count = Board_I2CCOUNT;
 
 /*
  *  =============================== Power ===============================
@@ -476,10 +493,6 @@ void Board_initPower(void)
  *  =============================== PWM ===============================
  */
 /* Place into subsections to allow the TI linker to remove items properly */
-#if defined(__TI_COMPILER_VERSION__)
-#pragma DATA_SECTION(PWM_config, ".const:PWM_config")
-#pragma DATA_SECTION(pwmTimerMSP432HWAttrs, ".const:pwmTimerMSP432HWAttrs")
-#endif
 
 #include <ti/drivers/PWM.h>
 #include <ti/drivers/pwm/PWMTimerMSP432.h>
@@ -487,105 +500,58 @@ void Board_initPower(void)
 PWMTimerMSP432_Object pwmTimerMSP432Objects[Board_PWMCOUNT];
 
 /* PWM configuration structure */
-PWMTimerMSP432_HWAttrsV1 pwmTimerMSP432HWAttrs[Board_PWMCOUNT] = {
+PWMTimerMSP432_HWAttrsV2 pwmTimerMSP432HWAttrs[Board_PWMCOUNT] = {
     /* pin mappable PWM channels */
     {
-        .timerBaseAddr = TIMER_A0_BASE,
         .clockSource = TIMER_A_CLOCKSOURCE_SMCLK,
-        .compareRegister = TIMER_A_CAPTURECOMPARE_REGISTER_1,
-        .gpioPort = GPIO_PORT_P2,
-        .gpioPinIndex = GPIO_PIN1,
-        .pwmMode = GPIO_PRIMARY_MODULE_FUNCTION
+        .pwmPin = PWMTimerMSP432_P2_0_TA0CCR1A
     },
     {
-        .timerBaseAddr = TIMER_A0_BASE,
         .clockSource = TIMER_A_CLOCKSOURCE_SMCLK,
-        .compareRegister = TIMER_A_CAPTURECOMPARE_REGISTER_2,
-        .gpioPort = GPIO_PORT_P2,
-        .gpioPinIndex = GPIO_PIN1,
-        .pwmMode = GPIO_PRIMARY_MODULE_FUNCTION
+        .pwmPin = PWMTimerMSP432_P2_1_TA0CCR2A
     },
     {
-        .timerBaseAddr = TIMER_A0_BASE,
         .clockSource = TIMER_A_CLOCKSOURCE_SMCLK,
-        .compareRegister = TIMER_A_CAPTURECOMPARE_REGISTER_3,
-        .gpioPort = GPIO_PORT_P2,
-        .gpioPinIndex = GPIO_PIN1,
-        .pwmMode = GPIO_PRIMARY_MODULE_FUNCTION
+        .pwmPin = PWMTimerMSP432_P2_2_TA0CCR3A
     },
     {
-        .timerBaseAddr = TIMER_A0_BASE,
         .clockSource = TIMER_A_CLOCKSOURCE_SMCLK,
-        .compareRegister = TIMER_A_CAPTURECOMPARE_REGISTER_4,
-        .gpioPort = GPIO_PORT_P2,
-        .gpioPinIndex = GPIO_PIN1,
-        .pwmMode = GPIO_PRIMARY_MODULE_FUNCTION
+        .pwmPin = PWMTimerMSP432_P2_3_TA0CCR4A
     },
     {
-        .timerBaseAddr = TIMER_A1_BASE,
         .clockSource = TIMER_A_CLOCKSOURCE_SMCLK,
-        .compareRegister = TIMER_A_CAPTURECOMPARE_REGISTER_1,
-        .gpioPort = GPIO_PORT_P2,
-        .gpioPinIndex = GPIO_PIN1,
-        .pwmMode = GPIO_PRIMARY_MODULE_FUNCTION
+        .pwmPin = PWMTimerMSP432_P2_4_TA1CCR1A
     },
     {
-        .timerBaseAddr = TIMER_A1_BASE,
         .clockSource = TIMER_A_CLOCKSOURCE_SMCLK,
-        .compareRegister = TIMER_A_CAPTURECOMPARE_REGISTER_2,
-        .gpioPort = GPIO_PORT_P2,
-        .gpioPinIndex = GPIO_PIN1,
-        .pwmMode = GPIO_PRIMARY_MODULE_FUNCTION
+        .pwmPin = PWMTimerMSP432_P2_5_TA1CCR2A
     },
     {
-        .timerBaseAddr = TIMER_A1_BASE,
         .clockSource = TIMER_A_CLOCKSOURCE_SMCLK,
-        .compareRegister = TIMER_A_CAPTURECOMPARE_REGISTER_3,
-        .gpioPort = GPIO_PORT_P2,
-        .gpioPinIndex = GPIO_PIN1,
-        .pwmMode = GPIO_PRIMARY_MODULE_FUNCTION
+        .pwmPin = PWMTimerMSP432_P2_6_TA1CCR3A
     },
     {
-        .timerBaseAddr = TIMER_A1_BASE,
         .clockSource = TIMER_A_CLOCKSOURCE_SMCLK,
-        .compareRegister = TIMER_A_CAPTURECOMPARE_REGISTER_4,
-        .gpioPort = GPIO_PORT_P2,
-        .gpioPinIndex = GPIO_PIN1,
-        .pwmMode = GPIO_PRIMARY_MODULE_FUNCTION
+        .pwmPin = PWMTimerMSP432_P2_7_TA1CCR4A
     },
+
 	/* fixed pin mapped PWM channels */
     {
-        .timerBaseAddr = TIMER_A2_BASE,
         .clockSource = TIMER_A_CLOCKSOURCE_SMCLK,
-        .compareRegister = TIMER_A_CAPTURECOMPARE_REGISTER_1,
-        .gpioPort = GPIO_PORT_P2,
-        .gpioPinIndex = GPIO_PIN1,
-        .pwmMode = GPIO_PRIMARY_MODULE_FUNCTION
+        .pwmPin = PWMTimerMSP432_P2_1_TA0CCR1A
     },
     {
-        .timerBaseAddr = TIMER_A2_BASE,
         .clockSource = TIMER_A_CLOCKSOURCE_SMCLK,
-        .compareRegister = TIMER_A_CAPTURECOMPARE_REGISTER_2,
-        .gpioPort = GPIO_PORT_P2,
-        .gpioPinIndex = GPIO_PIN1,
-        .pwmMode = GPIO_PRIMARY_MODULE_FUNCTION
+        .pwmPin = PWMTimerMSP432_P2_2_TA0CCR2A
     },
     {
-        .timerBaseAddr = TIMER_A2_BASE,
         .clockSource = TIMER_A_CLOCKSOURCE_SMCLK,
-        .compareRegister = TIMER_A_CAPTURECOMPARE_REGISTER_3,
-        .gpioPort = GPIO_PORT_P2,
-        .gpioPinIndex = GPIO_PIN1,
-        .pwmMode = GPIO_PRIMARY_MODULE_FUNCTION
+        .pwmPin = PWMTimerMSP432_P2_3_TA0CCR3A
     },
     {
-        .timerBaseAddr = TIMER_A2_BASE,
         .clockSource = TIMER_A_CLOCKSOURCE_SMCLK,
-        .compareRegister = TIMER_A_CAPTURECOMPARE_REGISTER_4,
-        .gpioPort = GPIO_PORT_P2,
-        .gpioPinIndex = GPIO_PIN1,
-        .pwmMode = GPIO_PRIMARY_MODULE_FUNCTION
-    }
+        .pwmPin = PWMTimerMSP432_P2_4_TA0CCR4A
+    },
 };
 
 const PWM_Config PWM_config[] = {
@@ -652,6 +618,8 @@ const PWM_Config PWM_config[] = {
     {NULL, NULL, NULL}
 };
 
+const uint_least8_t PWM_count = Board_PWMCOUNT;
+
 /*
  *  ======== Board_initPWM ========
  */
@@ -676,27 +644,18 @@ void Board_initPWM(void)
 SDSPIMSP432_Object sdspiMSP432Objects[Board_SDSPICOUNT];
 
 /* SDSPI configuration structure, describing which pins are to be used */
-const SDSPIMSP432_HWAttrs sdspiMSP432HWAttrs[Board_SDSPICOUNT] = {
+const SDSPIMSP432_HWAttrsV1 sdspiMSP432HWAttrs[Board_SDSPICOUNT] = {
     {
         .baseAddr = EUSCI_B0_BASE,
         .clockSource = EUSCI_B_SPI_CLOCKSOURCE_SMCLK,
 
         /* CLK, MOSI & MISO ports & pins */
-        .portSCK = GPIO_PORT_P1,
-        .pinSCK = GPIO_PIN5,
-        .sckMode = GPIO_PRIMARY_MODULE_FUNCTION,
-
-        .portMISO = GPIO_PORT_P1,
-        .pinMISO = GPIO_PIN7,
-        .misoMode = GPIO_PRIMARY_MODULE_FUNCTION,
-
-        .portMOSI = GPIO_PORT_P1,
-        .pinMOSI = GPIO_PIN6,
-        .mosiMode = GPIO_PRIMARY_MODULE_FUNCTION,
+        .sckPin = SDSPIMSP432_P1_5_UCB0CLK,
+        .somiPin = SDSPIMSP432_P1_7_UCB0SOMI,
+        .simoPin = SDSPIMSP432_P1_6_UCB0SIMO,
 
         /* Chip select port & pin */
-        .portCS = GPIO_PORT_P4,
-        .pinCS = GPIO_PIN6
+        .csPin = SDSPIMSP432_P4_6_CS
     }
 };
 
@@ -709,6 +668,8 @@ const SDSPI_Config SDSPI_config[] = {
     {NULL, NULL, NULL}
 };
 
+const uint_least8_t SDSPI_count = Board_SDSPICOUNT;
+
 /*
  *  ======== Board_initSDSPI ========
  */
@@ -720,11 +681,6 @@ void Board_initSDSPI(void)
 /*
  *  =============================== SPI ===============================
  */
-/* Place into subsections to allow the TI linker to remove items properly */
-#if defined(__TI_COMPILER_VERSION__)
-#pragma DATA_SECTION(SPI_config, ".const:SPI_config")
-#pragma DATA_SECTION(spiMSP432DMAHWAttrs, ".const:spiMSP432DMAHWAttrs")
-#endif
 
 #include <ti/drivers/SPI.h>
 #include <ti/drivers/spi/SPIMSP432DMA.h>
@@ -733,30 +689,36 @@ void Board_initSDSPI(void)
 SPIMSP432DMA_Object spiMSP432DMAObjects[Board_SPICOUNT];
 
 /* SPI configuration structure, describing which pins are to be used */
-const SPIMSP432DMA_HWAttrs spiMSP432DMAHWAttrs[Board_SPICOUNT] = {
+const SPIMSP432DMA_HWAttrsV1 spiMSP432DMAHWAttrs[Board_SPICOUNT] = {
     {
         .baseAddr = EUSCI_B0_BASE,
         .bitOrder = EUSCI_B_SPI_MSB_FIRST,
         .clockSource = EUSCI_B_SPI_CLOCKSOURCE_SMCLK,
-
         .defaultTxBufValue = 0,
-
         .dmaIntNum = INT_DMA_INT1,
         .intPriority = 0xC0,       /* make SPI interrupt one priority higher than default */
         .rxDMAChannelIndex = DMA_CH1_EUSCIB0RX0,
-        .txDMAChannelIndex = DMA_CH0_EUSCIB0TX0
+        .txDMAChannelIndex = DMA_CH0_EUSCIB0TX0,
+        .clkPin  = SPIMSP432DMA_P1_5_UCB0CLK,
+        .simoPin = SPIMSP432DMA_P1_6_UCB0SIMO,
+        .somiPin = SPIMSP432DMA_P1_7_UCB0SOMI,
+        .stePin  = SPIMSP432DMA_P1_4_UCB0STE,
+        .pinMode  = EUSCI_SPI_3PIN
     },
     {
         .baseAddr = EUSCI_B2_BASE,
         .bitOrder = EUSCI_B_SPI_MSB_FIRST,
         .clockSource = EUSCI_B_SPI_CLOCKSOURCE_SMCLK,
-
         .defaultTxBufValue = 0,
-
         .dmaIntNum = INT_DMA_INT2,
         .intPriority = 0xC0,       /* make SPI interrupt one priority higher than default */
         .rxDMAChannelIndex = DMA_CH5_EUSCIB2RX0,
-        .txDMAChannelIndex = DMA_CH4_EUSCIB2TX0
+        .txDMAChannelIndex = DMA_CH4_EUSCIB2TX0,
+        .clkPin  = SPIMSP432DMA_P3_5_UCB2CLK,
+        .simoPin = SPIMSP432DMA_P3_6_UCB2SIMO,
+        .somiPin = SPIMSP432DMA_P3_7_UCB2SOMI,
+        .stePin  = SPIMSP432DMA_P3_4_UCB2STE,
+        .pinMode  = EUSCI_SPI_3PIN
     }
 };
 
@@ -774,60 +736,95 @@ const SPI_Config SPI_config[] = {
     {NULL, NULL, NULL},
 };
 
+const uint_least8_t SPI_count = Board_SPICOUNT;
+
 /*
- *  ======== Board_openSPI ========
+ *  =============================== Timer ===============================
  */
-SPI_Handle Board_openSPI(UInt spiPortIndex, SPI_Params *spiParams)
-{
-    /* Initialize the SPI driver */
-    /* By design, SPI_init() is idempotent */
-    SPI_init();
+#include <ti/drivers/Timer.h>
+#include <ti/drivers/timer/TimerMSP432.h>
 
-    /* initialize the pins associated with the respective UART */
-    switch(spiPortIndex) {
-        case 0:
+TimerMSP432_Object timerMSP432Objects[Board_TIMERCOUNT];
 
-            /* Configure CLK, MOSI & MISO for SPI0 (EUSCI_B0) */
-            MAP_GPIO_setAsPeripheralModuleFunctionOutputPin(GPIO_PORT_P1,
-                                                            GPIO_PIN5 | GPIO_PIN6,
-                                                            GPIO_PRIMARY_MODULE_FUNCTION);
-            MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P1,
-                                                           GPIO_PIN7,
-                                                           GPIO_PRIMARY_MODULE_FUNCTION);
-            break;
-            
-        case 1:
-            /* Configure CLK, MOSI & MISO for SPI1 (EUSCI_B2) */
-            MAP_GPIO_setAsPeripheralModuleFunctionOutputPin(GPIO_PORT_P3,
-                                                            GPIO_PIN5 | GPIO_PIN6,
-                                                            GPIO_PRIMARY_MODULE_FUNCTION);
-            MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P3,
-                                                           GPIO_PIN7,
-                                                           GPIO_PRIMARY_MODULE_FUNCTION);
-            break;
-
-        default:
-            return(NULL);
+const TimerMSP432_HWAttrs timerMSP432HWAttrs[Board_TIMERCOUNT] = {
+    /* Timer32_0 */
+    {
+        .timerBaseAddress = TIMER32_0_BASE,
+        .clockSource = TIMER_A_CLOCKSOURCE_SMCLK,
+        .intNum = INT_T32_INT1,
+        .intPriority = ~0
+    },
+    {
+        .timerBaseAddress = TIMER32_1_BASE,
+        .clockSource = TIMER_A_CLOCKSOURCE_SMCLK,
+        .intNum = INT_T32_INT2,
+        .intPriority = ~0
+    },
+    /* Timer_A1 */
+    {
+        .timerBaseAddress = TIMER_A1_BASE,
+        .clockSource = TIMER_A_CLOCKSOURCE_ACLK,
+        .intNum = INT_TA1_0,
+        .intPriority = ~0
+    },
+    /* Timer_A2 */
+    {
+        .timerBaseAddress = TIMER_A2_BASE,
+        .clockSource = TIMER_A_CLOCKSOURCE_ACLK,
+        .intNum = INT_TA2_0,
+        .intPriority = ~0
+    },
+    /* Timer_A3 */
+    {
+        .timerBaseAddress = TIMER_A3_BASE,
+        .clockSource = TIMER_A_CLOCKSOURCE_ACLK,
+        .intNum = INT_TA3_0,
+        .intPriority = ~0
     }
-    
-    /* open the SPI port */
-    return (SPI_open(spiPortIndex, spiParams));
-}
+};
+
+const Timer_Config Timer_config[Board_TIMERCOUNT] = {
+    {
+        .fxnTablePtr = &TimerMSP432_Timer32_fxnTable,
+        .object = &timerMSP432Objects[Board_TIMER_T32_0],
+        .hwAttrs = &timerMSP432HWAttrs[Board_TIMER_T32_0]
+    },
+    {
+        .fxnTablePtr = &TimerMSP432_Timer32_fxnTable,
+        .object = &timerMSP432Objects[Board_TIMER_T32_1],
+        .hwAttrs = &timerMSP432HWAttrs[Board_TIMER_T32_1]
+    },
+    {
+        .fxnTablePtr = &TimerMSP432_Timer_A_fxnTable,
+        .object = &timerMSP432Objects[Board_TIMER_TA_1],
+        .hwAttrs = &timerMSP432HWAttrs[Board_TIMER_TA_1]
+    },
+    {
+        .fxnTablePtr = &TimerMSP432_Timer_A_fxnTable,
+        .object = &timerMSP432Objects[Board_TIMER_TA_2],
+        .hwAttrs = &timerMSP432HWAttrs[Board_TIMER_TA_2]
+    },
+    {
+        .fxnTablePtr = &TimerMSP432_Timer_A_fxnTable,
+        .object = &timerMSP432Objects[Board_TIMER_TA_3],
+        .hwAttrs = &timerMSP432HWAttrs[Board_TIMER_TA_3]
+    }
+};
+
+const uint_least8_t Timer_count = Board_TIMERCOUNT;
 
 /*
  *  =============================== UART ===============================
  */
-/* Place into subsections to allow the TI linker to remove items properly */
-#if defined(__TI_COMPILER_VERSION__)
-#pragma DATA_SECTION(UART_config, ".const:UART_config")
-#pragma DATA_SECTION(uartMSP432HWAttrs, ".const:uartMSP432HWAttrs")
-#endif
 
 #include <ti/drivers/UART.h>
 #include <ti/drivers/uart/UARTMSP432.h>
 
 /* UART objects */
 UARTMSP432_Object uartMSP432Objects[Board_UARTCOUNT];
+unsigned char uartMSP432RingBuffer0[32];
+unsigned char uartMSP432RingBuffer1[32];
+
 
 /*
  * The baudrate dividers were determined by using the MSP430 baudrate
@@ -838,12 +835,19 @@ const UARTMSP432_BaudrateConfig uartMSP432Baudrates[] = {
     /* {baudrate, input clock, prescalar, UCBRFx, UCBRSx, oversampling} */
     {
         .outputBaudrate = 115200,
-        .inputClockFreq = 12000000,
-        .prescalar = 6,
-        .hwRegUCBRFx = 8,
-        .hwRegUCBRSx = 32,
+        .inputClockFreq = 24000000,
+        .prescalar = 13,
+        .hwRegUCBRFx = 0,
+        .hwRegUCBRSx = 37,
         .oversampling = 1
     },
+    {57600,  24000000,  26,  0, 111, 1},
+    {38400,  24000000,  39,  1,   0, 1},
+    {19200,  24000000,  78,  2,   0, 1},
+    {9600,   24000000, 156,  4,   0, 1},
+    {4800,   24000000, 312,  8,   0, 1},
+
+    {115200, 12000000,   6,  8,  32, 1},
     {57600,  12000000,  13,  0,  37, 1},
     {38400,  12000000,  19,  8,  85, 1},
     {19200,  12000000,  39,  1,   0, 1},
@@ -863,13 +867,16 @@ const UARTMSP432_BaudrateConfig uartMSP432Baudrates[] = {
     {19200,  3000000,    9, 12,  34, 1},
     {9600,   3000000,   19,  8,  85, 1},
     {4800,   3000000,   39,  1,   0, 1},
+
+    /* only 3 baud rates supported with */
+    /* 32.678KHz input clock            */
+    {19200,  32768,      1,  0, 183, 0},
+    {9600,   32768,      3,  0, 146, 0},
+    {4800,   32768,      6,  0, 238, 0},
 };
 
-unsigned char uartMSP432RingBuffer0[32];
-unsigned char uartMSP432RingBuffer1[32];
-
 /* UART configuration structure */
-const UARTMSP432_HWAttrs uartMSP432HWAttrs[Board_UARTCOUNT] = {
+const UARTMSP432_HWAttrsV1 uartMSP432HWAttrs[Board_UARTCOUNT] = {
     {
         .baseAddr = EUSCI_A0_BASE,
         .intNum = INT_EUSCIA0,
@@ -880,7 +887,9 @@ const UARTMSP432_HWAttrs uartMSP432HWAttrs[Board_UARTCOUNT] = {
                               sizeof(UARTMSP432_BaudrateConfig),
         .baudrateLUT = uartMSP432Baudrates,
         .ringBufPtr  = uartMSP432RingBuffer0,
-        .ringBufSize = sizeof(uartMSP432RingBuffer0)
+        .ringBufSize = sizeof(uartMSP432RingBuffer0),
+        .rxPin = UARTMSP432_P1_2_UCA0RXD,
+        .txPin = UARTMSP432_P1_3_UCA0TXD
     },
     {
         .baseAddr = EUSCI_A2_BASE,
@@ -892,7 +901,9 @@ const UARTMSP432_HWAttrs uartMSP432HWAttrs[Board_UARTCOUNT] = {
             sizeof(UARTMSP432_BaudrateConfig),
         .baudrateLUT = uartMSP432Baudrates,
         .ringBufPtr  = uartMSP432RingBuffer1,
-        .ringBufSize = sizeof(uartMSP432RingBuffer1)
+        .ringBufSize = sizeof(uartMSP432RingBuffer1),
+        .rxPin = UARTMSP432_P3_2_UCA2RXD,
+        .txPin = UARTMSP432_P3_3_UCA2TXD
     }
 };
 
@@ -910,50 +921,12 @@ const UART_Config UART_config[] = {
     {NULL, NULL, NULL}
 };
 
-/*
- *  ======== Board_openUART ========
- *  Initialize the UART driver.
- *  Initialize the UART port's pins.
- *  Open the UART port.
- */
-UART_Handle  Board_openUART(UInt uartPortIndex, UART_Params *uartParams)
-{
-    /* Initialize the UART driver */
-    /* By design, UART_init() is idempotent */
-    UART_init();
-
-    /* initialize the pins associated with the respective UART */
-    switch(uartPortIndex) {
-        case 0:
-            /* Set P1.2 & P1.3 in UART mode */
-            MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P1,
-                                                   GPIO_PIN2 | GPIO_PIN3,
-                                                   GPIO_PRIMARY_MODULE_FUNCTION);
-            break;
-
-        case 1:
-            /* Set P3.2 & P3.3 in UART mode */
-            MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P3,
-                                                   GPIO_PIN2 | GPIO_PIN3,
-                                                   GPIO_PRIMARY_MODULE_FUNCTION);
-            break;
-
-        default:
-            return (NULL);
-    }
-
-    /* open the UART */
-    return (UART_open(uartPortIndex, uartParams));
-}
+const uint_least8_t UART_count = Board_UARTCOUNT;
 
 /*
  *  =============================== Watchdog ===============================
  */
 /* Place into subsections to allow the TI linker to remove items properly */
-#if defined(__TI_COMPILER_VERSION__)
-#pragma DATA_SECTION(Watchdog_config, ".const:Watchdog_config")
-#pragma DATA_SECTION(watchdogMSP432HWAttrs, ".const:watchdogMSP432HWAttrs")
-#endif
 
 #include <ti/drivers/Watchdog.h>
 #include <ti/drivers/watchdog/WatchdogMSP432.h>
@@ -980,6 +953,8 @@ const Watchdog_Config Watchdog_config[] = {
     },
     {NULL, NULL, NULL}
 };
+
+const uint_least8_t Watchdog_count = Board_WATCHDOGCOUNT;
 
 /*
  *  ======== Board_initWatchdog ========
