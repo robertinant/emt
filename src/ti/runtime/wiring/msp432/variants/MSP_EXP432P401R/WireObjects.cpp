@@ -36,3 +36,4 @@
  * Pre-Initialize Wire instances
  */
 TwoWire Wire;
+TwoWire Wire1(1);
