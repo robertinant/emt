@@ -35,9 +35,10 @@
 #include <ti/runtime/wiring/wiring_private.h>
 #include "wiring_analog.h"
 
-#include <ti/drivers/PWM.h>
 #include <ti/drivers/GPIO.h>
 #include <ti/drivers/gpio/GPIOMSP432.h>
+
+#include <ti/drivers/PWM.h>
 #include <ti/drivers/pwm/PWMTimerMSP432.h>
 
 #include <ti/sysbios/family/arm/m3/Hwi.h>
@@ -67,18 +68,6 @@ extern const GPIOMSP432_Config GPIOMSP432_config;
 uint32_t toneTimerId = (~0);  /* use Timer_ANY for tone timer */
 uint32_t servoTimerId = (~0); /* use Timer_ANY for servo timer */
 
-/* Mappable PWM Timer capture pins */
-const uint8_t mappable_pwms[] = {
-    PM_TA0CCR1A,
-    PM_TA0CCR2A,
-    PM_TA0CCR3A,
-    PM_TA0CCR4A,
-    PM_TA1CCR1A,
-    PM_TA1CCR2A,
-    PM_TA1CCR3A,
-    PM_TA1CCR4A,
-};
-
 /* port number to PXMAP translation */
 const uint8_t pxmap[] = {
     0,               /* Port numbers start at 1 */
@@ -105,6 +94,25 @@ uint16_t used_pwm_port_pins[] = {
     PWM_NOT_IN_USE,   /* Timer 2, CCR 2 Fixed mapping */
     PWM_NOT_IN_USE,   /* Timer 2, CCR 3 Fixed mapping */
     PWM_NOT_IN_USE,   /* Timer 2, CCR 4 Fixed mapping */
+};
+
+uint32_t fixed_map_pwm_pins[] = {
+    PWMTimerMSP432_P5_6_TA2CCR1A,
+    PWMTimerMSP432_TA2CCR2 | 0x157, /* typo in PWMTimerMSP432_P5_7_TA2CCR2A definition */
+    PWMTimerMSP432_P6_6_TA2CCR3A,
+    PWMTimerMSP432_P6_7_TA2CCR4A
+};
+
+/* Mappable PWM Timer capture pin encodings */
+uint32_t mapped_pwm_pin_ccrs[] = {
+    PWMTimerMSP432_TA0CCR1,
+    PWMTimerMSP432_TA0CCR2,
+    PWMTimerMSP432_TA0CCR3,
+    PWMTimerMSP432_TA0CCR4,
+    PWMTimerMSP432_TA1CCR1,
+    PWMTimerMSP432_TA1CCR2,
+    PWMTimerMSP432_TA1CCR3,
+    PWMTimerMSP432_TA1CCR4
 };
 
 /*
@@ -140,6 +148,7 @@ void analogWrite(uint8_t pin, int val)
     uint_fast8_t port;
     uint_fast16_t pinMask;
     uint32_t hwiKey;
+    uint32_t pwmPin;
 
     hwiKey = Hwi_disable();
 
@@ -167,6 +176,8 @@ void analogWrite(uint8_t pin, int val)
         pinId = GPIOMSP432_config.pinConfigs[pin] & 0xffff;
         port = pinId >> 8;
         pinMask = pinId & 0xff;
+        pinNum = 0;
+        while (((1 << pinNum) & pinMask) == 0) pinNum++;
 
         if (pwmIndex < PWM_AVAILABLE_PWMS) { /* fixed mapping */
             if (used_pwm_port_pins[pwmIndex] != PWM_NOT_IN_USE) {
@@ -179,6 +190,9 @@ void analogWrite(uint8_t pin, int val)
              */
 
             used_pwm_port_pins[pwmIndex] = pwmIndex;
+
+            /* plug pwmPin in HwAttrs with corresponding encoded pin identifier */
+            pwmTimerMSP432HWAttrs[pwmIndex].pwmPin = fixed_map_pwm_pins[pwmIndex-8];
         }
         else {
             /* find an unused PWM resource and port map it */
@@ -197,23 +211,10 @@ void analogWrite(uint8_t pin, int val)
                 return; /* no unused PWM ports */
             }
 
-            /* derive pinNum from pinMask */
-            pinNum = 0;
-            while (((1 << pinNum) & pinMask) == 0) pinNum++;
-
-            /* the following code was extracted from PMAP_configurePort() */
-
-            /* Get write-access to port mapping registers: */
-            PMAP->KEYID = PMAP_KEYID_VAL;
-
-            /* Enable reconfiguration during runtime */
-            PMAP->CTL = (PMAP->CTL & ~PMAP_CTL_PRECFG) | PMAP_ENABLE_RECONFIGURATION;
-
-            /* Configure Port Mapping for this pin: */
-            HWREG8(PMAP_BASE + pinNum + pxmap[port]) = mappable_pwms[pwmIndex];
-
-            /* Disable write-access to port mapping registers: */
-            PMAP->KEYID = 0;
+            /* encode pwmPin field with port/pin/TAxCCRyA info */
+            pwmPin = port << 4 | pinNum;
+            pwmPin = pwmPin | mapped_pwm_pin_ccrs[pwmIndex];
+            pwmTimerMSP432HWAttrs[pwmIndex].pwmPin = pwmPin;
         }
 
         PWM_Params_init(&pwmParams);
@@ -222,11 +223,6 @@ void analogWrite(uint8_t pin, int val)
         pwmParams.periodUnits = PWM_PERIOD_US;
         pwmParams.periodValue = 2040; /* arduino period is 2.04ms (490Hz) */
         pwmParams.dutyUnits = PWM_DUTY_COUNTS;
-
-        /* override default pin definition in HwAttrs */
-#warning HACK: to get past compile error, must port to V2 attrs
-        //pwmTimerMSP432HWAttrs[pwmIndex].gpioPort = port;
-        //pwmTimerMSP432HWAttrs[pwmIndex].gpioPinIndex = pinMask;
 
         /* PWM_open() will fail if the timer's CCR is already in use */
         pwmHandle = PWM_open(pwmIndex, &pwmParams);
@@ -248,10 +244,6 @@ void analogWrite(uint8_t pin, int val)
 
         /* start the timer */
         PWM_start(pwmHandle);
-
-        /* Enable PWM output on GPIO pins */
-        MAP_GPIO_setAsPeripheralModuleFunctionOutputPin(port, pinMask,
-                                                    GPIO_PRIMARY_MODULE_FUNCTION);
 
         /* remove timer from pool of available timers if not in use */
         timerId = pwmIndex >> 2;
