@@ -8,7 +8,7 @@ include ./imports.mak
 TIRTOS_REPOS = $(TIRTOS.msp432);$(TIDRIVERS.msp432)
 
 # required by bundles/energia/makefile
-export TIRTOS
+export MCPI_TREE
 
 MYXDC = $(XDCROOT)/xdc XDCPATH="$(CURDIR)/src;$(TIRTOS_REPOS)"
 
@@ -35,8 +35,9 @@ JOBS = --jobs=1
 	make -C src/bundles/emt_src release
 #	@echo making energia closures ...
 #	make -C src/bundles/energia all closure-$(notdir $(CURDIR)).tar.gz
+	@echo "======== "msp432-$(notdir $(CURDIR)).zip" [./src/bundles/energia] ========"
 	@echo "making msp432 board 'package' ..."
-	make -C src/bundles/energia all msp432-$(notdir $(CURDIR)).zip
+	make -C src/bundles/energia PLATFORMS=msp432 all msp432-$(notdir $(CURDIR)).zip
 #	@echo "making cc3200 board 'package' ..."
 #	make -C src/bundles/energia all cc3200-$(notdir $(CURDIR)).zip
 #	@echo "making cc13xx board 'package' ..."
@@ -73,5 +74,7 @@ PKGS = $(shell $(XDCROOT)/bin/xdcpkg -r ./src |egrep -v '3200|26xx|13xx')
 	-rm -f .generated_files
 	-rm -rf exports/
 	-$(MYXDC) --jobs=4 clean -Pr ./src
+	-echo ======== clean [./src/bundles/energia] =========
 	-make -C src/bundles/energia clean
+	-echo ======== clean [./src/bundles/emt_src] =========
 	-make -C src/bundles/emt_src clean

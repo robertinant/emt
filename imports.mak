@@ -15,7 +15,7 @@ MCPI_TREE = $(TREES)/mcpi/mcpi-b17
 #
 SDK.msp432 = $(firstword $(wildcard $(MCPI_TREE)/exports/coresdk_msp432_*))
 
-TIRTOS.msp432    = $(SDK.msp432)/kernel/tirtos/packages
+TIRTOS.msp432   = $(SDK.msp432)/kernel/tirtos/packages
 TIDRIVERS.msp432 = $(SDK.msp432)/source
 
 INO2CPP = $(wildcard $(ENERGIA)/app/src/processing/app/ino2cpp/exports/ino2cp*)

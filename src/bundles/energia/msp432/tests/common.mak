@@ -41,7 +41,7 @@ VARIANT ?= MSP_EXP432P401R
 PROGNAME ?= blink
 
 # define MSP432 DriverLib libs and headers based on definitions above
-SDK_LIBS = $(DRVLIB.msp432)/driverlib/MSP432P4xx/ccs/msp432p4xx_driverlib.lib
+SDK_LIBS = $(DRVLIB.msp432)/driverlib/ccs/msp432p4xx_driverlib.lib
 
 #define board-specific library path
 BRD_LIBS = $(CLOSURE)/ti/runtime/wiring/msp432/variants/$(VARIANT)

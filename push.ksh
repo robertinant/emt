@@ -28,22 +28,8 @@ for dev in $devices; do
     dzip="`ls $base/$dev-emt-*.zip 2> /dev/null`"
     if [ -z "$dzip" ]; then
 	echo "WARNING: energia push failed."
-	echo "    can't find closure archive $base/$dev-emt-*.zip"
+	echo "    can't find board package $base/$dev-emt-*.zip"
 	exit 0
     fi
     $base/lpush.ksh $dzip `basename $dzip`
 done
-
-echo "pushing energia_17 closures ..."
-ctar="`ls $base/closure*.tar.gz 2> /dev/null`"
-if [ -z "$ctar" ]; then
-	echo "WARNING: energia push failed."
-	echo "    can't find 'universal' closure $base/closure-*.tar.gz"
-	exit 0
-fi
-
-$base/lpush.ksh $base/msp432/closure.zip msp432-closure.zip \
-                $base/cc3200/closure.zip cc3200-closure.zip \
-                $base/cc26xx/closure.zip cc26xx-closure.zip \
-                $base/cc13xx/closure.zip cc13xx-closure.zip \
-                $ctar    `basename $ctar`

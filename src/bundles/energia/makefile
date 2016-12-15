@@ -36,15 +36,11 @@ endef
 TREE_ROOT = $(firstword $(subst /src/, /src/,$(CURDIR)))
 TREE_NAME = $(notdir $(TREE_ROOT))
 
-ifeq (,$(TIRTOS))
-    $(warning "warning: importing ../../products.mak to get TIRTOS definition")
-    include ../../products.mak
+ifeq (,$(MCPI_TREE))
+    $(warning "warning: importing $(TREE_ROOT)/imports.mak to get MCPI_TREE")
+    include $(TREE_ROOT)/imports.mak
 endif
 
-ZUMA_TREE = $(firstword $(subst /, ,$(lastword $(subst /zumaprod/, ,$(TIRTOS)))))
-ifeq (,$(ZUMA_TREE))
-    $(error "can't compute ZUMA_TREE from TIRTOS = '$(TIRTOS)'")
-endif
 
 # ensure "all" is the default build goal
 all: makefile
@@ -58,7 +54,8 @@ closure-$(TREE_NAME).tar.gz: $(TREE_ROOT)/exports/emt_src.zip $(CLOSURE_ZIPS)
 
 # rules to make the loadable board .zip archives
 .PHONY: board.msp432 board.cc3200 board.cc13xx
-boards: board.msp432 board.cc3200 board.cc13xx
+#boards: board.msp432 board.cc3200 board.cc13xx
+boards: board.msp432
 
 board.cc13xx: cc13xx-$(TREE_NAME).zip
 cc13xx-$(TREE_NAME).zip: $(TREE_ROOT)/exports/emt_src.zip cc13xx/closure.zip
@@ -68,14 +65,14 @@ cc13xx-$(TREE_NAME).zip: $(TREE_ROOT)/exports/emt_src.zip cc13xx/closure.zip
 board.msp432: msp432-$(TREE_NAME).zip
 msp432-$(TREE_NAME).zip: $(TREE_ROOT)/exports/emt_src.zip msp432/closure.zip
 	@echo making $@ ...
-	./msp432/mkbrd.ksh $< $(ZUMA_TREE)
+	./msp432/mkbrd.ksh $< $(MCPI_TREE)
 
 board.cc3200: cc3200-$(TREE_NAME).zip
 cc3200-$(TREE_NAME).zip: $(TREE_ROOT)/exports/emt_src.zip cc3200/closure.zip
 	@echo making $@ ...
 	./cc3200/mkbrd.ksh $< $(ZUMA_TREE)
 
-# rule for device-specific closure zips; used to create the "universal closure"
+# rule for device-specific closure zips; used to create board packages
 %/closure.zip: | all
 	@echo making $@ "[ $(TREE_NAME) ]" ...
 	@echo "version: $(TREE_NAME)" > $*/closure/version.txt

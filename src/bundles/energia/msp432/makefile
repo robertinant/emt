@@ -7,7 +7,7 @@
 #  following prerequisite components:
 #      CCROOT  - the GCC arm compiler (version 4.8 or above)
 #      XDCROOT - XDCtools (version 3.30.05 or above)
-#      TIRTOS  - TI-RTOS for MSP432
+#      SDK.msp432  - core SDK for MSP432
 #      EMTROOT - the EMT packages repo
 #
 
@@ -15,16 +15,16 @@
 include tools.mak
 
 # define the XDC package path based on the settings above
-SYSBIOS ?= $(wildcard $(TIRTOS)/products/bios_*)
-TIDRIVERS ?= $(wildcard $(TIRTOS)/products/tidrivers_*)
+SYSBIOS   ?= $(SDK.msp432)/kernel/tirtos/packages
+TIDRIVERS ?= $(SDK.msp432)/source
 
-XDCPATH = $(TIRTOS)/packages;$(SYSBIOS)/packages;$(TIDRIVERS)/packages;$(EMTROOT)
+XDCPATH = $(SYSBIOS);$(TIDRIVERS);$(EMTROOT)
 
 PLATFORM = ti.platforms.emt432
 TARGET   = gnu.targets.arm.M4F
 CCOPTS   = --compileOptions "-gdwarf-3 -gstrict-dwarf -fno-exceptions"
 
-VARIANTS  = $(EMTROOT)/ti/runtime/wiring/msp432/variants
+VARIANTS = $(EMTROOT)/ti/runtime/wiring/msp432/variants
 
 ifneq (,$(wildcard $(XDCROOT)/bin/rm.exe))
     RMDIR = $(XDCROOT)/bin/rm -rf
@@ -39,11 +39,10 @@ all: .debug closure
 	@echo "  ---- imports ----"
 	@echo "    CCROOT  = $(CCROOT)"
 	@echo "    XDCROOT = $(XDCROOT)"
-	@echo "    TIRTOS  = $(lastword $(subst /, ,$(TIRTOS)))"
+	@echo "    SDK     = $(SDK.msp432)"
 	@echo "    SYSBIOS = $(SYSBIOS)"
 	@echo "    EMTROOT = $(EMTROOT)"
 	@echo "    XDCPATH = $(XDCPATH)"
-	@echo "    DRVLIB  = $(DRVLIB.msp432)"
 	@echo "  -----------------"
 	@echo ""
 

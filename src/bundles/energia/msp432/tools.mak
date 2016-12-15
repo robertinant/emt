@@ -17,7 +17,8 @@
 
 TREE_ROOT = $(firstword $(subst /src/, /src/,$(CURDIR)))
 
-include $(firstword $(wildcard $(TREE_ROOT)/src/products.mak $(TREE_ROOT)/products.mak))
+include $(TREE_ROOT)/imports.mak
+include $(TREE_ROOT)/compilers.mak
 
 CCROOT  = $(gnu.targets.arm.M4F)
 CRTLDIR = gnu/targets/arm/libs/install-native/arm-none-eabi/lib/armv7e-m/fpu
