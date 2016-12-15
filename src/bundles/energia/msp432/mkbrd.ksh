@@ -30,14 +30,15 @@ if [ $# -lt 2 ]; then
     echo "$usage"
     exit 1
 fi
-sdktree="$2"
+
 srczip="$1"
+sdktree="$2"
 if [ ! -r "$srczip" ]; then
-    exit "$0: error: emt source archive is not readable: $srczip"
+    echo "$0: error: emt source archive is not readable: $srczip"
     exit 1
 fi
-if [ ! -r "$sdkzip" ]; then
-    exit "$0: error: core SDK is not readable: $sdktree"
+if [ ! -d "$sdktree" ]; then
+    echo "$0: error: core SDK is not readable: $sdktree"
     exit 1
 fi
 
