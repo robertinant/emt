@@ -1,4 +1,4 @@
-				emt-c08
+				emt-d00
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -115,30 +115,33 @@ ADDITIONS
 
 DELETIONS
 
-CHANGES
-bundles/energia/cc13xx
-	added support for CC1350STK and CC1350_LAUNCHXL boards
+./products.mak
+./src/makefile
+	removed unused ability to build emt on windows
 
-ti.runtime.wiring.*
-	rework UART to address ENERGIAMT-2 Change UART to UART_MODE_CALLBACK
-	  -Default to using UART callback mode so that Serial.write() can be
-           called from an ISR.
-	  -Optionally support blocking mode by providing a new
-	   Serial.begin(baud, callbackModeEnabled) form of Serial.begin().
-	  -Work around issues with CC3200 UART driver that would invoke the
-	   tx callback before the last character has been sent.
-	  -Work around issues with CC26XX UART driver resulting from tx
-	   callback being invoked from a Clock Swi rather than interrupt 
-	   context.
-	  -The above two issues should be resolved in a future TI-DRIVERS
-	   release.
-	  -Work around missing CC26XX UART_control commands (PEEK and
-	   GETRXCOUNT)
+./makeunix ./push.ksh
+	removed builds and uploads of emergia17 closures
+
+        removed builds of cc13xx and cc3200 board packages (for now)
+
+CHANGES
+
+bundles/energia/
+	port to core SDK release
+
+ti.runtime.wiring*
+	port to core SDK release:
+	  -No need for Board_openXXX() APIs anymore since drivers do the 
+           needed driverlib calls.
+	  -Removed archaic section placement pragmas from driver objects.
+	  -Adapted all driver HwAttrs according to their new fields in 3.0.1
+           drivers.
+	  -General cleanup
 
 ti.runtime.wiring.msp432
-	Add Hwi_restore() to analogWrite() error return path to prevent
-        interrupt lockup.
+	reworked to support enhanced PWM driver. No need for driverlib calls
+
+ti.runtime.wiring.msp432.variants.*
+	added second I2C bus
 
 MRS
-
-ENERGIAMT-2 Change UART to UART_MODE_CALLBACK
