@@ -32,6 +32,8 @@
 
 #define ARDUINO_MAIN
 
+#define DEVICE_FAMILY cc13x0
+
 #include <ti/runtime/wiring/wiring_private.h>
 #include "wiring_analog.h"
 
@@ -46,9 +48,9 @@
 #include <ti/sysbios/family/arm/m3/Hwi.h>
 #include <ti/sysbios/family/arm/lm4/Timer.h>
 
-#include <driverlib/ioc.h>
-#include <driverlib/aux_adc.h>
-#include <driverlib/aux_wuc.h>
+#include <ti/devices/cc13x0/driverlib/ioc.h>
+#include <ti/devices/cc13x0/driverlib/aux_adc.h>
+#include <ti/devices/cc13x0/driverlib/aux_wuc.h>
 
 /* !!! Hack to workaround unilateral 'const' modifier in CC26xx HwAttrs typedef !!! */
 typedef struct myPWMTimerCC26XX_HwAttrs

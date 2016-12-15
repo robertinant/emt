@@ -30,12 +30,15 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#define DEVICE_FAMILY cc13x0
+
 #include <stdint.h>
 #include <xdc/runtime/Error.h>
 #include <xdc/runtime/Assert.h>
 #include <xdc/runtime/Diags.h>
 #include <xdc/runtime/Log.h>
 #include <xdc/runtime/Types.h>
+
 #include <ti/sysbios/BIOS.h>
 #include <ti/sysbios/knl/Semaphore.h>
 #include <ti/sysbios/knl/Swi.h>
@@ -46,25 +49,34 @@
 #include <ti/drivers/pin/PINCC26XX.h>
 
 /* driverlib header files */
-#include <inc/hw_memmap.h>
-#include <inc/hw_ints.h>
-#include <inc/hw_types.h>
-#include <driverlib/uart.h>
-#include <driverlib/sys_ctrl.h>
-#include <driverlib/ioc.h>
-#include <driverlib/aon_ioc.h>
+#ifdef DEVICE_FAMILY
+    #undef DEVICE_FAMILY_PATH
+    #define DEVICE_FAMILY_PATH(x) <ti/devices/DEVICE_FAMILY/x>
+#else
+    #error "You must define DEVICE_FAMILY at the project level as one of cc26x0, cc26x0r2, cc13x0, etc."
+#endif
+
+#include DEVICE_FAMILY_PATH(inc/hw_memmap.h)
+#include DEVICE_FAMILY_PATH(inc/hw_ints.h)
+#include DEVICE_FAMILY_PATH(inc/hw_types.h)
+#include DEVICE_FAMILY_PATH(driverlib/uart.h)
+#include DEVICE_FAMILY_PATH(driverlib/sys_ctrl.h)
+#include DEVICE_FAMILY_PATH(driverlib/ioc.h)
+#include DEVICE_FAMILY_PATH(driverlib/aon_ioc.h)
 
 /* UARTCC26XX functions */
 void         UARTCC26XX_close(UART_Handle handle);
-int          UARTCC26XX_control(UART_Handle handle, unsigned int cmd, void *arg);
+int_fast16_t UARTCC26XX_control(UART_Handle handle, uint_fast16_t cmd,
+                               void *arg);
 void         UARTCC26XX_init(UART_Handle handle);
 UART_Handle  UARTCC26XX_open(UART_Handle handle, UART_Params *params);
-int          UARTCC26XX_read(UART_Handle handle, void *buffer, size_t size);
-int          UARTCC26XX_readPolling(UART_Handle handle, void *buf, size_t size);
+int_fast32_t UARTCC26XX_read(UART_Handle handle, void *buffer, size_t size);
+int_fast32_t UARTCC26XX_readPolling(UART_Handle handle, void *buf,
+                                   size_t size);
 void         UARTCC26XX_readCancel(UART_Handle handle);
-int          UARTCC26XX_write(UART_Handle handle, const void *buffer,
+int_fast32_t UARTCC26XX_write(UART_Handle handle, const void *buffer,
                             size_t size);
-int          UARTCC26XX_writePolling(UART_Handle handle, const void *buf,
+int_fast32_t UARTCC26XX_writePolling(UART_Handle handle, const void *buf,
                                    size_t size);
 void         UARTCC26XX_writeCancel(UART_Handle handle);
 
@@ -886,7 +898,8 @@ void UARTCC26XX_close(UART_Handle handle)
  *
  *  @return ::UART_STATUS_SUCCESS if success, or error code if error.
  */
-int UARTCC26XX_control(UART_Handle handle, unsigned int cmd, void *arg)
+int_fast16_t UARTCC26XX_control(UART_Handle handle, uint_fast16_t cmd,
+        void *arg)
 {
     /* Locals */
     UARTCC26XX_Object            *object;
@@ -995,7 +1008,8 @@ int UARTCC26XX_control(UART_Handle handle, unsigned int cmd, void *arg)
  *          UART_ERROR on an error.
  *
  */
-int UARTCC26XX_write(UART_Handle handle, const void *buffer, size_t size)
+int_fast32_t UARTCC26XX_write(UART_Handle handle, const void *buffer,
+        size_t size)
 {
     unsigned int                    key;
     UARTCC26XX_Object               *object;
@@ -1128,7 +1142,8 @@ int UARTCC26XX_write(UART_Handle handle, const void *buffer, size_t size)
  *
  *  @return Always ::UART_ERROR
  */
-int UARTCC26XX_writePolling(UART_Handle handle, const void *buf, size_t size)
+int_fast32_t UARTCC26XX_writePolling(UART_Handle handle, const void *buf,
+        size_t size)
 {
     /* Not supported */
     return (UART_ERROR);
@@ -1213,7 +1228,7 @@ void UARTCC26XX_writeCancel(UART_Handle handle)
  *
  *  @sa     UARTCC26XX_open(), UARTCC26XX_readCancel()
  */
-int UARTCC26XX_read(UART_Handle handle, void *buffer, size_t size)
+int_fast32_t UARTCC26XX_read(UART_Handle handle, void *buffer, size_t size)
 {
     unsigned char                    readIn;
     UARTCC26XX_Object                *object;
@@ -1327,7 +1342,7 @@ int UARTCC26XX_read(UART_Handle handle, void *buffer, size_t size)
 /*
  *  ======== UARTCC26XX_readPolling ========
  */
-int UARTCC26XX_readPolling(UART_Handle handle, void *buf, size_t size)
+int_fast32_t UARTCC26XX_readPolling(UART_Handle handle, void *buf, size_t size)
 {
     /* Not supported */
     return (UART_ERROR);

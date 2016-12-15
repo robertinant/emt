@@ -30,6 +30,8 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#define DEVICE_FAMILY cc13x0
+
 #include <ti/runtime/wiring/Energia.h>
 #include <ti/sysbios/family/arm/m3/TimestampProvider.h>
 #include <ti/sysbios/family/arm/m3/Hwi.h>

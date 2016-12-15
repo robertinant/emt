@@ -138,14 +138,15 @@ extern PIN_Config BoardGpioInitTable[];
 #define Board_PWMPIN6                       PIN_UNASSIGNED
 #define Board_PWMPIN7                       PIN_UNASSIGNED
 
-#define Board_DIO23_ANALOG          IOID_23
-#define Board_DIO24_ANALOG          IOID_24
-#define Board_DIO25_ANALOG          IOID_25
-#define Board_DIO26_ANALOG          IOID_26
-#define Board_DIO27_ANALOG          IOID_27
-#define Board_DIO28_ANALOG          IOID_28
-#define Board_DIO29_ANALOG          IOID_29
-#define Board_DIO30_ANALOG          IOID_30
+/* Analog Capable DIOs */
+#define CC1350_LAUNCHXL_DIO23_ANALOG          IOID_23
+#define CC1350_LAUNCHXL_DIO24_ANALOG          IOID_24
+#define CC1350_LAUNCHXL_DIO25_ANALOG          IOID_25
+#define CC1350_LAUNCHXL_DIO26_ANALOG          IOID_26
+#define CC1350_LAUNCHXL_DIO27_ANALOG          IOID_27
+#define CC1350_LAUNCHXL_DIO28_ANALOG          IOID_28
+#define CC1350_LAUNCHXL_DIO29_ANALOG          IOID_29
+#define CC1350_LAUNCHXL_DIO30_ANALOG          IOID_30
 
 /* UART pins used by driver */
 #define Board_UART_TX               IOID_3
@@ -167,6 +168,26 @@ extern PIN_Config BoardGpioInitTable[];
 /** ============================================================================
  *  Number of peripherals and their names
  *  ==========================================================================*/
+
+/*!
+ *  @def    CC1350_LAUNCHXL_ADCName
+ *  @brief  Enum of ADCs
+ */
+typedef enum CC1350_LAUNCHXL_ADCName {
+    CC1350_LAUNCHXL_ADC0 = 0,
+    CC1350_LAUNCHXL_ADC1,
+    CC1350_LAUNCHXL_ADC2,
+    CC1350_LAUNCHXL_ADC3,
+    CC1350_LAUNCHXL_ADC4,
+    CC1350_LAUNCHXL_ADC5,
+    CC1350_LAUNCHXL_ADC6,
+    CC1350_LAUNCHXL_ADC7,
+    CC1350_LAUNCHXL_ADCDCOUPL,
+    CC1350_LAUNCHXL_ADCVSS,
+    CC1350_LAUNCHXL_ADCVDDS,
+
+    CC1350_LAUNCHXL_ADCCOUNT
+} CC1350_LAUNCHXL_ADCName;
 
 /*!
  *  @def    CC1350_I2CName
@@ -259,25 +280,6 @@ typedef enum CC1350_LAUNCHXL_PWMName {
     CC1350_LAUNCHXL_PWM7 = 7, /* PWM output from TIMERA3 side B */
     CC1350_LAUNCHXL_PWMCOUNT
 } CC1350_LAUNCHXL_PWMName;
-
-/*!
- *  @def    CC1350_LAUNCHXL_ADCName
- *  @brief  Enum of ADCs
- */
-typedef enum CC1350_LAUNCHXL_ADCName {
-    CC1350_LAUNCHXL_ADC0 = 0,
-    CC1350_LAUNCHXL_ADC1,
-    CC1350_LAUNCHXL_ADC2,
-    CC1350_LAUNCHXL_ADC3,
-    CC1350_LAUNCHXL_ADC4,
-    CC1350_LAUNCHXL_ADC5,
-    CC1350_LAUNCHXL_ADC6,
-    CC1350_LAUNCHXL_ADC7,
-    CC1350_LAUNCHXL_ADCDCOUPL,
-    CC1350_LAUNCHXL_ADCVSS,
-    CC1350_LAUNCHXL_ADCVDDS,
-    CC1350_LAUNCHXL_ADCCOUNT
-} CC1350_LAUNCHXL_ADCName;
 
 #ifdef __cplusplus
 }

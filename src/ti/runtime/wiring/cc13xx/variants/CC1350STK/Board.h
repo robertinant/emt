@@ -166,14 +166,15 @@ extern const PIN_Config BoardGpioInitTable[];
 #define Board_PWMPIN6                       PIN_UNASSIGNED
 #define Board_PWMPIN7                       PIN_UNASSIGNED
 
-#define Board_DIO23_ANALOG          IOID_23
-#define Board_DIO24_ANALOG          IOID_24
-#define Board_DIO25_ANALOG          IOID_25
-#define Board_DIO26_ANALOG          IOID_26
-#define Board_DIO27_ANALOG          IOID_27
-#define Board_DIO28_ANALOG          IOID_28
-#define Board_DIO29_ANALOG          IOID_29
-#define Board_DIO30_ANALOG          IOID_30
+/* Analog capable DIOs */
+#define CC1350STK_DIO23_ANALOG          IOID_23
+#define CC1350STK_DIO24_ANALOG          IOID_24
+#define CC1350STK_DIO25_ANALOG          IOID_25
+#define CC1350STK_DIO26_ANALOG          IOID_26
+#define CC1350STK_DIO27_ANALOG          IOID_27
+#define CC1350STK_DIO28_ANALOG          IOID_28
+#define CC1350STK_DIO29_ANALOG          IOID_29
+#define CC1350STK_DIO30_ANALOG          IOID_30
 
 /* DevPack */
 #define Board_AUDIOFS_TDO           IOID_16
@@ -206,14 +207,14 @@ extern const PIN_Config BoardGpioInitTable[];
  *  Instance identifiers
  *  ==========================================================================*/
 /* Generic I2C instance identifiers */
-#define Board_I2C                   CC1350_I2C0
+#define Board_I2C                   CC1350STK_I2C0
 /* Generic SPI instance identifiers */
-#define Board_SPI0                  CC1350_SPI0
-#define Board_SPI1                  CC1350_SPI1
+#define Board_SPI0                  CC1350STK_SPI0
+#define Board_SPI1                  CC1350STK_SPI1
 /* Generic UART instance identifiers */
-#define Board_UART                  CC1350_UART0
+#define Board_UART                  CC1350STK_UART0
 /* Generic PWM instance identifiers */
-#define Board_PWM                   CC1350_PWM0
+#define Board_PWM                   CC1350STK_PWM0
 
 
 /** ============================================================================
@@ -221,52 +222,72 @@ extern const PIN_Config BoardGpioInitTable[];
  *  ==========================================================================*/
 
 /*!
- *  @def    CC1350_I2CName
+ *  @def    CC1350STK_ADCName
+ *  @brief  Enum of ADCs
+ */
+typedef enum CC1350STK_ADCName {
+    CC1350STK_ADC0 = 0,
+    CC1350STK_ADC1,
+    CC1350STK_ADC2,
+    CC1350STK_ADC3,
+    CC1350STK_ADC4,
+    CC1350STK_ADC5,
+    CC1350STK_ADC6,
+    CC1350STK_ADC7,
+    CC1350STK_ADCDCOUPL,
+    CC1350STK_ADCVSS,
+    CC1350STK_ADCVDDS,
+
+    CC1350STK_ADCCOUNT
+} CC1350STK_ADCName;
+
+/*!
+ *  @def    CC1350STK_I2CName
  *  @brief  Enum of I2C names on the CC1350 dev board
  */
-typedef enum CC1350_I2CName {
-    CC1350_I2C0 = 0,
-    CC1350_I2C1,
-    CC1350_I2CCOUNT
-} CC1350_I2CName;
+typedef enum CC1350STK_I2CName {
+    CC1350STK_I2C0 = 0,
+    CC1350STK_I2C1,
+    CC1350STK_I2CCOUNT
+} CC1350STK_I2CName;
 
 /*!
- *  @def    CC1350_CryptoName
+ *  @def    CC1350STK_CryptoName
  *  @brief  Enum of Crypto names on the CC1350 dev board
  */
-typedef enum CC1350_CryptoName {
-    CC1350_CRYPTO0 = 0,
-    CC1350_CRYPTOCOUNT
-} CC1350_CryptoName;
+typedef enum CC1350STK_CryptoName {
+    CC1350STK_CRYPTO0 = 0,
+    CC1350STK_CRYPTOCOUNT
+} CC1350STK_CryptoName;
 
 
 /*!
- *  @def    CC1350_SPIName
+ *  @def    CC1350STK_SPIName
  *  @brief  Enum of SPI names on the CC1350 dev board
  */
-typedef enum CC1350_SPIName {
-    CC1350_SPI0 = 0,
-    CC1350_SPI1,
-    CC1350_SPICOUNT
-} CC1350_SPIName;
+typedef enum CC1350STK_SPIName {
+    CC1350STK_SPI0 = 0,
+    CC1350STK_SPI1,
+    CC1350STK_SPICOUNT
+} CC1350STK_SPIName;
 
 /*!
- *  @def    CC1350_UARTName
+ *  @def    CC1350STK_UARTName
  *  @brief  Enum of UARTs on the CC1350 dev board
  */
-typedef enum CC1350_UARTName {
-    CC1350_UART0 = 0,
-    CC1350_UARTCOUNT
-} CC1350_UARTName;
+typedef enum CC1350STK_UARTName {
+    CC1350STK_UART0 = 0,
+    CC1350STK_UARTCOUNT
+} CC1350STK_UARTName;
 
 /*!
- *  @def    CC1350_UdmaName
+ *  @def    CC1350STK_UdmaName
  *  @brief  Enum of DMA buffers
  */
-typedef enum CC1350_UdmaName {
-    CC1350_UDMA0 = 0,
-    CC1350_UDMACOUNT
-} CC1350_UdmaName;
+typedef enum CC1350STK_UdmaName {
+    CC1350STK_UDMA0 = 0,
+    CC1350STK_UDMACOUNT
+} CC1350STK_UdmaName;
 
 /*!
  *  @def    CC1350STK_GPTimerName
@@ -299,7 +320,7 @@ typedef enum CC1350STK_GPTimers
 } CC1350STK_GPTimers;
 
 /*!
- *  @def    CC1350_PWMName
+ *  @def    CC1350STK_PWMName
  *  @brief  Enum of PWM pin names on the CC1350 dev board
  */
 typedef enum CC1350STK_PWMName {
@@ -313,25 +334,6 @@ typedef enum CC1350STK_PWMName {
     CC1350STK_PWM7 = 7, /* PWM output from TIMERA3 side B */
     CC1350STK_PWMCOUNT
 } CC1350STK_PWMName;
-
-/*!
- *  @def    CC1350STK_ADCName
- *  @brief  Enum of ADCs
- */
-typedef enum CC1350STK_ADCName {
-    CC1350STK_ADC0 = 0,
-    CC1350STK_ADC1,
-    CC1350STK_ADC2,
-    CC1350STK_ADC3,
-    CC1350STK_ADC4,
-    CC1350STK_ADC5,
-    CC1350STK_ADC6,
-    CC1350STK_ADC7,
-    CC1350STK_ADCDCOUPL,
-    CC1350STK_ADCVSS,
-    CC1350STK_ADCVDDS,
-    CC1350STK_ADCCOUNT
-} CC1350STK_ADCName;
 
 #ifdef __cplusplus
 }
