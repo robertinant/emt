@@ -41,6 +41,10 @@
 #include <ti/drivers/PWM.h>
 #include <ti/drivers/pwm/PWMTimerMSP432.h>
 
+#include <ti/drivers/ADC.h>
+//#include <ti/drivers/adc/ADCMSP432.h>
+#include "variants/MSP_EXP432P401R/ADCMSP432.h"
+
 #include <ti/sysbios/family/arm/m3/Hwi.h>
 #include <ti/sysbios/family/arm/msp432/Timer.h>
 
@@ -61,8 +65,9 @@
 
 extern PWM_Config PWM_config[];
 extern PWMTimerMSP432_HWAttrsV2 pwmTimerMSP432HWAttrs[];
-
 extern const GPIOMSP432_Config GPIOMSP432_config;
+extern ADCMSP432_HWAttrsV1 adcMSP432HWAttrs[];
+extern ADC_Config ADC_config[];
 
 /* Carefully selected hal Timer IDs for tone and servo */
 uint32_t toneTimerId = (~0);  /* use Timer_ANY for tone timer */
@@ -330,41 +335,8 @@ void stopAnalogWrite(uint8_t pin)
  * analogRead() support
  */
 
-static bool adc_module_enabled = false;
 static int8_t analogReadShift = 4; /* 14 - 4 = 10 bits by default */
-/* Default reference is VCC */
-static uint16_t adcReferenceMode = DEFAULT;
-static uint32_t adcReferenceSelect = ADC_VREFPOS_AVCC_VREFNEG_VSS;
-static uint_fast8_t referenceVoltageSelect = REF_A_VREF2_5V;
-
-static const uint16_t adc_to_port_pin[] = {
-    GPIOMSP432_P5_5,  /* A0 */
-    GPIOMSP432_P5_4,  /* A1 */
-    GPIOMSP432_P5_3,  /* A2 */
-    GPIOMSP432_P5_2,  /* A3 */
-    GPIOMSP432_P5_1,  /* A4 */
-    GPIOMSP432_P5_0,  /* A5 */
-    GPIOMSP432_P4_7,  /* A6 */
-    GPIOMSP432_P4_6,  /* A7 */
-
-    GPIOMSP432_P4_5,  /* A8 */
-    GPIOMSP432_P4_4,  /* A9 */
-    GPIOMSP432_P4_3,  /* A10 */
-    GPIOMSP432_P4_2,  /* A11 */
-    GPIOMSP432_P4_1,  /* A12 */
-    GPIOMSP432_P4_0,  /* A13 */
-    GPIOMSP432_P6_1,  /* A14 */
-    GPIOMSP432_P6_0,  /* A15 */
-
-    GPIOMSP432_P9_1,  /* A16 */
-    GPIOMSP432_P9_0,  /* A17 */
-    GPIOMSP432_P8_7,  /* A18 */
-    GPIOMSP432_P8_6,  /* A19 */
-    GPIOMSP432_P8_5,  /* A20 */
-    GPIOMSP432_P8_4,  /* A21 */
-    GPIOMSP432_P8_3,  /* A22 */
-    GPIOMSP432_P8_2,  /* A23 */
-};
+static bool adcInitialized = false;
 
 /*
  * \brief           configure the A/D reference voltage
@@ -373,46 +345,37 @@ static const uint16_t adc_to_port_pin[] = {
  */
 void analogReference(uint16_t mode)
 {
-    uint32_t hwiKey;
-
-    hwiKey = Hwi_disable();
-
-    adcReferenceMode = mode;
+    uint_fast16_t refVoltage;
+    uint8_t i;
 
     switch (mode) {
         default:
         case DEFAULT:  /* Use VCC as reference (3.3V) */
-            adcReferenceSelect = ADC_VREFPOS_AVCC_VREFNEG_VSS;
+            refVoltage = ADCMSP432_REF_VOLTAGE_VDD;
             break;
 
         case INTERNAL1V2:
-            adcReferenceSelect = ADC_VREFPOS_INTBUF_VREFNEG_VSS;
-            referenceVoltageSelect = REF_A_VREF1_2V;
+            refVoltage = ADCMSP432_REF_VOLTAGE_INT_1_2V;
             break;
 
         case INTERNAL1V45:
-            adcReferenceSelect = ADC_VREFPOS_INTBUF_VREFNEG_VSS;
-            referenceVoltageSelect = REF_A_VREF1_45V;
+            refVoltage = ADCMSP432_REF_VOLTAGE_INT_1_45V;
             break;
 
         case INTERNAL:
         case INTERNAL2V5:
-            adcReferenceSelect = ADC_VREFPOS_INTBUF_VREFNEG_VSS;
-            referenceVoltageSelect = REF_A_VREF2_5V;
+            refVoltage = ADCMSP432_REF_VOLTAGE_INT_2_5V;
             break;
 
         case EXTERNAL:
-            adcReferenceSelect = ADC_VREFPOS_EXTPOS_VREFNEG_EXTNEG;
+            refVoltage = ADCMSP432_REF_VOLTAGE_EXT;
             break;
     }
 
-    if (adcReferenceSelect == ADC_VREFPOS_INTBUF_VREFNEG_VSS) {
-        /* Setting reference voltage */
-        MAP_REF_A_setReferenceVoltage(referenceVoltageSelect);
-        MAP_REF_A_enableReferenceVoltage();
+    /* update all adc HWAttrs accordingly */
+    for (i = 0; i < 24; i++) {
+        adcMSP432HWAttrs[i].refVoltage = refVoltage;
     }
-
-    Hwi_restore(hwiKey);
 }
 
 /*
@@ -423,88 +386,34 @@ void analogReference(uint16_t mode)
 uint16_t analogRead(uint8_t pin)
 {
     uint8_t adcIndex = digital_pin_to_adc_index[pin];
-    uint32_t adcMem, adcInt;
-    uint16_t sample = 0;
-    uint64_t status;
-    uint32_t hwiKey;
+    uint16_t sample;
 
     if (adcIndex == NOT_ON_ADC) return (0);
 
-    adcMem = 1 << adcIndex;
-    adcInt = 1 << adcIndex;
-
-    hwiKey = Hwi_disable();
-
     /* re-configure pin if necessary */
     if (digital_pin_to_pin_function[pin] != PIN_FUNC_ANALOG_INPUT) {
-        uint_fast8_t port;
-        uint_fast16_t pinMask;
+        ADC_Params adcParams;
+        ADC_Handle adcHandle;
 
-        digital_pin_to_pin_function[pin] = PIN_FUNC_ANALOG_INPUT;
+        if (adcInitialized == false) {
+            ADC_init();
+            adcInitialized = true;
+        }
+        
+        ADC_Params_init(&adcParams);
+        adcParams.isProtected = false;  /* do NOT use a semaphore for thread safety */
 
-        /* initialize top level ADC module if it hasn't been already */
-        if (adc_module_enabled == false) {
-            adc_module_enabled = true;
+        adcHandle = ADC_open(adcIndex, &adcParams);
 
-            /* Initializing ADC (MCLK/1/1) */
-            MAP_ADC14_enableModule();
-            MAP_ADC14_initModule(ADC_CLOCKSOURCE_MCLK,
-                             ADC_PREDIVIDER_1,
-                             ADC_DIVIDER_1,
-                             0);
-            /* set the analog reference source */
-            analogReference(adcReferenceMode);
-            /* always use max resolution */
-            MAP_ADC14_setResolution(ADC_14BIT);
+        if (adcHandle == NULL) {
+            return (0);
         }
 
-        port = adc_to_port_pin[adcIndex] >> 8;
-        pinMask = adc_to_port_pin[adcIndex] & 0xff;
-
-        /* Setting up GPIO pins as analog inputs (and references) */
-        MAP_GPIO_setAsPeripheralModuleFunctionInputPin(port, pinMask,
-                                        GPIO_TERTIARY_MODULE_FUNCTION);
+        digital_pin_to_pin_function[pin] = PIN_FUNC_ANALOG_INPUT;
     }
-
-    /* minimize latency by re-enabling ints temporarily */
-    Hwi_restore(hwiKey);
-
-    /* Sadly, I think the following code must all be done thread safely */
-    hwiKey = Hwi_disable();
-
-    /* stop all current conversions */
-    MAP_ADC14_disableConversion();
-
-    /* Configuring ADC Memory in single conversion mode
-     * with selected reference */
-    MAP_ADC14_configureSingleSampleMode(adcMem, false);
-    MAP_ADC14_configureConversionMemory(adcMem,
-                                    adcReferenceSelect,
-                                    adcIndex, false);
-
-    /* Enabling sample timer in auto iteration mode and interrupts */
-    MAP_ADC14_enableSampleTimer(ADC_MANUAL_ITERATION);
-
-    /* clear out any stale conversions */
-    status = MAP_ADC14_getInterruptStatus();
-    MAP_ADC14_clearInterruptFlag(status);
-
-    /* start new conversion */
-    MAP_ADC14_enableConversion();
-    MAP_ADC14_toggleConversionTrigger();
-
-    do {
-        status = MAP_ADC14_getInterruptStatus();
-    }
-    while ((adcInt & status) == 0);
-
-    sample = MAP_ADC14_getResult(adcMem);
-
-    /* clear out last sample */
-    MAP_ADC14_clearInterruptFlag(adcInt);
-
-    Hwi_restore(hwiKey);
-
+    
+    ADC_convert((ADC_Handle)&(ADC_config[adcIndex]), &sample);
+    
     if (analogReadShift >= 0) {
         return (sample >> analogReadShift);
     }
@@ -526,8 +435,11 @@ void stopAnalogRead(uint8_t pin)
     uint_fast8_t port;
     uint_fast16_t pinMask;
 
-    port = adc_to_port_pin[adcIndex] >> 8;
-    pinMask = adc_to_port_pin[adcIndex] & 0xff;
+    /* Close PWM port */
+    ADC_close((ADC_Handle)&(ADC_config[adcIndex]));
+
+    port = (GPIOMSP432_config.pinConfigs[pin] & 0xffff) >> 8;
+    pinMask = GPIOMSP432_config.pinConfigs[pin] & 0xff;
 
     /* Place Pin in NORMAL GPIO mode */
     MAP_GPIO_setAsPeripheralModuleFunctionOutputPin(port, pinMask,

@@ -63,20 +63,131 @@
  *  =============================== ADC ===============================
  */
 #include <ti/drivers/ADC.h>
-#include <ti/drivers/adc/ADCMSP432.h>
+//#include <ti/drivers/adc/ADCMSP432.h>
+#include "ADCMSP432.h"
 
 /* ADC objects */
 ADCMSP432_Object adcMSP432Objects[Board_ADCCOUNT];
 
 /* ADC configuration structure */
-const ADCMSP432_HWAttrsV1 adcMSP432HWAttrs[Board_ADCCOUNT] = {
+ADCMSP432_HWAttrsV1 adcMSP432HWAttrs[Board_ADCCOUNT] = {
     {
         .adcPin = ADCMSP432_P5_5_A0,
-        .refVoltage = REF_A_VREF2_5V,
+        .refVoltage = ADCMSP432_REF_VOLTAGE_VDD,
         .resolution = ADC_14BIT
     },
     {
         .adcPin = ADCMSP432_P5_4_A1,
+        .refVoltage = ADCMSP432_REF_VOLTAGE_VDD,
+        .resolution = ADC_14BIT
+    },
+    {
+        .adcPin = ADCMSP432_P5_3_A2,
+        .refVoltage = ADCMSP432_REF_VOLTAGE_VDD,
+        .resolution = ADC_14BIT
+    },
+    {
+        .adcPin = ADCMSP432_P5_2_A3,
+        .refVoltage = ADCMSP432_REF_VOLTAGE_VDD,
+        .resolution = ADC_14BIT
+    },
+    {
+        .adcPin = ADCMSP432_P5_1_A4,
+        .refVoltage = ADCMSP432_REF_VOLTAGE_VDD,
+        .resolution = ADC_14BIT
+    },
+    {
+        .adcPin = ADCMSP432_P5_0_A5,
+        .refVoltage = ADCMSP432_REF_VOLTAGE_VDD,
+        .resolution = ADC_14BIT
+    },
+    {
+        .adcPin = ADCMSP432_P4_7_A6,
+        .refVoltage = ADCMSP432_REF_VOLTAGE_VDD,
+        .resolution = ADC_14BIT
+    },
+    {
+        .adcPin = ADCMSP432_P4_6_A7,
+        .refVoltage = ADCMSP432_REF_VOLTAGE_VDD,
+        .resolution = ADC_14BIT
+    },
+    {
+        .adcPin = ADCMSP432_P4_5_A8,
+        .refVoltage = ADCMSP432_REF_VOLTAGE_VDD,
+        .resolution = ADC_14BIT
+    },
+    {
+        .adcPin = ADCMSP432_P4_4_A9,
+        .refVoltage = ADCMSP432_REF_VOLTAGE_VDD,
+        .resolution = ADC_14BIT
+    },
+    {
+        .adcPin = ADCMSP432_P4_3_A10,
+        .refVoltage = ADCMSP432_REF_VOLTAGE_VDD,
+        .resolution = ADC_14BIT
+    },
+    {
+        .adcPin = ADCMSP432_P4_2_A11,
+        .refVoltage = ADCMSP432_REF_VOLTAGE_VDD,
+        .resolution = ADC_14BIT
+    },
+    {
+        .adcPin = ADCMSP432_P4_1_A12,
+        .refVoltage = ADCMSP432_REF_VOLTAGE_VDD,
+        .resolution = ADC_14BIT
+    },
+    {
+        .adcPin = ADCMSP432_P4_0_A13,
+        .refVoltage = ADCMSP432_REF_VOLTAGE_VDD,
+        .resolution = ADC_14BIT
+    },
+    {
+        .adcPin = ADCMSP432_P6_1_A14,
+        .refVoltage = ADCMSP432_REF_VOLTAGE_VDD,
+        .resolution = ADC_14BIT
+    },
+    {
+        .adcPin = ADCMSP432_P6_0_A15,
+        .refVoltage = ADCMSP432_REF_VOLTAGE_VDD,
+        .resolution = ADC_14BIT
+    },
+    {
+        .adcPin = ADCMSP432_P9_1_A16,
+        .refVoltage = ADCMSP432_REF_VOLTAGE_VDD,
+        .resolution = ADC_14BIT
+    },
+    {
+        .adcPin = ADCMSP432_P9_0_A17,
+        .refVoltage = ADCMSP432_REF_VOLTAGE_VDD,
+        .resolution = ADC_14BIT
+    },
+    {
+        .adcPin = ADCMSP432_P8_7_A18,
+        .refVoltage = ADCMSP432_REF_VOLTAGE_VDD,
+        .resolution = ADC_14BIT
+    },
+    {
+        .adcPin = ADCMSP432_P8_6_A19,
+        .refVoltage = ADCMSP432_REF_VOLTAGE_VDD,
+        .resolution = ADC_14BIT
+    },
+    {
+        .adcPin = ADCMSP432_P8_5_A20,
+        .refVoltage = ADCMSP432_REF_VOLTAGE_VDD,
+        .resolution = ADC_14BIT
+    },
+    {
+        .adcPin = ADCMSP432_P8_4_A21,
+        .refVoltage = ADCMSP432_REF_VOLTAGE_VDD,
+        .resolution = ADC_14BIT
+    },
+    {
+        .adcPin = ADCMSP432_P8_3_A22,
+        .refVoltage = ADCMSP432_REF_VOLTAGE_VDD,
+        .resolution = ADC_14BIT
+    },
+    {
+        .adcPin = ADCMSP432_P8_2_A23,
         .refVoltage = REF_A_VREF1_45V,
         .resolution = ADC_8BIT
     }
@@ -85,13 +196,123 @@ const ADCMSP432_HWAttrsV1 adcMSP432HWAttrs[Board_ADCCOUNT] = {
 const ADC_Config ADC_config[Board_ADCCOUNT] = {
     {
         .fxnTablePtr = &ADCMSP432_fxnTable,
-        .object = &adcMSP432Objects[Board_ADC0],
-        .hwAttrs = &adcMSP432HWAttrs[Board_ADC0]
+        .object = &adcMSP432Objects[0],
+        .hwAttrs = &adcMSP432HWAttrs[0]
     },
     {
         .fxnTablePtr = &ADCMSP432_fxnTable,
-        .object = &adcMSP432Objects[Board_ADC1],
-        .hwAttrs = &adcMSP432HWAttrs[Board_ADC1]
+        .object = &adcMSP432Objects[1],
+        .hwAttrs = &adcMSP432HWAttrs[1]
+    },
+    {
+        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .object = &adcMSP432Objects[2],
+        .hwAttrs = &adcMSP432HWAttrs[2]
+    },
+    {
+        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .object = &adcMSP432Objects[3],
+        .hwAttrs = &adcMSP432HWAttrs[3]
+    },
+    {
+        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .object = &adcMSP432Objects[4],
+        .hwAttrs = &adcMSP432HWAttrs[4]
+    },
+    {
+        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .object = &adcMSP432Objects[5],
+        .hwAttrs = &adcMSP432HWAttrs[5]
+    },
+    {
+        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .object = &adcMSP432Objects[6],
+        .hwAttrs = &adcMSP432HWAttrs[6]
+    },
+    {
+        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .object = &adcMSP432Objects[7],
+        .hwAttrs = &adcMSP432HWAttrs[7]
+    },
+    {
+        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .object = &adcMSP432Objects[8],
+        .hwAttrs = &adcMSP432HWAttrs[8]
+    },
+    {
+        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .object = &adcMSP432Objects[9],
+        .hwAttrs = &adcMSP432HWAttrs[9]
+    },
+    {
+        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .object = &adcMSP432Objects[10],
+        .hwAttrs = &adcMSP432HWAttrs[10]
+    },
+    {
+        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .object = &adcMSP432Objects[11],
+        .hwAttrs = &adcMSP432HWAttrs[11]
+    },
+    {
+        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .object = &adcMSP432Objects[12],
+        .hwAttrs = &adcMSP432HWAttrs[12]
+    },
+    {
+        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .object = &adcMSP432Objects[13],
+        .hwAttrs = &adcMSP432HWAttrs[13]
+    },
+    {
+        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .object = &adcMSP432Objects[14],
+        .hwAttrs = &adcMSP432HWAttrs[14]
+    },
+    {
+        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .object = &adcMSP432Objects[15],
+        .hwAttrs = &adcMSP432HWAttrs[15]
+    },
+    {
+        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .object = &adcMSP432Objects[16],
+        .hwAttrs = &adcMSP432HWAttrs[16]
+    },
+    {
+        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .object = &adcMSP432Objects[17],
+        .hwAttrs = &adcMSP432HWAttrs[17]
+    },
+    {
+        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .object = &adcMSP432Objects[18],
+        .hwAttrs = &adcMSP432HWAttrs[18]
+    },
+    {
+        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .object = &adcMSP432Objects[19],
+        .hwAttrs = &adcMSP432HWAttrs[19]
+    },
+    {
+        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .object = &adcMSP432Objects[20],
+        .hwAttrs = &adcMSP432HWAttrs[20]
+    },
+    {
+        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .object = &adcMSP432Objects[21],
+        .hwAttrs = &adcMSP432HWAttrs[21]
+    },
+    {
+        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .object = &adcMSP432Objects[22],
+        .hwAttrs = &adcMSP432HWAttrs[22]
+    },
+    {
+        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .object = &adcMSP432Objects[23],
+        .hwAttrs = &adcMSP432HWAttrs[23]
     }
 };
 

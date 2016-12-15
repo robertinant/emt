@@ -64,6 +64,28 @@ extern "C" {
 typedef enum Board_ADCName {
     Board_ADC0 = 0,
     Board_ADC1,
+    Board_ADC2,
+    Board_ADC3,
+    Board_ADC4,
+    Board_ADC5,
+    Board_ADC6,
+    Board_ADC7,
+    Board_ADC8,
+    Board_ADC9,
+    Board_ADC10,
+    Board_ADC11,
+    Board_ADC12,
+    Board_ADC13,
+    Board_ADC14,
+    Board_ADC15,
+    Board_ADC16,
+    Board_ADC17,
+    Board_ADC18,
+    Board_ADC19,
+    Board_ADC20,
+    Board_ADC21,
+    Board_ADC22,
+    Board_ADC23,
 
     Board_ADCCOUNT
 } Board_ADCName;
