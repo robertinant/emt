@@ -1,4 +1,4 @@
-				emt-d00
+				emt-d01
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -95,7 +95,7 @@ Librarian releases
 
     # clone the tree and merge/review user content
     ggentree -u d-russo@ti.com emt.git/
-    cd emt-c??
+    cd emt-d??
     git merge origin/dr
 
     # build the tree
@@ -104,7 +104,7 @@ Librarian releases
 
     # update README 
     emacs README
-    git commit -a -m emt-c??
+    git commit -a -m emt-d??
 
     # release the tree
     greltree -m "something brief and meaningful"
@@ -115,33 +115,17 @@ ADDITIONS
 
 DELETIONS
 
-./products.mak
-./src/makefile
-	removed unused ability to build emt on windows
-
-./makeunix ./push.ksh
-	removed builds and uploads of emergia17 closures
-
-        removed builds of cc13xx and cc3200 board packages (for now)
-
 CHANGES
 
-bundles/energia/
+bundles/energia/cc13xx
 	port to core SDK release
 
-ti.runtime.wiring*
-	port to core SDK release:
-	  -No need for Board_openXXX() APIs anymore since drivers do the 
-           needed driverlib calls.
-	  -Removed archaic section placement pragmas from driver objects.
-	  -Adapted all driver HwAttrs according to their new fields in 3.0.1
-           drivers.
-	  -General cleanup
+ti.runtime.wiring.cc13xx
+	port to core SDK release
+
+	use ADC driver on cc13xx analogRead()
 
 ti.runtime.wiring.msp432
-	reworked to support enhanced PWM driver. No need for driverlib calls
-
-ti.runtime.wiring.msp432.variants.*
-	added second I2C bus
+	mark pin unused in stopAnalogWrite()
 
 MRS
