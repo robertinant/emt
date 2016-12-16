@@ -68,7 +68,7 @@ const ADCCC26XX_HWAttrs adcCC26xxHWAttrs[CC1350STK_ADCCOUNT] = {
     {
         .adcDIO              = CC1350STK_DIO23_ANALOG,
         .adcCompBInput       = ADC_COMPB_IN_AUXIO7,
-        .refSource           = ADCCC26XX_FIXED_REFERENCE,
+        .refSource           = ADCCC26XX_VDDS_REFERENCE,
         .samplingDuration    = ADCCC26XX_SAMPLING_DURATION_2P7_US,
         .inputScalingEnabled = true,
         .triggerSource       = ADCCC26XX_TRIGGER_MANUAL
@@ -76,7 +76,7 @@ const ADCCC26XX_HWAttrs adcCC26xxHWAttrs[CC1350STK_ADCCOUNT] = {
     {
         .adcDIO              = CC1350STK_DIO24_ANALOG,
         .adcCompBInput       = ADC_COMPB_IN_AUXIO6,
-        .refSource           = ADCCC26XX_FIXED_REFERENCE,
+        .refSource           = ADCCC26XX_VDDS_REFERENCE,
         .samplingDuration    = ADCCC26XX_SAMPLING_DURATION_2P7_US,
         .inputScalingEnabled = true,
         .triggerSource       = ADCCC26XX_TRIGGER_MANUAL
@@ -84,7 +84,7 @@ const ADCCC26XX_HWAttrs adcCC26xxHWAttrs[CC1350STK_ADCCOUNT] = {
     {
         .adcDIO              = CC1350STK_DIO25_ANALOG,
         .adcCompBInput       = ADC_COMPB_IN_AUXIO5,
-        .refSource           = ADCCC26XX_FIXED_REFERENCE,
+        .refSource           = ADCCC26XX_VDDS_REFERENCE,
         .samplingDuration    = ADCCC26XX_SAMPLING_DURATION_2P7_US,
         .inputScalingEnabled = true,
         .triggerSource       = ADCCC26XX_TRIGGER_MANUAL
@@ -92,7 +92,7 @@ const ADCCC26XX_HWAttrs adcCC26xxHWAttrs[CC1350STK_ADCCOUNT] = {
     {
         .adcDIO              = CC1350STK_DIO26_ANALOG,
         .adcCompBInput       = ADC_COMPB_IN_AUXIO4,
-        .refSource           = ADCCC26XX_FIXED_REFERENCE,
+        .refSource           = ADCCC26XX_VDDS_REFERENCE,
         .samplingDuration    = ADCCC26XX_SAMPLING_DURATION_2P7_US,
         .inputScalingEnabled = true,
         .triggerSource       = ADCCC26XX_TRIGGER_MANUAL
@@ -100,7 +100,7 @@ const ADCCC26XX_HWAttrs adcCC26xxHWAttrs[CC1350STK_ADCCOUNT] = {
     {
         .adcDIO              = CC1350STK_DIO27_ANALOG,
         .adcCompBInput       = ADC_COMPB_IN_AUXIO3,
-        .refSource           = ADCCC26XX_FIXED_REFERENCE,
+        .refSource           = ADCCC26XX_VDDS_REFERENCE,
         .samplingDuration    = ADCCC26XX_SAMPLING_DURATION_2P7_US,
         .inputScalingEnabled = true,
         .triggerSource       = ADCCC26XX_TRIGGER_MANUAL
@@ -108,7 +108,7 @@ const ADCCC26XX_HWAttrs adcCC26xxHWAttrs[CC1350STK_ADCCOUNT] = {
     {
         .adcDIO              = CC1350STK_DIO28_ANALOG,
         .adcCompBInput       = ADC_COMPB_IN_AUXIO2,
-        .refSource           = ADCCC26XX_FIXED_REFERENCE,
+        .refSource           = ADCCC26XX_VDDS_REFERENCE,
         .samplingDuration    = ADCCC26XX_SAMPLING_DURATION_2P7_US,
         .inputScalingEnabled = true,
         .triggerSource       = ADCCC26XX_TRIGGER_MANUAL
@@ -116,7 +116,7 @@ const ADCCC26XX_HWAttrs adcCC26xxHWAttrs[CC1350STK_ADCCOUNT] = {
     {
         .adcDIO              = CC1350STK_DIO29_ANALOG,
         .adcCompBInput       = ADC_COMPB_IN_AUXIO1,
-        .refSource           = ADCCC26XX_FIXED_REFERENCE,
+        .refSource           = ADCCC26XX_VDDS_REFERENCE,
         .samplingDuration    = ADCCC26XX_SAMPLING_DURATION_2P7_US,
         .inputScalingEnabled = true,
         .triggerSource       = ADCCC26XX_TRIGGER_MANUAL
@@ -124,7 +124,7 @@ const ADCCC26XX_HWAttrs adcCC26xxHWAttrs[CC1350STK_ADCCOUNT] = {
     {
         .adcDIO              = CC1350STK_DIO30_ANALOG,
         .adcCompBInput       = ADC_COMPB_IN_AUXIO0,
-        .refSource           = ADCCC26XX_FIXED_REFERENCE,
+        .refSource           = ADCCC26XX_VDDS_REFERENCE,
         .samplingDuration    = ADCCC26XX_SAMPLING_DURATION_10P9_MS,
         .inputScalingEnabled = true,
         .triggerSource       = ADCCC26XX_TRIGGER_MANUAL
@@ -132,7 +132,7 @@ const ADCCC26XX_HWAttrs adcCC26xxHWAttrs[CC1350STK_ADCCOUNT] = {
     {
         .adcDIO              = PIN_UNASSIGNED,
         .adcCompBInput       = ADC_COMPB_IN_DCOUPL,
-        .refSource           = ADCCC26XX_FIXED_REFERENCE,
+        .refSource           = ADCCC26XX_VDDS_REFERENCE,
         .samplingDuration    = ADCCC26XX_SAMPLING_DURATION_2P7_US,
         .inputScalingEnabled = true,
         .triggerSource       = ADCCC26XX_TRIGGER_MANUAL
@@ -140,7 +140,7 @@ const ADCCC26XX_HWAttrs adcCC26xxHWAttrs[CC1350STK_ADCCOUNT] = {
     {
         .adcDIO              = PIN_UNASSIGNED,
         .adcCompBInput       = ADC_COMPB_IN_VSS,
-        .refSource           = ADCCC26XX_FIXED_REFERENCE,
+        .refSource           = ADCCC26XX_VDDS_REFERENCE,
         .samplingDuration    = ADCCC26XX_SAMPLING_DURATION_2P7_US,
         .inputScalingEnabled = true,
         .triggerSource       = ADCCC26XX_TRIGGER_MANUAL
@@ -148,7 +148,7 @@ const ADCCC26XX_HWAttrs adcCC26xxHWAttrs[CC1350STK_ADCCOUNT] = {
     {
         .adcDIO              = PIN_UNASSIGNED,
         .adcCompBInput       = ADC_COMPB_IN_VDDS,
-        .refSource           = ADCCC26XX_FIXED_REFERENCE,
+        .refSource           = ADCCC26XX_VDDS_REFERENCE,
         .samplingDuration    = ADCCC26XX_SAMPLING_DURATION_2P7_US,
         .inputScalingEnabled = true,
         .triggerSource       = ADCCC26XX_TRIGGER_MANUAL
