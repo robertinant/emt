@@ -55,12 +55,12 @@ closure-$(TREE_NAME).tar.gz: $(TREE_ROOT)/exports/emt_src.zip $(CLOSURE_ZIPS)
 # rules to make the loadable board .zip archives
 .PHONY: board.msp432 board.cc3200 board.cc13xx
 #boards: board.msp432 board.cc3200 board.cc13xx
-boards: board.msp432
+boards: board.msp432 board.cc13xx
 
 board.cc13xx: cc13xx-$(TREE_NAME).zip
 cc13xx-$(TREE_NAME).zip: $(TREE_ROOT)/exports/emt_src.zip cc13xx/closure.zip
 	@echo making $@ ...
-	./cc13xx/mkbrd.ksh $< $(ZUMA_TREE)
+	./cc13xx/mkbrd.ksh $< $(MCPI_TREE)
 
 board.msp432: msp432-$(TREE_NAME).zip
 msp432-$(TREE_NAME).zip: $(TREE_ROOT)/exports/emt_src.zip msp432/closure.zip
@@ -70,7 +70,7 @@ msp432-$(TREE_NAME).zip: $(TREE_ROOT)/exports/emt_src.zip msp432/closure.zip
 board.cc3200: cc3200-$(TREE_NAME).zip
 cc3200-$(TREE_NAME).zip: $(TREE_ROOT)/exports/emt_src.zip cc3200/closure.zip
 	@echo making $@ ...
-	./cc3200/mkbrd.ksh $< $(ZUMA_TREE)
+	./cc3200/mkbrd.ksh $< $(MCPI_TREE)
 
 # rule for device-specific closure zips; used to create board packages
 %/closure.zip: | all

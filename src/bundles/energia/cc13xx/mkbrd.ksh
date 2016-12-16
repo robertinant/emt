@@ -9,9 +9,10 @@
 #  cc26xx uses the M3 target  => GCC libs install-native/*/lib/armv7-m
 #  cc13xx uses the M3 target  => GCC libs install-native/*/lib/armv7-m
 #
-#  CORE = the directory name appearing in <closure>/ti/runtime/wiring/<core>
+#  CORE   = the directory name appearing in <closure>/ti/runtime/wiring/<core>
+#  SRCDIR = directory containing this file
 #
-#                      TMPDIR
+#                      TMPDIR = temp for staging all the zip content
 #  <vers>              DSTDIR
 #      cores/$CORE     EMTDIR
 #      system
@@ -22,11 +23,22 @@
 #              :
 #          <board_n>
 #
-usage="usage: <path_to_emt_source_archive> <ti-rtos_product_tree_name>"
+usage="usage: <path_to_emt_source_archive> <core-sdk-directory>"
 
 if [ $# -lt 2 ]; then
     echo "Error: Illegal number of parameters"
     echo "$usage"
+    exit 1
+fi
+
+srczip="$1"
+sdktree="$2"
+if [ ! -r "$srczip" ]; then
+    echo "$0: error: emt source archive is not readable: $srczip"
+    exit 1
+fi
+if [ ! -d "$sdktree" ]; then
+    echo "$0: error: core SDK is not readable: $sdktree"
     exit 1
 fi
 
@@ -42,16 +54,6 @@ if [ -z "$TMPDIR" ]; then
     exit 1
 fi
 trap "chmod -R +w $TMPDIR;rm -rf $TMPDIR" EXIT INT TERM
-
-zptree=zumaprod-j08
-if [ $# -ge 2 ]; then
-    zptree="$2"
-fi
-
-srczip=../../../../exports/emt_src.zip
-if [ $# -ge 1 ]; then
-    srczip="$1"
-fi
 
 # compute semantic version number
 patch="`git tag -l 'emt-*' | egrep -o '[0-9]+'|tail -1`"
@@ -104,39 +106,44 @@ rm -rf $DSTDIR/cores/emt/ti/runtime/wiring/$CORE/variants
 
 mv $DSTDIR/cores/emt $EMTDIR
 
-# copy driverlib library from TI-RTOS product tree to DSTDIR/system
+# copy driverlib library from core-sdk product tree to DSTDIR/system
 cd $TMPDIR/closure
 echo "Copying driverlib to $DSTDIR/system ..."
-dlib="`ls -d $TREES/zumaprod/$zptree/exports/tirtos_full_2*/products/cc13xxware_*/`"
+dlib="`ls -d $sdktree/exports/coresdk_cc13xx_*/source/ti/devices/cc13x0`"
 mkdir -p "$DSTDIR/system/driverlib/CC13xx"
 cp "$dlib"/driverlib/*.[ch] "$DSTDIR/system/driverlib/CC13xx/"
 cp -r "$dlib/driverlib/bin/gcc" "$DSTDIR/system/driverlib/CC13xx/"
 cp -r "$dlib/inc" "$DSTDIR/system/"
 
 # selectively copy closure files to EMTDIR (inside DSTDIR)
+
+## add version file to EMTDIR
 VERSIONLINE=$(head -n 1 version.txt)
 VERSION=${VERSIONLINE##* }
-echo copying from `/bin/pwd` to $EMTDIR ...
+echo Copying from `/bin/pwd` to $EMTDIR ...
 echo "    closure from $VERSION"
 cp version.txt $EMTDIR
 
+## copy GNU reentrant libc 
 echo "Copy reentrant gnulib libraries ..."
 gnulib=./gnu/targets/arm/libs/install-native/arm-none-eabi
 find $gnulib/include -type f | cpio -pudm $EMTDIR
 find $gnulib/lib/armv7-m -type f | cpio -pudm $EMTDIR
 
+## copy GNU reentrant libc 
 echo "Copy libraries and linker scripts"
 find . -type f \( -name "*.m3g.lib" -o -name "*.am3g" -o -name "*.lds" \) | cpio -pudm $EMTDIR
 find . -type f \( -name "*.m4fg.lib" -o -name "*.am4fg" \) | cpio -pudm $EMTDIR
 find . -type f \( -name "*.m4g.lib" -o -name "*.am4g" \) | cpio -pudm $EMTDIR
 
+## copy closure headers
 echo "Copy TI-RTOS headers"
-find ./ti/sysbios -type f -name "*.h" | cpio -pudm $EMTDIR
-find ./ti/drivers -type f -name "*.h" | cpio -pudm $EMTDIR
-find ./ti/mw -type f -name "*.h" | cpio -pudm $EMTDIR
+find ./ti -type f -name "*.h" | cpio -pudm $EMTDIR
+rm -rf $EMTDIR/ti/dpl $EMTDIR/ti/tirtos
 find ./xdc -type f -name "*.h" | cpio -pudm $EMTDIR
 find ./gnu -type f -name "*.h" | cpio -pudm $EMTDIR
 
+## copy board variant sources to appropriate variant directories
 echo "Copy board variant sources to Arduino variant directories"
 vfiles="`find ./ti/runtime/wiring/*/variants -depth -maxdepth 6 -type f \( -name "*.c" -o -name "*.cpp" -o -name "*.h" \) -print`"
 for f in $vfiles; do
@@ -146,6 +153,7 @@ for f in $vfiles; do
     cp $f $vdir
 done
 
+## copy configuration generated files
 echo "Copy linker script and compiler options to ti/runtime/wiring/$CORE"
 cp linker.cmd compiler.opt $EMTDIR/ti/runtime/wiring/$CORE
 

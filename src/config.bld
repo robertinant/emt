@@ -30,7 +30,7 @@ tiTargets.M3.ccOpts.suffix  += " -ms --relaxed_ansi --display_error_number ";
 if (tiTargets.M4F.rootDir == null) {
     tiTargets.M4F.rootDir = vtools + "/ti/arm/16.9.0/" + os;
 }
-//tiTargets.M3.rootDir = tiTargets.M4F.rootDir;
+tiTargets.M3.rootDir = tiTargets.M4F.rootDir;
 //tiTargets.M4.rootDir = tiTargets.M4F.rootDir;
 
 /* Gnu compiler configuration settings */
@@ -43,7 +43,7 @@ if (os == "Linux" && gnuTargets.M4F.rootDir == null) {
         vtools + "/linaro/gcc-arm-none-eabi-4_9-2015q3/";
 }
 //gnuTargets.M4.rootDir  = gnuTargets.M4F.rootDir;
-//gnuTargets.M3.rootDir  = gnuTargets.M4F.rootDir;
+gnuTargets.M3.rootDir  = gnuTargets.M4F.rootDir;
 
 /* manage exceptions and dwarf compatibility */
 if (false) {

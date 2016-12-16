@@ -7,7 +7,7 @@
 #  following prerequisite components:
 #      CCROOT  - the GCC arm compiler (version 4.8 or above)
 #      XDCROOT - XDCtools (version 3.30.05 or above)
-#      TIRTOS  - TI-RTOS for CC13xx
+#      SDK.cc13xx  - core SDK for cc13xx
 #      EMTROOT - the EMT packages repo
 #
 
@@ -15,10 +15,10 @@
 include tools.mak
 
 # define the XDC package path based on the settings above
-SYSBIOS ?= $(wildcard $(TIRTOS)/products/bios_*)
-TIDRIVERS ?= $(wildcard $(TIRTOS)/products/tidrivers_*)
+SYSBIOS   ?= $(SDK.cc13xx)/kernel/tirtos/packages
+TIDRIVERS ?= $(SDK.cc13xx)/source
 
-XDCPATH = $(TIRTOS)/packages;$(SYSBIOS)/packages;$(TIDRIVERS)/packages;$(EMTROOT)
+XDCPATH = $(SYSBIOS);$(TIDRIVERS);$(EMTROOT)
 
 PLATFORM = ti.platforms.emt13xx
 TARGET   = gnu.targets.arm.M3
@@ -39,7 +39,7 @@ all: .debug closure
 	@echo "  ---- imports ----"
 	@echo "    CCROOT  = $(CCROOT)"
 	@echo "    XDCROOT = $(XDCROOT)"
-	@echo "    TIRTOS  = $(lastword $(subst /, ,$(TIRTOS)))"
+	@echo "    SDK     = $(SDK.cc13xx)"
 	@echo "    SYSBIOS = $(SYSBIOS)"
 	@echo "    EMTROOT = $(EMTROOT)"
 	@echo "    XDCPATH = $(XDCPATH)"
@@ -61,6 +61,7 @@ closure: configPkg
 # create a fixed configuration of TI-RTOS from energia.cfg
 configPkg: energia.cfg
 	@echo xs xdc.tools.configuro -o $@ $< ...
+	@echo $(XDCROOT)/xs --xdcpath="$(XDCPATH)" xdc.tools.configuro -o $@ -t $(TARGET) $(CCOPTS) -p $(PLATFORM) -r release -c $(CCROOT) $<
 	$(XDCROOT)/xs --xdcpath="$(XDCPATH)" xdc.tools.configuro -o $@ -t $(TARGET) $(CCOPTS) -p $(PLATFORM) -r release -c $(CCROOT) $<
 
 # remove all generated files/directories

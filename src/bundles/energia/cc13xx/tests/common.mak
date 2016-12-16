@@ -47,7 +47,7 @@ SDK_LIBS = $(DRVLIB.cc13xx)/driverlib/bin/ccs/driverlib.lib
 
 #define board-specific library path
 BRD_LIBS = $(CLOSURE)/ti/runtime/wiring/cc13xx/variants/$(VARIANT)
-BRD_DEFS = -DBOARD_$(VARIANT)
+BRD_DEFS = -DBOARD_$(VARIANT) -DDEVICE_FAMILY=cc13x0
 
 # define TI-RTOS and Energia wiring headers based on CLOSURE above
 CFG_INCS = -I "$(CLOSURE)" -I "$(CLOSURE)/src" \

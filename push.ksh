@@ -29,7 +29,7 @@ for dev in $devices; do
     if [ -z "$dzip" ]; then
 	echo "WARNING: energia push failed."
 	echo "    can't find board package $base/$dev-emt-*.zip"
-	exit 0
+    else
+	$base/lpush.ksh $dzip `basename $dzip`
     fi
-    $base/lpush.ksh $dzip `basename $dzip`
 done
