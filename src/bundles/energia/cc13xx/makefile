@@ -61,7 +61,6 @@ closure: configPkg
 # create a fixed configuration of TI-RTOS from energia.cfg
 configPkg: energia.cfg
 	@echo xs xdc.tools.configuro -o $@ $< ...
-	@echo $(XDCROOT)/xs --xdcpath="$(XDCPATH)" xdc.tools.configuro -o $@ -t $(TARGET) $(CCOPTS) -p $(PLATFORM) -r release -c $(CCROOT) $<
 	$(XDCROOT)/xs --xdcpath="$(XDCPATH)" xdc.tools.configuro -o $@ -t $(TARGET) $(CCOPTS) -p $(PLATFORM) -r release -c $(CCROOT) $<
 
 # remove all generated files/directories
