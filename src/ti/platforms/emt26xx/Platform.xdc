@@ -27,7 +27,7 @@ metaonly module Platform inherits ti.platforms.launchpad.IPlatform
      *
      *  @see ti.platforms.launchpad.IPlatform#driverLibPattern
      */
-    override config String driverLibPattern = "../products/cc26xxware_*";
+    override config String driverLibPattern = "ti/devices/cc26x0";
 
 instance:
 

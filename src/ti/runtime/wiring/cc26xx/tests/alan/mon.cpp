@@ -48,8 +48,8 @@
 #define STATS_CMD 1  /* CPU and task utilzation stats cmd */
 #define ALOG_CMD 1   /* log analog value cmd */
 #define PI_CMD 1     /* pulseIn() cmd */
-#define ARTEST_CMD 0 /* analogRead() self test */
-#define AWTEST_CMD 0 /* analogWrite() self test */
+#define ARTEST_CMD 1 /* analogRead() self test */
+#define AWTEST_CMD 1 /* analogWrite() self test */
 
 #if ARTEST_CMD == 1
 #if defined(BOARD_CC3200LP) || defined(BOARD_CC3200_LAUNCHXL)

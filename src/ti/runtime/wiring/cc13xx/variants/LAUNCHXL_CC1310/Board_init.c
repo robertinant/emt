@@ -304,14 +304,14 @@ GPIO_CallbackFxn gpioCallbackFunctions[] = {
     /* pins 31-40 */
     NULL,  /*  31 - DIO_17 */
     NULL,  /*  32 - DIO_16 */
-    NULL,  /*  31 - TCK */
-    NULL,  /*  32 - TMS */
-    NULL,  /*  31 - BPRST */
-    NULL,  /*  32 - DIO_18 */
-    NULL,  /*  31 - DIO_19 */
-    NULL,  /*  32 - DIO_20 */
-    NULL,  /*  31 - DIO_06 */
-    NULL,  /*  32 - DIO_07 */
+    NULL,  /*  33 - TCK */
+    NULL,  /*  34 - TMS */
+    NULL,  /*  35 - BPRST */
+    NULL,  /*  36 - DIO_18 */
+    NULL,  /*  37 - DIO_19 */
+    NULL,  /*  38 - DIO_20 */
+    NULL,  /*  39 - DIO_06 */
+    NULL,  /*  40 - DIO_07 */
 };
 
 /* User requested callback functions for the GPIO input signals */
@@ -620,7 +620,6 @@ void Board_initPower(void)
 
 /*
  *  ======== Board_init ========
- *  Initialialize the ti.platforms.tink2 hardware
  */
 void Board_init(void)
 {

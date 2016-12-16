@@ -599,7 +599,7 @@ PWMTimerCC26XX_HwAttrs pwmtimerCC26xxHWAttrs[CC1350STK_PWMCOUNT] = {
 };
 
 /* PWM configuration (used as PWM_Handle by driver and application) */
-const PWM_Config PWM_config[CC1350STK_PWMCOUNT + 1] = {
+const PWM_Config PWM_config[CC1350STK_PWMCOUNT] = {
     { &PWMTimerCC26XX_fxnTable, &pwmtimerCC26xxObjects[0], &pwmtimerCC26xxHWAttrs[0] },
     { &PWMTimerCC26XX_fxnTable, &pwmtimerCC26xxObjects[1], &pwmtimerCC26xxHWAttrs[1] },
     { &PWMTimerCC26XX_fxnTable, &pwmtimerCC26xxObjects[2], &pwmtimerCC26xxHWAttrs[2] },

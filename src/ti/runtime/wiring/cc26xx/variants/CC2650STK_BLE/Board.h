@@ -68,7 +68,7 @@ extern "C" {
 /** ============================================================================
  *  Externs
  *  ==========================================================================*/
-extern PIN_Config BoardGpioInitTable[];
+extern const PIN_Config BoardGpioInitTable[];
 
 /** ============================================================================
  *  Defines
@@ -167,14 +167,15 @@ extern PIN_Config BoardGpioInitTable[];
 #define Board_PWMPIN6                       PIN_UNASSIGNED
 #define Board_PWMPIN7                       PIN_UNASSIGNED
 
-#define Board_DIO23_ANALOG          IOID_23
-#define Board_DIO24_ANALOG          IOID_24
-#define Board_DIO25_ANALOG          IOID_25
-#define Board_DIO26_ANALOG          IOID_26
-#define Board_DIO27_ANALOG          IOID_27
-#define Board_DIO28_ANALOG          IOID_28
-#define Board_DIO29_ANALOG          IOID_29
-#define Board_DIO30_ANALOG          IOID_30
+/* Analog capable DIOs */
+#define CC2650STK_DIO23_ANALOG          IOID_23
+#define CC2650STK_DIO24_ANALOG          IOID_24
+#define CC2650STK_DIO25_ANALOG          IOID_25
+#define CC2650STK_DIO26_ANALOG          IOID_26
+#define CC2650STK_DIO27_ANALOG          IOID_27
+#define CC2650STK_DIO28_ANALOG          IOID_28
+#define CC2650STK_DIO29_ANALOG          IOID_29
+#define CC2650STK_DIO30_ANALOG          IOID_30
 
 /* DevPack */
 #define Board_AUDIOFS_TDO           IOID_16
@@ -207,14 +208,14 @@ extern PIN_Config BoardGpioInitTable[];
  *  Instance identifiers
  *  ==========================================================================*/
 /* Generic I2C instance identifiers */
-#define Board_I2C                   CC2650_I2C0
+#define Board_I2C                   CC2650STK_I2C0
 /* Generic SPI instance identifiers */
-#define Board_SPI0                  CC2650_SPI0
-#define Board_SPI1                  CC2650_SPI1
+#define Board_SPI0                  CC2650STK_SPI0
+#define Board_SPI1                  CC2650STK_SPI1
 /* Generic UART instance identifiers */
-#define Board_UART                  CC2650_UART0
+#define Board_UART                  CC2650STK_UART0
 /* Generic PWM instance identifiers */
-#define Board_PWM                   CC2650_PWM0
+#define Board_PWM                   CC2650STK_PWM0
 
 
 /** ============================================================================
@@ -222,52 +223,72 @@ extern PIN_Config BoardGpioInitTable[];
  *  ==========================================================================*/
 
 /*!
- *  @def    CC2650_I2CName
+ *  @def    CC2650STK_ADCName
+ *  @brief  Enum of ADCs
+ */
+typedef enum CC2650STK_ADCName {
+    CC2650STK_ADC0 = 0,
+    CC2650STK_ADC1,
+    CC2650STK_ADC2,
+    CC2650STK_ADC3,
+    CC2650STK_ADC4,
+    CC2650STK_ADC5,
+    CC2650STK_ADC6,
+    CC2650STK_ADC7,
+    CC2650STK_ADCDCOUPL,
+    CC2650STK_ADCVSS,
+    CC2650STK_ADCVDDS,
+
+    CC2650STK_ADCCOUNT
+} CC2650STK_ADCName;
+
+/*!
+ *  @def    CC2650STK_I2CName
  *  @brief  Enum of I2C names on the CC2650 dev board
  */
-typedef enum CC2650_I2CName {
-    CC2650_I2C0 = 0,
-    CC2650_I2C1,
-    CC2650_I2CCOUNT
-} CC2650_I2CName;
+typedef enum CC2650STK_I2CName {
+    CC2650STK_I2C0 = 0,
+    CC2650STK_I2C1,
+    CC2650STK_I2CCOUNT
+} CC2650STK_I2CName;
 
 /*!
- *  @def    CC2650_CryptoName
+ *  @def    CC2650STK_CryptoName
  *  @brief  Enum of Crypto names on the CC2650 dev board
  */
-typedef enum CC2650_CryptoName {
-    CC2650_CRYPTO0 = 0,
-    CC2650_CRYPTOCOUNT
-} CC2650_CryptoName;
+typedef enum CC2650STK_CryptoName {
+    CC2650STK_CRYPTO0 = 0,
+    CC2650STK_CRYPTOCOUNT
+} CC2650STK_CryptoName;
 
 
 /*!
- *  @def    CC2650_SPIName
+ *  @def    CC2650STK_SPIName
  *  @brief  Enum of SPI names on the CC2650 dev board
  */
-typedef enum CC2650_SPIName {
-    CC2650_SPI0 = 0,
-    CC2650_SPI1,
-    CC2650_SPICOUNT
-} CC2650_SPIName;
+typedef enum CC2650STK_SPIName {
+    CC2650STK_SPI0 = 0,
+    CC2650STK_SPI1,
+    CC2650STK_SPICOUNT
+} CC2650STK_SPIName;
 
 /*!
- *  @def    CC2650_UARTName
+ *  @def    CC2650STK_UARTName
  *  @brief  Enum of UARTs on the CC2650 dev board
  */
-typedef enum CC2650_UARTName {
-    CC2650_UART0 = 0,
-    CC2650_UARTCOUNT
-} CC2650_UARTName;
+typedef enum CC2650STK_UARTName {
+    CC2650STK_UART0 = 0,
+    CC2650STK_UARTCOUNT
+} CC2650STK_UARTName;
 
 /*!
- *  @def    CC2650_UdmaName
+ *  @def    CC2650STK_UdmaName
  *  @brief  Enum of DMA buffers
  */
-typedef enum CC2650_UdmaName {
-    CC2650_UDMA0 = 0,
-    CC2650_UDMACOUNT
-} CC2650_UdmaName;
+typedef enum CC2650STK_UdmaName {
+    CC2650STK_UDMA0 = 0,
+    CC2650STK_UDMACOUNT
+} CC2650STK_UdmaName;
 
 /*!
  *  @def    CC2650STK_GPTimerName
@@ -300,7 +321,7 @@ typedef enum CC2650STK_GPTimers
 } CC2650STK_GPTimers;
 
 /*!
- *  @def    CC2650_PWMName
+ *  @def    CC2650STK_PWMName
  *  @brief  Enum of PWM pin names on the CC2650 dev board
  */
 typedef enum CC2650STK_PWMName {
@@ -314,25 +335,6 @@ typedef enum CC2650STK_PWMName {
     CC2650STK_PWM7 = 7, /* PWM output from TIMERA3 side B */
     CC2650STK_PWMCOUNT
 } CC2650STK_PWMName;
-
-/*!
- *  @def    CC2650STK_ADCName
- *  @brief  Enum of ADCs
- */
-typedef enum CC2650STK_ADCName {
-    CC2650STK_ADC0 = 0,
-    CC2650STK_ADC1,
-    CC2650STK_ADC2,
-    CC2650STK_ADC3,
-    CC2650STK_ADC4,
-    CC2650STK_ADC5,
-    CC2650STK_ADC6,
-    CC2650STK_ADC7,
-    CC2650STK_ADCDCOUPL,
-    CC2650STK_ADCVSS,
-    CC2650STK_ADCVDDS,
-    CC2650STK_ADCCOUNT
-} CC2650STK_ADCName;
 
 #ifdef __cplusplus
 }

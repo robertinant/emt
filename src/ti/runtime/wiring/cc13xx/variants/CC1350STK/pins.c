@@ -33,9 +33,6 @@
 #include <ti/runtime/wiring/wiring_private.h>
 #include <ti/runtime/wiring/cc13xx/wiring_analog.h>
 
-#include <inc/hw_types.h>
-#include <inc/hw_memmap.h>
-
 uint8_t digital_pin_to_pin_function[] = {
     PIN_FUNC_INVALID,   /*  dummy */
     PIN_FUNC_INVALID,   /*  1  - VDD */
