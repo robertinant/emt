@@ -444,6 +444,8 @@ void stopAnalogRead(uint8_t pin)
     /* Place Pin in NORMAL GPIO mode */
     MAP_GPIO_setAsPeripheralModuleFunctionOutputPin(port, pinMask,
                                                  GPIO_PRIMARY_MODULE_FUNCTION);
+
+    digital_pin_to_pin_function[pin] = PIN_FUNC_UNUSED;
 }
 
 /*
