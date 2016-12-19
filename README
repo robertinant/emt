@@ -1,4 +1,4 @@
-				emt-d01
+				emt-d02
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -117,15 +117,10 @@ DELETIONS
 
 CHANGES
 
-bundles/energia/cc13xx
-	port to core SDK release
-
 ti.runtime.wiring.cc13xx
-	port to core SDK release
+	minor cleanup
 
-	use ADC driver on cc13xx analogRead()
-
-ti.runtime.wiring.msp432
-	mark pin unused in stopAnalogWrite()
+ti.runtime.wiring.cc26xx
+	port to core SDK version of TI-RTOS
 
 MRS
