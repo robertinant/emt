@@ -1,4 +1,4 @@
-				emt-d02
+				emt-d03
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -117,10 +117,11 @@ DELETIONS
 
 CHANGES
 
-ti.runtime.wiring.cc13xx
-	minor cleanup
+bundles/energia
+	fix several bugs in the */mkbrd.ksh scripts to accomodate SDK choices
 
-ti.runtime.wiring.cc26xx
-	port to core SDK version of TI-RTOS
+bundles/energia/cc13xx
+	fix platform.txt to add a necessary -D DEVICE_FAMILY=cc13x0 required
+        by the LPRF driverlib(?)
 
 MRS
