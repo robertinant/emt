@@ -110,12 +110,18 @@ mv $DSTDIR/cores/emt $EMTDIR
 cd $TMPDIR/closure
 echo "Copying driverlib to $DSTDIR/system ..."
 dlib="`ls -d $sdktree/exports/coresdk_msp432_*/source/ti/devices/msp432p4xx`"
-cmsis="`ls -d $sdktree/exports/coresdk_msp432_*/source/third_party/CMSIS`"
-mkdir -p "$DSTDIR/system/driverlib/MSP432P4xx"
-cp "$dlib"/driverlib/*.[ch] "$DSTDIR/system/driverlib/MSP432P4xx/"
-cp -r "$dlib/driverlib/gcc" "$DSTDIR/system/driverlib/MSP432P4xx/"
+mkdir -p "$DSTDIR/system/ti/devices/driverlib/MSP432P4xx"
+cp "$dlib"/driverlib/*.[ch] "$DSTDIR/system/ti/devices/driverlib/MSP432P4xx/"
+cp -r "$dlib/driverlib/gcc" "$DSTDIR/system/ti/devices/driverlib/MSP432P4xx/"
 cp -r "$dlib/inc" "$DSTDIR/system/"
+
+# copy third-party components from core-sdk product tree to DSTDIR/system
+cmsis="`ls -d $sdktree/exports/coresdk_msp432_*/source/third_party/CMSIS`"
 cp -r "$cmsis" "$DSTDIR/system/"
+
+fatfs="`ls -d $sdktree/exports/coresdk_msp432_*/source/third_party/fatfs`"
+mkdir -p "$DSTDIR/system/third_party"
+cp -r "$fatfs" "$DSTDIR/system/third_party"
 
 # selectively copy closure files to EMTDIR (inside DSTDIR)
 
@@ -132,7 +138,7 @@ gnulib=./gnu/targets/arm/libs/install-native/arm-none-eabi
 find $gnulib/include -type f | cpio -pudm $EMTDIR
 find $gnulib/lib/armv7e-m/fpu -type f | cpio -pudm $EMTDIR
 
-## copy GNU reentrant libc 
+## copy closure libraries and linker files
 echo "Copy libraries and linker scripts"
 find . -type f \( -name "*.m3g.lib" -o -name "*.am3g" -o -name "*.lds" \) | cpio -pudm $EMTDIR
 find . -type f \( -name "*.m4fg.lib" -o -name "*.am4fg" \) | cpio -pudm $EMTDIR
@@ -141,9 +147,10 @@ find . -type f \( -name "*.m4g.lib" -o -name "*.am4g" \) | cpio -pudm $EMTDIR
 ## copy closure headers
 echo "Copy TI-RTOS headers"
 find ./ti -type f -name "*.h" | cpio -pudm $EMTDIR
-rm -rf $EMTDIR/ti/dpl $EMTDIR/ti/tirtos
 find ./xdc -type f -name "*.h" | cpio -pudm $EMTDIR
 find ./gnu -type f -name "*.h" | cpio -pudm $EMTDIR
+## remove empty/useless packages
+rm -rf $EMTDIR/ti/tirtos
 
 ## copy board variant sources to appropriate variant directories
 echo "Copy board variant sources to Arduino variant directories"
