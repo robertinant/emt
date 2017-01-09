@@ -15,6 +15,7 @@ MCPI_TREE = $(TREES)/mcpi/mcpi-b19
 #
 SDK.msp432 = $(firstword $(wildcard $(MCPI_TREE)/exports/coresdk_msp432_*))
 SDK.cc13xx = $(firstword $(wildcard $(MCPI_TREE)/exports/coresdk_cc13xx_*))
+SDK.cc32xx = $(firstword $(wildcard $(MCPI_TREE)/exports/coresdk_cc32xx_*))
 
 TIRTOS.msp432   = $(SDK.msp432)/kernel/tirtos/packages
 TIDRIVERS.msp432 = $(SDK.msp432)/source
