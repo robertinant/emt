@@ -110,10 +110,10 @@ mv $DSTDIR/cores/emt $EMTDIR
 cd $TMPDIR/closure
 echo "Copying driverlib to $DSTDIR/system ..."
 dlib="`ls -d $sdktree/exports/coresdk_msp432_*/source/ti/devices/msp432p4xx`"
-mkdir -p "$DSTDIR/system/ti/devices/driverlib/MSP432P4xx"
-cp "$dlib"/driverlib/*.[ch] "$DSTDIR/system/ti/devices/driverlib/MSP432P4xx/"
-cp -r "$dlib/driverlib/gcc" "$DSTDIR/system/ti/devices/driverlib/MSP432P4xx/"
-cp -r "$dlib/inc" "$DSTDIR/system/"
+mkdir -p "$DSTDIR/system/ti/devices/msp432p4xx/driverlib"
+cp "$dlib"/driverlib/*.[ch] "$DSTDIR/system/ti/devices/msp432p4xx/driverlib/"
+cp -r "$dlib/driverlib/gcc" "$DSTDIR/system/ti/devices/msp432p4xx/driverlib/"
+cp -r "$dlib/inc" "$DSTDIR/system/ti/devices/msp432p4xx/"
 
 # copy third-party components from core-sdk product tree to DSTDIR/system
 cmsis="`ls -d $sdktree/exports/coresdk_msp432_*/source/third_party/CMSIS`"
