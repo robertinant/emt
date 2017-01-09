@@ -1,5 +1,5 @@
 PROGNAME = alloc
-VARIANT  = LAUNCHXL_CC1310
+VARIANT  = CC1310_LAUNCHXL
 SOURCES  = $(PROGNAME).cpp main.cpp
 
 include ../common.mak

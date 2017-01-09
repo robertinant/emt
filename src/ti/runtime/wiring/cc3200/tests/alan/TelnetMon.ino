@@ -52,7 +52,7 @@
 #define CC32XX_ARTEST_CMD 0
 #define MSP432_ARTEST_CMD 1
 #define CC26XX_ARTEST_CMD 0
-#elif defined(BOARD_CC2650_LAUNCHXL) || defined(BOARD_LAUNCHXL_CC1310) || defined(BOARD_LAUNCHXL_CC1350)
+#elif defined(BOARD_CC2650_LAUNCHXL) || defined(BOARD_CC1310_LAUNCHXL) || defined(BOARD_CC1350_LAUNCHXL)
 #define CC32XX_ARTEST_CMD 0
 #define MSP432_ARTEST_CMD 0
 #define CC26XX_ARTEST_CMD 1
@@ -68,7 +68,7 @@
 #define CC32XX_AWTEST_CMD 0
 #define MSP432_AWTEST_CMD 1
 #define CC26XX_AWTEST_CMD 0
-#elif defined(BOARD_CC2650_LAUNCHXL) || defined(BOARD_LAUNCHXL_CC1310) || defined(BOARD_LAUNCHXL_CC1350)
+#elif defined(BOARD_CC2650_LAUNCHXL) || defined(BOARD_CC1310_LAUNCHXL) || defined(BOARD_CC1350_LAUNCHXL)
 #define CC32XX_AWTEST_CMD 0
 #define MSP432_AWTEST_CMD 0
 #define CC26XX_AWTEST_CMD 1
@@ -1602,7 +1602,7 @@ static uint8_t awPinIds[] = {
     37,  39,  40
 };
 
-#elif defined(BOARD_LAUNCHXL_CC1310) || defined(BOARD_LAUNCHXL_CC1350)
+#elif defined(BOARD_CC1310_LAUNCHXL) || defined(BOARD_CC1350_LAUNCHXL)
 
 /* Supported analogWrite pins */
 static uint8_t awPinIds[] = {
