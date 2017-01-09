@@ -38,8 +38,8 @@ ifneq (,$(wildcard $(INO2CPP)))
 endif
 
 # Supported variants include:
-#   LAUNCHXL_CC1310 CC1310 LaunchPad
-VARIANT ?= LAUNCHXL_CC1310
+#   CC1310_LAUNCHXL CC1310 LaunchPad
+VARIANT ?= CC1310_LAUNCHXL
 PROGNAME ?= blink
 
 # define CC13xx DriverLib libs and headers based on definitions above

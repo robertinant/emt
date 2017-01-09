@@ -6,14 +6,14 @@ Pkg.attrs.exportAll = true;
 
 Pkg.uses = ["ti/runtime/wiring"];
 
-var PLATFORM = "ti.platforms.emt13xx:LAUNCHXL_CC1310";
-var DEFS = "-Dxdc__nolocalstring=1 -DBOARD_LAUNCHXL_CC1310";
+var PLATFORM = "ti.platforms.emt13xx:CC1310_LAUNCHXL";
+var DEFS = "-Dxdc__nolocalstring=1 -DBOARD_CC1310_LAUNCHXL";
 
 //var PLATFORM = "ti.platforms.emt13xx:CC1350STK";
 //var DEFS = "-Dxdc__nolocalstring=1 -DBOARD_CC1350STK";
 
-//var PLATFORM = "ti.platforms.emt13xx:LAUNCHXL_CC1350";
-//var DEFS = "-Dxdc__nolocalstring=1 -DBOARD_LAUNCHXL_CC1350";
+//var PLATFORM = "ti.platforms.emt13xx:CC1350_LAUNCHXL";
+//var DEFS = "-Dxdc__nolocalstring=1 -DBOARD_CC1350_LAUNCHXL";
 
 var Platform = xdc.module("ti.platforms.emt13xx.Platform");
 var DLIBROOT = Platform.findDriverLib();

@@ -42,6 +42,6 @@ instance:
         revision:       "",
     };
 
-    override config String variant = "LAUNCHXL_CC1310";
+    override config String variant = "CC1310_LAUNCHXL";
 }
 
