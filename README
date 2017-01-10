@@ -1,4 +1,4 @@
-				emt-d03
+				emt-d04
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -118,10 +118,19 @@ DELETIONS
 CHANGES
 
 bundles/energia
-	fix several bugs in the */mkbrd.ksh scripts to accomodate SDK choices
+	fix more bugs in the */mkbrd.ksh scripts to strictly match SDK design
+
+bundles/energia/msp432
+	Correct maximum_size / maximum_data_size in boards.txt for msp432
+
+	Fixup platform.txt for msp432 to support new SDK
 
 bundles/energia/cc13xx
-	fix platform.txt to add a necessary -D DEVICE_FAMILY=cc13x0 required
-        by the LPRF driverlib(?)
+	fix the cc13xx platform file to add a necessary BU device definition
+
+bundles/energia/cc13xx/variants
+	renamed cc13xx LAUNCHXL_blah to blah_LAUNCHXL
+
+
 
 MRS
