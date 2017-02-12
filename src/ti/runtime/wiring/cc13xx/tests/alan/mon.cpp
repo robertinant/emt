@@ -1275,8 +1275,8 @@ uint8_t pin_to_channel[] = {
     255, /* 20 GND */
     255, /* 21 5V */
     255, /* 22 GND */
-    255, /* 23 Common mux signal, DAC output */
-    15,  /* 24 */
+    15,  /* 23 */
+    255, /* 24 Common mux signal, DAC output */
     16,  /* 25 */
     17,  /* 26 */
     18,  /* 27 */
@@ -1308,7 +1308,7 @@ static void aMuxChannelEnable(unsigned int pin)
         chan = 0x10 | (chan & 0x0f); /* enable upper 16 channels */
     }
     else {
-        return;
+        chan = 0x30; /* disable b0th muxes */
     }
 
     Wire.beginTransmission(PCF8574A_I2C_ADDR);
@@ -1408,6 +1408,8 @@ static int consoleHandler_artest(const char * line)
     dacValues[3] = dacValue*3/4;
     dacValues[4] = dacValue;
 
+    analogRead(24);
+
     aMuxChannelEnable(0);
 
     for (i = 0; i < 5; i++) {
@@ -1486,7 +1488,7 @@ static uint8_t awPinIds[] = {
     2,   5,
     6,   7,   8,   11,
     12,  13,  14,  15,
-    18,  19,  24,  25,
+    18,  19,  23,  25,
     26,  27,  28,  29,
     30,  36,
     37,  39,  40
@@ -1499,7 +1501,7 @@ static uint8_t awPinIds[] = {
     2,   5,
     6,   7,   8,   11,
     12,  13,  14,  15,
-    18,  19,  24,  25,
+    18,  19,  23,  25,
     26,  27,  28,
     30,  36,
     37,  39,  40
@@ -1523,10 +1525,10 @@ static int consoleHandler_awtest(const char * line)
 
     Wire.begin();
 
-    /* turn off the DAC so that mux routes output pins to pin 23 */
+    /* turn off the DAC so that mux routes output pins to pin 24 */
     disableDac();
 
-    pinMode(23, INPUT);
+    pinMode(24, INPUT);
 
     aMuxChannelEnable(2);
 
@@ -1539,21 +1541,21 @@ static int consoleHandler_awtest(const char * line)
         aMuxChannelEnable(pin);
 
         analogWrite(pin, 1);
-        aval[0] = pulseIn(23, 1, 10000);
+        aval[0] = pulseIn(24, 1, 10000);
 
         analogWrite(pin, 128);
-        aval[1] = pulseIn(23, 1, 10000);
+        aval[1] = pulseIn(24, 1, 10000);
 
         analogWrite(pin, 254);
-        aval[2] = pulseIn(23, 1, 10000);
+        aval[2] = pulseIn(24, 1, 10000);
 
         analogWrite(pin, 0);
-        aval[3] = pulseIn(23, 1, 10000);
-        aval[4] = digitalRead(23);
+        aval[3] = pulseIn(24, 1, 10000);
+        aval[4] = digitalRead(24);
 
         analogWrite(pin, 255);
-        aval[5] = pulseIn(23, 1, 10000);
-        aval[6] = digitalRead(23);
+        aval[5] = pulseIn(24, 1, 10000);
+        aval[6] = digitalRead(24);
 
         /* release PWM resource */
         pinMode(pin, INPUT);

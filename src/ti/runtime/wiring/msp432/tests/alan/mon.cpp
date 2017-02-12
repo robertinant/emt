@@ -1523,10 +1523,10 @@ static int consoleHandler_awtest(const char * line)
 
     Wire.begin();
 
-    /* turn off the DAC so that mux routes output pins to pin 23 */
+    /* turn off the DAC so that mux routes output pins to pin 24 */
     disableDac();
 
-    pinMode(23, INPUT);
+    pinMode(24, INPUT);
 
     aMuxChannelEnable(2);
 
@@ -1539,21 +1539,21 @@ static int consoleHandler_awtest(const char * line)
         aMuxChannelEnable(pin);
 
         analogWrite(pin, 1);
-        aval[0] = pulseIn(23, 1, 10000);
+        aval[0] = pulseIn(24, 1, 10000);
 
         analogWrite(pin, 128);
-        aval[1] = pulseIn(23, 1, 10000);
+        aval[1] = pulseIn(24, 1, 10000);
 
         analogWrite(pin, 254);
-        aval[2] = pulseIn(23, 1, 10000);
+        aval[2] = pulseIn(24, 1, 10000);
 
         analogWrite(pin, 0);
-        aval[3] = pulseIn(23, 1, 10000);
-        aval[4] = digitalRead(23);
+        aval[3] = pulseIn(24, 1, 10000);
+        aval[4] = digitalRead(24);
 
         analogWrite(pin, 255);
-        aval[5] = pulseIn(23, 1, 10000);
-        aval[6] = digitalRead(23);
+        aval[5] = pulseIn(24, 1, 10000);
+        aval[6] = digitalRead(24);
 
         /* release PWM resource */
         pinMode(pin, INPUT);
