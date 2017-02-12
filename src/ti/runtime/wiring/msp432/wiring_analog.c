@@ -135,6 +135,22 @@ uint8_t timer_ccrs_in_use[] = {
 };
 
 /*
+ * Do whatever is necessary to prepare the digital input pin to be
+ * configured in any other mode
+ */
+void stopDigitalRead(uint8_t pin)
+{
+}
+
+/*
+ * Do whatever is necessary to prepare the digital output pin to be
+ * configured in any other mode
+ */
+ void stopDigitalWrite(uint8_t pin)
+{
+}
+
+/*
  * For the MSP432, the timers used for PWM are clocked at 12MHz.
  * The period is set to 2.04ms in the PWM_open() call.
  * The PWM objects are configured for PWM_DUTY_COUNTS mode to minimize
@@ -394,6 +410,19 @@ uint16_t analogRead(uint8_t pin)
     if (digital_pin_to_pin_function[pin] != PIN_FUNC_ANALOG_INPUT) {
         ADC_Params adcParams;
         ADC_Handle adcHandle;
+
+        /* undo pin's current plumbing */
+        switch (digital_pin_to_pin_function[pin]) {
+            case PIN_FUNC_ANALOG_OUTPUT:
+                stopAnalogWrite(pin);
+                break;
+            case PIN_FUNC_DIGITAL_INPUT:
+                stopDigitalRead(pin);
+                break;
+            case PIN_FUNC_DIGITAL_OUTPUT:
+                stopDigitalWrite(pin);
+                break;
+        }
 
         if (adcInitialized == false) {
             ADC_init();
