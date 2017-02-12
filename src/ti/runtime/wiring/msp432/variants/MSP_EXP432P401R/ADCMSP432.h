@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Texas Instruments Incorporated
+ * Copyright (c) 2016-2017 Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -128,12 +128,12 @@ extern "C" {
 /*
  * ADCMSP432_HWAttrsV1.refVoltage values
  */
-#define ADCMSP432_REF_VOLTAGE_VDD        ADC_VREFPOS_AVCC_VREFNEG_VSS << 8
-#define ADCMSP432_REF_VOLTAGE_INT_1_2V   ADC_VREFPOS_INTBUF_VREFNEG_VSS << 8 | REF_A_VREF1_2V
-#define ADCMSP432_REF_VOLTAGE_INT_1_45V  ADC_VREFPOS_INTBUF_VREFNEG_VSS << 8 | REF_A_VREF1_45V
-#define ADCMSP432_REF_VOLTAGE_INT_2_5V   ADC_VREFPOS_INTBUF_VREFNEG_VSS << 8 | REF_A_VREF2_5V
-#define ADCMSP432_REF_VOLTAGE_EXT        ADC_VREFPOS_EXTPOS_VREFNEG_EXTNEG << 8
-#define ADCMSP432_REF_VOLTAGE_EXT_BUF    ADC_VREFPOS_EXTBUF_VREFNEG_EXTNEG << 8
+#define ADCMSP432_REF_VOLTAGE_VDD        ADC_VREFPOS_AVCC_VREFNEG_VSS | 0xFF  /* 0x00FF */
+#define ADCMSP432_REF_VOLTAGE_INT_1_2V   REF_A_VREF1_2V  /* 0x0000 */
+#define ADCMSP432_REF_VOLTAGE_INT_1_45V  REF_A_VREF1_45V /* 0x0010 */
+#define ADCMSP432_REF_VOLTAGE_INT_2_5V   REF_A_VREF2_5V  /* 0x0030 */
+#define ADCMSP432_REF_VOLTAGE_EXT        ADC_VREFPOS_EXTPOS_VREFNEG_EXTNEG    /* 0x0E00 */
+#define ADCMSP432_REF_VOLTAGE_EXT_BUF    ADC_VREFPOS_EXTBUF_VREFNEG_EXTNEG    /* 0x0F00 */
 
 
 /* ADC function table pointer */
@@ -152,7 +152,7 @@ extern const ADC_FxnTable ADCMSP432_fxnTable;
  *  const ADCMSP432_HWAttrsV1 adcMSP432HWAttrs[Board_ADCCHANNELCOUNT] = {
  *      {
  *          .adcPin = ADCMSP432_P5_5_A0,
- *          .refVoltage = REF_A_VREF2_5V,
+ *          .refVoltage = ADCMSP432_REF_VOLTAGE_INT_2_5V,
  *          .resolution = ADC_14BIT
  *      }
  *  };

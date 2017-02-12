@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Texas Instruments Incorporated
+ * Copyright (c) 2016-2017 Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,8 +34,7 @@
 #include <stdbool.h>
 
 #include <ti/drivers/ADC.h>
-//#include <ti/drivers/adc/ADCMSP432.h>
-#include "ADCMSP432.h"
+#include <ti/drivers/adc/ADCMSP432.h>
 #include <ti/drivers/dpl/DebugP.h>
 #include <ti/drivers/dpl/HwiP.h>
 #include <ti/drivers/dpl/SemaphoreP.h>
@@ -169,7 +168,10 @@ int_fast16_t ADCMSP432_convert(ADC_Handle handle, uint16_t *value)
     Power_setConstraint(PowerMSP432_DISALLOW_PERF_CHANGES);
 
     /* Set and enable internal reference voltage if being used */
-    if ((hwAttrs->refVoltage >> 8) == ADC_VREFPOS_INTBUF_VREFNEG_VSS) {
+    if ((hwAttrs->refVoltage == ADCMSP432_REF_VOLTAGE_INT_1_2V) ||
+        (hwAttrs->refVoltage == ADCMSP432_REF_VOLTAGE_INT_1_45V) ||
+        (hwAttrs->refVoltage == ADCMSP432_REF_VOLTAGE_INT_2_5V))
+    {
         MAP_REF_A_setReferenceVoltage(hwAttrs->refVoltage);
         MAP_REF_A_enableReferenceVoltage();
     }
@@ -181,9 +183,30 @@ int_fast16_t ADCMSP432_convert(ADC_Handle handle, uint16_t *value)
     MAP_ADC14_setResolution(hwAttrs->resolution);
 
     /* Config the ADC memory0 with specified channel */
-    MAP_ADC14_configureConversionMemory(ADC_MEM0,
-            (hwAttrs->refVoltage >> 8),
-            PinConfigChannel(hwAttrs->adcPin), false);
+    switch(hwAttrs->refVoltage) {
+        case ADCMSP432_REF_VOLTAGE_VDD:
+            MAP_ADC14_configureConversionMemory(ADC_MEM0,
+                    ADC_VREFPOS_AVCC_VREFNEG_VSS,
+                    PinConfigChannel(hwAttrs->adcPin), false);
+            break;
+        case ADCMSP432_REF_VOLTAGE_INT_1_2V:
+        case ADCMSP432_REF_VOLTAGE_INT_1_45V:
+        case ADCMSP432_REF_VOLTAGE_INT_2_5V:
+            MAP_ADC14_configureConversionMemory(ADC_MEM0,
+                    ADC_VREFPOS_INTBUF_VREFNEG_VSS,
+                    PinConfigChannel(hwAttrs->adcPin), false);
+            break;
+        case ADCMSP432_REF_VOLTAGE_EXT:
+            MAP_ADC14_configureConversionMemory(ADC_MEM0,
+                    ADC_VREFPOS_EXTPOS_VREFNEG_EXTNEG,
+                    PinConfigChannel(hwAttrs->adcPin), false);
+            break;
+        case ADCMSP432_REF_VOLTAGE_EXT_BUF:
+            MAP_ADC14_configureConversionMemory(ADC_MEM0,
+                    ADC_VREFPOS_EXTBUF_VREFNEG_EXTNEG,
+                    PinConfigChannel(hwAttrs->adcPin), false);
+            break;
+    }
 
     /* Enabling/Toggling Conversion */
     MAP_ADC14_enableConversion();
