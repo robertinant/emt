@@ -270,6 +270,19 @@ uint16_t analogRead(uint8_t pin)
         ADC_Params adcParams;
         ADC_Handle adcHandle;
 
+        /* undo pin's current plumbing */
+        switch (digital_pin_to_pin_function[pin]) {
+            case PIN_FUNC_ANALOG_OUTPUT:
+                stopAnalogWrite(pin);
+                break;
+            case PIN_FUNC_DIGITAL_INPUT:
+                stopDigitalRead(pin);
+                break;
+            case PIN_FUNC_DIGITAL_OUTPUT:
+                stopDigitalWrite(pin);
+                break;
+        }
+
         if (adcInitialized == false) {
             ADC_init();
             adcInitialized = true;
