@@ -31,7 +31,7 @@ if (tiTargets.M4F.rootDir == null) {
     tiTargets.M4F.rootDir = vtools + "/ti/arm/16.9.0/" + os;
 }
 tiTargets.M3.rootDir = tiTargets.M4F.rootDir;
-//tiTargets.M4.rootDir = tiTargets.M4F.rootDir;
+tiTargets.M4.rootDir = tiTargets.M4F.rootDir;
 
 /* Gnu compiler configuration settings */
 var gnuTargets = xdc.loadPackage('gnu.targets.arm');
@@ -42,7 +42,7 @@ if (os == "Linux" && gnuTargets.M4F.rootDir == null) {
     gnuTargets.M4F.rootDir =
         vtools + "/linaro/gcc-arm-none-eabi-4_9-2015q3/";
 }
-//gnuTargets.M4.rootDir  = gnuTargets.M4F.rootDir;
+gnuTargets.M4.rootDir  = gnuTargets.M4F.rootDir;
 gnuTargets.M3.rootDir  = gnuTargets.M4F.rootDir;
 
 /* manage exceptions and dwarf compatibility */
@@ -86,14 +86,14 @@ tiTargets.M3.platform =  "ti.platforms.emt26xx";
 gnuTargets.M4F.platform = "ti.platforms.emt432";
 tiTargets.M4F.platform =  "ti.platforms.emt432";
 
-gnuTargets.M4.platform = "ti.platforms.emt3200";
-tiTargets.M4.platform =  "ti.platforms.emt3200";
+gnuTargets.M4.platform = "ti.platforms.emt32xx";
+tiTargets.M4.platform =  "ti.platforms.emt32xx";
 
 if (Pkg.name.match(/432/)) {
     if (gnuTargets.M4F.rootDir != null) Build.targets.$add(gnuTargets.M4F);
     if (tiTargets.M4F.rootDir != null)  Build.targets.$add(tiTargets.M4F);
 }
-else if (Pkg.name.match(/3200/)) {
+else if (Pkg.name.match(/32xx/)) {
     if (gnuTargets.M4.rootDir != null) Build.targets.$add(gnuTargets.M4);
     if (tiTargets.M4.rootDir != null)  Build.targets.$add(tiTargets.M4);
 }

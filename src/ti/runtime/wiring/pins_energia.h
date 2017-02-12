@@ -3,6 +3,10 @@
 
 #if defined(BOARD_CC3200LP) || defined(BOARD_CC3200_LAUNCHXL)
 #include <ti/runtime/wiring/cc3200/variants/CC3200_LAUNCHXL/pins_energia.h>
+#elif defined(BOARD_CC3220S_LAUNCHXL)
+#include <ti/runtime/wiring/cc32xx/variants/CC3220S_LAUNCHXL/pins_energia.h>
+#elif defined(BOARD_CC3220SF_LAUNCHXL)
+#include <ti/runtime/wiring/cc32xx/variants/CC3220SF_LAUNCHXL/pins_energia.h>
 #elif defined(BOARD_CC3200STK_WIFI)
 #include <ti/runtime/wiring/cc3200/variants/CC3200STK_WIFI/pins_energia.h>
 #elif defined(BOARD_RedBearLab_CC3200)

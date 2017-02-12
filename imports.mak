@@ -21,6 +21,8 @@ TIRTOS.msp432   = $(SDK.msp432)/kernel/tirtos/packages
 TIDRIVERS.msp432 = $(SDK.msp432)/source
 TIRTOS.cc13xx   = $(SDK.cc13xx)/kernel/tirtos/packages
 TIDRIVERS.cc13xx = $(SDK.cc13xx)/source
+TIRTOS.cc32xx   = $(SDK.cc32xx)/kernel/tirtos/packages
+TIDRIVERS.cc32xx = $(SDK.cc32xx)/source
 
 INO2CPP = $(wildcard $(ENERGIA)/app/src/processing/app/ino2cpp/exports/ino2cp*)
 
@@ -35,4 +37,5 @@ IMPORT_ARCHIVES = $(INO2CPP)
 IMPORT_PACKAGES =
 
 REFERENCED_REPOS = $(TIRTOS.msp432) $(TIDRIVERS.msp432) \
-                   $(TIRTOS.cc13xx) $(TIDRIVERS.cc13xx)
+                   $(TIRTOS.cc13xx) $(TIDRIVERS.cc13xx) \
+                   $(TIRTOS.cc32xx) $(TIDRIVERS.cc32xx)

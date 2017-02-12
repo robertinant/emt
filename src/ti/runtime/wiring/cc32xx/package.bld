@@ -1,0 +1,25 @@
+/*
+ *  ======== package.bld ========
+ */
+var cc32xx = xdc.loadCapsule("cc32xx.bld");
+
+//Pkg.attrs.profile = "debug";
+//Pkg.uses = ["ti/runtime/wiring"];
+
+// options required for multi-threaded support
+//var base = xdc.getPackageBase(Pkg.name) + "/libraries/sdk";
+//var INCS = "-I" + base + "/oslib";
+//var DEFS = "-DSL_FULL -DSL_PLATFORM_MULTI_THREADED";
+
+/* _POSIX_SOURCE is needed to work around a duplicate symbol
+ * definition in socket.h: GCC wants to define it (unless 
+ * _POSIX_SOURCE is defined) but it's also defined by our socket.h
+ */
+var DEFS = "-D_POSIX_SOURCE " + cc32xx.DEFS;
+
+var SRCDIRS = [
+    ".", "..", "../avr", 
+//    "./libraries/ZumoCC3200", "./libraries/ZumoCC3200/utility",
+];
+
+cc32xx.addLibs(SRCDIRS, {name: "lib/wiring_cc32xx", defs: DEFS});

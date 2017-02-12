@@ -1,0 +1,64 @@
+/*
+ *  ======== package.bld ========
+ */
+Pkg.attrs.profile = "release";
+//Pkg.attrs.profile = "debug";
+Pkg.attrs.exportAll = true;
+
+var platform = xdc.module("ti.platforms.emt32xx.Platform");
+var DLIBROOT = platform.findDriverLib();
+print (DLIBROOT);
+
+var INCS = '-I"' + DLIBROOT + '" '
+       + '-I"' + DLIBROOT + '/driverlib" '
+       + '-I"' + DLIBROOT + '/inc" '
+       + '-I"' + '" ';
+
+
+Pkg.uses = ["ti/runtime/wiring", "ti/runtime/wiring/cc32xx"];
+
+var PLATFORM = "ti.platforms.emt32xx:CC3220S_LAUNCHXL";
+var DEFS = "-Dxdc__nolocalstring=1 -DBOARD_CC3220S_LAUNCHXL";
+
+//var PLATFORM = "ti.platforms.emt32xx:CC3220SF_LAUNCHXL";
+//var DEFS = "-Dxdc__nolocalstring=1 -DBOARD_CC3220SF_LAUNCHXL";
+
+var MAIN = "main.cpp";
+var SRCS = getSources(".");
+print(SRCS);
+print(MAIN);
+
+for (var i = 0; i < Build.targets.length; i++) {
+    var targ = Build.targets[i];
+
+    if (targ.name != "M4") {
+        continue;
+    }
+
+    var cxxopts = targ.$name.indexOf("gnu.targets") == 0 ? "-fno-rtti" : "";
+
+    var lib = Pkg.addLibrary("lib/sketches", targ, {defs: DEFS, incs: INCS});
+    lib.addObjects(SRCS, {copts: cxxopts});
+
+    var exe = Pkg.addExecutable("energia", targ, PLATFORM, {defs: DEFS, incs: INCS});
+    exe.addObjects([MAIN], {copts: cxxopts});
+
+    break;  /* comment this out to build using TI compiler */
+}
+
+/*
+ *  ======== getSources ========
+ *  Return array of *.c and *.cpp files in the current working directory
+ */
+function getSources(dir)
+{
+    var result = [];
+    var list = java.io.File(dir).list();
+    for (var i = 0; i < list.length; i++) {
+        var file = String(list[i]);
+        if (file.match(/\.c$|\.cpp$/) && file[0] != '.' && file != MAIN) {
+            result.push(file);
+        }
+    }
+    return (result);
+}

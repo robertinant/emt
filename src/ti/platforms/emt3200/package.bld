@@ -1,3 +1,0 @@
-Pkg.otherFiles = [
-    "include", "include_gnu", "templates"
-];
