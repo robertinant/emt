@@ -34,7 +34,8 @@
 #include <stdbool.h>
 
 #include <ti/drivers/ADC.h>
-#include <ti/drivers/adc/ADCMSP432.h>
+//#include <ti/drivers/adc/ADCMSP432.h>
+#include "ADCMSP432.h"
 #include <ti/drivers/dpl/DebugP.h>
 #include <ti/drivers/dpl/HwiP.h>
 #include <ti/drivers/dpl/SemaphoreP.h>
