@@ -3,7 +3,7 @@ PLATFORMS ?= cc13xx cc26xx msp432 cc32xx
 
 ifeq (,$(TESTS))
     TESTS        = blink hello alloc string 
-    TESTS.cc32xx = zumo wifi pstring MultiBlink 
+    TESTS.cc32xx = pstring MultiBlink 
     TESTS.msp432 = pstring MultiBlink 
     TESTS.cc26xx = pstring MultiBlink 
 endif
@@ -40,7 +40,6 @@ ifeq (,$(MCPI_TREE))
     $(warning "warning: importing $(TREE_ROOT)/imports.mak to get MCPI_TREE")
     include $(TREE_ROOT)/imports.mak
 endif
-
 
 # ensure "all" is the default build goal
 all: makefile

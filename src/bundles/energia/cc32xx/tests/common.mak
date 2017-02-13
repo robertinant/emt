@@ -38,7 +38,7 @@ ifneq (,$(wildcard $(INO2CPP)))
 endif
 
 # Supported variants include:
-#    CC3220iS_LAUNCHXL	  - TI LaunchPad
+#    CC3220S_LAUNCHXL	  - TI LaunchPad
 VARIANT ?= CC3220S_LAUNCHXL
 PROGNAME ?= blink
 
@@ -90,7 +90,7 @@ all: $(PROGNAME).out $(PROGNAME).size
 ifeq ("true",$(ISINO))
   $(PROGNAME).cpp main.cpp: $(PROGNAME).ino 
 	@echo making $@ ...
-	$(INO2CPP) -E -o . $(SRCDIR) cc32xxemt:$(VARIANT)
+	$(INO2CPP) -E -o . $(SRCDIR) cc3200emt:$(VARIANT)
 endif
 
 %.bin: %.out

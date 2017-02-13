@@ -1,5 +1,5 @@
 #
-#  Example makefile to build an MSP432 LP TI-RTOS "reusable configuration";
+#  Example makefile to build a TI-RTOS "reusable configuration";
 #  a fixed configuration of TI-RTOS that can be consumed by applications as
 #  a 100% self contained set of libraries and headers.
 #
