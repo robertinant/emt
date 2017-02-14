@@ -7,7 +7,7 @@ rm -rf $base/msp432/closure $base/cc3200/closure $base/cc26xx/closure
 echo "pushing local git repo to gitorious ..."
 (cd ../emt.git; git push --all; git push --tags)
 
-echo "pushing closures to to energia.nu ..."
+echo "pushing board packages to energia.nu ..."
 ./push.ksh
 
 echo "done."

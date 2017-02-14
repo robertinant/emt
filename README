@@ -1,4 +1,4 @@
-				emt-d04
+				emt-d05
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -117,20 +117,10 @@ DELETIONS
 
 CHANGES
 
-bundles/energia
-	fix more bugs in the */mkbrd.ksh scripts to strictly match SDK design
+bundles/energia ./makeunix
+	update build to respect CC32xx changes
 
-bundles/energia/msp432
-	Correct maximum_size / maximum_data_size in boards.txt for msp432
-
-	Fixup platform.txt for msp432 to support new SDK
-
-bundles/energia/cc13xx
-	fix the cc13xx platform file to add a necessary BU device definition
-
-bundles/energia/cc13xx/variants
-	renamed cc13xx LAUNCHXL_blah to blah_LAUNCHXL
-
-
+*
+	removed CC3200 and added initial CC322x support
 
 MRS
