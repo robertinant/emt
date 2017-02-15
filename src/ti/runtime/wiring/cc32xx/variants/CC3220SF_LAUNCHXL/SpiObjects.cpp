@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, Texas Instruments Incorporated
+ * Copyright (c) 2017, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,4 +35,5 @@
 /*
  * Pre-Initialize SPI instances
  */
-SPIClass SPI(0);
+SPIClass SPI(1);  /* the 0th SPI instance is reserved for use by */
+                  /* simplelink to communicate with the NWP */
