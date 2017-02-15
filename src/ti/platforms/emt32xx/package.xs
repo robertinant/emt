@@ -39,7 +39,7 @@ function getLibs(prog)
     var dlib = Platform.addDriverLibs ? Platform.findDriverLib() : null;
     if (dlib != null) {
 	libs = (libs ? (libs + ';') : "")
-	    + dlib + "/driverlib/ccs/Release/driverlib.a";
+	    + dlib + "/driverlib/gcc/Release/driverlib.a";
     }
 
     /* '!' tells XDCtools the file won't exist until _after_ generation */
