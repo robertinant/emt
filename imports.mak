@@ -8,7 +8,7 @@ ENERGIA = /db/builds/xinstall/energia_nightly/Energia
 #
 # internal TISB trees containing imports
 #
-MCPI_TREE = $(TREES)/mcpi/mcpi-3.10.00.08_eng
+MCPI_TREE = $(TREES)/mcpi/mcpi-3.10.00.09_eng
 
 #
 # Specific required imports (referenced by makeunix, for example)
