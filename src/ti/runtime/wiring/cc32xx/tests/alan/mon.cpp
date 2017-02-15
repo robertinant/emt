@@ -1314,6 +1314,9 @@ static void aMuxChannelEnable(unsigned int pin)
     Wire.beginTransmission(PCF8574A_I2C_ADDR);
     Wire.write(chan);
     Wire.endTransmission();
+
+    /* wait for the dust to settle */
+    delay(1);
 }
 
 #endif
@@ -1419,6 +1422,7 @@ static int consoleHandler_artest(const char * line)
     dacValues[3] = maxDacValue*3/4;
     dacValues[4] = maxDacValue;
 
+    /* force common pin to be an input */
     digitalRead(5);
 
     aMuxChannelEnable(0);
@@ -1450,7 +1454,7 @@ static int consoleHandler_artest(const char * line)
             analogReadResolution(10);
         
             System_snprintf(response, sizeof(response),
-                " pin A%d = %8d  %8d  %8d  %8d", pinIdx, aval[0], aval[1], aval[2], aval[3]);
+                " pin %d = %8d  %8d  %8d  %8d", pin, aval[0], aval[1], aval[2], aval[3]);
 
             SERIAL.println(response);
         }
