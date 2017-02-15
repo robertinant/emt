@@ -63,8 +63,7 @@
  *  =============================== ADC ===============================
  */
 #include <ti/drivers/ADC.h>
-//#include <ti/drivers/adc/ADCMSP432.h>
-#include "ADCMSP432.h"
+#include <ti/drivers/adc/ADCMSP432.h>
 
 /* ADC objects */
 ADCMSP432_Object adcMSP432Objects[Board_ADCCOUNT];

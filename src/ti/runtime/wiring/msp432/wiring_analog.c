@@ -42,8 +42,7 @@
 #include <ti/drivers/pwm/PWMTimerMSP432.h>
 
 #include <ti/drivers/ADC.h>
-//#include <ti/drivers/adc/ADCMSP432.h>
-#include "variants/MSP_EXP432P401R/ADCMSP432.h"
+#include <ti/drivers/adc/ADCMSP432.h>
 
 #include <ti/sysbios/family/arm/m3/Hwi.h>
 #include <ti/sysbios/family/arm/msp432/Timer.h>
