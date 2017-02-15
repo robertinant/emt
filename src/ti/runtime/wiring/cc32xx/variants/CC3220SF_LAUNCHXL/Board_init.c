@@ -548,12 +548,9 @@ PowerCC32XX_ParkInfo parkInfo[] = {
     {PowerCC32XX_PIN04, PowerCC32XX_WEAK_PULL_DOWN_STD}, /* GPIO13              */
     {PowerCC32XX_PIN05, PowerCC32XX_WEAK_PULL_DOWN_STD}, /* GPIO14              */
     {PowerCC32XX_PIN06, PowerCC32XX_WEAK_PULL_DOWN_STD}, /* GPIO15              */
-    {PowerCC32XX_PIN07, PowerCC32XX_DONT_PARK},          /* GPIO16 (UART1_TX)   */
+    {PowerCC32XX_PIN07, PowerCC32XX_WEAK_PULL_DOWN_STD}, /* GPIO16              */
     {PowerCC32XX_PIN08, PowerCC32XX_WEAK_PULL_DOWN_STD}, /* GPIO17              */
-    {PowerCC32XX_PIN11, PowerCC32XX_WEAK_PULL_DOWN_STD}, /* FLASH_SPI_CLK       */
-    {PowerCC32XX_PIN12, PowerCC32XX_WEAK_PULL_DOWN_STD}, /* FLASH_SPI_DOUT      */
     {PowerCC32XX_PIN13, PowerCC32XX_WEAK_PULL_DOWN_STD}, /* FLASH_SPI_DIN       */
-    {PowerCC32XX_PIN14, PowerCC32XX_WEAK_PULL_DOWN_STD}, /* FLASH_SPI_CS        */
     {PowerCC32XX_PIN15, PowerCC32XX_WEAK_PULL_DOWN_STD}, /* GPIO22              */
     {PowerCC32XX_PIN16, PowerCC32XX_WEAK_PULL_DOWN_STD}, /* TDI (JTAG DEBUG)    */
     {PowerCC32XX_PIN17, PowerCC32XX_WEAK_PULL_DOWN_STD}, /* TDO (JTAG DEBUG)    */
@@ -567,8 +564,8 @@ PowerCC32XX_ParkInfo parkInfo[] = {
     {PowerCC32XX_PIN50, PowerCC32XX_WEAK_PULL_DOWN_STD}, /* GPIO0               */
     {PowerCC32XX_PIN52, PowerCC32XX_WEAK_PULL_DOWN_STD}, /* RTC_XTAL_N          */
     {PowerCC32XX_PIN53, PowerCC32XX_WEAK_PULL_DOWN_STD}, /* GPIO30              */
-    {PowerCC32XX_PIN55, PowerCC32XX_DONT_PARK},          /* GPIO1 (UART0_TX)    */
-    {PowerCC32XX_PIN57, PowerCC32XX_WEAK_PULL_DOWN_STD}, /* GPIO2               */
+    {PowerCC32XX_PIN55, PowerCC32XX_WEAK_PULL_UP_STD},   /* GPIO1 (XDS_UART_RX) */
+    {PowerCC32XX_PIN57, PowerCC32XX_WEAK_PULL_UP_STD},   /* GPIO2 (XDS_UART_TX) */
     {PowerCC32XX_PIN58, PowerCC32XX_WEAK_PULL_DOWN_STD}, /* GPIO3               */
     {PowerCC32XX_PIN59, PowerCC32XX_WEAK_PULL_DOWN_STD}, /* GPIO4               */
     {PowerCC32XX_PIN60, PowerCC32XX_WEAK_PULL_DOWN_STD}, /* GPIO5               */
