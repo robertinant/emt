@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2016, Texas Instruments Incorporated
+ * Copyright (c) 2015-2017, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,7 +38,6 @@
 #include <xdc/runtime/Diags.h>
 #include <xdc/runtime/Log.h>
 #include <xdc/runtime/Types.h>
-
 #include <ti/sysbios/BIOS.h>
 #include <ti/sysbios/knl/Semaphore.h>
 #include <ti/sysbios/knl/Swi.h>
@@ -850,8 +849,17 @@ void UARTCC26XX_close(UART_Handle handle)
     UARTIntDisable(hwAttrs->baseAddr, UART_INT_OE | UART_INT_BE | UART_INT_PE |
                                       UART_INT_FE | UART_INT_RT | UART_INT_TX |
                                       UART_INT_RX | UART_INT_CTS);
-    /* Disable UART */
-    UARTDisable(hwAttrs->baseAddr);
+
+
+    /* Cancel any possible ongoing reads/writes */
+    UARTCC26XX_writeCancel(handle);
+    UARTCC26XX_readCancel(handle);
+
+    /* Disable UART FIFO */
+    HWREG(hwAttrs->baseAddr + UART_O_LCRH) &= ~(UART_LCRH_FEN);
+    /* Disable UART module */
+    HWREG(hwAttrs->baseAddr + UART_O_CTL) &= ~(UART_CTL_UARTEN | UART_CTL_TXE |
+                                      UART_CTL_RXE);
 
     /* Release power dependency - i.e. potentially power down serial domain. */
     Power_releaseDependency(hwAttrs->powerMngrId);
