@@ -1,14 +1,14 @@
 #
 # XDCtools used to build this tree
 #
-XDCROOT = $(TOOLS)/vendors/xdc/xdctools_3_32_01_11_eng/$(BUILD_HOST_OS)
+XDCROOT = $(TOOLS)/vendors/xdc/xdctools_3_50_00_10/$(BUILD_HOST_OS)
 
 ENERGIA = /db/builds/xinstall/energia_nightly/Energia
 
 #
 # internal TISB trees containing imports
 #
-MCPI_TREE = $(TREES)/mcpi/mcpi-b19
+MCPI_TREE = $(TREES)/mcpi/mcpi-3.10.00.08_eng
 
 #
 # Specific required imports (referenced by makeunix, for example)
