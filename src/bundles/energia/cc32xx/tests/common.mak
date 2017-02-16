@@ -43,7 +43,7 @@ VARIANT ?= CC3220S_LAUNCHXL
 PROGNAME ?= blink
 
 # define CC32xx DriverLib libs and headers based on definitions above
-SDK_LIBS = $(DRVLIB.cc32xx)/driverlib/ccs/Release/driverlib.a
+SDK_LIBS = $(DRVLIB.cc32xx)/driverlib/gcc/Release/driverlib.a
 
 #define board-specific library path
 BRD_LIBS = $(CLOSURE)/ti/runtime/wiring/cc32xx/variants/$(VARIANT)
