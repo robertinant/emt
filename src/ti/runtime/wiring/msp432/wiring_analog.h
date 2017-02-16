@@ -40,7 +40,6 @@ extern "C" {
 #endif
 
 #define NOT_A_PIN       0
-#define NOT_ON_ADC      0xff
 
 /* PWM digital_pin_to_pwm_index table encodings */
 #define PWM_MAPPABLE        0xfe
@@ -62,7 +61,6 @@ extern "C" {
 #define PWM_MAX_MAPPABLE_INDEX   PWM_FIXED_INDEX_7
 
 extern uint8_t digital_pin_to_pwm_index[];
-extern const uint8_t digital_pin_to_adc_index[];
 
 #ifdef __cplusplus
 } // extern "C"

@@ -55,7 +55,6 @@ extern "C" {
 #define NOT_ON_ADC      0xff
 
 extern const uint32_t digital_pin_to_pwm_pin[];
-extern const uint16_t digital_pin_to_adc_index[];
 
 #ifdef __cplusplus
 } // extern "C"

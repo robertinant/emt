@@ -135,7 +135,7 @@ const uint32_t digital_pin_to_pwm_pin[] = {
     PWMTimerCC32XX_PIN_02,  /*  40 -  GPIO_11 T3B */
 };
 
-const uint16_t digital_pin_to_adc_index[] = {
+const uint8_t digital_pin_to_adc_index[] = {
     NOT_ON_ADC,     /*  dummy */
     NOT_ON_ADC,     /*  1  - 3.3V */
     1,              /*  2  - GPIO_03 */

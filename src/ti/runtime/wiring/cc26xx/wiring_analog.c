@@ -241,8 +241,7 @@ void stopAnalogWrite(uint8_t pin)
  * analogRead() support
  */
 
-static int8_t analogReadShift = 2;
-static bool adcInitialized = false;
+int8_t analogReadShift = 2;
 
 /*
  * \brief           configure the A/D reference voltage
@@ -251,63 +250,6 @@ static bool adcInitialized = false;
  */
 void analogReference(uint16_t mode)
 {
-}
-
-/*
- * \brief           Reads an analog value from the pin specified.
- * \param[in] pin   The pin number to read from.
- * \return          A 16-bit integer containing a 12-bit sample from the ADC.
- */
-uint16_t analogRead(uint8_t pin)
-{
-    uint8_t adcIndex = digital_pin_to_adc_index[pin];
-    uint16_t sample;
-
-    if (adcIndex == NOT_ON_ADC) return (0);
-
-    /* re-configure pin if necessary */
-    if (digital_pin_to_pin_function[pin] != PIN_FUNC_ANALOG_INPUT) {
-        ADC_Params adcParams;
-        ADC_Handle adcHandle;
-
-        /* undo pin's current plumbing */
-        switch (digital_pin_to_pin_function[pin]) {
-            case PIN_FUNC_ANALOG_OUTPUT:
-                stopAnalogWrite(pin);
-                break;
-            case PIN_FUNC_DIGITAL_INPUT:
-                stopDigitalRead(pin);
-                break;
-            case PIN_FUNC_DIGITAL_OUTPUT:
-                stopDigitalWrite(pin);
-                break;
-        }
-
-        if (adcInitialized == false) {
-            ADC_init();
-            adcInitialized = true;
-        }
-        
-        ADC_Params_init(&adcParams);
-        adcParams.isProtected = false;  /* do NOT use a semaphore for thread safety */
-
-        adcHandle = ADC_open(adcIndex, &adcParams);
-
-        if (adcHandle == NULL) {
-            return (0);
-        }
-
-        digital_pin_to_pin_function[pin] = PIN_FUNC_ANALOG_INPUT;
-    }
-    
-    ADC_convert((ADC_Handle)&(ADC_config[adcIndex]), &sample);
-    
-    if (analogReadShift >= 0) {
-        return (sample >> analogReadShift);
-    }
-    else {
-        return (sample << -analogReadShift);
-    }
 }
 
 /*
