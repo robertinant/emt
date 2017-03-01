@@ -74,7 +74,7 @@ gnuTargets.M4F.lnkOpts.suffix += " -lstdc++";
 gnuTargets.M4.lnkOpts.suffix  += " -lstdc++";
 gnuTargets.M3.lnkOpts.suffix  += " -lstdc++";
 
-/* disable wchar warning about incompatibility between TI and GCC ABI objects */
+/* disable wchar warning about incompatibility between TI & GCC ABI objects */
 gnuTargets.M4F.lnkOpts.suffix += " -Wl,--no-wchar-size-warning";
 gnuTargets.M4.lnkOpts.suffix  += " -Wl,--no-wchar-size-warning";
 gnuTargets.M3.lnkOpts.suffix  += " -Wl,--no-wchar-size-warning";

@@ -4,7 +4,7 @@
 #
 #  Usage: mkbrd <path_to_emt_source_archive> <ti-rtos_product_tree_name>
 #
-#  cc3200 uses the M4 target  => GCC libs install-native/*/lib/armv7e-m
+#  cc32xx uses the M4 target  => GCC libs install-native/*/lib/armv7e-m
 #  msp432 uses the M4F target => GCC libs install-native/*/lib/armv7e-m/fpu
 #  cc26xx uses the M3 target  => GCC libs install-native/*/lib/armv7-m
 #  cc13xx uses the M3 target  => GCC libs install-native/*/lib/armv7-m
@@ -86,14 +86,14 @@ CORE=${CORE%/*}
 CORE=${CORE##*/}
 echo CORE = $CORE
 
-# unzip _all_ emt sources to EMTDIR (= $DSTDIR/cores/{msp432,cc3200, ...})
+# unzip _all_ emt sources to EMTDIR (= $DSTDIR/cores/{msp432,cc32xx, ...})
 echo "unzipping emt sources to $DSTDIR/cores ..."
 EMTDIR="$DSTDIR/cores/$CORE"
 unzip -q $srczip -d $DSTDIR/cores
 
 # remove sources that are unrelated to the core $CORE
 echo "remove unrelated cores ..."
-for c in msp432 cc26xx cc13xx cc3200; do
+for c in msp432 cc26xx cc13xx cc32xx; do
     if [ "$c" != "$CORE" ]; then
 	echo "    rm -rf $c ..."
 	rm -rf $DSTDIR/cores/emt/ti/runtime/wiring/$c

@@ -16,7 +16,7 @@ metaonly module Platform inherits ti.platforms.launchpad.IPlatform
 
     /*!
      *  ======== driverLibPattern ========
-     *  The pattern used to locate CC3200 DriverLib
+     *  The pattern used to locate CC32xx DriverLib
      *
      *  The default setting below locates driverLib relative to the TI-RTOS
      *  repo which must be on the package path in order to access reentrant
