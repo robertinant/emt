@@ -1,4 +1,4 @@
-				emt-d05
+				emt-d06
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -117,10 +117,17 @@ DELETIONS
 
 CHANGES
 
-bundles/energia ./makeunix
-	update build to respect CC32xx changes
+imports.mak
+	use xdctools 3.50 + BU SDK (with a GA coresdk)
 
-*
-	removed CC3200 and added initial CC322x support
+bundles/energia/cc32xx
+	first cut at SDK based board package
+
+ti.runtime.wiring.<family>
+	refactor analogRead() now that the implementation is identical for
+        all device families
+
+ti.runtime.wiring.cc32xx/variants
+	various 3.10 boardfile tweaks
 
 MRS
