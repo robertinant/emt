@@ -36,10 +36,8 @@ endef
 TREE_ROOT = $(firstword $(subst /src/, /src/,$(CURDIR)))
 TREE_NAME = $(notdir $(TREE_ROOT))
 
-ifeq (,$(MCPI_TREE))
-    $(warning "warning: importing $(TREE_ROOT)/imports.mak to get MCPI_TREE")
-    include $(TREE_ROOT)/imports.mak
-endif
+# import SDK locations from imports.mak
+include $(TREE_ROOT)/imports.mak
 
 # ensure "all" is the default build goal
 all: makefile
@@ -53,8 +51,8 @@ closure-$(TREE_NAME).tar.gz: $(TREE_ROOT)/exports/emt_src.zip $(CLOSURE_ZIPS)
 
 # rules to make the loadable board .zip archives
 .PHONY: board.msp432 board.cc32xx board.cc13xx
-#boards: board.msp432 board.cc32xx board.cc13xx
-boards: board.msp432 board.cc13xx
+
+boards: board.msp432 board.cc32xx board.cc13xx
 
 board.cc13xx: cc13xx-$(TREE_NAME).zip
 cc13xx-$(TREE_NAME).zip: $(TREE_ROOT)/exports/emt_src.zip cc13xx/closure.zip
@@ -69,7 +67,7 @@ msp432-$(TREE_NAME).zip: $(TREE_ROOT)/exports/emt_src.zip msp432/closure.zip
 board.cc32xx: cc32xx-$(TREE_NAME).zip
 cc32xx-$(TREE_NAME).zip: $(TREE_ROOT)/exports/emt_src.zip cc32xx/closure.zip
 	@echo making $@ ...
-	./cc32xx/mkbrd.ksh $< $(MCPI_TREE)
+	./cc32xx/mkbrd.ksh $< $(SDK.cc32xx)
 
 # rule for device-specific closure zips; used to create board packages
 %/closure.zip: | all

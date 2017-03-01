@@ -8,14 +8,21 @@ ENERGIA = /db/builds/xinstall/energia_nightly/Energia
 #
 # internal TISB trees containing imports
 #
-MCPI_TREE = $(TREES)/mcpi/mcpi-3.10.00.09_eng
+MCPI_TREE = $(TREES)/mcpi/mcpi-3.10.00.10
+SDK_CC32XX = simplelink_cc32xx_sdk_1_30_00_01_eng
+
+#
+# Official SDK builds:
+#   MSP432: http://msp430.sc.ti.com/component_builds/msp432_sdk/ 
+#   CC3220: http://msp430.sc.ti.com/component_builds/CC32XX_SDK/Version
+#
 
 #
 # Specific required imports (referenced by makeunix, for example)
 #
 SDK.msp432 = $(firstword $(wildcard $(MCPI_TREE)/exports/coresdk_msp432_*))
 SDK.cc13xx = $(firstword $(wildcard $(MCPI_TREE)/exports/coresdk_cc13xx_*))
-SDK.cc32xx = $(firstword $(wildcard $(MCPI_TREE)/exports/coresdk_cc32xx_*))
+SDK.cc32xx = $(TOOLS)/vendors/ti/cc3220_sdk/$(SDK_CC32XX)
 
 TIRTOS.msp432   = $(SDK.msp432)/kernel/tirtos/packages
 TIDRIVERS.msp432 = $(SDK.msp432)/source
