@@ -9,8 +9,9 @@ requires internal ti.runtime.wiring.cc13xx;
 //requires internal ti.runtime.wiring.cc26xx;
 //requires internal ti.runtime.wiring.cc26xx.variants.CC2650STK_BLE;
 
-//requires internal ti.runtime.wiring.cc3200.variants.CC3200_LAUNCHXL;
-//requires internal ti.runtime.wiring.cc3200;
+requires internal ti.runtime.wiring.cc32xx.variants.CC3220SF_LAUNCHXL;
+requires internal ti.runtime.wiring.cc32xx.variants.CC3220S_LAUNCHXL;
+requires internal ti.runtime.wiring.cc32xx;
 
 /*!
  *  ======== emt ========
