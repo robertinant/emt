@@ -59,6 +59,24 @@
 #include <ti/drivers/ADC.h>
 #include <ti/drivers/adc/ADCCC26XX.h>
 
+void ADCCC26XX_close(ADC_Handle handle);
+int_fast16_t ADCCC26XX_control(ADC_Handle handle, uint_fast16_t cmd, void *arg);
+int_fast16_t ADCCC26XX_convert(ADC_Handle handle, uint16_t *value);
+uint32_t ADCCC26XX_convertRawToMicroVolts(ADC_Handle handle,
+    uint16_t rawAdcValue);
+void ADCCC26XX_init(ADC_Handle handle);
+ADC_Handle ADCCC26XX_open(ADC_Handle handle, ADC_Params *params);
+
+/* ADC function table for ADCCC26XX implementation */
+const ADC_FxnTable myADCCC26XX_fxnTable = {
+    ADCCC26XX_close,
+    NULL, /* ADCCC26XX_control, */
+    ADCCC26XX_convert,
+    NULL, /* ADCCC26XX_convertRawToMicroVolts, */
+    ADCCC26XX_init,
+    ADCCC26XX_open
+};
+
 ADCCC26XX_Object adcCC26xxObjects[CC1310_LAUNCHXL_ADCCOUNT];
 
 const ADCCC26XX_HWAttrs adcCC26xxHWAttrs[CC1310_LAUNCHXL_ADCCOUNT] = {
@@ -122,7 +140,7 @@ const ADCCC26XX_HWAttrs adcCC26xxHWAttrs[CC1310_LAUNCHXL_ADCCOUNT] = {
         .adcDIO              = CC1310_LAUNCHXL_DIO30_ANALOG,
         .adcCompBInput       = ADC_COMPB_IN_AUXIO0,
         .refSource           = ADCCC26XX_VDDS_REFERENCE,
-        .samplingDuration    = ADCCC26XX_SAMPLING_DURATION_10P9_MS,
+        .samplingDuration    = ADCCC26XX_SAMPLING_DURATION_2P7_US,
         .inputScalingEnabled = true,
         .triggerSource       = ADCCC26XX_TRIGGER_MANUAL
     },
@@ -153,17 +171,17 @@ const ADCCC26XX_HWAttrs adcCC26xxHWAttrs[CC1310_LAUNCHXL_ADCCOUNT] = {
 };
 
 const ADC_Config ADC_config[CC1310_LAUNCHXL_ADCCOUNT] = {
-    {&ADCCC26XX_fxnTable, &adcCC26xxObjects[CC1310_LAUNCHXL_ADC0], &adcCC26xxHWAttrs[CC1310_LAUNCHXL_ADC0]},
-    {&ADCCC26XX_fxnTable, &adcCC26xxObjects[CC1310_LAUNCHXL_ADC1], &adcCC26xxHWAttrs[CC1310_LAUNCHXL_ADC1]},
-    {&ADCCC26XX_fxnTable, &adcCC26xxObjects[CC1310_LAUNCHXL_ADC2], &adcCC26xxHWAttrs[CC1310_LAUNCHXL_ADC2]},
-    {&ADCCC26XX_fxnTable, &adcCC26xxObjects[CC1310_LAUNCHXL_ADC3], &adcCC26xxHWAttrs[CC1310_LAUNCHXL_ADC3]},
-    {&ADCCC26XX_fxnTable, &adcCC26xxObjects[CC1310_LAUNCHXL_ADC4], &adcCC26xxHWAttrs[CC1310_LAUNCHXL_ADC4]},
-    {&ADCCC26XX_fxnTable, &adcCC26xxObjects[CC1310_LAUNCHXL_ADC5], &adcCC26xxHWAttrs[CC1310_LAUNCHXL_ADC5]},
-    {&ADCCC26XX_fxnTable, &adcCC26xxObjects[CC1310_LAUNCHXL_ADC6], &adcCC26xxHWAttrs[CC1310_LAUNCHXL_ADC6]},
-    {&ADCCC26XX_fxnTable, &adcCC26xxObjects[CC1310_LAUNCHXL_ADC7], &adcCC26xxHWAttrs[CC1310_LAUNCHXL_ADC7]},
-    {&ADCCC26XX_fxnTable, &adcCC26xxObjects[CC1310_LAUNCHXL_ADCDCOUPL], &adcCC26xxHWAttrs[CC1310_LAUNCHXL_ADCDCOUPL]},
-    {&ADCCC26XX_fxnTable, &adcCC26xxObjects[CC1310_LAUNCHXL_ADCVSS], &adcCC26xxHWAttrs[CC1310_LAUNCHXL_ADCVSS]},
-    {&ADCCC26XX_fxnTable, &adcCC26xxObjects[CC1310_LAUNCHXL_ADCVDDS], &adcCC26xxHWAttrs[CC1310_LAUNCHXL_ADCVDDS]},
+    {&myADCCC26XX_fxnTable, &adcCC26xxObjects[CC1310_LAUNCHXL_ADC0], &adcCC26xxHWAttrs[CC1310_LAUNCHXL_ADC0]},
+    {&myADCCC26XX_fxnTable, &adcCC26xxObjects[CC1310_LAUNCHXL_ADC1], &adcCC26xxHWAttrs[CC1310_LAUNCHXL_ADC1]},
+    {&myADCCC26XX_fxnTable, &adcCC26xxObjects[CC1310_LAUNCHXL_ADC2], &adcCC26xxHWAttrs[CC1310_LAUNCHXL_ADC2]},
+    {&myADCCC26XX_fxnTable, &adcCC26xxObjects[CC1310_LAUNCHXL_ADC3], &adcCC26xxHWAttrs[CC1310_LAUNCHXL_ADC3]},
+    {&myADCCC26XX_fxnTable, &adcCC26xxObjects[CC1310_LAUNCHXL_ADC4], &adcCC26xxHWAttrs[CC1310_LAUNCHXL_ADC4]},
+    {&myADCCC26XX_fxnTable, &adcCC26xxObjects[CC1310_LAUNCHXL_ADC5], &adcCC26xxHWAttrs[CC1310_LAUNCHXL_ADC5]},
+    {&myADCCC26XX_fxnTable, &adcCC26xxObjects[CC1310_LAUNCHXL_ADC6], &adcCC26xxHWAttrs[CC1310_LAUNCHXL_ADC6]},
+    {&myADCCC26XX_fxnTable, &adcCC26xxObjects[CC1310_LAUNCHXL_ADC7], &adcCC26xxHWAttrs[CC1310_LAUNCHXL_ADC7]},
+    {&myADCCC26XX_fxnTable, &adcCC26xxObjects[CC1310_LAUNCHXL_ADCDCOUPL], &adcCC26xxHWAttrs[CC1310_LAUNCHXL_ADCDCOUPL]},
+    {&myADCCC26XX_fxnTable, &adcCC26xxObjects[CC1310_LAUNCHXL_ADCVSS], &adcCC26xxHWAttrs[CC1310_LAUNCHXL_ADCVSS]},
+    {&myADCCC26XX_fxnTable, &adcCC26xxObjects[CC1310_LAUNCHXL_ADCVDDS], &adcCC26xxHWAttrs[CC1310_LAUNCHXL_ADCVDDS]},
 };
 
 const uint_least8_t ADC_count = CC1310_LAUNCHXL_ADCCOUNT;
@@ -342,6 +360,36 @@ void Board_initGPIO(void)
 #include <ti/drivers/UART.h>
 #include <ti/drivers/uart/UARTCC26XX.h>
 
+
+extern void UARTCC26XX_close(UART_Handle handle);
+extern int_fast16_t UARTCC26XX_control(UART_Handle handle, uint_fast16_t cmd,
+        void *arg);
+extern void UARTCC26XX_init(UART_Handle handle);
+extern UART_Handle UARTCC26XX_open(UART_Handle handle, UART_Params *params);
+extern int_fast32_t UARTCC26XX_read(UART_Handle handle, void *buffer, size_t size);
+extern void UARTCC26XX_readCancel(UART_Handle handle);
+extern int_fast32_t UARTCC26XX_readPolling(UART_Handle handle, void *buffer,
+        size_t size);
+extern int_fast32_t UARTCC26XX_write(UART_Handle handle, const void *buffer,
+        size_t size);
+extern void UARTCC26XX_writeCancel(UART_Handle handle);
+extern int_fast32_t UARTCC26XX_writePolling(UART_Handle handle, const void *buffer,
+        size_t size);
+
+/* UART function table for UARTMP432 implementation */
+const UART_FxnTable myUARTCC26XX_fxnTable = {
+    UARTCC26XX_close,
+    UARTCC26XX_control,
+    UARTCC26XX_init,
+    UARTCC26XX_open,
+    UARTCC26XX_read,
+    NULL, /* UARTCC26XX_readPolling, */
+    NULL, /* UARTCC26XX_readCancel, */
+    UARTCC26XX_write,
+    NULL, /* UARTCC26XX_writePolling, */
+    NULL /* UARTCC26XX_writeCancel, */
+};
+
 /* UART objects */
 UARTCC26XX_Object uartCC26XXObjects[CC1310_LAUNCHXL_UARTCOUNT];
 unsigned char uartCC26XXRingBuffer[CC1310_LAUNCHXL_UARTCOUNT][32];
@@ -366,7 +414,7 @@ const UARTCC26XX_HWAttrsV2 uartCC26XXHWAttrs[CC1310_LAUNCHXL_UARTCOUNT] = {
 /* UART configuration structure */
 const UART_Config UART_config[] = {
     {
-        .fxnTablePtr = &UARTCC26XX_fxnTable,
+        .fxnTablePtr = &myUARTCC26XX_fxnTable,
         .object      = &uartCC26XXObjects[0],
         .hwAttrs     = &uartCC26XXHWAttrs[0]
     },
@@ -409,7 +457,26 @@ const UDMACC26XX_Config UDMACC26XX_config[] = {
 /* Include drivers */
 #include <ti/drivers/spi/SPICC26XXDMA.h>
 
+/* SPICC26XXDMA functions */
+extern void SPICC26XXDMA_close(SPI_Handle handle);
+extern int_fast16_t SPICC26XXDMA_control(SPI_Handle handle, uint_fast16_t cmd, void *arg);
+extern void SPICC26XXDMA_init(SPI_Handle handle);
+extern SPI_Handle SPICC26XXDMA_open(SPI_Handle handle, SPI_Params *params);
+extern bool SPICC26XXDMA_transfer(SPI_Handle handle, SPI_Transaction *transaction);
+extern void SPICC26XXDMA_transferCancel(SPI_Handle handle);
+
+/* SPI function table for SPICC26XXDMA implementation */
+const SPI_FxnTable mySPICC26XXDMA_fxnTable = {
+    SPICC26XXDMA_close,
+    NULL, /* SPICC26XXDMA_control, */
+    SPICC26XXDMA_init,
+    SPICC26XXDMA_open,
+    SPICC26XXDMA_transfer,
+    NULL /* SPICC26XXDMA_transferCancel */
+};
+
 /* SPI objects */
+
 SPICC26XXDMA_Object spiCC26XXDMAObjects[CC1310_LAUNCHXL_SPICOUNT];
 
 /* SPI configuration structure, describing which pins are to be used */
@@ -434,7 +501,7 @@ const SPICC26XXDMA_HWAttrsV1 spiCC26XXDMAHWAttrs[CC1310_LAUNCHXL_SPICOUNT] = {
 const SPI_Config SPI_config[] = {
     /* CC1310_LAUNCHXL_SPI0 */
     {
-        .fxnTablePtr = &SPICC26XXDMA_fxnTable, 
+        .fxnTablePtr = &mySPICC26XXDMA_fxnTable, 
         .object      = &spiCC26XXDMAObjects[0], 
         .hwAttrs     = &spiCC26XXDMAHWAttrs[0]
     },
@@ -448,6 +515,22 @@ const uint_least8_t SPI_count = CC1310_LAUNCHXL_SPICOUNT;
 
 /* Include drivers */
 #include <ti/drivers/i2c/I2CCC26XX.h>
+
+extern void I2CCC26XX_cancel(I2C_Handle handle);
+extern void I2CCC26XX_close(I2C_Handle handle);
+extern int_fast16_t I2CCC26XX_control(I2C_Handle handle, uint_fast16_t cmd, void *arg);
+extern void I2CCC26XX_init(I2C_Handle handle);
+extern I2C_Handle I2CCC26XX_open(I2C_Handle handle, I2C_Params *params);
+extern bool I2CCC26XX_transfer(I2C_Handle handle, I2C_Transaction *transaction);
+
+const I2C_FxnTable myI2CCC26XX_fxnTable = {
+    NULL, /* I2CCC26XX_cancel, */
+    I2CCC26XX_close,
+    NULL, /* I2CCC26XX_control, */
+    I2CCC26XX_init,
+    I2CCC26XX_open,
+    I2CCC26XX_transfer
+};
 
 /* I2C objects */
 I2CCC26XX_Object i2cCC26xxObjects[CC1310_LAUNCHXL_I2CCOUNT];
@@ -467,7 +550,7 @@ const I2CCC26XX_HWAttrsV1 i2cCC26xxHWAttrs[CC1310_LAUNCHXL_I2CCOUNT] = {
 
 const I2C_Config I2C_config[] = {
     {
-        .fxnTablePtr = &I2CCC26XX_fxnTable,
+        .fxnTablePtr = &myI2CCC26XX_fxnTable,
         .object = &i2cCC26xxObjects[0],
         .hwAttrs = &i2cCC26xxHWAttrs[0]
     },
@@ -546,6 +629,27 @@ const GPTimerCC26XX_Config GPTimerCC26XX_config[CC1310_LAUNCHXL_GPTIMERPARTSCOUN
 #include <ti/drivers/PWM.h>
 #include <ti/drivers/pwm/PWMTimerCC26XX.h>
 
+void PWMTimerCC26XX_close(PWM_Handle handle);
+int_fast16_t PWMTimerCC26XX_control(PWM_Handle handle, uint_fast16_t cmd, void *arg);
+void PWMTimerCC26XX_init(PWM_Handle handle);
+PWM_Handle PWMTimerCC26XX_open(PWM_Handle handle, PWM_Params *params);
+int_fast16_t PWMTimerCC26XX_setDuty(PWM_Handle handle, uint32_t dutyValue);
+int_fast16_t PWMTimerCC26XX_setPeriod(PWM_Handle handle, uint32_t periodValue);
+void PWMTimerCC26XX_start(PWM_Handle handle);
+void PWMTimerCC26XX_stop(PWM_Handle handle);
+
+/* PWM function table for PWMTimerCC26XX implementation */
+const PWM_FxnTable myPWMTimerCC26XX_fxnTable = {
+    PWMTimerCC26XX_close,
+    NULL, /* PWMTimerCC26XX_control, */
+    PWMTimerCC26XX_init,
+    PWMTimerCC26XX_open,
+    PWMTimerCC26XX_setDuty,
+    NULL, /* PWMTimerCC26XX_setPeriod, */
+    PWMTimerCC26XX_start,
+    NULL /* PWMTimerCC26XX_stop */
+};
+
 /* PWM object, one per PWM output */
 PWMTimerCC26XX_Object pwmtimerCC26xxObjects[CC1310_LAUNCHXL_PWMCOUNT];
 
@@ -563,14 +667,14 @@ PWMTimerCC26XX_HwAttrs pwmtimerCC26xxHWAttrs[CC1310_LAUNCHXL_PWMCOUNT] = {
 
 /* PWM configuration (used as PWM_Handle by driver and application) */
 const PWM_Config PWM_config[CC1310_LAUNCHXL_PWMCOUNT] = {
-    { &PWMTimerCC26XX_fxnTable, &pwmtimerCC26xxObjects[0], &pwmtimerCC26xxHWAttrs[0] },
-    { &PWMTimerCC26XX_fxnTable, &pwmtimerCC26xxObjects[1], &pwmtimerCC26xxHWAttrs[1] },
-    { &PWMTimerCC26XX_fxnTable, &pwmtimerCC26xxObjects[2], &pwmtimerCC26xxHWAttrs[2] },
-    { &PWMTimerCC26XX_fxnTable, &pwmtimerCC26xxObjects[3], &pwmtimerCC26xxHWAttrs[3] },
-    { &PWMTimerCC26XX_fxnTable, &pwmtimerCC26xxObjects[4], &pwmtimerCC26xxHWAttrs[4] },
-    { &PWMTimerCC26XX_fxnTable, &pwmtimerCC26xxObjects[5], &pwmtimerCC26xxHWAttrs[5] },
-    { &PWMTimerCC26XX_fxnTable, &pwmtimerCC26xxObjects[6], &pwmtimerCC26xxHWAttrs[6] },
-    { &PWMTimerCC26XX_fxnTable, &pwmtimerCC26xxObjects[7], &pwmtimerCC26xxHWAttrs[7] },
+    { &myPWMTimerCC26XX_fxnTable, &pwmtimerCC26xxObjects[0], &pwmtimerCC26xxHWAttrs[0] },
+    { &myPWMTimerCC26XX_fxnTable, &pwmtimerCC26xxObjects[1], &pwmtimerCC26xxHWAttrs[1] },
+    { &myPWMTimerCC26XX_fxnTable, &pwmtimerCC26xxObjects[2], &pwmtimerCC26xxHWAttrs[2] },
+    { &myPWMTimerCC26XX_fxnTable, &pwmtimerCC26xxObjects[3], &pwmtimerCC26xxHWAttrs[3] },
+    { &myPWMTimerCC26XX_fxnTable, &pwmtimerCC26xxObjects[4], &pwmtimerCC26xxHWAttrs[4] },
+    { &myPWMTimerCC26XX_fxnTable, &pwmtimerCC26xxObjects[5], &pwmtimerCC26xxHWAttrs[5] },
+    { &myPWMTimerCC26XX_fxnTable, &pwmtimerCC26xxObjects[6], &pwmtimerCC26xxHWAttrs[6] },
+    { &myPWMTimerCC26XX_fxnTable, &pwmtimerCC26xxObjects[7], &pwmtimerCC26xxHWAttrs[7] },
 };
 
 const uint_least8_t PWM_count = CC1310_LAUNCHXL_PWMCOUNT;

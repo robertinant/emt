@@ -50,6 +50,7 @@
 #define PI_CMD 1     /* pulseIn() cmd */
 #define ARTEST_CMD 1 /* analogRead() self test */
 #define AWTEST_CMD 1 /* analogWrite() self test */
+#define DRWTEST_CMD 1 /* digitalRead/Write self test */
 
 #if ARTEST_CMD == 1
 #if defined(BOARD_CC3200LP) || defined(BOARD_CC3200_LAUNCHXL) || defined(BOARD_CC3220S_LAUNCHXL) || defined(BOARD_CC3220SF_LAUNCHXL)
@@ -80,6 +81,22 @@
 #define CC32XX_AWTEST_CMD 0
 #define MSP432_AWTEST_CMD 0
 #define CC26XX_AWTEST_CMD 1
+#endif
+#endif
+
+#if DRWTEST_CMD == 1
+#if defined(BOARD_CC3200LP) || defined(BOARD_CC3200_LAUNCHXL) || defined(BOARD_CC3220S_LAUNCHXL) || defined(BOARD_CC3220SF_LAUNCHXL)
+#define CC32XX_DRWTEST_CMD 1
+#define MSP432_DRWTEST_CMD 0
+#define CC26XX_DRWTEST_CMD 0
+#elif defined(BOARD_MSP432LP) || defined(BOARD_MSP_EXP432P401R)
+#define CC32XX_DRWTEST_CMD 0
+#define MSP432_DRWTEST_CMD 1
+#define CC26XX_DRWTEST_CMD 0
+#elif defined(BOARD_CC2650_LAUNCHXL) || defined(BOARD_CC1310_LAUNCHXL) || defined(BOARD_CC1350_LAUNCHXL)
+#define CC32XX_DRWTEST_CMD 0
+#define MSP432_DRWTEST_CMD 0
+#define CC26XX_DRWTEST_CMD 1
 #endif
 #endif
 
@@ -161,6 +178,10 @@ static int consoleHandler_artest(const char *line);
 static int consoleHandler_awtest(const char *line);
 #endif
 
+#if DRWTEST_CMD == 1
+static int consoleHandler_drwtest(const char *line);
+#endif
+
 static char home[] = "\e[H";
 static char clear[] = "\e[2J";
 
@@ -218,6 +239,9 @@ static const struct {
 #endif
 #if AWTEST_CMD == 1
     GEN_COMMTABLE_ENTRY(awtest,  "analogWrite test",            "usage: awtest"),
+#endif
+#if DRWTEST_CMD == 1
+    GEN_COMMTABLE_ENTRY(drwtest, "digitalReadWrite test",       "usage: drwtest"),
 #endif
     GEN_COMMTABLE_ENTRY(help,    "Get information on commands. Usage: help [command]",  NULL),
     {NULL,NULL,NULL,NULL}   // Indicates end of table
@@ -1238,7 +1262,7 @@ static int consoleHandler_pi(const char *line)
 
 #endif
 
-#if (ARTEST_CMD == 1) || (AWTEST_CMD == 1)
+#if (ARTEST_CMD == 1) || (AWTEST_CMD == 1) || (DRWTEST_CMD == 1)
 
 /*
  * The analog MUX selection bits are tied to the LS 4 bits
@@ -1296,6 +1320,9 @@ uint8_t pin_to_channel[] = {
 };
 
 #define PCF8574A_I2C_ADDR  (0x38)
+#define PCF8574T_I2C_ADDR  (0x20)
+
+#define PCF8574_I2C_ADDR PCF8574A_I2C_ADDR
 
 static void aMuxChannelEnable(unsigned int pin)
 {
@@ -1311,7 +1338,7 @@ static void aMuxChannelEnable(unsigned int pin)
         chan = 0x30; /* disable b0th muxes */
     }
 
-    Wire.beginTransmission(PCF8574A_I2C_ADDR);
+    Wire.beginTransmission(PCF8574_I2C_ADDR);
     Wire.write(chan);
     Wire.endTransmission();
 
@@ -1591,4 +1618,142 @@ static int consoleHandler_awtest(const char * line)
 }
 
 #endif /* AWTEST_CMD */
+
+
+#if DRWTEST_CMD == 1
+
+#if MSP432_DRWTEST_CMD == 1
+
+#define COMMON_PIN 24
+
+/* Supported analogWrite pins */
+static uint8_t drwPinIds[] = {
+    2, 5, 6, 7, 8,
+   11, 12, 13, 14, 15, 17, 18, 19,
+   23, 24, 25, 26, 27, 28, 29, 30,
+   31, 32, 33, 34, 35, 36, 37, 38, 39, 40
+};
+
+#endif  /* MSP432_DRWTEST_CMD */
+
+
+#if CC32XX_DRWTEST_CMD == 1
+
+#define COMMON_PIN 5
+
+/* Supported analogWrite pins */
+static uint8_t drwPinIds[] = {
+    3,  4,  5, 7, 8,
+    11, /* 12, 13, */ 14, 15, /* 17, */18, 19,
+    27, 28, 29, 30,
+    /* 31, 32 */
+};
+
+#endif  /* CC32XX_DRWTEST_CMD */
+
+
+#if CC26XX_DRWTEST_CMD == 1
+
+#define COMMON_PIN 24
+
+#if defined(BOARD_CC2650_LAUNCHXL)
+
+/* Supported analogWrite pins */
+static uint8_t drwPinIds[] = {
+    2,   5,
+    6,   7,   8,   11,
+    12,  13,  14,  15,
+    18,  19,  23,  24,
+    25,  26,  27,  28,
+    30, 
+    36,  37,  38,  39,
+    40
+};
+
+#elif defined(BOARD_CC1310_LAUNCHXL) || defined(BOARD_CC1350_LAUNCHXL)
+
+/* Supported analogWrite pins */
+static uint8_t drwPinIds[] = {
+    2,   5,
+    6,   7,   8,   11,
+    12,  13,  14,  15,
+    18,  19,  23,  24,
+    25,  26,  27,  28,
+    30,
+    36,  37,  38,  39,
+    40
+};
+
+#endif
+#endif  /* CC26XX_DRWTEST_CMD */
+
+static int consoleHandler_drwtest(const char * line)
+{
+    char *endptr;
+    uint8_t pin, pinIdx;
+    uint16_t dval[4];
+    static char response[80];
+    bool doLoop = true;
+
+    if (*line == ' ') {
+        pin = strtol(line , &endptr, 10);
+        doLoop = false;
+    }
+
+    Wire.begin();
+
+    /* turn off the DAC so that mux routes output pins to pin 23 */
+    disableDac();
+
+    pinMode(COMMON_PIN, INPUT);
+
+    aMuxChannelEnable(2);
+
+    System_snprintf(response, sizeof(response),
+        "             w0     w1     r0     r1");
+    SERIAL.println(response);
+
+    for (pinIdx = 0; pinIdx < sizeof(drwPinIds); pinIdx++ ) {
+
+        if (doLoop == true) {
+            pin = drwPinIds[pinIdx];
+        }
+
+        aMuxChannelEnable(pin);
+
+        /* digitalWrite test */
+        pinMode(pin, OUTPUT);
+
+        digitalWrite(pin, 0);
+        dval[0] = digitalRead(COMMON_PIN);
+
+        digitalWrite(pin, 1);
+        dval[1] = digitalRead(COMMON_PIN);
+
+        /* digitalRead test */
+        pinMode(pin, INPUT);
+        
+        digitalWrite(COMMON_PIN, 0);
+        dval[2] = digitalRead(pin);
+
+        digitalWrite(COMMON_PIN, 1);
+        dval[3] = digitalRead(pin);
+
+        /* release PWM resource */
+        pinMode(pin, INPUT);
+
+        System_snprintf(response, sizeof(response),
+            " pin %2d = %5d  %5d  %5d  %5d", pin,
+            dval[0], dval[1], dval[2], dval[3]);
+
+        SERIAL.println(response);
+
+        if (doLoop == false) break;
+    }
+
+    return RETURN_SUCCESS;
+}
+
+#endif /* DRWTEST_CMD */
+
 
