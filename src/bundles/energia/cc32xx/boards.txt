@@ -5,11 +5,11 @@ CC3220S-LAUNCHXL.build.mcu=cortex-m4
 CC3220S-LAUNCHXL.build.f_cpu=80000000L
 CC3220S-LAUNCHXL.build.core=cc3220emt
 CC3220S-LAUNCHXL.build.variant=CC3220S_LAUNCHXL
-CC3220S-LAUNCHXL.build.ldscript=ti/runtime/wiring/cc32xx/linker.cmd
+CC3220S-LAUNCHXL.build.ldscript=linker.cmd
 CC3220S-LAUNCHXL.build.board=CC3220S_LAUNCHXL
 CC3220S-LAUNCHXL.build.mcu=cortex-m4
-CC3220S-LAUNCHXL.upload.tool=cc3220prog
-CC3220S-LAUNCHXL.upload.protocol=cc3220prog
+CC3220S-LAUNCHXL.upload.tool=dslite
+CC3220S-LAUNCHXL.upload.protocol=dslite
 
 
 CC3220SF-LAUNCHXL.name=CC3220SF-LAUNCHXL (80MHz)
@@ -18,8 +18,8 @@ CC3220SF-LAUNCHXL.build.mcu=cortex-m4
 CC3220SF-LAUNCHXL.build.f_cpu=80000000L
 CC3220SF-LAUNCHXL.build.core=cc3220emt
 CC3220SF-LAUNCHXL.build.variant=CC3220SF_LAUNCHXL
-CC3220SF-LAUNCHXL.build.ldscript=ti/runtime/wiring/cc32xx/linker.cmd
+CC3220SF-LAUNCHXL.build.ldscript=linker.cmd
 CC3220SF-LAUNCHXL.build.board=CC3220SF_LAUNCHXL
 CC3220SF-LAUNCHXL.build.mcu=cortex-m4
-CC3220SF-LAUNCHXL.upload.tool=cc3220prog
-CC3220SF-LAUNCHXL.upload.protocol=cc3220prog
+CC3220SF-LAUNCHXL.upload.tool=dslite
+CC3220SF-LAUNCHXL.upload.protocol=dslite
