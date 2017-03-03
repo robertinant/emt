@@ -68,6 +68,24 @@
 #include <ti/drivers/ADC.h>
 #include <ti/drivers/adc/ADCCC32XX.h>
 
+void ADCCC32XX_close(ADC_Handle handle);
+int_fast16_t ADCCC32XX_control(ADC_Handle handle, uint_fast16_t cmd, void *arg);
+int_fast16_t ADCCC32XX_convert(ADC_Handle handle, uint16_t *value);
+uint32_t ADCCC32XX_convertRawToMicroVolts(ADC_Handle handle,
+    uint16_t rawAdcValue);
+void ADCCC32XX_init(ADC_Handle handle);
+ADC_Handle ADCCC32XX_open(ADC_Handle handle, ADC_Params *params);
+
+/* ADC function table for ADCCC32XX implementation */
+const ADC_FxnTable myADCCC32XX_fxnTable = {
+    ADCCC32XX_close,
+    NULL, /* ADCCC32XX_control, */
+    ADCCC32XX_convert,
+    NULL, /* ADCCC32XX_convertRawToMicroVolts, */
+    ADCCC32XX_init,
+    ADCCC32XX_open
+};
+
 ADCCC32XX_Object adcCC3220SObjects[Board_ADCCOUNT];
 
 const ADCCC32XX_HWAttrsV1 adcCC3220SHWAttrs[Board_ADCCOUNT] = {
@@ -87,22 +105,22 @@ const ADCCC32XX_HWAttrsV1 adcCC3220SHWAttrs[Board_ADCCOUNT] = {
 
 const ADC_Config ADC_config[Board_ADCCOUNT] = {
     {
-        .fxnTablePtr = &ADCCC32XX_fxnTable,
+        .fxnTablePtr = &myADCCC32XX_fxnTable,
         .object = &adcCC3220SObjects[Board_ADC0],
         .hwAttrs = &adcCC3220SHWAttrs[Board_ADC0]
     },
     {
-        .fxnTablePtr = &ADCCC32XX_fxnTable,
+        .fxnTablePtr = &myADCCC32XX_fxnTable,
         .object = &adcCC3220SObjects[Board_ADC1],
         .hwAttrs = &adcCC3220SHWAttrs[Board_ADC1]
     },
     {
-        .fxnTablePtr = &ADCCC32XX_fxnTable,
+        .fxnTablePtr = &myADCCC32XX_fxnTable,
         .object = &adcCC3220SObjects[Board_ADC2],
         .hwAttrs = &adcCC3220SHWAttrs[Board_ADC2]
     },
     {
-        .fxnTablePtr = &ADCCC32XX_fxnTable,
+        .fxnTablePtr = &myADCCC32XX_fxnTable,
         .object = &adcCC3220SObjects[Board_ADC3],
         .hwAttrs = &adcCC3220SHWAttrs[Board_ADC3]
     }
@@ -293,8 +311,6 @@ GPIO_CallbackFxn gpioCallbackFunctions[] = {
     NULL,  /*  40 - GPIO_11 */
 };
 
-/* User requested callback functions for the GPIO input signals */
-
 /* The device-specific GPIO_config structure */
 const GPIOCC32XX_Config GPIOCC32XX_config = {
     .pinConfigs = (GPIO_PinConfig *)gpioPinConfigs,
@@ -306,11 +322,29 @@ const GPIOCC32XX_Config GPIOCC32XX_config = {
 
 
 /*
- * ======== I2C ========
+ *  =============================== I2C ===============================
  */
+
 #include <ti/drivers/I2C.h>
 #include <ti/drivers/i2c/I2CCC32XX.h>
 
+extern void I2CCC32XX_cancel(I2C_Handle handle);
+extern void I2CCC32XX_close(I2C_Handle handle);
+extern int_fast16_t I2CCC32XX_control(I2C_Handle handle, uint_fast16_t cmd, void *arg);
+extern void I2CCC32XX_init(I2C_Handle handle);
+extern I2C_Handle I2CCC32XX_open(I2C_Handle handle, I2C_Params *params);
+extern bool I2CCC32XX_transfer(I2C_Handle handle, I2C_Transaction *transaction);
+
+const I2C_FxnTable myI2CCC32XX_fxnTable = {
+    NULL, /* I2CCC32XX_cancel, */
+    I2CCC32XX_close,
+    NULL, /* I2CCC32XX_control, */
+    I2CCC32XX_init,
+    I2CCC32XX_open,
+    I2CCC32XX_transfer
+};
+
+/* I2C objects */
 I2CCC32XX_Object i2cCC32XXObjects[Board_I2CCOUNT];
 
 /* I2C configuration structure */
@@ -326,7 +360,7 @@ const I2CCC32XX_HWAttrsV1 i2cCC32XXHWAttrs[Board_I2CCOUNT] = {
 
 const I2C_Config I2C_config[] = {
     {
-        .fxnTablePtr = &I2CCC32XX_fxnTable,
+        .fxnTablePtr = &myI2CCC32XX_fxnTable,
         .object = &i2cCC32XXObjects[0],
         .hwAttrs = &i2cCC32XXHWAttrs[0]
     },
@@ -339,6 +373,27 @@ const uint_least8_t I2C_count = Board_I2CCOUNT;
  */
 #include <ti/drivers/PWM.h>
 #include <ti/drivers/pwm/PWMTimerCC32XX.h>
+
+void PWMTimerCC32XX_close(PWM_Handle handle);
+int_fast16_t PWMTimerCC32XX_control(PWM_Handle handle, uint_fast16_t cmd, void *arg);
+void PWMTimerCC32XX_init(PWM_Handle handle);
+PWM_Handle PWMTimerCC32XX_open(PWM_Handle handle, PWM_Params *params);
+int_fast16_t PWMTimerCC32XX_setDuty(PWM_Handle handle, uint32_t dutyValue);
+int_fast16_t PWMTimerCC32XX_setPeriod(PWM_Handle handle, uint32_t periodValue);
+void PWMTimerCC32XX_start(PWM_Handle handle);
+void PWMTimerCC32XX_stop(PWM_Handle handle);
+
+/* PWM function table for PWMTimerCC32XX implementation */
+const PWM_FxnTable myPWMTimerCC32XX_fxnTable = {
+    PWMTimerCC32XX_close,
+    NULL, /* PWMTimerCC32XX_control, */
+    PWMTimerCC32XX_init,
+    PWMTimerCC32XX_open,
+    PWMTimerCC32XX_setDuty,
+    NULL, /* PWMTimerCC32XX_setPeriod, */
+    PWMTimerCC32XX_start,
+    NULL /* PWMTimerCC32XX_stop */
+};
 
 PWMTimerCC32XX_Object pwmCC32XXObjects[Board_PWMCOUNT];
 
@@ -378,14 +433,14 @@ PWMTimerCC32XX_HWAttrsV2 pwmCC32XXHWAttrs[Board_PWMCOUNT] = {
 };
 
 const PWM_Config PWM_config[] = {
-    {&PWMTimerCC32XX_fxnTable, &pwmCC32XXObjects[0], &pwmCC32XXHWAttrs[0]},
-    {&PWMTimerCC32XX_fxnTable, &pwmCC32XXObjects[1], &pwmCC32XXHWAttrs[1]},
-    {&PWMTimerCC32XX_fxnTable, &pwmCC32XXObjects[2], &pwmCC32XXHWAttrs[2]},
-    {&PWMTimerCC32XX_fxnTable, &pwmCC32XXObjects[3], &pwmCC32XXHWAttrs[3]},
-    {&PWMTimerCC32XX_fxnTable, &pwmCC32XXObjects[4], &pwmCC32XXHWAttrs[4]},
-    {&PWMTimerCC32XX_fxnTable, &pwmCC32XXObjects[5], &pwmCC32XXHWAttrs[5]},
-    {&PWMTimerCC32XX_fxnTable, &pwmCC32XXObjects[6], &pwmCC32XXHWAttrs[6]},
-    {&PWMTimerCC32XX_fxnTable, &pwmCC32XXObjects[7], &pwmCC32XXHWAttrs[7]},
+    {&myPWMTimerCC32XX_fxnTable, &pwmCC32XXObjects[0], &pwmCC32XXHWAttrs[0]},
+    {&myPWMTimerCC32XX_fxnTable, &pwmCC32XXObjects[1], &pwmCC32XXHWAttrs[1]},
+    {&myPWMTimerCC32XX_fxnTable, &pwmCC32XXObjects[2], &pwmCC32XXHWAttrs[2]},
+    {&myPWMTimerCC32XX_fxnTable, &pwmCC32XXObjects[3], &pwmCC32XXHWAttrs[3]},
+    {&myPWMTimerCC32XX_fxnTable, &pwmCC32XXObjects[4], &pwmCC32XXHWAttrs[4]},
+    {&myPWMTimerCC32XX_fxnTable, &pwmCC32XXObjects[5], &pwmCC32XXHWAttrs[5]},
+    {&myPWMTimerCC32XX_fxnTable, &pwmCC32XXObjects[6], &pwmCC32XXHWAttrs[6]},
+    {&myPWMTimerCC32XX_fxnTable, &pwmCC32XXObjects[7], &pwmCC32XXHWAttrs[7]},
 };
 
 const uint_least8_t PWM_count = Board_PWMCOUNT;
@@ -396,6 +451,24 @@ const uint_least8_t PWM_count = Board_PWMCOUNT;
 #include <ti/drivers/SPI.h>
 #include <ti/drivers/spi/SPICC32XXDMA.h>
 #include <driverlib/spi.h>
+
+/* SPICC32XXDMA functions */
+extern void SPICC32XXDMA_close(SPI_Handle handle);
+extern int_fast16_t SPICC32XXDMA_control(SPI_Handle handle, uint_fast16_t cmd, void *arg);
+extern void SPICC32XXDMA_init(SPI_Handle handle);
+extern SPI_Handle SPICC32XXDMA_open(SPI_Handle handle, SPI_Params *params);
+extern bool SPICC32XXDMA_transfer(SPI_Handle handle, SPI_Transaction *transaction);
+extern void SPICC32XXDMA_transferCancel(SPI_Handle handle);
+
+/* SPI function table for SPICC32XXDMA implementation */
+const SPI_FxnTable mySPICC32XXDMA_fxnTable = {
+    SPICC32XXDMA_close,
+    NULL, /* SPICC32XXDMA_control, */
+    SPICC32XXDMA_init,
+    SPICC32XXDMA_open,
+    SPICC32XXDMA_transfer,
+    NULL /* SPICC32XXDMA_transferCancel */
+};
 
 static SPICC32XXDMA_Object SPICC32XXDMAObjects[Board_SPICOUNT];
 
@@ -453,12 +526,12 @@ static const SPICC32XXDMA_HWAttrsV1 spiCC32XXDMAHWAttrs[Board_SPICOUNT] = {
 
 const SPI_Config SPI_config[] = {
     {
-        .fxnTablePtr = &SPICC32XXDMA_fxnTable,
+        .fxnTablePtr = &mySPICC32XXDMA_fxnTable,
         .object = &SPICC32XXDMAObjects[0],
         .hwAttrs = &spiCC32XXDMAHWAttrs[0]
     },
     {
-        .fxnTablePtr = &SPICC32XXDMA_fxnTable,
+        .fxnTablePtr = &mySPICC32XXDMA_fxnTable,
         .object = &SPICC32XXDMAObjects[1],
         .hwAttrs = &spiCC32XXDMAHWAttrs[1]
     }
@@ -468,12 +541,42 @@ const uint_least8_t SPI_count = Board_SPICOUNT;
 
 
 /*
- * ======== UART driver ========
+ *  =============================== UART ===============================
  */
 #include <driverlib/uart.h>
 #include <ti/drivers/UART.h>
 #include <ti/drivers/uart/UARTCC32XX.h>
 
+extern void UARTCC32XX_close(UART_Handle handle);
+extern int_fast16_t UARTCC32XX_control(UART_Handle handle, uint_fast16_t cmd,
+        void *arg);
+extern void UARTCC32XX_init(UART_Handle handle);
+extern UART_Handle UARTCC32XX_open(UART_Handle handle, UART_Params *params);
+extern int_fast32_t UARTCC32XX_read(UART_Handle handle, void *buffer, size_t size);
+extern void UARTCC32XX_readCancel(UART_Handle handle);
+extern int_fast32_t UARTCC32XX_readPolling(UART_Handle handle, void *buffer,
+        size_t size);
+extern int_fast32_t UARTCC32XX_write(UART_Handle handle, const void *buffer,
+        size_t size);
+extern void UARTCC32XX_writeCancel(UART_Handle handle);
+extern int_fast32_t UARTCC32XX_writePolling(UART_Handle handle, const void *buffer,
+        size_t size);
+
+/* UART function table for UARTCC32XX implementation */
+const UART_FxnTable myUARTCC32XX_fxnTable = {
+    UARTCC32XX_close,
+    UARTCC32XX_control,
+    UARTCC32XX_init,
+    UARTCC32XX_open,
+    UARTCC32XX_read,
+    NULL, /* UARTCC32XX_readPolling, */
+    NULL, /* UARTCC32XX_readCancel, */
+    UARTCC32XX_write,
+    NULL, /* UARTCC32XX_writePolling, */
+    NULL /* UARTCC32XX_writeCancel, */
+};
+
+/* UART objects */
 UARTCC32XX_Object uartCC32XXObjects[Board_UARTCOUNT];
 
 unsigned char uartCC32XXRingBuffer0[32];
@@ -505,12 +608,12 @@ const UARTCC32XX_HWAttrsV1 uartCC32XXHWAttrs[Board_UARTCOUNT] = {
 
 const UART_Config UART_config[] = {
     {
-        .fxnTablePtr = &UARTCC32XX_fxnTable,
+        .fxnTablePtr = &myUARTCC32XX_fxnTable,
         .object = &uartCC32XXObjects[0],
         .hwAttrs = &uartCC32XXHWAttrs[0]
     },
     {
-        .fxnTablePtr = &UARTCC32XX_fxnTable,
+        .fxnTablePtr = &myUARTCC32XX_fxnTable,
         .object = &uartCC32XXObjects[1],
         .hwAttrs = &uartCC32XXHWAttrs[1]
     },

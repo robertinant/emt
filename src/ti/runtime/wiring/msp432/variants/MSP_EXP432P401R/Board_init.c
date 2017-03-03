@@ -65,6 +65,24 @@
 #include <ti/drivers/ADC.h>
 #include <ti/drivers/adc/ADCMSP432.h>
 
+void ADCMSP432_close(ADC_Handle handle);
+int_fast16_t ADCMSP432_control(ADC_Handle handle, uint_fast16_t cmd, void *arg);
+int_fast16_t ADCMSP432_convert(ADC_Handle handle, uint16_t *value);
+uint32_t ADCMSP432_convertRawToMicroVolts(ADC_Handle handle,
+    uint16_t rawAdcValue);
+void ADCMSP432_init(ADC_Handle handle);
+ADC_Handle ADCMSP432_open(ADC_Handle handle, ADC_Params *params);
+
+/* ADC function table for ADCMSP432 implementation */
+const ADC_FxnTable myADCMSP432_fxnTable = {
+    ADCMSP432_close,
+    NULL, /* ADCMSP432_control, */
+    ADCMSP432_convert,
+    NULL, /* ADCMSP432_convertRawToMicroVolts, */
+    ADCMSP432_init,
+    ADCMSP432_open
+};
+
 /* ADC objects */
 ADCMSP432_Object adcMSP432Objects[Board_ADCCOUNT];
 
@@ -194,122 +212,122 @@ ADCMSP432_HWAttrsV1 adcMSP432HWAttrs[Board_ADCCOUNT] = {
 
 const ADC_Config ADC_config[Board_ADCCOUNT] = {
     {
-        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .fxnTablePtr = &myADCMSP432_fxnTable,
         .object = &adcMSP432Objects[0],
         .hwAttrs = &adcMSP432HWAttrs[0]
     },
     {
-        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .fxnTablePtr = &myADCMSP432_fxnTable,
         .object = &adcMSP432Objects[1],
         .hwAttrs = &adcMSP432HWAttrs[1]
     },
     {
-        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .fxnTablePtr = &myADCMSP432_fxnTable,
         .object = &adcMSP432Objects[2],
         .hwAttrs = &adcMSP432HWAttrs[2]
     },
     {
-        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .fxnTablePtr = &myADCMSP432_fxnTable,
         .object = &adcMSP432Objects[3],
         .hwAttrs = &adcMSP432HWAttrs[3]
     },
     {
-        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .fxnTablePtr = &myADCMSP432_fxnTable,
         .object = &adcMSP432Objects[4],
         .hwAttrs = &adcMSP432HWAttrs[4]
     },
     {
-        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .fxnTablePtr = &myADCMSP432_fxnTable,
         .object = &adcMSP432Objects[5],
         .hwAttrs = &adcMSP432HWAttrs[5]
     },
     {
-        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .fxnTablePtr = &myADCMSP432_fxnTable,
         .object = &adcMSP432Objects[6],
         .hwAttrs = &adcMSP432HWAttrs[6]
     },
     {
-        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .fxnTablePtr = &myADCMSP432_fxnTable,
         .object = &adcMSP432Objects[7],
         .hwAttrs = &adcMSP432HWAttrs[7]
     },
     {
-        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .fxnTablePtr = &myADCMSP432_fxnTable,
         .object = &adcMSP432Objects[8],
         .hwAttrs = &adcMSP432HWAttrs[8]
     },
     {
-        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .fxnTablePtr = &myADCMSP432_fxnTable,
         .object = &adcMSP432Objects[9],
         .hwAttrs = &adcMSP432HWAttrs[9]
     },
     {
-        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .fxnTablePtr = &myADCMSP432_fxnTable,
         .object = &adcMSP432Objects[10],
         .hwAttrs = &adcMSP432HWAttrs[10]
     },
     {
-        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .fxnTablePtr = &myADCMSP432_fxnTable,
         .object = &adcMSP432Objects[11],
         .hwAttrs = &adcMSP432HWAttrs[11]
     },
     {
-        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .fxnTablePtr = &myADCMSP432_fxnTable,
         .object = &adcMSP432Objects[12],
         .hwAttrs = &adcMSP432HWAttrs[12]
     },
     {
-        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .fxnTablePtr = &myADCMSP432_fxnTable,
         .object = &adcMSP432Objects[13],
         .hwAttrs = &adcMSP432HWAttrs[13]
     },
     {
-        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .fxnTablePtr = &myADCMSP432_fxnTable,
         .object = &adcMSP432Objects[14],
         .hwAttrs = &adcMSP432HWAttrs[14]
     },
     {
-        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .fxnTablePtr = &myADCMSP432_fxnTable,
         .object = &adcMSP432Objects[15],
         .hwAttrs = &adcMSP432HWAttrs[15]
     },
     {
-        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .fxnTablePtr = &myADCMSP432_fxnTable,
         .object = &adcMSP432Objects[16],
         .hwAttrs = &adcMSP432HWAttrs[16]
     },
     {
-        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .fxnTablePtr = &myADCMSP432_fxnTable,
         .object = &adcMSP432Objects[17],
         .hwAttrs = &adcMSP432HWAttrs[17]
     },
     {
-        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .fxnTablePtr = &myADCMSP432_fxnTable,
         .object = &adcMSP432Objects[18],
         .hwAttrs = &adcMSP432HWAttrs[18]
     },
     {
-        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .fxnTablePtr = &myADCMSP432_fxnTable,
         .object = &adcMSP432Objects[19],
         .hwAttrs = &adcMSP432HWAttrs[19]
     },
     {
-        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .fxnTablePtr = &myADCMSP432_fxnTable,
         .object = &adcMSP432Objects[20],
         .hwAttrs = &adcMSP432HWAttrs[20]
     },
     {
-        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .fxnTablePtr = &myADCMSP432_fxnTable,
         .object = &adcMSP432Objects[21],
         .hwAttrs = &adcMSP432HWAttrs[21]
     },
     {
-        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .fxnTablePtr = &myADCMSP432_fxnTable,
         .object = &adcMSP432Objects[22],
         .hwAttrs = &adcMSP432HWAttrs[22]
     },
     {
-        .fxnTablePtr = &ADCMSP432_fxnTable,
+        .fxnTablePtr = &myADCMSP432_fxnTable,
         .object = &adcMSP432Objects[23],
         .hwAttrs = &adcMSP432HWAttrs[23]
     }
@@ -590,6 +608,7 @@ GPIO_CallbackFxn gpioCallbackFunctions[] = {
     NULL,  /*  78 - P1.0 LED1 */
 };
 
+/* The device-specific GPIO_config structure */
 const GPIOMSP432_Config GPIOMSP432_config = {
     .pinConfigs = (GPIO_PinConfig *)gpioPinConfigs,
     .callbacks = (GPIO_CallbackFxn *)gpioCallbackFunctions,
@@ -641,10 +660,25 @@ void Board_initGPIO(void)
 /*
  *  =============================== I2C ===============================
  */
-/* Place into subsections to allow the TI linker to remove items properly */
 
 #include <ti/drivers/I2C.h>
 #include <ti/drivers/i2c/I2CMSP432.h>
+
+extern void I2CMSP432_cancel(I2C_Handle handle);
+extern void I2CMSP432_close(I2C_Handle handle);
+extern int_fast16_t I2CMSP432_control(I2C_Handle handle, uint_fast16_t cmd, void *arg);
+extern void I2CMSP432_init(I2C_Handle handle);
+extern I2C_Handle I2CMSP432_open(I2C_Handle handle, I2C_Params *params);
+extern bool I2CMSP432_transfer(I2C_Handle handle, I2C_Transaction *transaction);
+
+const I2C_FxnTable myI2CMSP432_fxnTable = {
+    NULL, /* I2CMSP432_cancel, */
+    I2CMSP432_close,
+    NULL, /* I2CMSP432_control, */
+    I2CMSP432_init,
+    I2CMSP432_open,
+    I2CMSP432_transfer
+};
 
 /* I2C objects */
 I2CMSP432_Object i2cMSP432Objects[Board_I2CCOUNT];
@@ -671,16 +705,15 @@ const I2CMSP432_HWAttrsV1 i2cMSP432HWAttrs[Board_I2CCOUNT] = {
 
 const I2C_Config I2C_config[] = {
     {
-        .fxnTablePtr = &I2CMSP432_fxnTable,
+        .fxnTablePtr = &myI2CMSP432_fxnTable,
         .object = &i2cMSP432Objects[0],
         .hwAttrs = &i2cMSP432HWAttrs[0]
     },
     {
-        .fxnTablePtr = &I2CMSP432_fxnTable,
+        .fxnTablePtr = &myI2CMSP432_fxnTable,
         .object = &i2cMSP432Objects[1],
         .hwAttrs = &i2cMSP432HWAttrs[1]
     },
-    {NULL, NULL, NULL}
 };
 
 const uint_least8_t I2C_count = Board_I2CCOUNT;
@@ -716,6 +749,27 @@ void Board_initPower(void)
 
 #include <ti/drivers/PWM.h>
 #include <ti/drivers/pwm/PWMTimerMSP432.h>
+
+void PWMTimerMSP432_close(PWM_Handle handle);
+int_fast16_t PWMTimerMSP432_control(PWM_Handle handle, uint_fast16_t cmd, void *arg);
+void PWMTimerMSP432_init(PWM_Handle handle);
+PWM_Handle PWMTimerMSP432_open(PWM_Handle handle, PWM_Params *params);
+int_fast16_t PWMTimerMSP432_setDuty(PWM_Handle handle, uint32_t dutyValue);
+int_fast16_t PWMTimerMSP432_setPeriod(PWM_Handle handle, uint32_t periodValue);
+void PWMTimerMSP432_start(PWM_Handle handle);
+void PWMTimerMSP432_stop(PWM_Handle handle);
+
+/* PWM function table for PWMTimerMSP432 implementation */
+const PWM_FxnTable myPWMTimerMSP432_fxnTable = {
+    PWMTimerMSP432_close,
+    NULL, /* PWMTimerMSP432_control, */
+    PWMTimerMSP432_init,
+    PWMTimerMSP432_open,
+    PWMTimerMSP432_setDuty,
+    NULL, /* PWMTimerMSP432_setPeriod, */
+    PWMTimerMSP432_start,
+    NULL /* PWMTimerMSP432_stop */
+};
 
 PWMTimerMSP432_Object pwmTimerMSP432Objects[Board_PWMCOUNT];
 
@@ -776,66 +830,65 @@ PWMTimerMSP432_HWAttrsV2 pwmTimerMSP432HWAttrs[Board_PWMCOUNT] = {
 
 const PWM_Config PWM_config[] = {
     {
-        .fxnTablePtr = &PWMTimerMSP432_fxnTable,
+        .fxnTablePtr = &myPWMTimerMSP432_fxnTable,
         .object = &pwmTimerMSP432Objects[0],
         .hwAttrs = &pwmTimerMSP432HWAttrs[0]
     },
     {
-        .fxnTablePtr = &PWMTimerMSP432_fxnTable,
+        .fxnTablePtr = &myPWMTimerMSP432_fxnTable,
         .object = &pwmTimerMSP432Objects[1],
         .hwAttrs = &pwmTimerMSP432HWAttrs[1]
     },
     {
-        .fxnTablePtr = &PWMTimerMSP432_fxnTable,
+        .fxnTablePtr = &myPWMTimerMSP432_fxnTable,
         .object = &pwmTimerMSP432Objects[2],
         .hwAttrs = &pwmTimerMSP432HWAttrs[2]
     },
     {
-        .fxnTablePtr = &PWMTimerMSP432_fxnTable,
+        .fxnTablePtr = &myPWMTimerMSP432_fxnTable,
         .object = &pwmTimerMSP432Objects[3],
         .hwAttrs = &pwmTimerMSP432HWAttrs[3]
     },
     {
-        .fxnTablePtr = &PWMTimerMSP432_fxnTable,
+        .fxnTablePtr = &myPWMTimerMSP432_fxnTable,
         .object = &pwmTimerMSP432Objects[4],
         .hwAttrs = &pwmTimerMSP432HWAttrs[4]
     },
     {
-        .fxnTablePtr = &PWMTimerMSP432_fxnTable,
+        .fxnTablePtr = &myPWMTimerMSP432_fxnTable,
         .object = &pwmTimerMSP432Objects[5],
         .hwAttrs = &pwmTimerMSP432HWAttrs[5]
     },
     {
-        .fxnTablePtr = &PWMTimerMSP432_fxnTable,
+        .fxnTablePtr = &myPWMTimerMSP432_fxnTable,
         .object = &pwmTimerMSP432Objects[6],
         .hwAttrs = &pwmTimerMSP432HWAttrs[6]
     },
     {
-        .fxnTablePtr = &PWMTimerMSP432_fxnTable,
+        .fxnTablePtr = &myPWMTimerMSP432_fxnTable,
         .object = &pwmTimerMSP432Objects[7],
         .hwAttrs = &pwmTimerMSP432HWAttrs[7]
     },
     {
-        .fxnTablePtr = &PWMTimerMSP432_fxnTable,
+        .fxnTablePtr = &myPWMTimerMSP432_fxnTable,
         .object = &pwmTimerMSP432Objects[8],
         .hwAttrs = &pwmTimerMSP432HWAttrs[8]
     },
     {
-        .fxnTablePtr = &PWMTimerMSP432_fxnTable,
+        .fxnTablePtr = &myPWMTimerMSP432_fxnTable,
         .object = &pwmTimerMSP432Objects[9],
         .hwAttrs = &pwmTimerMSP432HWAttrs[9]
     },
     {
-        .fxnTablePtr = &PWMTimerMSP432_fxnTable,
+        .fxnTablePtr = &myPWMTimerMSP432_fxnTable,
         .object = &pwmTimerMSP432Objects[10],
         .hwAttrs = &pwmTimerMSP432HWAttrs[10]
     },
     {
-        .fxnTablePtr = &PWMTimerMSP432_fxnTable,
+        .fxnTablePtr = &myPWMTimerMSP432_fxnTable,
         .object = &pwmTimerMSP432Objects[11],
         .hwAttrs = &pwmTimerMSP432HWAttrs[11]
     },
-    {NULL, NULL, NULL}
 };
 
 const uint_least8_t PWM_count = Board_PWMCOUNT;
@@ -885,7 +938,6 @@ const SDSPI_Config SDSPI_config[] = {
         .object = &sdspiMSP432Objects[0],
         .hwAttrs = &sdspiMSP432HWAttrs[0]
     },
-    {NULL, NULL, NULL}
 };
 
 const uint_least8_t SDSPI_count = Board_SDSPICOUNT;
@@ -904,6 +956,24 @@ void Board_initSDSPI(void)
 
 #include <ti/drivers/SPI.h>
 #include <ti/drivers/spi/SPIMSP432DMA.h>
+
+/* SPIMSP432DMA functions */
+extern void SPIMSP432DMA_close(SPI_Handle handle);
+extern int_fast16_t SPIMSP432DMA_control(SPI_Handle handle, uint_fast16_t cmd, void *arg);
+extern void SPIMSP432DMA_init(SPI_Handle handle);
+extern SPI_Handle SPIMSP432DMA_open(SPI_Handle handle, SPI_Params *params);
+extern bool SPIMSP432DMA_transfer(SPI_Handle handle, SPI_Transaction *transaction);
+extern void SPIMSP432DMA_transferCancel(SPI_Handle handle);
+
+/* SPI function table for SPIMSP432DMA implementation */
+const SPI_FxnTable mySPIMSP432DMA_fxnTable = {
+    SPIMSP432DMA_close,
+    NULL, /* SPIMSP432DMA_control, */
+    SPIMSP432DMA_init,
+    SPIMSP432DMA_open,
+    SPIMSP432DMA_transfer,
+    NULL /* SPIMSP432DMA_transferCancel */
+};
 
 /* SPI objects */
 SPIMSP432DMA_Object spiMSP432DMAObjects[Board_SPICOUNT];
@@ -944,16 +1014,15 @@ const SPIMSP432DMA_HWAttrsV1 spiMSP432DMAHWAttrs[Board_SPICOUNT] = {
 
 const SPI_Config SPI_config[] = {
     {
-        .fxnTablePtr = &SPIMSP432DMA_fxnTable,
+        .fxnTablePtr = &mySPIMSP432DMA_fxnTable,
         .object = &spiMSP432DMAObjects[0],
         .hwAttrs = &spiMSP432DMAHWAttrs[0]
     },
     {
-        .fxnTablePtr = &SPIMSP432DMA_fxnTable,
+        .fxnTablePtr = &mySPIMSP432DMA_fxnTable,
         .object = &spiMSP432DMAObjects[1],
         .hwAttrs = &spiMSP432DMAHWAttrs[1]
     },
-    {NULL, NULL, NULL},
 };
 
 const uint_least8_t SPI_count = Board_SPICOUNT;
@@ -1039,6 +1108,35 @@ const uint_least8_t Timer_count = Board_TIMERCOUNT;
 
 #include <ti/drivers/UART.h>
 #include <ti/drivers/uart/UARTMSP432.h>
+
+extern void UARTMSP432_close(UART_Handle handle);
+extern int_fast16_t UARTMSP432_control(UART_Handle handle, uint_fast16_t cmd,
+        void *arg);
+extern void UARTMSP432_init(UART_Handle handle);
+extern UART_Handle UARTMSP432_open(UART_Handle handle, UART_Params *params);
+extern int_fast32_t UARTMSP432_read(UART_Handle handle, void *buffer, size_t size);
+extern void UARTMSP432_readCancel(UART_Handle handle);
+extern int_fast32_t UARTMSP432_readPolling(UART_Handle handle, void *buffer,
+        size_t size);
+extern int_fast32_t UARTMSP432_write(UART_Handle handle, const void *buffer,
+        size_t size);
+extern void UARTMSP432_writeCancel(UART_Handle handle);
+extern int_fast32_t UARTMSP432_writePolling(UART_Handle handle, const void *buffer,
+        size_t size);
+
+/* UART function table for UARTMP432 implementation */
+const UART_FxnTable myUARTMSP432_fxnTable = {
+    UARTMSP432_close,
+    UARTMSP432_control,
+    UARTMSP432_init,
+    UARTMSP432_open,
+    UARTMSP432_read,
+    NULL, /* UARTMSP432_readPolling, */
+    NULL, /* UARTMSP432_readCancel, */
+    UARTMSP432_write,
+    NULL, /* UARTMSP432_writePolling, */
+    NULL /* UARTMSP432_writeCancel, */
+};
 
 /* UART objects */
 UARTMSP432_Object uartMSP432Objects[Board_UARTCOUNT];
@@ -1129,16 +1227,15 @@ const UARTMSP432_HWAttrsV1 uartMSP432HWAttrs[Board_UARTCOUNT] = {
 
 const UART_Config UART_config[] = {
     {
-        .fxnTablePtr = &UARTMSP432_fxnTable,
+        .fxnTablePtr = &myUARTMSP432_fxnTable,
         .object = &uartMSP432Objects[0],
         .hwAttrs = &uartMSP432HWAttrs[0]
     },
     {
-        .fxnTablePtr = &UARTMSP432_fxnTable,
+        .fxnTablePtr = &myUARTMSP432_fxnTable,
         .object = &uartMSP432Objects[1],
         .hwAttrs = &uartMSP432HWAttrs[1]
     },
-    {NULL, NULL, NULL}
 };
 
 const uint_least8_t UART_count = Board_UARTCOUNT;
@@ -1171,7 +1268,6 @@ const Watchdog_Config Watchdog_config[] = {
         .object = &watchdogMSP432Objects[0],
         .hwAttrs = &watchdogMSP432HWAttrs[0]
     },
-    {NULL, NULL, NULL}
 };
 
 const uint_least8_t Watchdog_count = Board_WATCHDOGCOUNT;
@@ -1184,75 +1280,6 @@ void Board_initWatchdog(void)
     /* Initialize the Watchdog driver */
     Watchdog_init();
 }
-
-#if 0
-/*
- *  =============================== WiFi ===============================
- */
-/* Place into subsections to allow the TI linker to remove items properly */
-#if defined(__TI_COMPILER_VERSION__)
-#pragma DATA_SECTION(WiFi_config, ".const:WiFi_config")
-#pragma DATA_SECTION(wiFiCC3100HWAttrs, ".const:wiFiCC3100HWAttrs")
-#endif
-#include <ti/drivers/WiFi.h>
-#include <ti/drivers/wifi/WiFiCC3100.h>
-
-/* WiFi objects */
-WiFiCC3100_Object wiFiCC3100Objects[Board_WIFICOUNT];
-
-/* WiFi configuration structure */
-const WiFiCC3100_HWAttrs wiFiCC3100HWAttrs[Board_WIFICOUNT] = {
-    {
-        .irqPort = GPIO_PORT_P2,
-        .irqPin = GPIO_PIN5,
-        .irqIntNum = INT_PORT2,
-
-        .csPort = GPIO_PORT_P3,
-        .csPin = GPIO_PIN0,
-
-        .enPort = GPIO_PORT_P4,
-        .enPin = GPIO_PIN1
-    }
-};
-
-const WiFi_Config WiFi_config[] = {
-    {
-        .fxnTablePtr = &WiFiCC3100_fxnTable,
-        .object = &wiFiCC3100Objects[0],
-        .hwAttrs = &wiFiCC3100HWAttrs[0]
-    },
-    {NULL, NULL, NULL},
-};
-
-/*
- *  ======== Board_initWiFi ========
- */
-void Board_initWiFi(void)
-{
-    /* Configure EN & CS pins to disable CC3100 */
-    MAP_GPIO_setAsOutputPin(GPIO_PORT_P3, GPIO_PIN0);
-    MAP_GPIO_setAsOutputPin(GPIO_PORT_P4, GPIO_PIN1);
-    MAP_GPIO_setOutputHighOnPin(GPIO_PORT_P3, GPIO_PIN0);
-    MAP_GPIO_setOutputLowOnPin(GPIO_PORT_P4, GPIO_PIN1);
-
-    /* Configure CLK, MOSI & MISO for SPI0 (EUSCI_B0) */
-    MAP_GPIO_setAsPeripheralModuleFunctionOutputPin(GPIO_PORT_P1,
-                                                    GPIO_PIN5 | GPIO_PIN6,
-                                                    GPIO_PRIMARY_MODULE_FUNCTION);
-    MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P1,
-                                                   GPIO_PIN7,
-                                                   GPIO_PRIMARY_MODULE_FUNCTION);
-
-    /* Configure IRQ pin */
-    MAP_GPIO_setAsInputPinWithPullDownResistor(GPIO_PORT_P2, GPIO_PIN5);
-    MAP_GPIO_interruptEdgeSelect(GPIO_PORT_P2, GPIO_PIN5,
-                                 GPIO_LOW_TO_HIGH_TRANSITION);
-
-    /* Initialize SPI and WiFi drivers */
-    SPI_init();
-    WiFi_init();
-}
-#endif
 
 /*
  *  ======== Board_init ========
