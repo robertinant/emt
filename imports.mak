@@ -10,6 +10,7 @@ ENERGIA = /db/builds/xinstall/energia_nightly/Energia
 #
 MCPI_TREE = $(TREES)/mcpi/mcpi-3.10.00.10
 SDK_CC32XX = simplelink_cc32xx_sdk_1_30_00_01_eng
+SDK_MSP432 = simplelink_msp432_sdk_1_30_00_40
 
 #
 # Official SDK builds:
@@ -20,7 +21,7 @@ SDK_CC32XX = simplelink_cc32xx_sdk_1_30_00_01_eng
 #
 # Specific required imports (referenced by makeunix, for example)
 #
-SDK.msp432 = $(firstword $(wildcard $(MCPI_TREE)/exports/coresdk_msp432_*))
+SDK.msp432 = $(TOOLS)/vendors/ti/msp432_sdk/$(SDK_MSP432)
 SDK.cc13xx = $(firstword $(wildcard $(MCPI_TREE)/exports/coresdk_cc13xx_*))
 SDK.cc32xx = $(TOOLS)/vendors/ti/cc3220_sdk/$(SDK_CC32XX)
 
