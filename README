@@ -1,4 +1,4 @@
-				emt-d06
+				emt-d07
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -117,17 +117,11 @@ DELETIONS
 
 CHANGES
 
-imports.mak
-	use xdctools 3.50 + BU SDK (with a GA coresdk)
+bundles/emt_src
+	add back CC32xx sources
 
 bundles/energia/cc32xx
-	first cut at SDK based board package
+	remove more unneeded libraries from the cc32xx board package
 
-ti.runtime.wiring.<family>
-	refactor analogRead() now that the implementation is identical for
-        all device families
-
-ti.runtime.wiring.cc32xx/variants
-	various 3.10 boardfile tweaks
 
 MRS
