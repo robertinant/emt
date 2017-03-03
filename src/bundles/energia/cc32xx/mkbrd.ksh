@@ -16,8 +16,9 @@
 #  <vers>                DSTDIR
 #      cores/$CORE       EMTDIR (sources rebuilt for each project)
 #      system
-#          kernel/tirtos/builds/<launchpad>/energia
-#          source/<all non- sys/bios sources and libs>
+#          kernel/tirtos/
+#          source/
+#          energia/      BUILDDIR (config generated files)
 #      variants
 #          <board_1>
 #              :
@@ -25,7 +26,10 @@
 #
 usage="usage: <path_to_emt_source_archive> <sdk-directory>"
 
-XDCBIN=$TOOLS/vendors/xdc/xdctools_3_50_00_10/Linux/bin
+# the GNULIB for cc32xx
+GNULIB="armv7e-m"
+
+XDCBIN=$TOOLS/vendors/xdc/xdctools_3_50_02_13_eng/Linux/bin
 
 if [ $# -lt 2 ]; then
     echo "Error: Illegal number of parameters"
@@ -34,13 +38,13 @@ if [ $# -lt 2 ]; then
 fi
 
 srczip="$1"
-sdk="$2"
+SDK="$2"
 if [ ! -r "$srczip" ]; then
     echo "$0: error: emt source archive is not readable: $srczip"
     exit 1
 fi
-if [ ! -d "$sdk" ]; then
-    echo "$0: error: core SDK is not readable: $sdk"
+if [ ! -d "$SDK" ]; then
+    echo "$0: error: core SDK is not readable: $SDK"
     exit 1
 fi
 
@@ -57,22 +61,21 @@ if [ -z "$TMPDIR" ]; then
 fi
 trap "chmod -R +w $TMPDIR;rm -rf $TMPDIR" EXIT INT TERM
 
+# ======== lsp ========
+# list all packages (by dot name) in the specified repos
 function lsp {
     $XDCBIN/xdcpkg -a -l:%n $*
 }
 
+# ======== rmp ========
+# remove specified package (by the package's base directory)
 function rmp {
-    # work around bug in xdcrmp
-    dlist=`$XDCBIN/xdcrmp -n $base | egrep "^rmdir" | cut -d' ' -f2 | sort -r`
-    $XDCBIN/xdcrmp $1 2> /dev/null
-    for d in $dlist; do
-        if [ -d $d ]; then
-            rmdir $d
-        fi
-    done
+    $XDCBIN/xdcrmp $*
 }
 
-function removeDups {
+# ======== rmDups ========
+# rm packages from repo ($1) that also appear in the specified repos ($2, ...)
+function rmDups {
     top=$1
     shift 1
     chmod -R +w $top
@@ -81,7 +84,9 @@ function removeDups {
         dups=`lsp $top $repo | sort | uniq -d`
         for p in $dups; do
             echo "removing $p from $top ..."
-            base=$top/${p//\.//}
+            # compute package base directory from it's "dot name"
+            base="$top/${p//\.//}"
+            # remove just this package (but not any nested package)
             rmp $base
         done
     done
@@ -139,24 +144,33 @@ EMTDIR="$DSTDIR/cores/$CORE"
 mv $DSTDIR/cores/emt $EMTDIR
 
 # copy SDK source and kernel to DSTDIR/system
-echo "Copying sdk to $DSTDIR/system ..."
+echo "Copying SDK to $DSTDIR/system ..."
 mkdir -p "$DSTDIR/system"
-cp -r "$sdk/source" "$DSTDIR/system"
+cp -r "$SDK/source" "$DSTDIR/system"
 mkdir -p "$DSTDIR/system/kernel"
-cp -r "$sdk/kernel/tirtos" "$DSTDIR/system/kernel"
+cp -r "$SDK/kernel/tirtos" "$DSTDIR/system/kernel"
 
 # cull SDK (but preserve the packages)
-echo "culling ccs and iar junk ..."
-chmod -R +w "$DSTDIR/system/"
+echo "culling ti and iar libraries ..."
 find "$DSTDIR/system" -type d \( -name iar -o -name ccs \) -prune -exec rm -rf {} \;
+find "$DSTDIR/system" -type f \( -name "*.aem4" -o -name "*.aem4f" -o -name "*.arm4" \) -exec rm -f {} \;
 rm -rf $DSTDIR/system/kernel/tirtos/packages/ti/targets/omf/elf/docs
-rm -rf $DSTDIR/system/kernel/tirtos/packages/ti/targets/arm/rtsarm/
+rm -rf $DSTDIR/system/kernel/tirtos/packages/ti/targets/arm/rtsarm
+
+echo "culling gcc libc libraries ..."
+gld="`find $DSTDIR/system/kernel -type d -wholename '*/gnu/targets/arm/libs/install-native/arm-none-eabi/lib'`"
+for d in `ls $gld`; do
+    if [ "$d" != "$GNULIB" ]; then
+        echo removing $gld/$d ...
+	rm -rf "$gld/$d"
+    fi
+done
 
 # selectively copy closure files to EMTDIR (inside DSTDIR)
 cd $TMPDIR/closure
 
 ## remove packages from closure that are in the SDK
-removeDups . $DSTDIR/system/kernel/tirtos/packages $DSTDIR/system
+rmDups . $DSTDIR/system/kernel/tirtos/packages $DSTDIR/system
 
 ## add version file to EMTDIR
 VERSIONLINE=$(head -n 1 version.txt)
@@ -191,7 +205,7 @@ for f in $vfiles; do
     cp $f $vdir
 done
 
-# copy configuro closure files to BUILDDIR (inside DSTDIR)
+# copy closure's configuro files to BUILDDIR (inside DSTDIR)
 BUILDDIR=$DSTDIR/system/energia
 
 ## copy configuration generated files
@@ -205,7 +219,7 @@ find ./src -name "*.o" -exec rm -f {} \;
 cp -r ./src $BUILDDIR
 cp -r ./configPkg $BUILDDIR
 
-# patch linker.cmd to remove libraries that are re-built for every sketch
+## patch linker.cmd to remove libraries that are re-built for every sketch
 echo "Filtering linker.cmd to remove libraries rebuilt for each sketch ..."
 sed -e 's|\(lib/board.*\)|/* \1 commented out by mkbrd.ksh */|' -e 's|\(ti/runtime/wiring/[a-zA-Z0-9_]*/lib.*\)|/* \1 commented out by mkbrd.ksh */|' linker.cmd > $BUILDDIR/linker.cmd
 
