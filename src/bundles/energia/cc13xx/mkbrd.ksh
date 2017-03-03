@@ -154,7 +154,7 @@ cp -r "$SDK/kernel/tirtos" "$DSTDIR/system/kernel"
 echo "culling ti and iar libraries ..."
 chmod -R +w "$DSTDIR/system"
 find "$DSTDIR/system" -type d \( -name iar -o -name ccs \) -prune -exec rm -rf {} \;
-find "$DSTDIR/system" -type f \( -name "*.aem4" -o -name "*.aem4f" -o -name "*.arm4" -o -name "*.arm4f" \) -exec rm -f {} \;
+find "$DSTDIR/system" -type f \( -name "*.aem4" -o -name "*.aem4f" -o -name "*.arm4" -o -name "*.arm4f" -o -name "*.arm3" -o -name "*.aem3" \) -exec rm -f {} \;
 rm -rf $DSTDIR/system/kernel/tirtos/packages/ti/targets/omf/elf/docs
 rm -rf $DSTDIR/system/kernel/tirtos/packages/ti/targets/arm/rtsarm
 
