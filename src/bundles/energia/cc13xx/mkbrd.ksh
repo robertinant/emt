@@ -93,9 +93,12 @@ function rmDups {
 }
 
 # compute energia board package semantic version number
-patch="`git tag -l 'emt-*' | egrep -o '[0-9]+'|tail -1`"
+vers=`git tag -l 'emt-*' | egrep -o '[a-zA-Z][0-9]+'|tail -1`
+patch="`echo $vers | egrep -o '[0-9]+'`"
 patch=`expr $patch + 1`
-SEMVERS="1.0.$patch"
+char="`echo $vers | egrep -o '[a-zA-Z]'`"
+series=`expr index abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ $char`
+SEMVERS="$series.$patch.0"
 
 # extract closure to TMPDIR
 echo "Extracting closure ..."
@@ -157,6 +160,7 @@ find "$DSTDIR/system" -type d \( -name iar -o -name ccs \) -prune -exec rm -rf {
 find "$DSTDIR/system" -type f \( -name "*.aem4" -o -name "*.aem4f" -o -name "*.arm4" -o -name "*.arm4f" -o -name "*.arm3" -o -name "*.aem3" \) -exec rm -f {} \;
 rm -rf $DSTDIR/system/kernel/tirtos/packages/ti/targets/omf/elf/docs
 rm -rf $DSTDIR/system/kernel/tirtos/packages/ti/targets/arm/rtsarm
+rm -rf $DSTDIR/system/kernel/tirtos/packages/ti/sysbios/rom/c28
 
 echo "culling gcc libc libraries ..."
 gld="`find $DSTDIR/system/kernel -type d -wholename '*/gnu/targets/arm/libs/install-native/arm-none-eabi/lib'`"
