@@ -1,4 +1,4 @@
-				emt-d08
+				emt-d09
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -117,13 +117,9 @@ DELETIONS
 
 CHANGES
 
-bundles/energia/cc32xx
-        update board.txt and platform.txt
+bundles/energia/*
+	fix mkbrd's version mapping
 
-bundles/energia/msp432
-	moved to SDK-based board package
-
-bundles/energia/cc13xx
-	moved to SDK-based board package
+	minor size reduction for the the cc13xx board package
 
 MRS
