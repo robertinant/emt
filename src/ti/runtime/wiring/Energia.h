@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Texas Instruments Incorporated
+ * Copyright (c) 2015-2017, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -104,7 +104,7 @@ typedef uint8_t byte;
 #define degrees(rad) ((rad)*RAD_TO_DEG)
 #define sq(x) ((x)*(x))
 
-#define clockCyclesPerMicrosecond() ( 80000000L / 1000000L )
+#define clockCyclesPerMicrosecond() ( getCpuFrequency() / 1000000L )
 #define clockCyclesToMicroseconds(a) ( (a) / clockCyclesPerMicrosecond() )
 #define microsecondsToClockCycles(a) ( (a) * clockCyclesPerMicrosecond() )
 
@@ -122,6 +122,7 @@ typedef unsigned int word;
 
 void init(void);
 
+unsigned long getCpuFrequency(void);
 void shiftOut(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder, uint8_t val);
 uint8_t shiftIn(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder);
 unsigned long pulseIn(uint8_t pin, uint8_t state, unsigned long timeout);

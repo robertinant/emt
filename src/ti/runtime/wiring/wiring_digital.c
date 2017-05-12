@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Texas Instruments Incorporated
+ * Copyright (c) 2015-2017, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,6 +31,7 @@
  */
 
 #include "wiring_private.h"
+#include <xdc/runtime/Types.h>
 #include <ti/drivers/GPIO.h>
 
 /* device specific routine */
@@ -40,7 +41,7 @@ GPIO_PinConfig mode2gpioConfig(uint8_t pin, uint8_t mode)
         case INPUT:
             digital_pin_to_pin_function[pin] = PIN_FUNC_DIGITAL_INPUT;
             return (GPIO_CFG_IN_NOPULL);
-	    
+
         case INPUT_PULLUP:
             digital_pin_to_pin_function[pin] = PIN_FUNC_DIGITAL_INPUT;
             return (GPIO_CFG_IN_PU);
@@ -100,4 +101,16 @@ void digitalWrite(uint8_t pin, uint8_t val)
     }
 
     GPIO_write(pin, val ? 1 : 0);
+}
+
+/*
+ *  ======== getCpuFrequency ========
+ */
+unsigned long getCpuFrequency(void)
+{
+    Types_FreqHz freq;
+
+    BIOS_getCpuFreq(&freq);
+
+    return (freq.lo);
 }
