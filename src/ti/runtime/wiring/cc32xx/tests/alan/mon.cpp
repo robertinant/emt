@@ -100,6 +100,9 @@
 #endif
 #endif
 
+/* self test board's common pin */
+#define COMMON_PIN 5
+
 #define MAX_COMMAND_LEN 48
 #define MAX_COMMAND_NAME_LEN 8
 #define MAX_COMMAND_LINES 5
@@ -124,6 +127,8 @@ static int consoleHandler_dw(const char *line);
 
 #if ARW_CMDS == 1
 static int consoleHandler_ar(const char *line);
+static int consoleHandler_arr(const char *line);
+static int consoleHandler_aref(const char *line);
 static int consoleHandler_aw(const char *line);
 #endif
 
@@ -211,6 +216,8 @@ static const struct {
 #if ARW_CMDS == 1
     GEN_COMMTABLE_ENTRY(aw,      "analogWrite to pin",          "usage: aw <pin> <value>"),
     GEN_COMMTABLE_ENTRY(ar,      "analogRead from pin",         "usage: ar <pin>"),
+    GEN_COMMTABLE_ENTRY(aref,    "analogReference",             "usage: aref <1-6>"),
+    GEN_COMMTABLE_ENTRY(arr,     "analogReadResolution",        "usage: arr <10,11,12,14>"),
 #endif
 #if ALOG_CMD == 1
     GEN_COMMTABLE_ENTRY(alog,    "log a pin's value",           "usage: alog <pin> <period>"),
@@ -581,6 +588,32 @@ static int consoleHandler_ar(const char *line)
     else {
         doAr(pin);
     }
+    return RETURN_SUCCESS;
+}
+
+static int consoleHandler_arr(const char *line)
+{
+    if (*line++ != ' ') {
+        return RETURN_FAIL_PRINT_USAGE;
+    }
+    char *endptr = NULL;
+    uint32_t resolution = strtol(line, &endptr, 10);
+    
+    analogReadResolution(resolution);
+
+    return RETURN_SUCCESS;
+}
+
+static int consoleHandler_aref(const char *line)
+{
+    if (*line++ != ' ') {
+        return RETURN_FAIL_PRINT_USAGE;
+    }
+    char *endptr = NULL;
+    uint32_t ref = strtol(line, &endptr, 10);
+    
+    analogReference(ref);
+
     return RETURN_SUCCESS;
 }
 
@@ -1449,9 +1482,6 @@ static int consoleHandler_artest(const char * line)
     dacValues[3] = maxDacValue*3/4;
     dacValues[4] = maxDacValue;
 
-    /* force common pin to be an input */
-    digitalRead(5);
-
     aMuxChannelEnable(0);
 
     for (i = 0; i < 5; i++) {
@@ -1481,7 +1511,7 @@ static int consoleHandler_artest(const char * line)
             analogReadResolution(10);
         
             System_snprintf(response, sizeof(response),
-                " pin %d = %8d  %8d  %8d  %8d", pin, aval[0], aval[1], aval[2], aval[3]);
+                " pin %2d = %8d  %8d  %8d  %8d", pin, aval[0], aval[1], aval[2], aval[3]);
 
             SERIAL.println(response);
         }
@@ -1533,8 +1563,9 @@ static uint8_t awPinIds[] = {
     2,   5,
     6,   7,   8,   11,
     12,  13,  14,  15,
-    18,  19,  23,  25,
-    26,  27,  28,  29,
+    18,  19,  23,  24,
+    25,  26,  27,  28,
+    29,
     30,  36,
     37,  39,  40
 };
@@ -1546,8 +1577,8 @@ static uint8_t awPinIds[] = {
     2,   5,
     6,   7,   8,   11,
     12,  13,  14,  15,
-    18,  19,  23,  25,
-    26,  27,  28,
+    18,  19,  23,  24,
+    25,  26,  27,  28,
     30,  36,
     37,  39,  40
 };
@@ -1570,12 +1601,18 @@ static int consoleHandler_awtest(const char * line)
 
     Wire.begin();
 
-    /* turn off the DAC so that mux routes output pins to pin 23 */
+    /* turn off the DAC so that mux routes output pins to pin 24 */
     disableDac();
 
-    pinMode(5, INPUT);
+    pinMode(COMMON_PIN, INPUT);
 
     aMuxChannelEnable(2);
+
+    System_snprintf(response, sizeof(response),
+        "          %5d  %5d  %5d  %5d  %5d  %5d  %5d", 
+         8, 1024, 2034, 0, 0, 0, 1);
+
+    SERIAL.println(response);
 
     for (pinIdx = 0; pinIdx < sizeof(awPinIds); pinIdx++ ) {
 
@@ -1583,24 +1620,27 @@ static int consoleHandler_awtest(const char * line)
             pin = awPinIds[pinIdx];
         }
 
+        /* can't perform analogWrite() and pulseIn() on the same pin */
+        if (pin == COMMON_PIN) continue;
+
         aMuxChannelEnable(pin);
 
         analogWrite(pin, 1);
-        aval[0] = pulseIn(5, 1, 10000);
+        aval[0] = pulseIn(COMMON_PIN, 1, 10000);
 
         analogWrite(pin, 128);
-        aval[1] = pulseIn(5, 1, 10000);
+        aval[1] = pulseIn(COMMON_PIN, 1, 10000);
 
         analogWrite(pin, 254);
-        aval[2] = pulseIn(5, 1, 10000);
+        aval[2] = pulseIn(COMMON_PIN, 1, 10000);
 
         analogWrite(pin, 0);
-        aval[3] = pulseIn(5, 1, 10000);
-        aval[4] = digitalRead(5);
+        aval[3] = pulseIn(COMMON_PIN, 1, 10000);
+        aval[4] = digitalRead(COMMON_PIN);
 
         analogWrite(pin, 255);
-        aval[5] = pulseIn(5, 1, 10000);
-        aval[6] = digitalRead(5);
+        aval[5] = pulseIn(COMMON_PIN, 1, 10000);
+        aval[6] = digitalRead(COMMON_PIN);
 
         /* release PWM resource */
         pinMode(pin, INPUT);
@@ -1624,9 +1664,7 @@ static int consoleHandler_awtest(const char * line)
 
 #if MSP432_DRWTEST_CMD == 1
 
-#define COMMON_PIN 24
-
-/* Supported analogWrite pins */
+/* Supported digital pins */
 static uint8_t drwPinIds[] = {
     2, 5, 6, 7, 8,
    11, 12, 13, 14, 15, 17, 18, 19,
@@ -1639,9 +1677,7 @@ static uint8_t drwPinIds[] = {
 
 #if CC32XX_DRWTEST_CMD == 1
 
-#define COMMON_PIN 5
-
-/* Supported analogWrite pins */
+/* Supported digital pins */
 static uint8_t drwPinIds[] = {
     3,  4,  5, 7, 8,
     11, /* 12, 13, */ 14, 15, /* 17, */18, 19,
@@ -1654,11 +1690,9 @@ static uint8_t drwPinIds[] = {
 
 #if CC26XX_DRWTEST_CMD == 1
 
-#define COMMON_PIN 24
-
 #if defined(BOARD_CC2650_LAUNCHXL)
 
-/* Supported analogWrite pins */
+/* Supported digital pins */
 static uint8_t drwPinIds[] = {
     2,   5,
     6,   7,   8,   11,
@@ -1672,7 +1706,7 @@ static uint8_t drwPinIds[] = {
 
 #elif defined(BOARD_CC1310_LAUNCHXL) || defined(BOARD_CC1350_LAUNCHXL)
 
-/* Supported analogWrite pins */
+/* Supported digital pins */
 static uint8_t drwPinIds[] = {
     2,   5,
     6,   7,   8,   11,
@@ -1706,6 +1740,8 @@ static int consoleHandler_drwtest(const char * line)
     disableDac();
 
     pinMode(COMMON_PIN, INPUT);
+
+    pinMode(24, INPUT);
 
     aMuxChannelEnable(2);
 
