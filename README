@@ -1,4 +1,4 @@
-				emt-d09
+				emt-d10
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -118,8 +118,15 @@ DELETIONS
 CHANGES
 
 bundles/energia/*
-	fix mkbrd's version mapping
+        ENERGIAMT-9: fixed energia.cfg to include posix
 
-	minor size reduction for the the cc13xx board package
+        added unit test of WStringD fix
+
+ti/runtime/wiring
+        ENERGIAMT-4 & ENERGIAMT-12
 
 MRS
+
+ENERGIAMT-4 clockCyclesPerMicrosecond define in Energia.h is wrong
+ENERGIAMT-9 - add ti.sysbios.posix.Settings to the Energia config script
+ENERGIAMT-12 - undefined reference to String::init()
