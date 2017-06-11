@@ -6,6 +6,9 @@
 char lineOutBuffer[256];
 PString outLine(lineOutBuffer, sizeof(lineOutBuffer));
 
+String ds(PI);
+String is(32);
+
 /*
  *  ======== pstringSetup ========
  */

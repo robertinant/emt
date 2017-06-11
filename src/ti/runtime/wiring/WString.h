@@ -193,7 +193,12 @@ protected:
 	unsigned int capacity;  // the array length minus one (for the '\0')
 	unsigned int len;       // the String length (not counting the '\0')
 protected:
-	void init(void);
+	inline void init(void) {
+            buffer = NULL;
+	    capacity = 0;
+	    len = 0;
+        }
+        
 	void invalidate(void);
 	unsigned char changeBuffer(unsigned int maxStrLen);
 	unsigned char concat(const char *cstr, unsigned int length);

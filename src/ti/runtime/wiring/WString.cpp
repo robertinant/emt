@@ -117,13 +117,6 @@ String::~String()
 /*  Memory Management                        */
 /*********************************************/
 
-inline void String::init(void)
-{
-	buffer = NULL;
-	capacity = 0;
-	len = 0;
-}
-
 void String::invalidate(void)
 {
 	if (buffer) free(buffer);
