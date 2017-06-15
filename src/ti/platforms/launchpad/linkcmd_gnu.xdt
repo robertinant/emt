@@ -100,6 +100,9 @@ SECTIONS {
     __UNUSED_FLASH_start__ = ADDR(.emptyFlash);
     __UNUSED_FLASH_end__   = ORIGIN(FLASH) + LENGTH(FLASH);
     __FLASH_LENGTH__       = LENGTH(FLASH);
+
+    __NVS_BASE__           = (__UNUSED_FLASH_start__ + 0x1000) & 0xfffff000;
+    __NVS_SIZE__           = (__UNUSED_FLASH_end__ & 0xfffff000) - __NVS_BASE__;
 }
 
 ENTRY(_c_int00)

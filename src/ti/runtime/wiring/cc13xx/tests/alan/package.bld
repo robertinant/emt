@@ -6,14 +6,14 @@ Pkg.attrs.exportAll = true;
 
 Pkg.uses = ["ti/runtime/wiring"];
 
-var PLATFORM = "ti.platforms.emt13xx:CC1310_LAUNCHXL";
-var DEFS = "-Dxdc__nolocalstring=1 -DBOARD_CC1310_LAUNCHXL";
+//var PLATFORM = "ti.platforms.emt13xx:CC1310_LAUNCHXL";
+//var DEFS = "-Dxdc__nolocalstring=1 -DBOARD_CC1310_LAUNCHXL";
 
 //var PLATFORM = "ti.platforms.emt13xx:CC1350STK";
 //var DEFS = "-Dxdc__nolocalstring=1 -DBOARD_CC1350STK";
 
-//var PLATFORM = "ti.platforms.emt13xx:CC1350_LAUNCHXL";
-//var DEFS = "-Dxdc__nolocalstring=1 -DBOARD_CC1350_LAUNCHXL";
+var PLATFORM = "ti.platforms.emt13xx:CC1350_LAUNCHXL";
+var DEFS = "-Dxdc__nolocalstring=1 -DBOARD_CC1350_LAUNCHXL";
 
 DEFS += " -DDeviceFamily_CC13X0 ";
 
