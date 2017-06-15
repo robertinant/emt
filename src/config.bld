@@ -40,7 +40,7 @@ gnuTargets.M4F.LONGNAME = gnuTargets.M4.LONGNAME;
 gnuTargets.M3.LONGNAME  = gnuTargets.M4.LONGNAME;
 if (os == "Linux" && gnuTargets.M4F.rootDir == null) {
     gnuTargets.M4F.rootDir =
-        vtools + "/linaro/gcc-arm-none-eabi-4_9-2015q3/";
+        "/db/vendors/linaro/gcc-arm-none-eabi-6-2017-q1-update/";
 }
 gnuTargets.M4.rootDir  = gnuTargets.M4F.rootDir;
 gnuTargets.M3.rootDir  = gnuTargets.M4F.rootDir;

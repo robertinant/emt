@@ -21,5 +21,5 @@ include $(TREE_ROOT)/imports.mak
 include $(TREE_ROOT)/compilers.mak
 
 CCROOT  = $(gnu.targets.arm.M4F)
-CRTLDIR = gnu/targets/arm/libs/install-native/arm-none-eabi/lib/armv7e-m/fpu
+CRTLDIR = gnu/targets/arm/libs/install-native/arm-none-eabi/lib/thumb/armv7e-m/fpv4-sp/hard
 EMTROOT ?= $(TREE_ROOT)/src

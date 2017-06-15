@@ -145,7 +145,7 @@ static void switchToWatchdogTimer()
         wdtHwi = Hwi_create(19, clockTickFxn, NULL, NULL);
         
         /* set WDT to use 32KHz input, 250ms period */
-        MAP_WDT_A_initIntervalTimer(WDT_A_CLOCKSOURCE_XCLK, WDT_A_CLOCKITERATIONS_8192);
+        MAP_WDT_A_initIntervalTimer(WDT_A_CLOCKSOURCE_BCLK, WDT_A_CLOCKITERATIONS_8192);
     }
 
     /* remove DEEPSLEEP0 constraint left from TimerA usage */

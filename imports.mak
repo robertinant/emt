@@ -1,16 +1,16 @@
 #
 # XDCtools used to build this tree
 #
-XDCROOT = $(TOOLS)/vendors/xdc/xdctools_3_50_00_10/$(BUILD_HOST_OS)
+XDCROOT = $(TOOLS)/vendors/xdc/xdctools_3_50_01_12/$(BUILD_HOST_OS)
 
 ENERGIA = /db/builds/xinstall/energia_nightly/Energia
 
 #
 # internal TISB trees containing imports
 #
-MCPI_TREE = $(TREES)/mcpi/mcpi-3.10.00.10
-SDK_CC32XX = simplelink_cc32xx_sdk_1_30_00_01_eng
-SDK_MSP432 = simplelink_msp432_sdk_1_30_00_40
+MCPI_TREE = $(TREES)/mcpi/mcpi-3.20.00.17
+SDK_CC32XX = simplelink_cc32xx_sdk_1_40_00_03
+SDK_MSP432 = simplelink_msp432_sdk_1_40_00_28
 
 #
 # Official SDK builds:
