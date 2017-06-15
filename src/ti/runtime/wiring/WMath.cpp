@@ -30,7 +30,7 @@ extern "C" {
  * until msp430-libc adds supports for random and srandom
  */
 extern long random(void);
-extern void srandom(unsigned long __seed);
+extern void srandom(unsigned __seed);
 }
 
 void randomSeed(unsigned int seed)

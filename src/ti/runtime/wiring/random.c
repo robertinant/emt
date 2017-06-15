@@ -80,7 +80,7 @@ long random(void)
     return (do_random(&next));
 }
 
-void srandom(unsigned long seed)
+void srandom(unsigned seed)
 {
     next = seed;
 }
