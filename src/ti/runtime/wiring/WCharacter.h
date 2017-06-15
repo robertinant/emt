@@ -20,6 +20,7 @@
 #ifndef Character_h
 #define Character_h
 
+#define __MISC_VISIBLE 1
 #include <ctype.h>
 
 // WCharacter.h prototypes
