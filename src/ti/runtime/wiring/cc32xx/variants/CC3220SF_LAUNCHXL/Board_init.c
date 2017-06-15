@@ -31,7 +31,7 @@
  */
 
 /*
- *  ======== CC3220S_LAUNCHXL.c ========
+ *  ======== Board_init.c ========
  *  This file is responsible for setting up the board specific items for the
  *  CC3220S_LAUNCHXL board.
  */
@@ -707,6 +707,20 @@ const PowerCC32XX_ConfigV1 PowerCC32XX_config = {
     .ioRetentionShutdown = PRCM_IO_RET_GRP_1,
     .pinParkDefs = parkInfo,
     .numPins = sizeof(parkInfo) / sizeof(PowerCC32XX_ParkInfo)
+};
+
+#if defined(__TI_COMPILER_VERSION__)
+#pragma DATA_SECTION(ulDebugHeader, ".dbghdr")
+#elif defined(__IAR_SYSTEMS_ICC__)
+#pragma data_location=".dbghdr"
+#elif defined(__GNUC__)
+__attribute__ ((section (".dbghdr")))
+#endif
+const unsigned long ulDebugHeader[]=
+{
+                0x5AA5A55A,
+                0x000FF800,
+                0xEFA3247D
 };
 
 /*
