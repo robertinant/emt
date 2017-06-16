@@ -22,7 +22,7 @@ XDCPATH = $(SYSBIOS);$(TIDRIVERS);$(EMTROOT)
 
 PLATFORM = ti.platforms.emt13xx
 TARGET   = gnu.targets.arm.M3
-CCOPTS   = --compileOptions "-gdwarf-3 -gstrict-dwarf -fno-exceptions -I$(DRVLIB.cc13xx)"
+CCOPTS   = --compileOptions "-gdwarf-3 -gstrict-dwarf -fno-exceptions -DDeviceFamily_CC13X0 -I$(DRVLIB.cc13xx)"
 
 VARIANTS  = $(EMTROOT)/ti/runtime/wiring/cc13xx/variants
 

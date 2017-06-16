@@ -47,7 +47,7 @@ SDK_LIBS = $(DRVLIB.cc26xx)/driverlib/bin/ccs/driverlib.lib
 
 #define board-specific library path
 BRD_LIBS = $(CLOSURE)/ti/runtime/wiring/cc26xx/variants/$(VARIANT)
-BRD_DEFS = -DBOARD_$(VARIANT)
+BRD_DEFS = -DBOARD_$(VARIANT) -DDEVICE_FAMILY=cc26x0
 
 # define TI-RTOS and Energia wiring headers based on CLOSURE above
 CFG_INCS = -I "$(CLOSURE)" -I "$(CLOSURE)/src" \
@@ -57,9 +57,9 @@ CFG_INCS = -I "$(CLOSURE)" -I "$(CLOSURE)/src" \
 #    --cmd-file=...  - use the options defined in the specified file
 #    -g              - compile for debug
 #
-CCOPTS   = -Os -I"$(CLOSURE)/$(CRTLDIR)/../../include" @"$(CLOSURE)/compiler.opt" -gdwarf-3 -gstrict-dwarf -g -Dxdc__nolocalstring=1 -fno-exceptions $(BRD_DEFS)
+CCOPTS   = -Os -I"$(CLOSURE)/$(GCCLIBC)/include/newlib-nano" -I"$(CLOSURE)/$(GCCLIBC)/include" @"$(CLOSURE)/compiler.opt" -gdwarf-3 -gstrict-dwarf -g -Dxdc__nolocalstring=1 -fno-exceptions $(BRD_DEFS)
 CC       = $(CCROOT)/bin/arm-none-eabi-gcc -c
-LINK     = $(CCROOT)/bin/arm-none-eabi-gcc $(CCOPTS) -nostartfiles -Wl,--no-wchar-size-warning -Wl,-static -Wl,--gc-sections -L"$(CLOSURE)" -L"$(CLOSURE)/$(CRTLDIR)" -L"$(BRD_LIBS)"
+LINK     = $(CCROOT)/bin/arm-none-eabi-gcc $(CCOPTS) -nostartfiles --specs=nano.specs -Wl,--no-wchar-size-warning -Wl,-static -Wl,--gc-sections -L"$(CLOSURE)" -L"$(CLOSURE)/$(CRTLDIR)" -L"$(BRD_LIBS)"
 
 XDCROOT ?= $(wildcard $(TREES)/xdcprod/xdcprod-t67/product/Linux/xdctools*)
 

@@ -4,7 +4,7 @@
 #      DRVLIB  - the MSP432 driverlib product install directory
 #      XDCROOT - XDCtools (version 3.30.05 or above)
 #      INO2CPP - command to convert .ino sketch files to .cpp files
-#      TIRTOS  - TI-RTOS for CC3200
+#      TIRTOS  - TI-RTOS for CC26xx
 #      EMTROOT - the packages/ folder in the EMT product
 #
 #  For example, on Windows, these might be set as follows:
@@ -20,5 +20,6 @@ TREE_ROOT = $(firstword $(subst /src/, /src/,$(CURDIR)))
 include $(firstword $(wildcard $(TREE_ROOT)/src/products.mak $(TREE_ROOT)/products.mak))
 
 CCROOT  = $(gnu.targets.arm.M3)
-CRTLDIR = gnu/targets/arm/libs/install-native/arm-none-eabi/lib/armv7-m
+GCCLIBC = gnu/targets/arm/libs/install-native/arm-none-eabi
+CRTLDIR = $(GCCLIBC)/lib/thumb/v7e-m
 EMTROOT ?= $(TREE_ROOT)/src

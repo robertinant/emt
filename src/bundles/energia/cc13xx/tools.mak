@@ -21,5 +21,6 @@ include $(TREE_ROOT)/imports.mak
 include $(TREE_ROOT)/compilers.mak
 
 CCROOT  = $(gnu.targets.arm.M3)
-CRTLDIR = gnu/targets/arm/libs/install-native/arm-none-eabi/lib/armv7-m
+GCCLIBC = gnu/targets/arm/libs/install-native/arm-none-eabi
+CRTLDIR = $(GCCLIBC)/lib/thumb/v7e-m
 EMTROOT ?= $(TREE_ROOT)/src
