@@ -353,6 +353,60 @@ void Board_initGPIO(void)
 }
 
 /*
+ *  =============================== NVS ===============================
+ *  Non-Volatile Storage configuration.
+ */
+#include <ti/drivers/NVS.h>
+#include <ti/drivers/nvs/NVSCC26XX.h>
+#include <ti/drivers/nvs/NVSSPI25X.h>
+
+NVSCC26XX_Object nvsCC26XXObjects[1];
+NVSSPI25X_Object nvsSPI25XObjects[1];
+
+extern uint8_t __NVS_BASE__;
+extern uint8_t __NVS_SIZE__;
+
+NVSCC26XX_HWAttrs nvsCC26XXHWAttrs[1] = {
+    /*
+     * region 0 is 1 flash sector in length.
+     */
+    {
+        .regionBase = (void *)&__NVS_BASE__,
+        .regionSize = (size_t)(&__NVS_SIZE__)
+    },
+};
+
+NVSSPI25X_HWAttrs nvsSPI25XHWAttrs[1] = {
+    /*
+     * region 0 is 1 flash sector in length.
+     */
+    {
+        .regionBaseOffset = 0,
+        .regionSize = 0x100000,
+        .sectorSize = 4096,
+        .spiHandle = NULL,
+        .spiIndex = 0,
+        .spiBitRate = 4000000,
+        .spiCsnGpioIndex = 38,   /* boosterpack pin 38 = DIO20 */
+    },
+};
+
+const NVS_Config NVS_config[] = {
+    {
+        &NVSCC26XX_fxnTable,
+        &nvsCC26XXObjects[0],
+        &nvsCC26XXHWAttrs[0]
+    },
+    {
+        &NVSSPI25X_fxnTable,
+        &nvsSPI25XObjects[0],
+        &nvsSPI25XHWAttrs[0]
+    },
+};
+
+int NVS_count = 2;
+
+/*
  *  ============================= UART ===================================
 */
 

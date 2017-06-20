@@ -51,6 +51,7 @@
 #define ARTEST_CMD 1 /* analogRead() self test */
 #define AWTEST_CMD 1 /* analogWrite() self test */
 #define DRWTEST_CMD 1 /* digitalRead/Write self test */
+#define NVSTEST_CMD 1 /* nvsTest self test */
 
 #if ARTEST_CMD == 1
 #if defined(BOARD_CC3200LP) || defined(BOARD_CC3200_LAUNCHXL) || defined(BOARD_CC3220S_LAUNCHXL) || defined(BOARD_CC3220SF_LAUNCHXL)
@@ -187,6 +188,10 @@ static int consoleHandler_awtest(const char *line);
 static int consoleHandler_drwtest(const char *line);
 #endif
 
+#if NVSTEST_CMD == 1
+static int consoleHandler_nvstest(const char *line);
+#endif
+
 static char home[] = "\e[H";
 static char clear[] = "\e[2J";
 
@@ -249,6 +254,9 @@ static const struct {
 #endif
 #if DRWTEST_CMD == 1
     GEN_COMMTABLE_ENTRY(drwtest, "digitalReadWrite test",       "usage: drwtest"),
+#endif
+#if NVSTEST_CMD == 1
+    GEN_COMMTABLE_ENTRY(nvstest, "NVS test",                    "usage: nvstest"),
 #endif
     GEN_COMMTABLE_ENTRY(help,    "Get information on commands. Usage: help [command]",  NULL),
     {NULL,NULL,NULL,NULL}   // Indicates end of table
@@ -1792,4 +1800,60 @@ static int consoleHandler_drwtest(const char * line)
 
 #endif /* DRWTEST_CMD */
 
+#if NVSTEST_CMD
+#include  <ti/drivers/NVS.h>
 
+static int consoleHandler_nvstest(const char *line)
+{
+    NVS_Handle handle;
+    NVS_Params nvsParams;
+    NVS_Attrs nvsAttrs;
+    int_fast16_t status;
+    int i;
+
+    NVS_Params_init(&nvsParams);
+
+    handle = NVS_open(0, &nvsParams);
+
+    if (handle == NULL) {
+        Serial.println("open failure");
+        return RETURN_SUCCESS;
+    }
+
+    NVS_getAttrs(handle, &nvsAttrs);
+
+    char *regionData = (char *)(nvsAttrs.regionBase);
+
+    Serial.print("region base = ");
+    Serial.println((size_t)nvsAttrs.regionBase, 16);
+    Serial.print("region size = ");
+    Serial.println(nvsAttrs.regionSize, 16);
+
+    status = NVS_erase(handle, 0, nvsAttrs.regionSize);
+
+    if (status != NVS_STATUS_SUCCESS) {
+	Serial.println("Erase failure");
+        return (RETURN_SUCCESS);
+    }
+
+    for (i = 0; i < nvsAttrs.regionSize; i++) {
+        if (regionData[i] != 0xff) {
+            Serial.println("erase didn't erase");
+            return (RETURN_SUCCESS);
+        }
+    }
+
+    /* write a string */
+    status = NVS_write(handle, 0, (void *)"energia is easy to use", strlen("energia is easy to use") + 1,
+            NVS_WRITE_PRE_VERIFY | NVS_WRITE_POST_VERIFY );
+
+    if (status != NVS_STATUS_SUCCESS) {
+        Serial.println("NVS_write failed");
+        return (RETURN_SUCCESS);
+    }
+
+    Serial.println((char *)nvsAttrs.regionBase); 
+
+    return (RETURN_SUCCESS);
+}
+#endif
