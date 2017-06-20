@@ -1,4 +1,4 @@
-				emt-d10
+				emt-e00
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -95,7 +95,7 @@ Librarian releases
 
     # clone the tree and merge/review user content
     ggentree -u d-russo@ti.com emt.git/
-    cd emt-d??
+    cd emt-e??
     git merge origin/dr
 
     # build the tree
@@ -104,7 +104,7 @@ Librarian releases
 
     # update README 
     emacs README
-    git commit -a -m emt-d??
+    git commit -a -m emt-e??
 
     # release the tree
     greltree -m "something brief and meaningful"
@@ -117,16 +117,19 @@ DELETIONS
 
 CHANGES
 
+src/config.bld
+        move to GCC 6.3.1: gcc-arm-none-eabi-6-2017-q1-update: 
+
 bundles/energia/*
-        ENERGIAMT-9: fixed energia.cfg to include posix
+        switch to 3.20 drivers and 1.40 SDKs (including new GCC compiler)
 
-        added unit test of WStringD fix
+ti/runtime/wiring/*
+        switch to 3.20 drivers and 1.40 SDKs (including new GCC compiler)
 
-ti/runtime/wiring
-        ENERGIAMT-4 & ENERGIAMT-12
+        added NVS
+
+ti/runtime/wiring/cc32xx
+        added secret sauce required for cc3220Sf flashing
 
 MRS
-
-ENERGIAMT-4 clockCyclesPerMicrosecond define in Energia.h is wrong
-ENERGIAMT-9 - add ti.sysbios.posix.Settings to the Energia config script
-ENERGIAMT-12 - undefined reference to String::init()
+ENERGIAMT-11 NVS driver integration into Energia
