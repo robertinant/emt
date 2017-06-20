@@ -1,7 +1,7 @@
 #
 # XDCtools used to build this tree
 #
-XDCROOT = $(TOOLS)/vendors/xdc/xdctools_3_50_01_12/$(BUILD_HOST_OS)
+XDCROOT = $(TOOLS)/vendors/xdc/xdctools_3_50_02_20_core/$(BUILD_HOST_OS)
 
 ENERGIA = /db/builds/xinstall/energia_nightly/Energia
 

@@ -5,15 +5,19 @@
 
 include ./imports.mak
 
+PLATFORMPROD := $(strip $(shell ./getpp.ksh $(XDCROOT)))
+XDCTARGETS = $(TREES)/platformprod/$(PLATFORMPROD)/exports/packages
+
 # required by bundles/energia/makefile
 export MCPI_TREE
 
 MYXDC = $(XDCROOT)/xdc
+export XDCPATH = $(XDCTARGETS)
 
 XDCPATH.msp432 = "XDCPATH=$(CURDIR)/src;$(TIRTOS.msp432);$(TIDRIVERS.msp432)"
 XDCPATH.cc13xx = "XDCPATH=$(CURDIR)/src;$(TIRTOS.cc13xx);$(TIDRIVERS.cc13xx)"
 XDCPATH.cc32xx = "XDCPATH=$(CURDIR)/src;$(TIRTOS.cc32xx);$(TIDRIVERS.cc32xx)"
-XDCPATH.portable = $(XDCPATH.msp432)
+XDCPATH.portable = "XDCPATH=$(CURDIR)/src;$(TIRTOS.msp432);$(TIDRIVERS.msp432);$(XDCTARGETS)"
 
 PKGS := $(shell $(XDCROOT)/bin/xdcpkg -r ./src | egrep -v '32xx|26xx|13xx|432')
 PKGS.msp432 := $(shell $(XDCROOT)/bin/xdcpkg -r ./src | egrep '432')
@@ -70,6 +74,7 @@ JOBS = --jobs=1
 	$(MYXDC) $(JOBS) $(XDCPATH.cc13xx) .libraries -P $(PKGS.cc13xx)
 	$(MYXDC) $(JOBS) $(XDCPATH.cc32xx) .libraries -P $(PKGS.cc32xx)
 
+	@echo "Building package releases ..."
 	$(MYXDC) $(JOBS) $(XDCPATH.portable) release -P $(PKGS) 
 	$(MYXDC) $(JOBS) $(XDCPATH.msp432) release -P $(PKGS.msp432)
 	$(MYXDC) $(JOBS) $(XDCPATH.cc13xx) release -P $(PKGS.cc13xx)
