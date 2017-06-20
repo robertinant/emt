@@ -11,11 +11,11 @@ var cc32xx = xdc.loadCapsule("cc32xx.bld");
 //var INCS = "-I" + base + "/oslib";
 //var DEFS = "-DSL_FULL -DSL_PLATFORM_MULTI_THREADED";
 
-/* _POSIX_SOURCE is needed to work around a duplicate symbol
- * definition in socket.h: GCC wants to define it (unless 
- * _POSIX_SOURCE is defined) but it's also defined by our socket.h
+/* 
+ * -D_DEFAULT_SOURCE is needed by the new gcc compiler to enable
+ * BSD and GCC extensions required by WCharacter.h.
  */
-var DEFS = "-D_POSIX_SOURCE " + cc32xx.DEFS;
+var DEFS = "-D_DEFAULT_SOURCE " + cc32xx.DEFS;
 
 var SRCDIRS = [
     ".", "..", "../avr", 
