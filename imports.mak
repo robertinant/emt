@@ -23,12 +23,15 @@ SDK_MSP432 = simplelink_msp432_sdk_1_40_00_28
 #
 SDK.msp432 = $(TOOLS)/vendors/ti/msp432_sdk/$(SDK_MSP432)
 SDK.cc13xx = $(firstword $(wildcard $(MCPI_TREE)/exports/coresdk_cc13xx_*))
+SDK.cc26xx = $(SDK.cc13xx)
 SDK.cc32xx = $(TOOLS)/vendors/ti/cc3220_sdk/$(SDK_CC32XX)
 
 TIRTOS.msp432   = $(SDK.msp432)/kernel/tirtos/packages
 TIDRIVERS.msp432 = $(SDK.msp432)/source
 TIRTOS.cc13xx   = $(SDK.cc13xx)/kernel/tirtos/packages
 TIDRIVERS.cc13xx = $(SDK.cc13xx)/source
+TIRTOS.cc26xx   = $(SDK.cc26xx)/kernel/tirtos/packages
+TIDRIVERS.cc26xx = $(SDK.cc26xx)/source
 TIRTOS.cc32xx   = $(SDK.cc32xx)/kernel/tirtos/packages
 TIDRIVERS.cc32xx = $(SDK.cc32xx)/source
 

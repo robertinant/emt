@@ -1,5 +1,5 @@
 #  This file defines the installation locations of prerequisite components
-#  for the MSP432 LaunchPad Energia MT wiring port:
+#  for the CC26xx LaunchPad Energia MT wiring port:
 #      CCROOT  - an arm compiler (TI 5.2.5 or gcc 4.8)
 #      DRVLIB  - the MSP432 driverlib product install directory
 #      XDCROOT - XDCtools (version 3.30.05 or above)
@@ -17,7 +17,8 @@
 
 TREE_ROOT = $(firstword $(subst /src/, /src/,$(CURDIR)))
 
-include $(firstword $(wildcard $(TREE_ROOT)/src/products.mak $(TREE_ROOT)/products.mak))
+include $(TREE_ROOT)/imports.mak
+include $(TREE_ROOT)/compilers.mak
 
 CCROOT  = $(gnu.targets.arm.M3)
 GCCLIBC = gnu/targets/arm/libs/install-native/arm-none-eabi
