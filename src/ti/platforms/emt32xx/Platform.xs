@@ -22,9 +22,7 @@ function instance$meta$init(name)
 	this.variant = name;
     }
 
-    /* We use 'revision' to pass 'the real device name' to the generic
-     * CC32xx device.
-     */
+    /* We use variant name to compute the device */
     if (name.match(/CC3220SF/)) {
         this.deviceName = "CC3220SF";
     }
@@ -32,8 +30,14 @@ function instance$meta$init(name)
         this.deviceName = "CC3220S";
     }
     else {
-        print("Unknown platform: " + name);
+        this.deviceName = "CC3220SF";
+        print(this.$package + ": Unrecognized device: '" + name + "', using "
+             + this.deviceName);
     }
+
+    /* We use 'revision' to pass 'the real device name' to the generic
+     * CC32xx device.
+     */
     this.CPU.revision = this.deviceName;
     this.CPU.catalogName = "ti.catalog.arm.cortexm4";
     this.CPU.clockRate = 80;
