@@ -1,4 +1,4 @@
-				emt-e00
+				emt-e01
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -117,19 +117,14 @@ DELETIONS
 
 CHANGES
 
-src/config.bld
-        move to GCC 6.3.1: gcc-arm-none-eabi-6-2017-q1-update: 
+bundles/energia
+        fix board packages to include all newlib sub-directores (even those 
+        that are unnecessary for the specific board package)
 
-bundles/energia/*
-        switch to 3.20 drivers and 1.40 SDKs (including new GCC compiler)
+        bring cc26xx  up to the SDK model
 
-ti/runtime/wiring/*
-        switch to 3.20 drivers and 1.40 SDKs (including new GCC compiler)
-
-        added NVS
-
-ti/runtime/wiring/cc32xx
-        added secret sauce required for cc3220Sf flashing
+ti/platforms/emt32xx
+        fix default device and improve comments
 
 MRS
-ENERGIAMT-11 NVS driver integration into Energia
+
