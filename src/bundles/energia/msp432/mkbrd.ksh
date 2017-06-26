@@ -27,9 +27,13 @@
 usage="usage: <path_to_emt_source_archive> <sdk-directory>"
 
 # the GNULIB for msp432
-GNULIB="armv7e-m"
+#GNULIB="armv7e-m"
 
-XDCBIN=$TOOLS/vendors/xdc/xdctools_3_50_02_13_eng/Linux/bin
+XDCBIN=$TOOLS/vendors/xdc/xdctools_3_50_02_20_core/Linux/bin
+if [ ! -d $XDCBIN ]; then
+    echo "$0: XDCBIN does not exist: $XDCBIN"
+    exit 1
+fi
 
 if [ $# -lt 2 ]; then
     echo "Error: Illegal number of parameters"
@@ -162,14 +166,14 @@ rm -rf $DSTDIR/system/kernel/tirtos/packages/ti/targets/omf/elf/docs
 rm -rf $DSTDIR/system/kernel/tirtos/packages/ti/targets/arm/rtsarm
 rm -rf $DSTDIR/system/kernel/tirtos/packages/ti/sysbios/rom/c28
 
-echo "culling gcc libc libraries ..."
-gld="`find $DSTDIR/system/kernel -type d -wholename '*/gnu/targets/arm/libs/install-native/arm-none-eabi/lib'`"
-for d in `ls $gld`; do
-    if [ "$d" != "$GNULIB" ]; then
-        echo removing $gld/$d ...
-	rm -rf "$gld/$d"
-    fi
-done
+#echo "culling gcc libc libraries ..."
+#gld="`find $DSTDIR/system/kernel -type d -wholename '*/gnu/targets/arm/libs/install-native/arm-none-eabi/lib'`"
+#for d in `ls $gld`; do
+#    if [ "$d" != "$GNULIB" ]; then
+#        echo removing $gld/$d ...
+#	rm -rf "$gld/$d"
+#    fi
+#done
 
 # selectively copy closure files to EMTDIR (inside DSTDIR)
 cd $TMPDIR/closure
