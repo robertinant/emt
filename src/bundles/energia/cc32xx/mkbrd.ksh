@@ -30,6 +30,10 @@ usage="usage: <path_to_emt_source_archive> <sdk-directory>"
 #GNULIB="armv7e-m"
 
 XDCBIN=$TOOLS/vendors/xdc/xdctools_3_50_02_20_core/Linux/bin
+if [ ! -d $XDCBIN ]; then
+    echo "$0: XDCBIN does not exist: $XDCBIN"
+    exit 1
+fi
 
 if [ $# -lt 2 ]; then
     echo "Error: Illegal number of parameters"
