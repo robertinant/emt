@@ -1363,11 +1363,65 @@ uint8_t pin_to_channel[] = {
 #define PCF8574A_I2C_ADDR  (0x38)
 #define PCF8574T_I2C_ADDR  (0x20)
 
-#define PCF8574_I2C_ADDR PCF8574A_I2C_ADDR
+static uint8_t pcfAddress = 0;
+
+static bool findPcf(void)
+{
+    uint8_t result;
+
+    if (pcfAddress != 0) return (true);
+
+    /* write 0x3f to the 'A' address */
+    Wire.beginTransmission(PCF8574A_I2C_ADDR);
+    Wire.write(0x3f);
+    Wire.endTransmission();
+
+    delay(1);
+
+    /* write 0x1f to the 'T' address */
+    Wire.beginTransmission(PCF8574T_I2C_ADDR);
+    Wire.write(0x1f);
+    Wire.endTransmission();
+
+    delay(1);
+
+    Wire.requestFrom((int)PCF8574A_I2C_ADDR, 1);
+
+    /* read the 'A' address */
+    while (Wire.available())
+    {
+        result = Wire.read();
+    }
+  
+    /* if read = written, PCF device is 'A' type */ 
+    if (result == 0x3f) {
+        pcfAddress = PCF8574A_I2C_ADDR;
+        return (true);
+    }
+
+    Wire.requestFrom((int)PCF8574T_I2C_ADDR, 1);
+
+    /* read the 'T' address */
+    while (Wire.available())
+    {
+        result = Wire.read();
+    }
+
+
+    /* if read = written, PCF device is 'T' type */ 
+    if (result == 0x1f) {
+        pcfAddress = PCF8574T_I2C_ADDR;
+        return (true);
+    }
+
+    return (false);
+}
 
 static void aMuxChannelEnable(unsigned int pin)
 {
     uint8_t chan = pin_to_channel[pin];
+
+    findPcf();
 
     if (chan < 16) {
         chan = 0x20 | (chan & 0x0f); /* enable lower 16 channels */
@@ -1379,7 +1433,7 @@ static void aMuxChannelEnable(unsigned int pin)
         chan = 0x30; /* disable b0th muxes */
     }
 
-    Wire.beginTransmission(PCF8574_I2C_ADDR);
+    Wire.beginTransmission(pcfAddress);
     Wire.write(chan);
     Wire.endTransmission();
 

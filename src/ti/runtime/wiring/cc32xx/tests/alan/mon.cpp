@@ -51,6 +51,7 @@
 #define ARTEST_CMD 1 /* analogRead() self test */
 #define AWTEST_CMD 1 /* analogWrite() self test */
 #define DRWTEST_CMD 1 /* digitalRead/Write self test */
+#define NVSTEST_CMD 0 /* nvsTest self test */
 
 #if ARTEST_CMD == 1
 #if defined(BOARD_CC3200LP) || defined(BOARD_CC3200_LAUNCHXL) || defined(BOARD_CC3220S_LAUNCHXL) || defined(BOARD_CC3220SF_LAUNCHXL)
@@ -187,6 +188,10 @@ static int consoleHandler_awtest(const char *line);
 static int consoleHandler_drwtest(const char *line);
 #endif
 
+#if NVSTEST_CMD == 1
+static int consoleHandler_nvstest(const char *line);
+#endif
+
 static char home[] = "\e[H";
 static char clear[] = "\e[2J";
 
@@ -249,6 +254,9 @@ static const struct {
 #endif
 #if DRWTEST_CMD == 1
     GEN_COMMTABLE_ENTRY(drwtest, "digitalReadWrite test",       "usage: drwtest"),
+#endif
+#if NVSTEST_CMD == 1
+    GEN_COMMTABLE_ENTRY(nvstest, "NVS test",                    "usage: nvstest"),
 #endif
     GEN_COMMTABLE_ENTRY(help,    "Get information on commands. Usage: help [command]",  NULL),
     {NULL,NULL,NULL,NULL}   // Indicates end of table
@@ -1355,11 +1363,65 @@ uint8_t pin_to_channel[] = {
 #define PCF8574A_I2C_ADDR  (0x38)
 #define PCF8574T_I2C_ADDR  (0x20)
 
-#define PCF8574_I2C_ADDR PCF8574A_I2C_ADDR
+static uint8_t pcfAddress = 0;
+
+static bool findPcf(void)
+{
+    uint8_t result;
+
+    if (pcfAddress != 0) return (true);
+
+    /* write 0x3f to the 'A' address */
+    Wire.beginTransmission(PCF8574A_I2C_ADDR);
+    Wire.write(0x3f);
+    Wire.endTransmission();
+
+    delay(1);
+
+    /* write 0x1f to the 'T' address */
+    Wire.beginTransmission(PCF8574T_I2C_ADDR);
+    Wire.write(0x1f);
+    Wire.endTransmission();
+
+    delay(1);
+
+    Wire.requestFrom((int)PCF8574A_I2C_ADDR, 1);
+
+    /* read the 'A' address */
+    while (Wire.available())
+    {
+        result = Wire.read();
+    }
+  
+    /* if read = written, PCF device is 'A' type */ 
+    if (result == 0x3f) {
+        pcfAddress = PCF8574A_I2C_ADDR;
+        return (true);
+    }
+
+    Wire.requestFrom((int)PCF8574T_I2C_ADDR, 1);
+
+    /* read the 'T' address */
+    while (Wire.available())
+    {
+        result = Wire.read();
+    }
+
+
+    /* if read = written, PCF device is 'T' type */ 
+    if (result == 0x1f) {
+        pcfAddress = PCF8574T_I2C_ADDR;
+        return (true);
+    }
+
+    return (false);
+}
 
 static void aMuxChannelEnable(unsigned int pin)
 {
     uint8_t chan = pin_to_channel[pin];
+
+    findPcf();
 
     if (chan < 16) {
         chan = 0x20 | (chan & 0x0f); /* enable lower 16 channels */
@@ -1371,7 +1433,7 @@ static void aMuxChannelEnable(unsigned int pin)
         chan = 0x30; /* disable b0th muxes */
     }
 
-    Wire.beginTransmission(PCF8574_I2C_ADDR);
+    Wire.beginTransmission(pcfAddress);
     Wire.write(chan);
     Wire.endTransmission();
 
@@ -1792,4 +1854,60 @@ static int consoleHandler_drwtest(const char * line)
 
 #endif /* DRWTEST_CMD */
 
+#if NVSTEST_CMD
+#include  <ti/drivers/NVS.h>
 
+static int consoleHandler_nvstest(const char *line)
+{
+    NVS_Handle handle;
+    NVS_Params nvsParams;
+    NVS_Attrs nvsAttrs;
+    int_fast16_t status;
+    int i;
+
+    NVS_Params_init(&nvsParams);
+
+    handle = NVS_open(0, &nvsParams);
+
+    if (handle == NULL) {
+        Serial.println("open failure");
+        return RETURN_SUCCESS;
+    }
+
+    NVS_getAttrs(handle, &nvsAttrs);
+
+    char *regionData = (char *)(nvsAttrs.regionBase);
+
+    Serial.print("region base = ");
+    Serial.println((size_t)nvsAttrs.regionBase, 16);
+    Serial.print("region size = ");
+    Serial.println(nvsAttrs.regionSize, 16);
+
+    status = NVS_erase(handle, 0, nvsAttrs.regionSize);
+
+    if (status != NVS_STATUS_SUCCESS) {
+	Serial.println("Erase failure");
+        return (RETURN_SUCCESS);
+    }
+
+    for (i = 0; i < nvsAttrs.regionSize; i++) {
+        if (regionData[i] != 0xff) {
+            Serial.println("erase didn't erase");
+            return (RETURN_SUCCESS);
+        }
+    }
+
+    /* write a string */
+    status = NVS_write(handle, 0, (void *)"energia is easy to use", strlen("energia is easy to use") + 1,
+            NVS_WRITE_PRE_VERIFY | NVS_WRITE_POST_VERIFY );
+
+    if (status != NVS_STATUS_SUCCESS) {
+        Serial.println("NVS_write failed");
+        return (RETURN_SUCCESS);
+    }
+
+    Serial.println((char *)nvsAttrs.regionBase); 
+
+    return (RETURN_SUCCESS);
+}
+#endif
