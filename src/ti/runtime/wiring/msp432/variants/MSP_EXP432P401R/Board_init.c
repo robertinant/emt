@@ -731,12 +731,9 @@ extern uint8_t __NVS_BASE__;
 extern uint8_t __NVS_SIZE__;
 
 NVSMSP432_HWAttrs nvsMSP432HWAttrs[1] = {
-    /*
-     * region 0 is 1 flash sector in length.
-     */
     {
-        .regionBase = (void *)&__NVS_BASE__,
-        .regionSize = (size_t)(&__NVS_SIZE__)
+        .regionBase = (void *)&__NVS_BASE__,   /* base of unused flash aligned on 4k boundary */
+        .regionSize = (size_t)(&__NVS_SIZE__) 
     },
 };
 

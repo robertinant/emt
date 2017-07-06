@@ -367,9 +367,6 @@ extern uint8_t __NVS_BASE__;
 extern uint8_t __NVS_SIZE__;
 
 NVSCC26XX_HWAttrs nvsCC26XXHWAttrs[1] = {
-    /*
-     * region 0 is 1 flash sector in length.
-     */
     {
         .regionBase = (void *)&__NVS_BASE__,
         .regionSize = (size_t)(&__NVS_SIZE__)
@@ -377,12 +374,9 @@ NVSCC26XX_HWAttrs nvsCC26XXHWAttrs[1] = {
 };
 
 NVSSPI25X_HWAttrs nvsSPI25XHWAttrs[1] = {
-    /*
-     * region 0 is 1 flash sector in length.
-     */
     {
         .regionBaseOffset = 0,
-        .regionSize = 0x100000,
+        .regionSize = 0x100000,  /* 1 MByte */
         .sectorSize = 4096,
         .spiHandle = NULL,
         .spiIndex = 0,
@@ -392,11 +386,13 @@ NVSSPI25X_HWAttrs nvsSPI25XHWAttrs[1] = {
 };
 
 const NVS_Config NVS_config[] = {
+    /* Region 0 is internal flash */
     {
         &NVSCC26XX_fxnTable,
         &nvsCC26XXObjects[0],
         &nvsCC26XXHWAttrs[0]
     },
+    /* Region 1 is external spi flash */
     {
         &NVSSPI25X_fxnTable,
         &nvsSPI25XObjects[0],
