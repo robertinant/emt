@@ -1,4 +1,4 @@
-				emt-e01
+				emt-e02
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -117,14 +117,18 @@ DELETIONS
 
 CHANGES
 
-bundles/energia
-        fix board packages to include all newlib sub-directores (even those 
-        that are unnecessary for the specific board package)
+ti.runtime.wiring
+        added "continous" read mode to HardwareSerial.cpp to fix ENERGIAMT-3: 
+        skectches may poll for a certain number of characters before acting
+        (so always returning 1 for "available()" is bogus)
 
-        bring cc26xx  up to the SDK model
+ti.runtime.wiring.variants*
+        increased UART ring buffer from 32 to 128 bytes on CC32xx and MSP432
 
-ti/platforms/emt32xx
-        fix default device and improve comments
+        clean up NVS Board_init.c content
+
+        cleanup (currently unused) CC2650 Board_init.c (I2C + ...)
 
 MRS
 
+ENERGIAMT-3 Inserting a delay before Serial.available() produces odd behaviour
