@@ -44,5 +44,8 @@ void uartWriteCallback(UART_Handle uart, void *buf, size_t count)
 
 /*
  * Pre-Initialize Serial instances
+ *
+ * The CC26XX UART driver requires continuous read mode
+ * when callbackMode is enabled
  */
-HardwareSerial Serial(0, uartReadCallback, uartWriteCallback);
+HardwareSerial Serial(0, uartReadCallback, uartWriteCallback, true);

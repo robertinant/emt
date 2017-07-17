@@ -9,17 +9,23 @@ void timerIsr(UArg arg)
 
 void setup5()
 {
-    Timer_Params prms;
+//    Timer_Params prms;
 
-    Timer_Params_init(&prms);
-    prms.period = 1000000;
-    prms.arg = 1;
+//    Timer_Params_init(&prms);
+//    prms.period = 1000000;
+//    prms.arg = 1;
 
-    Timer_create(Timer_ANY, timerIsr, &prms, NULL);
+//    Timer_create(Timer_ANY, timerIsr, &prms, NULL);
     Serial.begin(115200);
 }
 
 void loop5()
 {
-    Task_exit();
+  delay(500);
+  if(Serial.available()) {
+    Serial.println(Serial.available());
+    while(Serial.available()) {
+      Serial.print((char)Serial.read());
+    }
+  }
 }

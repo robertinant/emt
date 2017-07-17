@@ -1169,8 +1169,8 @@ const UART_FxnTable myUARTMSP432_fxnTable = {
 
 /* UART objects */
 UARTMSP432_Object uartMSP432Objects[Board_UARTCOUNT];
-unsigned char uartMSP432RingBuffer0[32];
-unsigned char uartMSP432RingBuffer1[32];
+unsigned char uartMSP432RingBuffer0[128];
+unsigned char uartMSP432RingBuffer1[128];
 
 
 /*

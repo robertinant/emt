@@ -579,8 +579,8 @@ const UART_FxnTable myUARTCC32XX_fxnTable = {
 /* UART objects */
 UARTCC32XX_Object uartCC32XXObjects[Board_UARTCOUNT];
 
-unsigned char uartCC32XXRingBuffer0[32];
-unsigned char uartCC32XXRingBuffer1[32];
+unsigned char uartCC32XXRingBuffer0[128];
+unsigned char uartCC32XXRingBuffer1[128];
 
 /* UART configuration structure */
 const UARTCC32XX_HWAttrsV1 uartCC32XXHWAttrs[Board_UARTCOUNT] = {

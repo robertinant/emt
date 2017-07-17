@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Texas Instruments Incorporated
+ * Copyright (c) 2015-2017, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -60,6 +60,12 @@ HardwareSerial::HardwareSerial(unsigned long module, UART_Callback rCallback, UA
     init(module, rCallback, tCallback);
 }
 
+HardwareSerial::HardwareSerial(unsigned long module, UART_Callback rCallback, UART_Callback tCallback, bool useContRead)
+{
+    init(module, rCallback, tCallback);
+    useContinuousRead = useContRead;
+}
+
 /*
  * Private Methods
  */
@@ -70,6 +76,9 @@ void HardwareSerial::init(unsigned long module, UART_Callback rCallback, UART_Ca
 
     /* by default, read() will not block */
     blockingModeEnabled = false;
+
+    /* by default, read callback does not call UART_read() */
+    useContinuousRead = false;
 
     uartModule = module;
     begun = false;
@@ -86,12 +95,12 @@ void HardwareSerial::begin(unsigned long baud)
 {
     UART_Params uartParams;
 
-    if (begun == TRUE) return;
+    if (begun == true) return;
 
     baudRate = baud;
 
     UART_init();
-    
+
     UART_Params_init(&uartParams);
 
     if (blockingModeEnabled == true) {
@@ -103,6 +112,7 @@ void HardwareSerial::begin(unsigned long baud)
         uartParams.readCallback = rxCallback;
         uartParams.writeMode = UART_MODE_CALLBACK;
         uartParams.writeCallback = txCallback;
+        continuousReadMode = useContinuousRead;
         rxWriteIndex = 0;
         rxReadIndex = 0;
         txWriteIndex = 0;
@@ -120,11 +130,11 @@ void HardwareSerial::begin(unsigned long baud)
 
     if (uart != NULL) {
         GateMutex_construct(&gate, NULL);
-        if (blockingModeEnabled == false) {
+        if ((blockingModeEnabled == false) && (continuousReadMode == true)) {
             /* start the read process */
             UART_read(uart, &rxBuffer[rxWriteIndex], 1);
         }
-        begun = TRUE;
+        begun = true;
     }
 }
 
@@ -170,7 +180,7 @@ int HardwareSerial::available(void)
         return (0);
     }
 
-    if (blockingModeEnabled == true) {
+    if (continuousReadMode == false) {
         if (UART_control(uart, UART_CMD_GETRXCOUNT, (void *)&numChars)
          == UART_STATUS_SUCCESS) {
             return (numChars);
@@ -183,11 +193,6 @@ int HardwareSerial::available(void)
         unsigned int key;
 
         key = Hwi_disable();
-
-        if (RX_BUFFER_EMPTY) {
-            /* kick off another character read operation */
-            UART_read(uart, &rxBuffer[rxWriteIndex], 1);
-        }
 
         numChars = (rxWriteIndex >= rxReadIndex) ?
             (rxWriteIndex - rxReadIndex)
@@ -207,7 +212,7 @@ int HardwareSerial::peek(void)
         return (-1);
     }
 
-    if (blockingModeEnabled == true) {
+    if (continuousReadMode == false) {
         if (UART_control(uart, UART_CMD_PEEK, (void *)&iChar)
              == UART_STATUS_SUCCESS) {
             return (iChar);
@@ -250,7 +255,18 @@ int HardwareSerial::read(void)
 
         /* if a character is available, update buffer ptrs */
         if (iChar != -1) {
-            rxReadIndex = ((rxReadIndex) + 1) % SERIAL_RX_BUFFER_SIZE;
+            if (continuousReadMode == true) {
+                /* rx chars are fetched from rxBuffer */
+                rxReadIndex = ((rxReadIndex) + 1) % SERIAL_RX_BUFFER_SIZE;
+            }
+            else {
+                /* rxBuffer not used. Fetch from UART's ring buffer */
+                /*
+                 * UART_read() will ALWAYS be satisfied because we never ask
+                 * for more chars than there are available in the ring buffer.
+                 */
+                UART_read(uart, &iChar, 1);
+            }
         }
 
         Hwi_restore(hwiKey);
@@ -325,7 +341,7 @@ void HardwareSerial::primeTx(void) {
         Hwi_restore(hwiKey);
         return;
     }
-    
+
     if (txWriteIndex > txReadIndex) {
         size = txWriteIndex - txReadIndex;
     }
@@ -342,12 +358,20 @@ void HardwareSerial::primeTx(void) {
 
 void HardwareSerial::readCallback(UART_Handle uart, void *buf, size_t count)
 {
-    uint8_t volatile full = RX_BUFFER_FULL;
+    /*
+     * The CC26XX UART driver's receiver is disabled
+     * unless UART_read() is called.
+     */
+    if (continuousReadMode) {
+        uint8_t volatile full = RX_BUFFER_FULL;
 
-    rxWriteIndex = ((rxWriteIndex) + 1) % SERIAL_RX_BUFFER_SIZE;
+        rxWriteIndex = ((rxWriteIndex) + 1) % SERIAL_RX_BUFFER_SIZE;
 
-    if (full) {
-        rxReadIndex = ((rxReadIndex) + 1) % SERIAL_RX_BUFFER_SIZE;
+        if (full) {
+            rxReadIndex = ((rxReadIndex) + 1) % SERIAL_RX_BUFFER_SIZE;
+        }
+
+        UART_read(uart, &rxBuffer[rxWriteIndex], 1);
     }
 }
 

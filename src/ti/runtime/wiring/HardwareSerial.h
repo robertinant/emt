@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Texas Instruments Incorporated
+ * Copyright (c) 2015-2017, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -51,6 +51,8 @@ class HardwareSerial : public Stream
     private:
         bool begun;
         bool blockingModeEnabled;
+        bool continuousReadMode;
+        bool useContinuousRead;
         unsigned char rxBuffer[SERIAL_RX_BUFFER_SIZE];
         volatile unsigned long rxWriteIndex;
         volatile unsigned long rxReadIndex;
@@ -73,6 +75,7 @@ class HardwareSerial : public Stream
         HardwareSerial(void);
         HardwareSerial(unsigned long);
         HardwareSerial(unsigned long, UART_Callback, UART_Callback);
+        HardwareSerial(unsigned long, UART_Callback, UART_Callback, bool);
         void begin(unsigned long);
         void begin(unsigned long, bool);
         void setModule(unsigned long);
