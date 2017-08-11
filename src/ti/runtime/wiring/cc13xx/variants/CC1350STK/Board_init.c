@@ -381,7 +381,7 @@ NVSSPI25X_HWAttrs nvsSPI25XHWAttrs[1] = {
         .spiHandle = NULL,
         .spiIndex = 0,
         .spiBitRate = 4000000,
-        .spiCsnGpioIndex = 38,   /* boosterpack pin 38 = DIO20 */
+        .spiCsnGpioIndex = 32,   /* boosterpack pin 38 = DIO14 */
     },
 };
 
