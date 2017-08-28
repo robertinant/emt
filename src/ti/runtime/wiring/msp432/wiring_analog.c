@@ -38,6 +38,9 @@
 #include <ti/drivers/GPIO.h>
 #include <ti/drivers/gpio/GPIOMSP432.h>
 
+#include <ti/drivers/Power.h>
+#include <ti/drivers/power/PowerMSP432.h>
+
 #include <ti/drivers/PWM.h>
 #include <ti/drivers/pwm/PWMTimerMSP432.h>
 
