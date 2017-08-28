@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Texas Instruments Incorporated
+ * Copyright (c) 2015-2017, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,6 +31,8 @@
  */
 
 #include <ti/runtime/wiring/Energia.h>
+#include <ti/runtime/wiring/wiring_private.h>
+
 #include <xdc/runtime/Timestamp.h>
 #include <xdc/runtime/Types.h>
 #define ti_sysbios_knl_Clock__internalaccess
@@ -41,6 +43,9 @@
 
 #include <ti/drivers/Power.h>
 #include <ti/drivers/power/PowerMSP432.h>
+
+#include <ti/drivers/SPI.h>
+#include <ti/drivers/spi/SPIMSP432DMA.h>
 
 #include <driverlib/rom.h>
 #include <driverlib/rom_map.h>
@@ -115,7 +120,7 @@ void delayMicroseconds(unsigned int us)
 static void clockTickFxn(uintptr_t arg)
 {
     /*
-     * Bump Clock tick count by 249. 
+     * Bump Clock tick count by 249.
      * Clock_tick() will bump it one more
      */
     ((ti_sysbios_knl_Clock_Module_State *)(&ti_sysbios_knl_Clock_Module__state__V))->ticks += 249;
@@ -143,7 +148,7 @@ static void switchToWatchdogTimer()
     if (wdtHwi == NULL) {
         /* Create watchdog Timer Hwi */
         wdtHwi = Hwi_create(19, clockTickFxn, NULL, NULL);
-        
+
         /* set WDT to use 32KHz input, 250ms period */
         MAP_WDT_A_initIntervalTimer(WDT_A_CLOCKSOURCE_BCLK, WDT_A_CLOCKITERATIONS_8192);
     }
@@ -189,7 +194,7 @@ static void switchToTimerA()
     /* hence, Clock_tick() will be called from 1ms Timer_A interrupt */
 }
 
-/* 
+/*
  *  ======== delay ========
  */
 void delay(uint32_t milliseconds)
@@ -228,15 +233,15 @@ void delay(uint32_t milliseconds)
     }
 
     /* timeout is always in milliseconds so that Clock_workFunc() behaves properly */
-    Task_sleep(milliseconds); 
+    Task_sleep(milliseconds);
 }
 
-/* 
+/*
  *  ======== setDelayResolution ========
  *
  *  For now, only two resolutions are supported: 1ms and 250ms
  */
- void setDelayResolution(uint32_t milliseconds)
+void setDelayResolution(uint32_t milliseconds)
 {
     if (milliseconds == 250) {
         if ((delayMode == 0) || (delayMode == 2)) {
@@ -250,4 +255,24 @@ void delay(uint32_t milliseconds)
             delayMode = 2;
         }
     }
+}
+
+/*
+ *  ======== getSpiInfo ========
+ *
+ *  A hack to work around spiPolling only being supported
+ *  in SPI_MODE_BLOCKING. Remove if/when this is resolved
+ *  in the SPI drivers.
+ */
+void getSpiInfo(void *spi, SpiInfo *spiInfo)
+{
+    SPIMSP432DMA_Object *obj;
+    SPIMSP432DMA_HWAttrsV1 const *hwAttrs;
+    SPI_Handle spiHandle = (SPI_Handle)spi;
+
+    obj = (SPIMSP432DMA_Object *)(spiHandle->object);
+    hwAttrs = (SPIMSP432DMA_HWAttrsV1 *)(spiHandle->hwAttrs);
+
+    spiInfo->transferModePtr = &obj->transferMode;
+    spiInfo->minDmaTransferSize = hwAttrs->minDmaTransferSize;
 }

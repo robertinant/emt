@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Texas Instruments Incorporated
+ * Copyright (c) 2015-2017, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,11 +33,17 @@
 #define DEVICE_FAMILY cc13x0
 
 #include <ti/runtime/wiring/Energia.h>
+#include <ti/runtime/wiring/wiring_private.h>
+
+#include <xdc/runtime/Types.h>
+
 #include <ti/sysbios/family/arm/m3/TimestampProvider.h>
 #include <ti/sysbios/family/arm/m3/Hwi.h>
-#include <xdc/runtime/Types.h>
 #include <ti/sysbios/knl/Clock.h>
 #include <ti/sysbios/knl/Task.h>
+
+#include <ti/drivers/SPI.h>
+#include <ti/drivers/spi/SPICC26XXDMA.h>
 
 /*
  *  ======== micros ========
@@ -157,4 +163,22 @@ void energiaLastFxn() {
     Clock_TimerProxy_setFunc(Clock_getTimerHandle(), myClock_doTick, 0);
 }
 
+/*
+ *  ======== getSpiInfo ========
+ *
+ *  A hack to work around spiPolling only being supported
+ *  in SPI_MODE_BLOCKING. Remove if/when this is resolved
+ *  in the SPI drivers.
+ */
+void getSpiInfo(void *spi, SpiInfo *spiInfo)
+{
+    SPICC26XXDMA_Object *obj;
+    SPICC26XXDMA_HWAttrsV1 const *hwAttrs;
+    SPI_Handle spiHandle = (SPI_Handle)spi;
 
+    obj = (SPICC26XXDMA_Object *)(spiHandle->object);
+    hwAttrs = (SPICC26XXDMA_HWAttrsV1 *)(spiHandle->hwAttrs);
+
+    spiInfo->transferModePtr = &obj->transferMode;
+    spiInfo->minDmaTransferSize = hwAttrs->minDmaTransferSize;
+}

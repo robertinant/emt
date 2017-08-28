@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Texas Instruments Incorporated
+ * Copyright (c) 2015-2017, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -72,6 +72,10 @@ class SPIClass
         SPI_Handle spi;
         SPI_Params params;
         SPI_Transaction transaction;
+
+        SPI_TransferMode *spiTransferModePtr;
+        uint32_t minDmaTransferSize;
+
         GateMutex_Struct gate;
         void init(unsigned long);
         uint8_t reverseBits(uint8_t);
