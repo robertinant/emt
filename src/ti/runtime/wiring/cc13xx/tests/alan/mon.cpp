@@ -1414,6 +1414,9 @@ static bool findPcf(void)
         return (true);
     }
 
+    /* use default of A if search fails */
+    pcfAddress = PCF8574A_I2C_ADDR;
+
     return (false);
 }
 
@@ -1863,50 +1866,66 @@ static int consoleHandler_nvstest(const char *line)
     NVS_Params nvsParams;
     NVS_Attrs nvsAttrs;
     int_fast16_t status;
-    int i;
+    uint32_t index = 0;
+    char *endptr = NULL;
+    char buffer[32];
+
+    if (*line++ == ' ') {
+        endptr = (char *)line;
+        index = strtoul(endptr, &endptr, 10);
+    }
 
     NVS_Params_init(&nvsParams);
 
-    handle = NVS_open(0, &nvsParams);
+    handle = NVS_open(index, &nvsParams);
 
     if (handle == NULL) {
-        Serial.println("open failure");
+        Serial.print("open failure: ");
+        Serial.println(status, 16);
         return RETURN_SUCCESS;
     }
 
     NVS_getAttrs(handle, &nvsAttrs);
-
-    char *regionData = (char *)(nvsAttrs.regionBase);
 
     Serial.print("region base = ");
     Serial.println((size_t)nvsAttrs.regionBase, 16);
     Serial.print("region size = ");
     Serial.println(nvsAttrs.regionSize, 16);
 
-    status = NVS_erase(handle, 0, nvsAttrs.regionSize);
+    status = NVS_erase(handle, 0, nvsAttrs.sectorSize);
 
     if (status != NVS_STATUS_SUCCESS) {
-	Serial.println("Erase failure");
+	Serial.print("Erase failure: ");
+        Serial.println(status, 16);
+        NVS_close(handle);
         return (RETURN_SUCCESS);
-    }
-
-    for (i = 0; i < nvsAttrs.regionSize; i++) {
-        if (regionData[i] != 0xff) {
-            Serial.println("erase didn't erase");
-            return (RETURN_SUCCESS);
-        }
     }
 
     /* write a string */
-    status = NVS_write(handle, 0, (void *)"energia is easy to use", strlen("energia is easy to use") + 1,
-            NVS_WRITE_PRE_VERIFY | NVS_WRITE_POST_VERIFY );
+    status = NVS_write(handle, 0, (void *)"Energia is easy to use!",
+                       strlen("energia is easy to use!") + 1,
+                       NVS_WRITE_PRE_VERIFY | NVS_WRITE_POST_VERIFY );
 
     if (status != NVS_STATUS_SUCCESS) {
-        Serial.println("NVS_write failed");
+        Serial.print("NVS_write failed: ");
+        Serial.println(status, 16);
+        NVS_close(handle);
         return (RETURN_SUCCESS);
     }
 
-    Serial.println((char *)nvsAttrs.regionBase); 
+    status = NVS_read(handle, 0, buffer,
+                      strlen("Energia is easy to use!") + 1);
+
+    if (status != NVS_STATUS_SUCCESS) {
+        Serial.print("NVS_read failed: ");
+        Serial.println(status, 16);
+        NVS_close(handle);
+        return (RETURN_SUCCESS);
+    }
+
+    Serial.println(buffer); 
+
+    NVS_close(handle);
 
     return (RETURN_SUCCESS);
 }
