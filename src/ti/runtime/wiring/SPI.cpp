@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Texas Instruments Incorporated
+ * Copyright (c) 2015-2017, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,6 +34,10 @@
 
 #include "wiring_private.h"
 #include "SPI.h"
+
+extern "C" {
+extern void setSpiXferMode(SPI_Handle handle, SPI_TransferMode xferMode);
+}
 
 void spiTransferCallback(SPI_Handle handle,
                                         SPI_Transaction * transaction);
@@ -82,7 +86,11 @@ void SPIClass::begin(uint8_t ssPin)
     spi = SPI_open(spiModule, &params);
 
     if (spi != NULL) {
-	/* 6/18/2015 no support for pin profiles, just save for now */
+        SpiInfo spiInfo;
+    /* 6/18/2015 no support for pin profiles, just save for now */
+        getSpiInfo(spi, &spiInfo);
+        minDmaTransferSize = spiInfo.minDmaTransferSize;
+        spiTransferModePtr = (SPI_TransferMode *)(spiInfo.transferModePtr);
         slaveSelect = ssPin;
         GateMutex_construct(&gate, NULL);
         begun = TRUE;
@@ -144,7 +152,7 @@ uint8_t SPIClass::reverseBits(uint8_t rxtxData)
 {
 #if (defined(xdc_target__isaCompatible_v7M) || defined(xdc_target__isaCompatible_v7A))  \
      &&  defined(__TI_COMPILER_VERSION__)
-	rxtxData = __rbit(rxtxData);
+    rxtxData = __rbit(rxtxData);
         rxtxData = __rev(rxtxData);
 #elif (defined(xdc_target__isaCompatible_v7M) || defined(xdc_target__isaCompatible_v7A))  \
      && defined(__GNUC__)
@@ -177,7 +185,7 @@ uint8_t *SPIClass::transfer(uint8_t *buffer, size_t size)
     if (spi == NULL) {
         return (0);
     }
-    
+
     /* protect single 'transaction' content from re-rentrancy */
     taskKey = Task_disable();
 
@@ -201,12 +209,21 @@ uint8_t *SPIClass::transfer(uint8_t *buffer, size_t size)
     transaction.count = size;
     transferComplete = 0;
 
+    if (size < minDmaTransferSize) {
+        *spiTransferModePtr = SPI_MODE_BLOCKING;
+    }
+
     /* kick off the SPI transaction */
     SPI_transfer(spi, &transaction);
 
-    /* wait for transfer to complete (ie for callback to be called) */
-    while (transferComplete == 0) {
-        ;
+    if (size < minDmaTransferSize) {
+        *spiTransferModePtr = SPI_MODE_CALLBACK;
+    }
+    else {
+        /* wait for transfer to complete (ie for callback to be called) */
+        while (transferComplete == 0) {
+            ;
+        }
     }
 
     /* now that the transaction is finished, allow other threads to pre-empt */
@@ -240,7 +257,7 @@ uint8_t SPIClass::transfer(uint8_t ssPin, uint8_t data_out, uint8_t transferMode
     if (spi == NULL) {
         return (0);
     }
-    
+
     if (bitOrder == LSBFIRST) {
         data_out = reverseBits(data_out);
     }
@@ -267,13 +284,12 @@ uint8_t SPIClass::transfer(uint8_t ssPin, uint8_t data_out, uint8_t transferMode
     transaction.count = 1;
     transferComplete = 0;
 
+    *spiTransferModePtr = SPI_MODE_BLOCKING;
+
     /* kick off the SPI transaction */
     SPI_transfer(spi, &transaction);
 
-    /* wait for transfer to complete (ie for callback to be called) */
-    while (transferComplete == 0) {
-        ;
-    }
+    *spiTransferModePtr = SPI_MODE_CALLBACK;
 
     /* deselect SPI peripheral if ssPin was provided */
     if (transferMode == SPI_LAST && ssPin != 0) {
@@ -319,7 +335,7 @@ void SPIClass::setModule(uint8_t module)
 void SPIClass::usingInterrupt(uint8_t pin)
 {
     if (numUsingInterrupts < 16) {
-	usingInterruptPins[numUsingInterrupts++] = pin;
+    usingInterruptPins[numUsingInterrupts++] = pin;
     }
 }
 

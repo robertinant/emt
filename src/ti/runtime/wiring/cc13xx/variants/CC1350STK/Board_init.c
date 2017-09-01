@@ -363,6 +363,8 @@ void Board_initGPIO(void)
 NVSCC26XX_Object nvsCC26XXObjects[1];
 NVSSPI25X_Object nvsSPI25XObjects[1];
 
+static uint8_t verifyBuf[64];
+
 extern uint8_t __NVS_BASE__;
 extern uint8_t __NVS_SIZE__;
 
@@ -378,10 +380,12 @@ NVSSPI25X_HWAttrs nvsSPI25XHWAttrs[1] = {
         .regionBaseOffset = 0,
         .regionSize = 0x100000,  /* 1 MByte */
         .sectorSize = 4096,
+        .verifyBuf = verifyBuf,
+        .verifyBufSize = 64,
         .spiHandle = NULL,
         .spiIndex = 0,
         .spiBitRate = 4000000,
-        .spiCsnGpioIndex = 38,   /* boosterpack pin 38 = DIO20 */
+        .spiCsnGpioIndex = 32,   /* boosterpack pin 38 = DIO14 */
     },
 };
 
@@ -542,7 +546,8 @@ const SPICC26XXDMA_HWAttrsV1 spiCC26XXDMAHWAttrs[CC1350STK_SPICOUNT] = {
         .mosiPin = Board_SPI0_MOSI,
         .misoPin = Board_SPI0_MISO,
         .clkPin = Board_SPI0_CLK,
-        .csnPin = PIN_UNASSIGNED     /* External flash / DevPk uses SPI0 */
+        .csnPin = PIN_UNASSIGNED,    /* External flash / DevPk uses SPI0 */
+        .minDmaTransferSize = 16
     },
     {   /* SENSORTAG_CC1350STK_SPI1 */
         .baseAddr = SSI1_BASE,
@@ -556,7 +561,8 @@ const SPICC26XXDMA_HWAttrsV1 spiCC26XXDMAHWAttrs[CC1350STK_SPICOUNT] = {
         .mosiPin = Board_SPI1_MOSI,
         .misoPin = Board_SPI1_MISO,
         .clkPin = Board_SPI1_CLK,
-        .csnPin = Board_SPI1_CSN
+        .csnPin = Board_SPI1_CSN,
+        .minDmaTransferSize = 16
     }
 };
 

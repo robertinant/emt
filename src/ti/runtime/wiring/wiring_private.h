@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Texas Instruments Incorporated
+ * Copyright (c) 2015-2017, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -52,10 +52,18 @@ extern void stopAnalogRead(uint8_t pin);
 extern void stopDigitalWrite(uint8_t pin);
 extern void stopDigitalRead(uint8_t pin);
 
+typedef struct SpiInfo {
+    uint16_t minDmaTransferSize;
+    void *transferModePtr;
+} SpiInfo;
+
+extern void getSpiInfo(void *spi, SpiInfo *spiInfo);
+
 extern int8_t analogReadShift;
 
 extern uint8_t digital_pin_to_pin_function[];
 extern const uint8_t digital_pin_to_adc_index[];
+
 
 #ifdef __cplusplus
 } // extern "C"

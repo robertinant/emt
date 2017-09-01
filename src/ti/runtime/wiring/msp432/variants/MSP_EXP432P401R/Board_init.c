@@ -1022,7 +1022,8 @@ const SPIMSP432DMA_HWAttrsV1 spiMSP432DMAHWAttrs[Board_SPICOUNT] = {
         .simoPin = SPIMSP432DMA_P1_6_UCB0SIMO,
         .somiPin = SPIMSP432DMA_P1_7_UCB0SOMI,
         .stePin  = SPIMSP432DMA_P1_4_UCB0STE,
-        .pinMode  = EUSCI_SPI_3PIN
+        .pinMode  = EUSCI_SPI_3PIN,
+        .minDmaTransferSize = 16
     },
     {
         .baseAddr = EUSCI_B2_BASE,
@@ -1037,7 +1038,8 @@ const SPIMSP432DMA_HWAttrsV1 spiMSP432DMAHWAttrs[Board_SPICOUNT] = {
         .simoPin = SPIMSP432DMA_P3_6_UCB2SIMO,
         .somiPin = SPIMSP432DMA_P3_7_UCB2SOMI,
         .stePin  = SPIMSP432DMA_P3_4_UCB2STE,
-        .pinMode  = EUSCI_SPI_3PIN
+        .pinMode  = EUSCI_SPI_3PIN,
+        .minDmaTransferSize = 16
     }
 };
 
