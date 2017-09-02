@@ -1,4 +1,4 @@
-				emt-e03
+				emt-e04
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -123,17 +123,6 @@ DELETIONS
 CHANGES
 
 ./imports.mak
-        Upgrade to 3.30 TIRTOS
-
-ti.runtime.wiring.cc13xx.variants.CC1350STK
-        fix SPI flash CS pin for NVSSPI
-
-ti.runtime.wiring
-        Add workaround for SPI polling mode only being triggered in
-        SPI_MODE_BLOCKING transferMode
-
-ti.runtime.wiring.*.variants/*
-        Add .minDmaTransferSize to all SPI HWAttrs, and add verifyBuf to NVS
-        SPI region defintiions
+        Upgrade to CC32xx SDK that includes GA of core SDK
 
 MRS
