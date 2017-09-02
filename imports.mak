@@ -9,7 +9,7 @@ ENERGIA = /db/builds/xinstall/energia_nightly/Energia
 # internal TISB trees containing imports
 #
 MCPI_TREE = $(TREES)/mcpi/mcpi-3.30.00.13
-SDK_CC32XX = simplelink_cc32xx_sdk_1_50_00_00_eng
+SDK_CC32XX = simplelink_cc32xx_sdk_1_50_00_01_eng
 SDK_MSP432 = simplelink_msp432p4_sdk_1_50_00_06
 
 #
