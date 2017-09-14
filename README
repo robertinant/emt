@@ -1,4 +1,4 @@
-				emt-e04
+				emt-e05
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -122,7 +122,9 @@ DELETIONS
 
 CHANGES
 
-./imports.mak
-        Upgrade to CC32xx SDK that includes GA of core SDK
+bundles/energia/msp432
+        force PERIODIC mode for Clock
 
 MRS
+
+ENERGIAMT-14 - Calling delay with 250 or multiples thereof gets the target ...
