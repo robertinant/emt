@@ -1,4 +1,4 @@
-				emt-e02
+				emt-e04
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -109,26 +109,20 @@ Librarian releases
     # release the tree
     greltree -m "something brief and meaningful"
 
-========================================================================
+NOTE
+----
+    The following warning is a bug in SYS/BIOS handling of platform names 
+    and can be safely ignored for the time being:
+        warning: ti.sysbios.family.arm.msp432.init.Boot: "/db/vendors/ti/msp432_sdk/simplelink_msp432p4_sdk_1_50_00_06/kernel/tirtos/packages/ti/sysbios/family/arm/msp432/init/Boot.xs", line 120: ti.sysbios.family.arm.msp432.init.Boot : Unknown device: MSP432P401R. Assuming MSP432P401P compatible.
 
+========================================================================
 ADDITIONS
 
 DELETIONS
 
 CHANGES
 
-ti.runtime.wiring
-        added "continous" read mode to HardwareSerial.cpp to fix ENERGIAMT-3: 
-        skectches may poll for a certain number of characters before acting
-        (so always returning 1 for "available()" is bogus)
-
-ti.runtime.wiring.variants*
-        increased UART ring buffer from 32 to 128 bytes on CC32xx and MSP432
-
-        clean up NVS Board_init.c content
-
-        cleanup (currently unused) CC2650 Board_init.c (I2C + ...)
+./imports.mak
+        Upgrade to CC32xx SDK that includes GA of core SDK
 
 MRS
-
-ENERGIAMT-3 Inserting a delay before Serial.available() produces odd behaviour
