@@ -1,4 +1,4 @@
-				emt-e05
+				emt-e06
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -124,6 +124,13 @@ CHANGES
 
 bundles/energia/msp432
         force PERIODIC mode for Clock
+
+ti.runtime.wiring
+        replace System_sprintf with GNU sprintf to pull in %f support 
+        as needed.  We _really_ should remove all snprintf() references
+        since it is significantly larger than System_sprintf().  
+        But we need to implement dtostrf() using something that supports 
+        field widths (which, for %f, System does not)
 
 MRS
 
