@@ -22,13 +22,14 @@
  */
 #include "PString.h"
 #include <stdarg.h>
-#include <xdc/runtime/System.h>
+#include <stdio.h>
+//#include <xdc/runtime/System.h>
 
-int PString::format(char *str, ...) 
+int PString::format(const char *str, ...) 
 { 
     va_list argptr;  
     va_start(argptr, str); 
-    int ret = System_vsnprintf(_cur, _size - (_cur - _buf), str, argptr);
+    int ret = vsnprintf(_cur, _size - (_cur - _buf), str, argptr);
     if (_size) {
         while (*_cur) {
             ++_cur;
