@@ -37,14 +37,14 @@
 String::String(float value, unsigned char decimalPlaces)
 {
 	init();
-	char buf[33];
+	char buf[DTOSTRF_BUFLEN];
 	*this = dtostrf(value, (decimalPlaces + 2), decimalPlaces, buf);
 }
 
 String::String(double value, unsigned char decimalPlaces)
 {
 	init();
-	char buf[33];
+	char buf[DTOSTRF_BUFLEN];
 	*this = dtostrf(value, (decimalPlaces + 2), decimalPlaces, buf);
 }
 
@@ -54,14 +54,14 @@ String::String(double value, unsigned char decimalPlaces)
 
 unsigned char String::concat(float num)
 {
-	char buf[20];
+	char buf[DTOSTRF_BUFLEN];
 	char* string = dtostrf(num, 4, 2, buf);
 	return concat(string, strlen(string));
 }
 
 unsigned char String::concat(double num)
 {
-	char buf[20];
+	char buf[DTOSTRF_BUFLEN];
 	char* string = dtostrf(num, 4, 2, buf);
 	return concat(string, strlen(string));
 }
