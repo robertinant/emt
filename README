@@ -1,4 +1,4 @@
-				emt-e06
+				emt-e07
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -122,16 +122,20 @@ DELETIONS
 
 CHANGES
 
-bundles/energia/msp432
-        force PERIODIC mode for Clock
+bundles/energia/tests
+        updated string test/example to use floating point so we can test 
+        String (at least a bit)
+
+bundles/energia/msp432/tests/string
+        removed unnecessary cpp sources
 
 ti.runtime.wiring
-        replace System_sprintf with GNU sprintf to pull in %f support 
-        as needed.  We _really_ should remove all snprintf() references
-        since it is significantly larger than System_sprintf().  
-        But we need to implement dtostrf() using something that supports 
-        field widths (which, for %f, System does not)
+        re-implemented dtostrf()
+
+        fixed WStringD.cpp to properly size the working buffer passed to 
+        dtostrf()
 
 MRS
 
-ENERGIAMT-14 - Calling delay with 250 or multiples thereof gets the target ...
+ENERGIAMT-17 - String class floating point support corrupts the stack on
+ENERGIAMT-16 - Floating point support in the String class
