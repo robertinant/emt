@@ -21,11 +21,18 @@ __extern void stringLoop(void)
 {
     Memory_Stats stats;
     static int count = 1;
-
+    static float fcount = 2.0f;
+    const char *cstr;
+    
     digitalWrite(ledPin, HIGH); // set the LED on
 
-    System_printf("%s", (stringOne + count + '\n').c_str());
+    cstr = (stringOne + count + '\n').c_str();
+    System_printf("%s", cstr);
     count++;
+
+    cstr = (stringOne + fcount + '\n').c_str();
+    System_printf("%s", cstr);
+    fcount *= 2.0;
     
     Memory_getStats(NULL, &stats);
     System_printf("heap size: 0x%x, free: 0x%x, max free block: 0x%x\n",
