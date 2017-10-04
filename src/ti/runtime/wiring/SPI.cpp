@@ -207,6 +207,7 @@ uint8_t *SPIClass::transfer(uint8_t *buffer, size_t size)
     transaction.txBuf = buffer;
     transaction.rxBuf = buffer;
     transaction.count = size;
+    transaction.arg = (void *)this;
     transferComplete = 0;
 
     if (size < minDmaTransferSize) {
@@ -282,6 +283,7 @@ uint8_t SPIClass::transfer(uint8_t ssPin, uint8_t data_out, uint8_t transferMode
     transaction.txBuf = &data_out;
     transaction.rxBuf = &data_in;
     transaction.count = 1;
+    transaction.arg = (void *)this;
     transferComplete = 0;
 
     *spiTransferModePtr = SPI_MODE_BLOCKING;
@@ -342,5 +344,6 @@ void SPIClass::usingInterrupt(uint8_t pin)
 /* C type function */
 void spiTransferCallback(SPI_Handle spi, SPI_Transaction * transaction)
 {
-    SPI.transferComplete = 1;
+    SPIClass *si = static_cast<SPIClass*>(transaction->arg);
+    si.transferComplete = 1;
 }
