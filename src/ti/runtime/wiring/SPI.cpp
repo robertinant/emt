@@ -153,13 +153,13 @@ uint8_t SPIClass::reverseBits(uint8_t rxtxData)
 #if (defined(xdc_target__isaCompatible_v7M) || defined(xdc_target__isaCompatible_v7A))  \
      &&  defined(__TI_COMPILER_VERSION__)
     rxtxData = __rbit(rxtxData);
-        rxtxData = __rev(rxtxData);
+    rxtxData = __rev(rxtxData);
 #elif (defined(xdc_target__isaCompatible_v7M) || defined(xdc_target__isaCompatible_v7A))  \
      && defined(__GNUC__)
-        /* reverse order of 32 bits */
-        asm("rbit %0, %1" : "=r" (rxtxData) : "r" (rxtxData));
-        /* reverse order of bytes to get original bits into lowest byte */
-        asm("rev %0, %1" : "=r" (rxtxData) : "r" (rxtxData));
+    /* reverse order of 32 bits */
+    asm("rbit %0, %1" : "=r" (rxtxData) : "r" (rxtxData));
+    /* reverse order of bytes to get original bits into lowest byte */
+    asm("rev %0, %1" : "=r" (rxtxData) : "r" (rxtxData));
 #else
     static  const uint8_t reverse_data[] =
         { 0x0, 0x8, 0x4, 0xC,
@@ -299,7 +299,6 @@ uint8_t SPIClass::transfer(uint8_t ssPin, uint8_t data_out, uint8_t transferMode
     }
 
     /* now that the transaction is finished, allow other threads to pre-empt */
-
     hwiKey = Hwi_disable();
 
     /* re-enable all interrupts registered with SPI.usingInterrupt() */
@@ -337,7 +336,7 @@ void SPIClass::setModule(uint8_t module)
 void SPIClass::usingInterrupt(uint8_t pin)
 {
     if (numUsingInterrupts < 16) {
-    usingInterruptPins[numUsingInterrupts++] = pin;
+        usingInterruptPins[numUsingInterrupts++] = pin;
     }
 }
 
@@ -345,5 +344,5 @@ void SPIClass::usingInterrupt(uint8_t pin)
 void spiTransferCallback(SPI_Handle spi, SPI_Transaction * transaction)
 {
     SPIClass *si = static_cast<SPIClass*>(transaction->arg);
-    si.transferComplete = 1;
+    si->transferComplete = 1;
 }
