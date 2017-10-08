@@ -1,4 +1,4 @@
-				emt-e07
+				emt-e08
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -121,21 +121,18 @@ ADDITIONS
 DELETIONS
 
 CHANGES
+./imports.mak
+        import CC13X0 SDK (rather than core SDK) for CC13xx builds
 
-bundles/energia/tests
-        updated string test/example to use floating point so we can test 
-        String (at least a bit)
-
-bundles/energia/msp432/tests/string
-        removed unnecessary cpp sources
+ti.runtime.wiring.*
+        fix micros() implementation to acount for clock period differences 
+        between LPRF and other devices.
 
 ti.runtime.wiring
-        re-implemented dtostrf()
-
-        fixed WStringD.cpp to properly size the working buffer passed to 
-        dtostrf()
+        fix SPI transfer completion to properly track completion when
+        multiple SPI instances are concurrently active
 
 MRS
 
-ENERGIAMT-17 - String class floating point support corrupts the stack on
-ENERGIAMT-16 - Floating point support in the String class
+ENERGIAMT-15 - micros() does not return the right value after delay()
+ENERGIAMT-18 - SPI's transferComplete is clobbered if both SPI and SPI1 are ...
