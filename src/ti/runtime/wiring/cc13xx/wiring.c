@@ -50,14 +50,8 @@
  */
 unsigned long micros(void)
 {
-    Types_FreqHz freq;
-    Types_Timestamp64 time;
-    uint64_t t64;
-
-    TimestampProvider_getFreq(&freq);
-    TimestampProvider_get64(&time);
-    t64 = ((uint64_t)time.hi << 32) | time.lo;
-    return (t64/(freq.lo/1000000));
+    /* all LPRF devices have a 10us tickPeriod */
+    return(Clock_getTicks() * Clock_tickPeriod); 
 }
 
 /*
