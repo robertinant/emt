@@ -14,7 +14,7 @@ var DLIBROOT = Platform.findDriverLib();
 
 var SRCS = getSources(".");
 var DEFS = "-Dxdc__nolocalstring=1";
-DEFS +=  " -DDeviceFamily_CC26X0 ";
+DEFS +=  " -DDeviceFamily_CC13X0 ";
 var MAIN = "main.cpp";
 var INCS = "-I" + DLIBROOT;
 
