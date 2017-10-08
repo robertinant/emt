@@ -40,6 +40,7 @@
 #include <ti/sysbios/knl/Task.h>
 
 #include <ti/sysbios/family/arm/m3/Hwi.h>
+#include <ti/sysbios/family/arm/msp432/Timer.h>
 
 #include <ti/drivers/Power.h>
 #include <ti/drivers/power/PowerMSP432.h>
@@ -51,6 +52,11 @@
 #include <driverlib/rom_map.h>
 #include <driverlib/wdt_a.h>
 
+static Timer_Handle clockTimer = 0;
+static uint32_t clockTimerFreq = 0;
+static uint32_t timestampFreq = 0;
+static uint32_t clockTickTimestamp = 0;
+
 static uint8_t delayMode = 0; /* determines  which tick source is driving Clock_tick */
 
 /*
@@ -58,14 +64,40 @@ static uint8_t delayMode = 0; /* determines  which tick source is driving Clock_
  */
 unsigned long micros(void)
 {
+    uint32_t key;
     Types_FreqHz freq;
-    Types_Timestamp64 time;
-    uint64_t t64;
+    uint64_t micros, expired;
+    uint32_t ffreq;
 
-    Timestamp_getFreq(&freq);
-    Timestamp_get64(&time);
-    t64 = ((uint64_t)time.hi << 32) | time.lo;
-    return (t64/(freq.lo/1000000));
+    if (clockTimer == 0) {
+        clockTimer = Timer_getHandle(Clock_timerId);
+        Timer_getFreq(clockTimer, &freq);
+        clockTimerFreq = freq.lo;
+
+        Timestamp_getFreq(&freq);
+        timestampFreq = freq.lo;
+    }
+
+    key = Hwi_disable();
+
+    micros = Clock_getTicks() * Clock_tickPeriod;
+
+    /* use timestamp snapshot when in watchdog tick mode */
+    if (delayMode == 1) {
+        expired = Timestamp_get32() - clockTickTimestamp;
+        ffreq = timestampFreq;
+    }
+    /* use expired counts from Clock time when in Timer_A tick mode */
+    else {
+        expired = Timer_getExpiredCounts(clockTimer);
+        ffreq = clockTimerFreq;
+    }
+
+    Hwi_restore(key);
+
+    micros += (expired * 1000000) / ffreq;
+
+    return (micros);
 }
 
 /*
@@ -124,6 +156,9 @@ static void clockTickFxn(uintptr_t arg)
      * Clock_tick() will bump it one more
      */
     ((ti_sysbios_knl_Clock_Module_State *)(&ti_sysbios_knl_Clock_Module__state__V))->ticks += 249;
+
+    /* snapshot current timestamp for micros() */
+    clockTickTimestamp = Timestamp_get32();
 
     Clock_tick();
 }

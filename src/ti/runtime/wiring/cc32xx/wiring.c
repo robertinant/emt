@@ -39,33 +39,41 @@
 #include <ti/sysbios/knl/Clock.h>
 #include <ti/sysbios/knl/Task.h>
 
+#include <ti/sysbios/family/arm/m3/Hwi.h>
+#include <ti/sysbios/family/arm/m3/Timer.h>
+
 #include <ti/drivers/SPI.h>
 #include <ti/drivers/spi/SPICC32XXDMA.h>
+
+static Timer_Handle clockTimer = 0;
+static uint32_t clockTimerFreq = 0;
 
 /*
  *  ======== micros ========
  */
 unsigned long micros(void)
 {
+    uint32_t key;
     Types_FreqHz freq;
-    Types_Timestamp64 time;
-    uint64_t t64;
+    uint64_t micros, expired;
 
-    static bool firstTime = true;
-    static uint64_t scale;
-
-    /* no need to repeat this math on every call */
-    if (firstTime == true) {
-        Timestamp_getFreq(&freq);
-        scale = freq.lo / 1000000;
-        firstTime = false;
+    if (clockTimer == 0) {
+        clockTimer = Timer_getHandle(Clock_timerId);
+        Timer_getFreq(clockTimer, &freq);
+        clockTimerFreq = freq.lo;
     }
 
-    Timestamp_get64(&time);
+    key = Hwi_disable();
 
-    t64 = ((uint64_t)time.hi << 32) | time.lo;
+    micros = Clock_getTicks() * Clock_tickPeriod;
+    /* capture timer ticks since last Clock tick */
+    expired = Timer_getExpiredCounts(clockTimer);
 
-    return (t64/scale);
+    Hwi_restore(key);
+
+    micros += (expired * 1000000) / clockTimerFreq;
+
+    return (micros);
 }
 
 /*
