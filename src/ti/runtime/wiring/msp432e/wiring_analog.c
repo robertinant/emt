@@ -86,7 +86,7 @@ void stopDigitalRead(uint8_t pin)
  * The PWM scale factor is then 24480 / 255 = 96
  */
 
-#define PWM_SCALE_FACTOR 24480/255
+#define PWM_SCALE_FACTOR 2040/255
 
 void analogWrite(uint8_t pin, int val)
 {
@@ -120,12 +120,14 @@ void analogWrite(uint8_t pin, int val)
                 break;
         }
 
+        PWM_init();
+
         /* Open the PWM port */
         PWM_Params_init(&pwmParams);
 
         pwmParams.periodUnits = PWM_PERIOD_US;
         pwmParams.periodValue = 2040; /* arduino period is 2.04ms (490Hz) */
-        pwmParams.dutyUnits = PWM_DUTY_COUNTS;
+        pwmParams.dutyUnits = PWM_DUTY_US;
 
         pwmHandle = PWM_open(pwmIndex, &pwmParams);
 

@@ -246,8 +246,8 @@ GPIO_PinConfig gpioPinConfigs[] = {
     GPIOMSP432E4_PE1 | GPIO_DO_NOT_CONFIG,          /*  24 - PE1 */
     GPIOMSP432E4_PE2 | GPIO_DO_NOT_CONFIG,          /*  25 - PE2 */
     GPIOMSP432E4_PE3 | GPIO_DO_NOT_CONFIG,          /*  26 - PE3 */
-    GPIOMSP432E4_PD7 | GPIO_DO_NOT_CONFIG,          /*  27 - PD7 */
-    GPIOMSP432E4_PD6 | GPIO_DO_NOT_CONFIG,          /*  28 - PD6 */
+    GPIOMSP432E4_PD7 | GPIO_DO_NOT_CONFIG,          /*  27 - PD7  NMI */
+    GPIOMSP432E4_PA6 | GPIO_DO_NOT_CONFIG,          /*  28 - PA6 */
     GPIOMSP432E4_PM4 | GPIO_DO_NOT_CONFIG,          /*  29 - PM4 */
     GPIOMSP432E4_PM5 | GPIO_DO_NOT_CONFIG,          /*  30 - PM5 */
 
@@ -301,7 +301,7 @@ GPIO_PinConfig gpioPinConfigs[] = {
 
     /* pins 71-80 */
     GPIOMSP432E4_PK7 | GPIO_DO_NOT_CONFIG,          /*  71 - PK7 */
-    GPIOMSP432E4_PK5 | GPIO_DO_NOT_CONFIG,          /*  72 - PK5 */
+    GPIOMSP432E4_PK6 | GPIO_DO_NOT_CONFIG,          /*  72 - PK6 */
     GPIOMSP432E4_PH1 | GPIO_DO_NOT_CONFIG,          /*  73 - PH1 */
     GPIOMSP432E4_PH0 | GPIO_DO_NOT_CONFIG,          /*  74 - PH0 */
     GPIOMSP432E4_PM2 | GPIO_DO_NOT_CONFIG,          /*  75 - PM2 */
@@ -362,8 +362,8 @@ GPIO_CallbackFxn gpioCallbackFunctions[] = {
     NULL,  /*  24 - PE1 */
     NULL,  /*  25 - PE2 */
     NULL,  /*  26 - PE3 */
-    NULL,  /*  27 - PD7 */
-    NULL,  /*  28 - PD6 */
+    NULL,  /*  27 - PD7 NMI */
+    NULL,  /*  28 - PA6 */
     NULL,  /*  29 - PM4 */
     NULL,  /*  30 - PM5 */
 
@@ -417,7 +417,7 @@ GPIO_CallbackFxn gpioCallbackFunctions[] = {
 
     /* pins 71-80 */
     NULL,  /*  71 - PK7 */
-    NULL,  /*  72 - PK5 */
+    NULL,  /*  72 - PK6 */
     NULL,  /*  73 - PH1 */
     NULL,  /*  74 - PH0 */
     NULL,  /*  75 - PM2 */
@@ -487,66 +487,29 @@ const uint_least8_t I2C_count = MSP_EXP432E401Y_I2CCOUNT;
 
 /*
  *  =============================== NVS ===============================
+ *  Non-Volatile Storage configuration.
  */
 #include <ti/drivers/NVS.h>
 #include <ti/drivers/nvs/NVSMSP432E4.h>
 
-#define SECTORSIZE       (0x4000)
-#define NVS_REGIONS_BASE (0xF8000)
-#define REGIONSIZE       (SECTORSIZE * 2)
 
-/*
- * Reserve flash sectors for NVS driver use
- * by placing an uninitialized byte array
- * at the desired flash address.
- */
-#if defined(__TI_COMPILER_VERSION__)
+NVSMSP432E4_Object nvsMSP432E4Objects[1];
 
-/*
- * Place uninitialized array at NVS_REGIONS_BASE
- */
-#pragma LOCATION(flashBuf, NVS_REGIONS_BASE);
-#pragma NOINIT(flashBuf);
-static char flashBuf[REGIONSIZE];
+extern uint8_t __NVS_BASE__;
+extern uint8_t __NVS_SIZE__;
 
-#elif defined(__IAR_SYSTEMS_ICC__)
-
-/*
- * Place uninitialized array at NVS_REGIONS_BASE
- */
-__no_init static char flashBuf[REGIONSIZE] @ NVS_REGIONS_BASE;
-
-#elif defined(__GNUC__)
-
-/*
- * Place the flash buffers in the .nvs section created in the gcc linker file.
- * The .nvs section enforces alignment on a sector boundary but may
- * be placed anywhere in flash memory.  If desired the .nvs section can be set
- * to a fixed address by changing the following in the gcc linker file:
- *
- * .nvs (FIXED_FLASH_ADDR) (NOLOAD) : AT (FIXED_FLASH_ADDR) {
- *      *(.nvs)
- * } > REGION_TEXT
- */
-__attribute__ ((section (".nvs")))
-static char flashBuf[REGIONSIZE];
-
-#endif
-
-NVSMSP432E4_Object nvsMSP432E4Objects[MSP_EXP432E401Y_NVSCOUNT];
-
-const NVSMSP432E4_HWAttrs nvsMSP432E4HWAttrs[MSP_EXP432E401Y_NVSCOUNT] = {
+const NVSMSP432E4_HWAttrs nvsMSP432E4HWAttrs[] = {
     {
-        .regionBase = (void *) flashBuf,
-        .regionSize = REGIONSIZE,
+        .regionBase = (void *)&__NVS_BASE__,   /* base of unused flash aligned on 4k boundary */
+        .regionSize = (size_t)(&__NVS_SIZE__) 
     },
 };
 
-const NVS_Config NVS_config[MSP_EXP432E401Y_NVSCOUNT] = {
+const NVS_Config NVS_config[] = {
     {
         .fxnTablePtr = &NVSMSP432E4_fxnTable,
-        .object = &nvsMSP432E4Objects[MSP_EXP432E401Y_NVSMSP432E40],
-        .hwAttrs = &nvsMSP432E4HWAttrs[MSP_EXP432E401Y_NVSMSP432E40],
+        .object = &nvsMSP432E4Objects[0],
+        .hwAttrs = &nvsMSP432E4HWAttrs[0],
     },
 };
 

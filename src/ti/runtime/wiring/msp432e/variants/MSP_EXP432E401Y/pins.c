@@ -127,7 +127,7 @@ uint8_t digital_pin_to_pin_function[] = {
 
     /* pins 71-80 */
     PIN_FUNC_UNUSED,  /*  71 - PK7 */
-    PIN_FUNC_UNUSED,  /*  72 - PK5 */
+    PIN_FUNC_UNUSED,  /*  72 - PK6 */
     PIN_FUNC_UNUSED,  /*  73 - PH1 */
     PIN_FUNC_UNUSED,  /*  74 - PH0 */
     PIN_FUNC_UNUSED,  /*  75 - PM2 */
@@ -246,7 +246,7 @@ uint8_t digital_pin_to_pwm_index[] = {
 
     /* pins 71-80 */
     PWM_NOT_MAPPABLE,   /*  71 - PK7 */
-    PWM_NOT_MAPPABLE,   /*  72 - PK5 */
+    PWM_NOT_MAPPABLE,   /*  72 - PK6 */
     PWM_NOT_MAPPABLE,   /*  73 - PH1 */
     PWM_NOT_MAPPABLE,   /*  74 - PH0 */
     PWM_NOT_MAPPABLE,   /*  75 - PM2 */
@@ -358,7 +358,7 @@ const uint8_t digital_pin_to_adc_index[] = {
 
     /* pins 71-80 */
     NOT_ON_ADC,  /*  71 - PK7 */
-    NOT_ON_ADC,  /*  72 - PK5 */
+    NOT_ON_ADC,  /*  72 - PK6 */
     NOT_ON_ADC,  /*  73 - PH1 */
     NOT_ON_ADC,  /*  74 - PH0 */
     NOT_ON_ADC,  /*  75 - PM2 */
