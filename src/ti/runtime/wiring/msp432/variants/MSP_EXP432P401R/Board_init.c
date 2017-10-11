@@ -730,7 +730,7 @@ NVSMSP432_Object nvsMSP432Objects[1];
 extern uint8_t __NVS_BASE__;
 extern uint8_t __NVS_SIZE__;
 
-NVSMSP432_HWAttrs nvsMSP432HWAttrs[1] = {
+NVSMSP432_HWAttrs nvsMSP432HWAttrs[] = {
     {
         .regionBase = (void *)&__NVS_BASE__,   /* base of unused flash aligned on 4k boundary */
         .regionSize = (size_t)(&__NVS_SIZE__) 
@@ -739,9 +739,9 @@ NVSMSP432_HWAttrs nvsMSP432HWAttrs[1] = {
 
 const NVS_Config NVS_config[] = {
     {
-        &NVSMSP432_fxnTable,
-        &nvsMSP432Objects[0],
-        &nvsMSP432HWAttrs[0]
+        .fxnTablePtr = &NVSMSP432_fxnTable,
+        .object = &nvsMSP432Objects[0],
+        .hwAttrs = &nvsMSP432HWAttrs[0]
     },
 };
 
