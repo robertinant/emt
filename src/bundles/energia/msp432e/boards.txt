@@ -1,0 +1,15 @@
+##############################################################
+menu.cpu=Processor
+MSP-EXP432E401Y.vid.0=0x2341
+MSP-EXP432E401Y.pid.0=0x0c9f
+MSP-EXP432E401Y.name=LaunchPad w/ msp432e EMT (120MHz)
+MSP-EXP432E401Y.build.mcu=cortex-m4
+MSP-EXP432E401Y.build.f_cpu=120000000L
+MSP-EXP432E401Y.build.core=msp432e
+MSP-EXP432E401Y.build.variant=MSP_EXP432E401Y
+MSP-EXP432E401Y.build.board=MSP_EXP432E401Y
+MSP-EXP432E401Y.build.ldscript=ti/runtime/wiring/msp432e/linker.cmd
+MSP-EXP432E401Y.upload.tool=dslite
+MSP-EXP432E401Y.upload.protocol=dslite
+MSP-EXP432E401Y.upload.maximum_size=262144
+MSP-EXP432E401Y.upload.maximum_data_size=65536

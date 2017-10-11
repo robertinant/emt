@@ -1,0 +1,6 @@
+/*
+ *  ======== package.bld ========
+ */
+var msp432e = xdc.loadCapsule("msp432e.bld");
+
+msp432e.addLibs([".", "..", "../avr"], {name: "lib/wiring_msp432e"});

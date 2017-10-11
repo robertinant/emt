@@ -10,6 +10,7 @@ ENERGIA = /db/builds/xinstall/energia_nightly/Energia
 #
 MCPI_TREE = $(TREES)/mcpi/mcpi-3.30.00.13
 SDK_CC32XX = simplelink_cc32xx_sdk_1_50_00_01_eng
+MCPI_MSP432E_TREE =  $(TREES)/mcpi/mcpi-3.35.00.10_eng
 SDK_MSP432 = simplelink_msp432p4_sdk_1_50_00_06
 SDK_CC13XX = simplelink_cc13x0_sdk_1_50_00_08
 
@@ -23,12 +24,15 @@ SDK_CC13XX = simplelink_cc13x0_sdk_1_50_00_08
 # Specific required imports (referenced by makeunix, for example)
 #
 SDK.msp432 = $(TOOLS)/vendors/ti/msp432_sdk/$(SDK_MSP432)
+SDK.msp432e = $(firstword $(wildcard $(MCPI_MSP432E_TREE)/exports/coresdk_msp432e4_*))
 SDK.cc13xx = $(TOOLS)/vendors/ti/cc13xx_sdk/$(SDK_CC13XX)
 SDK.cc26xx = $(firstword $(wildcard $(MCPI_TREE)/exports/coresdk_cc13xx_*))
 SDK.cc32xx = $(TOOLS)/vendors/ti/cc3220_sdk/$(SDK_CC32XX)
 
 TIRTOS.msp432   = $(SDK.msp432)/kernel/tirtos/packages
 TIDRIVERS.msp432 = $(SDK.msp432)/source
+TIRTOS.msp432e   = $(SDK.msp432e)/kernel/tirtos/packages
+TIDRIVERS.msp432e = $(SDK.msp432e)/source
 TIRTOS.cc13xx   = $(SDK.cc13xx)/kernel/tirtos/packages
 TIDRIVERS.cc13xx = $(SDK.cc13xx)/source
 TIRTOS.cc26xx   = $(SDK.cc26xx)/kernel/tirtos/packages
@@ -49,5 +53,6 @@ IMPORT_ARCHIVES = $(INO2CPP)
 IMPORT_PACKAGES =
 
 REFERENCED_REPOS = $(TIRTOS.msp432) $(TIDRIVERS.msp432) \
+                   $(TIRTOS.msp432e) $(TIDRIVERS.msp432e) \
                    $(TIRTOS.cc13xx) $(TIDRIVERS.cc13xx) \
                    $(TIRTOS.cc32xx) $(TIDRIVERS.cc32xx)

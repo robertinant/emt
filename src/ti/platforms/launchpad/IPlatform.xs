@@ -174,7 +174,12 @@ function instance$meta$init(name)
          */
         this.CPU.revision = this.deviceName;
 
-        if (this.deviceName.match(/^MSP432/)) {
+        if (this.deviceName.match(/^MSP432E/)) {
+            this.CPU.catalogName = "ti.catalog.arm.cortexm4";
+            this.CPU.clockRate = 120;
+        }
+
+        if (this.deviceName.match(/^MSP432P/)) {
             this.CPU.catalogName = "ti.catalog.arm.cortexm4";
             this.CPU.clockRate = 48;
         }

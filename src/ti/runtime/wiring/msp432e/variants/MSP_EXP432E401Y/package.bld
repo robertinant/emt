@@ -1,0 +1,5 @@
+/*
+ *  ======== package.bld ========
+ */
+var build = xdc.loadCapsule("ti/runtime/wiring/msp432e/msp432e.bld");
+build.addLibs(["."], {name: "lib/board"});

@@ -15,14 +15,17 @@ MYXDC = $(XDCROOT)/xdc
 export XDCPATH = $(XDCTARGETS)
 
 XDCPATH.msp432 = "XDCPATH=$(CURDIR)/src;$(TIRTOS.msp432);$(TIDRIVERS.msp432)"
+XDCPATH.msp432e = "XDCPATH=$(CURDIR)/src;$(TIRTOS.msp432e);$(TIDRIVERS.msp432e)"
 XDCPATH.cc13xx = "XDCPATH=$(CURDIR)/src;$(TIRTOS.cc13xx);$(TIDRIVERS.cc13xx)"
 XDCPATH.cc32xx = "XDCPATH=$(CURDIR)/src;$(TIRTOS.cc32xx);$(TIDRIVERS.cc32xx)"
 XDCPATH.portable = "XDCPATH=$(CURDIR)/src;$(TIRTOS.msp432);$(TIDRIVERS.msp432);$(XDCTARGETS)"
 
-PKGS := $(shell $(XDCROOT)/bin/xdcpkg -r ./src | egrep -v '32xx|26xx|13xx|432')
-PKGS.msp432 := $(shell $(XDCROOT)/bin/xdcpkg -r ./src | egrep '432')
+PKGS := $(shell $(XDCROOT)/bin/xdcpkg -r ./src | egrep -v '32xx|26xx|13xx|432[^e]|432e')
+PKGS.msp432e := $(shell $(XDCROOT)/bin/xdcpkg -r ./src | egrep '432e')
+PKGS.msp432 := $(shell $(XDCROOT)/bin/xdcpkg -r ./src | egrep -v '432e'| egrep '432')
 PKGS.cc13xx := $(shell $(XDCROOT)/bin/xdcpkg -r ./src | egrep '13xx')
 PKGS.cc32xx := $(shell $(XDCROOT)/bin/xdcpkg -r ./src | egrep '32xx')
+
 
 JOBS = --jobs=1
 
@@ -51,6 +54,10 @@ JOBS = --jobs=1
 	@echo "making msp432 board 'package' ..."
 	make -C src/bundles/energia PLATFORMS=msp432 all msp432-$(notdir $(CURDIR)).zip
 
+	@echo "======== msp432e-*.zip [./src/bundles/energia] ========"
+	@echo "making msp432e board 'package' ..."
+	make -C src/bundles/energia PLATFORMS=msp432e all msp432e-$(notdir $(CURDIR)).zip
+
 	@echo "======== cc32xx-*.zip [./src/bundles/energia] ========"
 	@echo "making cc32xx board 'package' ..."
 	make -C src/bundles/energia PLATFORMS=cc32xx all cc32xx-$(notdir $(CURDIR)).zip
@@ -62,21 +69,27 @@ JOBS = --jobs=1
 # ======== .local-all ========
 # Builds all packages
 .local-all: .imports imports.mak
+	@echo ".. msp432e packages .." $(PKGS.msp432e)
+	@echo ".. msp432 packages .."$(PKGS.msp432)
 	-@mkdir -p exports
 	@echo "Building platforms ..."
 #	$(MYXDC) $(JOBS) release -P $(wildcard src/ti/platforms/*)
-	$(MYXDC) $(JOBS) release -P src/ti/platforms/launchpad src/ti/platforms/emt432 src/ti/platforms/emt13xx src/ti/platforms/emt26xx src/ti/platforms/emt32xx
+	$(MYXDC) $(JOBS) release -P src/ti/platforms/launchpad src/ti/platforms/emt432 src/ti/platforms/launchpad src/ti/platforms/emt432e src/ti/platforms/emt13xx src/ti/platforms/emt26xx src/ti/platforms/emt32xx
 
 	@echo "Building packages ..."
 #	$(MYXDC) $(JOBS) release -Pr src
 	$(MYXDC) $(JOBS) $(XDCPATH.portable) .libraries -P $(PKGS) 
+	@echo ".. msp432 path .." $(XDCPATH.msp432) $(PKGS.msp432)
 	$(MYXDC) $(JOBS) $(XDCPATH.msp432) .libraries -P $(PKGS.msp432)
+	@echo ".. msp432 path .." $(XDCPATH.msp432e) $(PKGS.msp432ie)
+	$(MYXDC) $(JOBS) $(XDCPATH.msp432e) .libraries -P $(PKGS.msp432e)
 	$(MYXDC) $(JOBS) $(XDCPATH.cc13xx) .libraries -P $(PKGS.cc13xx)
 	$(MYXDC) $(JOBS) $(XDCPATH.cc32xx) .libraries -P $(PKGS.cc32xx)
 
 	@echo "Building package releases ..."
 	$(MYXDC) $(JOBS) $(XDCPATH.portable) release -P $(PKGS) 
 	$(MYXDC) $(JOBS) $(XDCPATH.msp432) release -P $(PKGS.msp432)
+	$(MYXDC) $(JOBS) $(XDCPATH.msp432e) release -P $(PKGS.msp432e)
 	$(MYXDC) $(JOBS) $(XDCPATH.cc13xx) release -P $(PKGS.cc13xx)
 	$(MYXDC) $(JOBS) $(XDCPATH.cc32xx) release -P $(PKGS.cc32xx)
 

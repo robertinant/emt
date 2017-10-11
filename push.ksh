@@ -17,7 +17,7 @@ if [ "$PASSWORD" = "" ]; then
     echo "$PASSWORD" > ./.lastword
 fi
 
-devices="msp432 cc13xx cc32xx"
+devices="msp432 msp432e cc13xx cc32xx"
 if [ $# -gt 0 ]; then
     devices="$@"
 fi
