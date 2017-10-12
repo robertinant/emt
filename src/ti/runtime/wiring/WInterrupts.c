@@ -48,7 +48,7 @@ void attachInterrupt(uint8_t pin, void (*userFunc)(void), int mode)
 {
     GPIO_PinConfig intType;
 
-    switch(mode) {
+    switch (mode) {
         case LOW:
             intType = GPIO_CFG_IN_INT_LOW;
             break;
@@ -74,6 +74,7 @@ void attachInterrupt(uint8_t pin, void (*userFunc)(void), int mode)
 }
 
 void detachInterrupt(uint8_t pin) {
+    GPIO_disableInt(pin);
     GPIO_setCallback(pin, NULL);
 }
 
