@@ -72,6 +72,8 @@ uint16_t analogRead(uint8_t pin)
             adcInitialized = true;
         }
 
+        stopAnalogReadFxnPtr = stopAnalogReadFxn;
+
         ADC_Params_init(&adcParams);
         adcParams.isProtected = false;  /* do NOT use a semaphore for thread safety */
 
