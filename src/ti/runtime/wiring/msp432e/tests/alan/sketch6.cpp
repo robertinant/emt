@@ -19,20 +19,20 @@
 #define LED GREEN_LED
   
 // the setup routine runs once when you press reset:
-void setup6x() {                
+void setup6() {                
   // initialize the digital pin as an output.
   pinMode(LED, OUTPUT);     
 }
 
 // the loop routine runs over and over again forever:
-void loop6x() {
+void loop6() {
   digitalWrite(LED, HIGH);   // turn the LED on (HIGH is the voltage level)
   delay(1000);               // wait for a second
   digitalWrite(LED, LOW);    // turn the LED off by making the voltage LOW
   delay(1000);               // wait for a second
 }
 
-void setup6()
+void setup6x()
 { 
     Serial.begin(115200); 
     Serial.print("millis() at start: "); 
@@ -44,7 +44,7 @@ void setup6()
 uint32_t microsThen;
 uint32_t millisTshen;
 
-void loop6()
+void loop6x()
 { 
 // put your main code here, to run repeatedly: 
     uint32_t microsNow = micros(); 

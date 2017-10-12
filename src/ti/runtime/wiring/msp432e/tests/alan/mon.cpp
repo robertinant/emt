@@ -40,16 +40,16 @@
 #define DM_CMD 1     /* dump memory cmd */
 #define WM_CMD 1     /* write to memory cmd */
 #define DRW_CMDS 1   /* digital read/write cmds */
-#define AR_CMDS 0    /* analog read cmds */
+#define AR_CMDS 1    /* analog read cmds */
 #define AW_CMDS 1    /* analog write cmds */
 #define WR_CMD 1     /* Wire read cmd */
 #define WW_CMD 1     /* Wire write cmd */
 #define SPI_CMD 1    /* SPI transfer cmd */
 #define PRI_CMD 1    /* Set Task priority cmd */
 #define STATS_CMD 1  /* CPU and task utilzation stats cmd */
-#define ALOG_CMD 0   /* log analog value cmd */
+#define ALOG_CMD 1   /* log analog value cmd */
 #define PI_CMD 1     /* pulseIn() cmd */
-#define ARTEST_CMD 0 /* analogRead() self test */
+#define ARTEST_CMD 1 /* analogRead() self test */
 #define AWTEST_CMD 1 /* analogWrite() self test */
 #define DRWTEST_CMD 1 /* digitalRead/Write self test */
 #define NVSTEST_CMD 1 /* nvsTest self test */
@@ -74,7 +74,7 @@
 #define CC32XX_ARTEST_CMD 0
 #define MSP432_ARTEST_CMD 0
 #define CC26XX_ARTEST_CMD 0
-#define MSP432E_ARTEST_CMD 0
+#define MSP432E_ARTEST_CMD 1
 #endif
 #endif
 
@@ -1521,6 +1521,20 @@ static uint8_t pinIds[] = {
 
 #endif  /* MSP432_ARTEST_CMD */
 
+#if MSP432E_ARTEST_CMD == 1
+
+#define MAX_DAC_VALUE 2790  /* = 3.40V */
+
+/* Supported Ax pins */
+static uint8_t pinIds[] = {
+    A0,  A1,  A2,  A3,
+    A4,  A5,  A6,  A7,
+    A8,  A9,  A10, A11,
+    A12, A13, A14, A15
+};
+
+#endif  /* MSP432_ARTEST_CMD */
+
 #if CC32XX_ARTEST_CMD == 1
 
 #define MAX_DAC_VALUE 2790 /* = 3.4V */
@@ -1562,6 +1576,9 @@ static int consoleHandler_artest(const char * line)
     uint8_t pinIdx, i, pin;
     uint16_t aval[4];
     static char response[80];
+
+    /* force jumpered pin 24 to input mode */
+    pinMode(24, INPUT);
 
     Wire.begin();
 
@@ -1714,6 +1731,9 @@ static int consoleHandler_awtest(const char * line)
 
     pinMode(COMMON_PIN, INPUT);
 
+    /* force jumpered pin 24 to input mode */
+    pinMode(24, INPUT);
+
     aMuxChannelEnable(2);
 
     System_snprintf(response, sizeof(response),
@@ -1734,24 +1754,24 @@ static int consoleHandler_awtest(const char * line)
         aMuxChannelEnable(pin);
 
         analogWrite(pin, 1);
-        delay(10);
+        delay(2);
         aval[0] = pulseIn(COMMON_PIN, 1, 10000);
 
         analogWrite(pin, 128);
-        delay(10);
+        delay(2);
         aval[1] = pulseIn(COMMON_PIN, 1, 10000);
 
         analogWrite(pin, 254);
-        delay(10);
+        delay(2);
         aval[2] = pulseIn(COMMON_PIN, 1, 10000);
 
         analogWrite(pin, 0);
-        delay(10);
+        delay(2);
         aval[3] = pulseIn(COMMON_PIN, 1, 10000);
         aval[4] = digitalRead(COMMON_PIN);
 
         analogWrite(pin, 255);
-        delay(10);
+        delay(2);
         aval[5] = pulseIn(COMMON_PIN, 1, 10000);
         aval[6] = digitalRead(COMMON_PIN);
 
@@ -1792,7 +1812,7 @@ static uint8_t drwPinIds[] = {
 
 /* Supported digital pins */
 static uint8_t drwPinIds[] = {
-    3,  4,  5, 7, 8,
+    3,  4,  5,  7,  8,
     11, /* 12, 13, */ 14, 15, /* 17, */18, 19,
     27, 28, 29, 30,
     /* 31, 32 */
@@ -1846,11 +1866,20 @@ static uint8_t drwPinIds[] = {
 
 #endif  /* MSP432_DRWTEST_CMD */
 
+typedef void (*intFunc) (void);
+
+static volatile uint8_t interruptedPin = 0;
+
+static void pinInterrupt(uint_least8_t pin)
+{
+    interruptedPin = pin;
+}
+
 static int consoleHandler_drwtest(const char * line)
 {
     char *endptr;
     uint8_t pin, pinIdx;
-    uint16_t dval[4];
+    uint16_t dval[8];
     static char response[80];
     bool doLoop = true;
 
@@ -1866,12 +1895,13 @@ static int consoleHandler_drwtest(const char * line)
 
     pinMode(COMMON_PIN, INPUT);
 
+    /* force jumpered pin 24 to input mode */
     pinMode(24, INPUT);
 
     aMuxChannelEnable(2);
 
     System_snprintf(response, sizeof(response),
-        "             w0     w1     r0     r1");
+        "             w0     w1     r0     r1    rf0    ff1    rr1    fr0");
     SERIAL.println(response);
 
     for (pinIdx = 0; pinIdx < sizeof(drwPinIds); pinIdx++ ) {
@@ -1900,12 +1930,58 @@ static int consoleHandler_drwtest(const char * line)
         digitalWrite(COMMON_PIN, 1);
         dval[3] = digitalRead(pin);
 
-        /* release PWM resource */
-        pinMode(pin, INPUT);
+        /* start interrupt test with input low */
+        digitalWrite(COMMON_PIN, 0);
 
+        /* enable a falling edge interrupt on pin under test */
+        attachInterrupt(pin, (intFunc)pinInterrupt, FALLING);
+
+        /* send rising edge to falling edge int */
+        interruptedPin = 0;
+        digitalWrite(COMMON_PIN, 1);
+        interruptedPin; /* delay a few cycles to let */
+        interruptedPin; /* ISR complete */
+        interruptedPin;
+        interruptedPin;
+        dval[4] = (interruptedPin == pin ? 1 : 0);
+
+        /* send falling edge to falling edge int */
+        interruptedPin = 0;
+        digitalWrite(COMMON_PIN, 0);
+        interruptedPin; /* delay a few cycles to let */
+        interruptedPin; /* ISR complete */
+        interruptedPin;
+        interruptedPin;
+        dval[5] = (interruptedPin == pin ? 1 : 0);
+        
+        /* enable a rising edge interrupt on pin under test */
+        attachInterrupt(pin, (intFunc)pinInterrupt, RISING);
+        
+        /* send rising edge to rising edge int */
+        interruptedPin = 0;
+        digitalWrite(COMMON_PIN, 1);
+        interruptedPin; /* delay a few cycles to let */
+        interruptedPin; /* ISR complete */
+        interruptedPin;
+        interruptedPin;
+        dval[6] = (interruptedPin == pin ? 1 : 0);
+
+        /* send falling edge to rising edge int */
+        interruptedPin = 0;
+        digitalWrite(COMMON_PIN, 0);
+        interruptedPin; /* delay a few cycles to let */
+        interruptedPin; /* ISR complete */
+        interruptedPin;
+        interruptedPin;
+        dval[7] = (interruptedPin == pin ? 1 : 0);
+
+        detachInterrupt(pin);
+        
         System_snprintf(response, sizeof(response),
-            " pin %2d = %5d  %5d  %5d  %5d", pin,
-            dval[0], dval[1], dval[2], dval[3]);
+            " pin %2d = %5d  %5d  %5d  %5d  %5d  %5d  %5d  %5d",
+            pin,
+            dval[0], dval[1], dval[2], dval[3],
+            dval[4], dval[5], dval[6], dval[7]);
 
         SERIAL.println(response);
 
@@ -1955,7 +2031,7 @@ static int consoleHandler_nvstest(const char *line)
     status = NVS_erase(handle, 0, nvsAttrs.sectorSize);
 
     if (status != NVS_STATUS_SUCCESS) {
-	Serial.print("Erase failure: ");
+        Serial.print("Erase failure: ");
         Serial.println(status, 16);
         NVS_close(handle);
         return (RETURN_SUCCESS);

@@ -40,7 +40,8 @@
 #define DM_CMD 1     /* dump memory cmd */
 #define WM_CMD 1     /* write to memory cmd */
 #define DRW_CMDS 1   /* digital read/write cmds */
-#define ARW_CMDS 1   /* analog read/write cmds */
+#define AR_CMDS 1    /* analog read cmds */
+#define AW_CMDS 1    /* analog write cmds */
 #define WR_CMD 1     /* Wire read cmd */
 #define WW_CMD 1     /* Wire write cmd */
 #define SPI_CMD 1    /* SPI transfer cmd */
@@ -58,14 +59,22 @@
 #define CC32XX_ARTEST_CMD 1
 #define MSP432_ARTEST_CMD 0
 #define CC26XX_ARTEST_CMD 0
+#define MSP432E_ARTEST_CMD 0
 #elif defined(BOARD_MSP432LP) || defined(BOARD_MSP_EXP432P401R)
 #define CC32XX_ARTEST_CMD 0
 #define MSP432_ARTEST_CMD 1
 #define CC26XX_ARTEST_CMD 0
+#define MSP432E_ARTEST_CMD 0
 #elif defined(BOARD_CC2650_LAUNCHXL) || defined(BOARD_CC1310_LAUNCHXL) || defined(BOARD_CC1350_LAUNCHXL)
 #define CC32XX_ARTEST_CMD 0
 #define MSP432_ARTEST_CMD 0
 #define CC26XX_ARTEST_CMD 1
+#define MSP432E_ARTEST_CMD 0
+#elif defined(BOARD_MSP_EXP432E401Y)
+#define CC32XX_ARTEST_CMD 0
+#define MSP432_ARTEST_CMD 0
+#define CC26XX_ARTEST_CMD 0
+#define MSP432E_ARTEST_CMD 1
 #endif
 #endif
 
@@ -74,14 +83,22 @@
 #define CC32XX_AWTEST_CMD 1
 #define MSP432_AWTEST_CMD 0
 #define CC26XX_AWTEST_CMD 0
+#define MSP432E_AWTEST_CMD 0
 #elif defined(BOARD_MSP432LP) || defined(BOARD_MSP_EXP432P401R)
 #define CC32XX_AWTEST_CMD 0
 #define MSP432_AWTEST_CMD 1
 #define CC26XX_AWTEST_CMD 0
+#define MSP432E_AWTEST_CMD 0
 #elif defined(BOARD_CC2650_LAUNCHXL) || defined(BOARD_CC1310_LAUNCHXL) || defined(BOARD_CC1350_LAUNCHXL)
 #define CC32XX_AWTEST_CMD 0
 #define MSP432_AWTEST_CMD 0
 #define CC26XX_AWTEST_CMD 1
+#define MSP432E_AWTEST_CMD 0
+#elif defined(BOARD_MSP_EXP432E401Y)
+#define CC32XX_AWTEST_CMD 0
+#define MSP432_AWTEST_CMD 0
+#define CC26XX_AWTEST_CMD 0
+#define MSP432E_AWTEST_CMD 1
 #endif
 #endif
 
@@ -90,14 +107,22 @@
 #define CC32XX_DRWTEST_CMD 1
 #define MSP432_DRWTEST_CMD 0
 #define CC26XX_DRWTEST_CMD 0
+#define MSP432E_DRWTEST_CMD 0
 #elif defined(BOARD_MSP432LP) || defined(BOARD_MSP_EXP432P401R)
 #define CC32XX_DRWTEST_CMD 0
 #define MSP432_DRWTEST_CMD 1
 #define CC26XX_DRWTEST_CMD 0
+#define MSP432E_DRWTEST_CMD 0
 #elif defined(BOARD_CC2650_LAUNCHXL) || defined(BOARD_CC1310_LAUNCHXL) || defined(BOARD_CC1350_LAUNCHXL)
 #define CC32XX_DRWTEST_CMD 0
 #define MSP432_DRWTEST_CMD 0
 #define CC26XX_DRWTEST_CMD 1
+#define MSP432E_DRWTEST_CMD 0
+#elif defined(BOARD_MSP_EXP432E401Y)
+#define CC32XX_DRWTEST_CMD 0
+#define MSP432_DRWTEST_CMD 0
+#define CC26XX_DRWTEST_CMD 0
+#define MSP432E_DRWTEST_CMD 1
 #endif
 #endif
 
@@ -126,10 +151,13 @@ static int consoleHandler_dr(const char *line);
 static int consoleHandler_dw(const char *line);
 #endif
 
-#if ARW_CMDS == 1
+#if AR_CMDS == 1
 static int consoleHandler_ar(const char *line);
 static int consoleHandler_arr(const char *line);
 static int consoleHandler_aref(const char *line);
+#endif
+
+#if AW_CMDS == 1
 static int consoleHandler_aw(const char *line);
 #endif
 
@@ -218,8 +246,10 @@ static const struct {
     GEN_COMMTABLE_ENTRY(dw,      "digitalWrite to pin",         "usage: dw <pin> <value>"),
     GEN_COMMTABLE_ENTRY(dr,      "digitalRead from pin",        "usage: dr <pin>"),
 #endif
-#if ARW_CMDS == 1
+#if AW_CMDS == 1
     GEN_COMMTABLE_ENTRY(aw,      "analogWrite to pin",          "usage: aw <pin> <value>"),
+#endif
+#if AR_CMDS == 1
     GEN_COMMTABLE_ENTRY(ar,      "analogRead from pin",         "usage: ar <pin>"),
     GEN_COMMTABLE_ENTRY(aref,    "analogReference",             "usage: aref <1-6>"),
     GEN_COMMTABLE_ENTRY(arr,     "analogReadResolution",        "usage: arr <10,11,12,14>"),
@@ -572,7 +602,7 @@ static int consoleHandler_dw(const char *line)
 
 #endif /* DRW_CMDS */
 
-#if ARW_CMDS == 1
+#if AR_CMDS == 1
 
 static void doAr(uint32_t pin)
 {
@@ -625,6 +655,10 @@ static int consoleHandler_aref(const char *line)
     return RETURN_SUCCESS;
 }
 
+#endif /* AR_CMDS */
+
+#if AW_CMDS == 1
+
 static int consoleHandler_aw(const char *line)
 {
     if (*line++ != ' ') {
@@ -642,7 +676,7 @@ static int consoleHandler_aw(const char *line)
     return RETURN_SUCCESS;
 }
 
-#endif /* ARW_CMDS */
+#endif /* AW_CMDS */
 
 #if ALOG_CMD == 1
 
@@ -1446,20 +1480,9 @@ static void aMuxChannelEnable(unsigned int pin)
 
 #endif
 
-#if ARTEST_CMD == 1
-
 #define MCP4726_I2C_ADDR     (0x62)
 #define MCP4726_CMD_WRITEDAC (0x40)
 #define MCP4726_CMD_DISABLEDAC (0x46)
-
-static void dacWrite(unsigned int output)
-{
-    Wire.beginTransmission(MCP4726_I2C_ADDR);
-    Wire.write(MCP4726_CMD_WRITEDAC);
-    Wire.write(output / 16);         // Upper data bits   (D11.D10.D9.D8.D7.D6.D5.D4)
-    Wire.write((output % 16) << 4);  // Lower data bits   (D3.D2.D1.D0.x.x.x.x)
-    Wire.endTransmission();
-}
 
 /*
  * disable the DAC output
@@ -1473,7 +1496,32 @@ static void disableDac()
     Wire.endTransmission();
 }
 
+#if ARTEST_CMD == 1
+
+static void dacWrite(unsigned int output)
+{
+    Wire.beginTransmission(MCP4726_I2C_ADDR);
+    Wire.write(MCP4726_CMD_WRITEDAC);
+    Wire.write(output / 16);         // Upper data bits   (D11.D10.D9.D8.D7.D6.D5.D4)
+    Wire.write((output % 16) << 4);  // Lower data bits   (D3.D2.D1.D0.x.x.x.x)
+    Wire.endTransmission();
+}
+
 #if MSP432_ARTEST_CMD == 1
+
+#define MAX_DAC_VALUE 2790  /* = 3.40V */
+
+/* Supported Ax pins */
+static uint8_t pinIds[] = {
+    A0,  A1,  A2,  A3,
+    A4,  A5,  A6,  A7,
+    A8,  A9,  A10, A11,
+    A12, A13, A14, A15
+};
+
+#endif  /* MSP432_ARTEST_CMD */
+
+#if MSP432E_ARTEST_CMD == 1
 
 #define MAX_DAC_VALUE 2790  /* = 3.40V */
 
@@ -1528,6 +1576,9 @@ static int consoleHandler_artest(const char * line)
     uint8_t pinIdx, i, pin;
     uint16_t aval[4];
     static char response[80];
+
+    /* force jumpered pin 24 to input mode */
+    pinMode(24, INPUT);
 
     Wire.begin();
 
@@ -1651,6 +1702,15 @@ static uint8_t awPinIds[] = {
 #endif
 #endif  /* CC26XX_AWTEST_CMD */
 
+#if MSP432E_AWTEST_CMD == 1
+
+/* Supported analogWrite pins */
+static uint8_t awPinIds[] = {
+    37, 38, 39, 40
+};
+
+#endif  /* MSP432E_AWTEST_CMD */
+
 static int consoleHandler_awtest(const char * line)
 {
     char *endptr;
@@ -1670,6 +1730,9 @@ static int consoleHandler_awtest(const char * line)
     disableDac();
 
     pinMode(COMMON_PIN, INPUT);
+
+    /* force jumpered pin 24 to input mode */
+    pinMode(24, INPUT);
 
     aMuxChannelEnable(2);
 
@@ -1691,19 +1754,24 @@ static int consoleHandler_awtest(const char * line)
         aMuxChannelEnable(pin);
 
         analogWrite(pin, 1);
+        delay(2);
         aval[0] = pulseIn(COMMON_PIN, 1, 10000);
 
         analogWrite(pin, 128);
+        delay(2);
         aval[1] = pulseIn(COMMON_PIN, 1, 10000);
 
         analogWrite(pin, 254);
+        delay(2);
         aval[2] = pulseIn(COMMON_PIN, 1, 10000);
 
         analogWrite(pin, 0);
+        delay(2);
         aval[3] = pulseIn(COMMON_PIN, 1, 10000);
         aval[4] = digitalRead(COMMON_PIN);
 
         analogWrite(pin, 255);
+        delay(2);
         aval[5] = pulseIn(COMMON_PIN, 1, 10000);
         aval[6] = digitalRead(COMMON_PIN);
 
@@ -1744,7 +1812,7 @@ static uint8_t drwPinIds[] = {
 
 /* Supported digital pins */
 static uint8_t drwPinIds[] = {
-    3,  4,  5, 7, 8,
+    3,  4,  5,  7,  8,
     11, /* 12, 13, */ 14, 15, /* 17, */18, 19,
     27, 28, 29, 30,
     /* 31, 32 */
@@ -1786,11 +1854,32 @@ static uint8_t drwPinIds[] = {
 #endif
 #endif  /* CC26XX_DRWTEST_CMD */
 
+#if MSP432E_DRWTEST_CMD == 1
+
+/* Supported digital pins */
+static uint8_t drwPinIds[] = {
+        2, 5, 6, 7, 8,
+   11, 12, 13, 14, 15, 17, 18, 19,
+   23, 24, 25, 26, 28, 29, 30,
+   31, 32, 33, 34, 35, 36, 37, 38, 39, 40
+};
+
+#endif  /* MSP432_DRWTEST_CMD */
+
+typedef void (*intFunc) (void);
+
+static volatile uint8_t interruptedPin = 0;
+
+static void pinInterrupt(uint_least8_t pin)
+{
+    interruptedPin = pin;
+}
+
 static int consoleHandler_drwtest(const char * line)
 {
     char *endptr;
     uint8_t pin, pinIdx;
-    uint16_t dval[4];
+    uint16_t dval[8];
     static char response[80];
     bool doLoop = true;
 
@@ -1806,12 +1895,13 @@ static int consoleHandler_drwtest(const char * line)
 
     pinMode(COMMON_PIN, INPUT);
 
+    /* force jumpered pin 24 to input mode */
     pinMode(24, INPUT);
 
     aMuxChannelEnable(2);
 
     System_snprintf(response, sizeof(response),
-        "             w0     w1     r0     r1");
+        "             w0     w1     r0     r1    rf0    ff1    rr1    fr0");
     SERIAL.println(response);
 
     for (pinIdx = 0; pinIdx < sizeof(drwPinIds); pinIdx++ ) {
@@ -1840,12 +1930,58 @@ static int consoleHandler_drwtest(const char * line)
         digitalWrite(COMMON_PIN, 1);
         dval[3] = digitalRead(pin);
 
-        /* release PWM resource */
-        pinMode(pin, INPUT);
+        /* start interrupt test with input low */
+        digitalWrite(COMMON_PIN, 0);
 
+        /* enable a falling edge interrupt on pin under test */
+        attachInterrupt(pin, (intFunc)pinInterrupt, FALLING);
+
+        /* send rising edge to falling edge int */
+        interruptedPin = 0;
+        digitalWrite(COMMON_PIN, 1);
+        interruptedPin; /* delay a few cycles to let */
+        interruptedPin; /* ISR complete */
+        interruptedPin;
+        interruptedPin;
+        dval[4] = (interruptedPin == pin ? 1 : 0);
+
+        /* send falling edge to falling edge int */
+        interruptedPin = 0;
+        digitalWrite(COMMON_PIN, 0);
+        interruptedPin; /* delay a few cycles to let */
+        interruptedPin; /* ISR complete */
+        interruptedPin;
+        interruptedPin;
+        dval[5] = (interruptedPin == pin ? 1 : 0);
+        
+        /* enable a rising edge interrupt on pin under test */
+        attachInterrupt(pin, (intFunc)pinInterrupt, RISING);
+        
+        /* send rising edge to rising edge int */
+        interruptedPin = 0;
+        digitalWrite(COMMON_PIN, 1);
+        interruptedPin; /* delay a few cycles to let */
+        interruptedPin; /* ISR complete */
+        interruptedPin;
+        interruptedPin;
+        dval[6] = (interruptedPin == pin ? 1 : 0);
+
+        /* send falling edge to rising edge int */
+        interruptedPin = 0;
+        digitalWrite(COMMON_PIN, 0);
+        interruptedPin; /* delay a few cycles to let */
+        interruptedPin; /* ISR complete */
+        interruptedPin;
+        interruptedPin;
+        dval[7] = (interruptedPin == pin ? 1 : 0);
+
+        detachInterrupt(pin);
+        
         System_snprintf(response, sizeof(response),
-            " pin %2d = %5d  %5d  %5d  %5d", pin,
-            dval[0], dval[1], dval[2], dval[3]);
+            " pin %2d = %5d  %5d  %5d  %5d  %5d  %5d  %5d  %5d",
+            pin,
+            dval[0], dval[1], dval[2], dval[3],
+            dval[4], dval[5], dval[6], dval[7]);
 
         SERIAL.println(response);
 
@@ -1895,7 +2031,7 @@ static int consoleHandler_nvstest(const char *line)
     status = NVS_erase(handle, 0, nvsAttrs.sectorSize);
 
     if (status != NVS_STATUS_SUCCESS) {
-	Serial.print("Erase failure: ");
+        Serial.print("Erase failure: ");
         Serial.println(status, 16);
         NVS_close(handle);
         return (RETURN_SUCCESS);
