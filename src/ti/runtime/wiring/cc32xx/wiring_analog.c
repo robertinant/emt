@@ -66,6 +66,12 @@ extern ADC_Config ADC_config[];
 
 extern const GPIOCC32XX_Config GPIOCC32XX_config;
 
+void stopAnalogWriteFxn(uint8_t);
+void stopAnalogReadFxn(uint8_t);
+
+StopFunc stopAnalogWriteFxnPtr = NULL;
+StopFunc stopAnalogReadFxnPtr = NULL;
+
 /* Carefully selected hal Timer IDs for tone and servo */
 uint32_t toneTimerId = (~0);  /* use Timer_ANY for tone timer */
 uint32_t servoTimerId = (~0); /* use Timer_ANY for servo timer */
@@ -120,6 +126,9 @@ void analogWrite(uint8_t pin, int val)
             return;
         }
 
+        /* idempotent */
+        PWM_init();
+
         uint32_t timerAvailMask;
         bool weOwnTheTimer = false;
 
@@ -172,6 +181,13 @@ void analogWrite(uint8_t pin, int val)
             Timer_setAvailMask(timerAvailMask & ~(1 << timerId));
         }
 
+        /*
+         * To reduce footprint when analogWrite isn't used,
+         * reference stopAnalogWriteFxn only if analogWrite
+         * has been called.
+         */
+        stopAnalogWriteFxnPtr = stopAnalogWriteFxn;
+
         digital_pin_to_pin_function[pin] = PIN_FUNC_ANALOG_OUTPUT;
     }
 
@@ -189,6 +205,11 @@ void analogWrite(uint8_t pin, int val)
  * pin. It is called by pinMap() when a pin's function is being modified.
  */
 void stopAnalogWrite(uint8_t pin)
+{
+    stopAnalogWriteFxnPtr(pin);
+}
+
+void stopAnalogWriteFxn(uint8_t pin)
 {
     uint16_t pwmIndex;
     uint32_t pwmPin;
@@ -236,6 +257,11 @@ void analogReference(uint16_t mode)
  * being modified.
  */
 void stopAnalogRead(uint8_t pin)
+{
+    stopAnalogReadFxnPtr(pin);
+}
+
+void stopAnalogReadFxn(uint8_t pin)
 {
 }
 

@@ -47,10 +47,18 @@ extern "C" {
 
 #define NOT_ON_ADC      0xff
 
+typedef void (*StopFunc)(uint8_t);
+
 extern void stopAnalogWrite(uint8_t pin);
 extern void stopAnalogRead(uint8_t pin);
 extern void stopDigitalWrite(uint8_t pin);
 extern void stopDigitalRead(uint8_t pin);
+
+extern void stopAnalogWriteFxn(uint8_t);
+extern void stopAnalogReadFxn(uint8_t);
+
+extern StopFunc stopAnalogWriteFxnPtr;
+extern StopFunc stopAnalogReadFxnPtr;
 
 typedef struct SpiInfo {
     uint16_t minDmaTransferSize;

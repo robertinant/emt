@@ -71,6 +71,12 @@ extern const GPIOMSP432_Config GPIOMSP432_config;
 extern ADCMSP432_HWAttrsV1 adcMSP432HWAttrs[];
 extern ADC_Config ADC_config[];
 
+void stopAnalogWriteFxn(uint8_t);
+void stopAnalogReadFxn(uint8_t);
+
+StopFunc stopAnalogWriteFxnPtr = NULL;
+StopFunc stopAnalogReadFxnPtr = NULL;
+
 /* Carefully selected hal Timer IDs for tone and servo */
 uint32_t toneTimerId = (~0);  /* use Timer_ANY for tone timer */
 uint32_t servoTimerId = (~0); /* use Timer_ANY for servo timer */
@@ -105,7 +111,7 @@ uint16_t used_pwm_port_pins[] = {
 
 uint32_t fixed_map_pwm_pins[] = {
     PWMTimerMSP432_P5_6_TA2CCR1A,
-    PWMTimerMSP432_TA2CCR2 | 0x157, /* typo in PWMTimerMSP432_P5_7_TA2CCR2A definition */
+    PWMTimerMSP432_P5_7_TA2CCR2A,
     PWMTimerMSP432_P6_6_TA2CCR3A,
     PWMTimerMSP432_P6_7_TA2CCR4A
 };
@@ -182,6 +188,9 @@ void analogWrite(uint8_t pin, int val)
         /* re-configure pin if possible */
         PWM_Params pwmParams;
         PWM_Handle pwmHandle;
+
+        /* idempotent */
+        PWM_init();
 
         /*
          * The pwmIndex fetched from the pin_to_pwm_index[] table
@@ -275,6 +284,13 @@ void analogWrite(uint8_t pin, int val)
             Timer_setAvailMask(Timer_getAvailMask() & ~(1 << timerId));
         }
 
+        /*
+         * To reduce footprint when analogWrite isn't used,
+         * reference stopAnalogWriteFxn only if analogWrite
+         * has been called.
+         */
+        stopAnalogWriteFxnPtr = stopAnalogWriteFxn;
+
         digital_pin_to_pin_function[pin] = PIN_FUNC_ANALOG_OUTPUT;
     }
 
@@ -292,6 +308,11 @@ void analogWrite(uint8_t pin, int val)
  * pin. It is called by pinMap() when a pin's function is being modified.
  */
 void stopAnalogWrite(uint8_t pin)
+{
+    stopAnalogWriteFxnPtr(pin);
+}
+
+void stopAnalogWriteFxn(uint8_t pin)
 {
     uint16_t pwmIndex = digital_pin_to_pwm_index[pin];
     uint8_t timerId;
@@ -403,6 +424,11 @@ void analogReference(uint16_t mode)
  * being modified.
  */
 void stopAnalogRead(uint8_t pin)
+{
+    stopAnalogReadFxnPtr(pin);
+}
+
+void stopAnalogReadFxn(uint8_t pin)
 {
     uint8_t adcIndex = digital_pin_to_adc_index[pin];
     uint_fast8_t port;

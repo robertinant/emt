@@ -50,6 +50,12 @@
 #include <driverlib/rom_map.h>
 #include <driverlib/gpio.h>
 
+void stopAnalogWriteFxn(uint8_t);
+void stopAnalogReadFxn(uint8_t);
+
+StopFunc stopAnalogWriteFxnPtr = NULL;
+StopFunc stopAnalogReadFxnPtr = NULL;
+
 /* Carefully selected hal Timer IDs for tone and servo */
 uint32_t toneTimerId = (~0);  /* use Timer_ANY for tone timer */
 uint32_t servoTimerId = (~0); /* use Timer_ANY for servo timer */
@@ -120,6 +126,7 @@ void analogWrite(uint8_t pin, int val)
                 break;
         }
 
+        /* idempotent */
         PWM_init();
 
         /* Open the PWM port */
@@ -138,6 +145,13 @@ void analogWrite(uint8_t pin, int val)
 
         pwmHandles[pwmIndex] = pwmHandle;
         
+        /*
+         * To reduce footprint when analogWrite isn't used,
+         * reference stopAnalogWriteFxn only if analogWrite
+         * has been called.
+         */
+        stopAnalogWriteFxnPtr = stopAnalogWriteFxn;
+
         digital_pin_to_pin_function[pin] = PIN_FUNC_ANALOG_OUTPUT;
 
         /* start PWM */
@@ -158,6 +172,11 @@ void analogWrite(uint8_t pin, int val)
  * pin. It is called by pinMap() when a pin's function is being modified.
  */
 void stopAnalogWrite(uint8_t pin)
+{
+    stopAnalogWriteFxnPtr(pin);
+}
+
+void stopAnalogWriteFxn(uint8_t pin)
 {
     uint16_t pwmIndex = digital_pin_to_pwm_index[pin];
 
@@ -221,6 +240,11 @@ void analogReference(uint16_t mode)
  * being modified.
  */
 void stopAnalogRead(uint8_t pin)
+{
+    stopAnalogReadFxnPtr(pin);
+}
+
+void stopAnalogReadFxn(uint8_t pin)
 {
 //    uint8_t adcIndex = digital_pin_to_adc_index[pin];
 

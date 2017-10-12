@@ -732,5 +732,4 @@ void Board_init(void)
     /* driver-specific initialization */
     Power_init();
     GPIO_init();
-    PWM_init();
 }

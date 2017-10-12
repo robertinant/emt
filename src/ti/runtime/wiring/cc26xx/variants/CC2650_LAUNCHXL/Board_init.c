@@ -753,14 +753,6 @@ const PowerCC26XX_Config PowerCC26XX_config = {
 };
 
 /*
- *  ======== Board_initPWM ========
- */
-void Board_initPWM(void)
-{
-    PWM_init();
-}
-
-/*
  *  ======== Board_initPIN ========
  */
 void Board_initPIN()
@@ -786,6 +778,5 @@ void Board_init(void)
     /* driver-specific initialization */
     Board_initPower();
     Board_initPIN();
-    Board_initGPIO();
-    Board_initPWM();
+    GPIO_init();
 }

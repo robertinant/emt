@@ -54,6 +54,27 @@
 #include "MSP_EXP432E401Y.h"
 
 /*
+ *  =============================== ADC ===============================
+ */
+#include <ti/drivers/ADC.h>
+//#include <ti/drivers/adc/ADCMSP432E4.h>
+
+/* ADC function table for ADCMSP432 implementation */
+//const ADC_FxnTable myADCMSP432_fxnTable = {
+//    ADCMSP432E4_close,
+//    NULL, /* ADCMSP432_control, */
+//    ADCMSP4324_convert,
+//    NULL, /* ADCMSP432_convertRawToMicroVolts, */
+//    ADCMSP4324_init,
+//    ADCMSP4324_open
+//};
+
+const ADC_Config ADC_config[] = {
+};
+
+const uint_least8_t ADC_count = 0;
+
+/*
  *  ============================= Display =============================
  */
 #include <ti/display/Display.h>

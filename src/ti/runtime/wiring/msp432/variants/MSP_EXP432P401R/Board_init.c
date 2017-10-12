@@ -923,14 +923,6 @@ const PWM_Config PWM_config[] = {
 const uint_least8_t PWM_count = Board_PWMCOUNT;
 
 /*
- *  ======== Board_initPWM ========
- */
-void Board_initPWM(void)
-{
-    PWM_init();
-}
-
-/*
  *  =============================== SDSPI ===============================
  */
 /* Place into subsections to allow the TI linker to remove items properly */
@@ -1316,8 +1308,7 @@ void Board_initWatchdog(void)
  *  ======== Board_init ========
  */
 void Board_init(void) {
-    Board_initGPIO();
-    Board_initPWM();
     Board_initPower();
+    GPIO_init();
 }
 
