@@ -79,9 +79,7 @@ JOBS = --jobs=1
 	@echo "Building packages ..."
 #	$(MYXDC) $(JOBS) release -Pr src
 	$(MYXDC) $(JOBS) $(XDCPATH.portable) .libraries -P $(PKGS) 
-	@echo ".. msp432 path .." $(XDCPATH.msp432) $(PKGS.msp432)
 	$(MYXDC) $(JOBS) $(XDCPATH.msp432) .libraries -P $(PKGS.msp432)
-	@echo ".. msp432 path .." $(XDCPATH.msp432e) $(PKGS.msp432ie)
 	$(MYXDC) $(JOBS) $(XDCPATH.msp432e) .libraries -P $(PKGS.msp432e)
 	$(MYXDC) $(JOBS) $(XDCPATH.cc13xx) .libraries -P $(PKGS.cc13xx)
 	$(MYXDC) $(JOBS) $(XDCPATH.cc32xx) .libraries -P $(PKGS.cc32xx)
