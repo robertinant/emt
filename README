@@ -1,4 +1,4 @@
-				emt-e08
+				emt-e09
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -118,21 +118,15 @@ NOTE
 ========================================================================
 ADDITIONS
 
+ti/platforms/msp432e
+bundles/energia/msp432e
+        added support for the MSP432E
+
 DELETIONS
 
 CHANGES
-./imports.mak
-        import CC13X0 SDK (rather than core SDK) for CC13xx builds
-
-ti.runtime.wiring.*
-        fix micros() implementation to acount for clock period differences 
-        between LPRF and other devices.
-
-ti.runtime.wiring
-        fix SPI transfer completion to properly track completion when
-        multiple SPI instances are concurrently active
+ti/runtime/wiring/*/tests
+        enhance self test capabilities
 
 MRS
 
-ENERGIAMT-15 - micros() does not return the right value after delay()
-ENERGIAMT-18 - SPI's transferComplete is clobbered if both SPI and SPI1 are ...
