@@ -51,6 +51,7 @@ unsigned long pulseIn(uint8_t pin, uint8_t state, unsigned long timeout)
     /* measure GPIO_read() time */
     if (firstTime == true) {
         microsTime = micros();
+        microsTime = micros();
         microsTime = micros() - microsTime;
         loopTime = micros();
         GPIO_read(pin);
