@@ -20,7 +20,7 @@ TIDRIVERS ?= $(SDK.msp432)/source
 
 XDCPATH = $(SYSBIOS);$(TIDRIVERS);$(EMTROOT)
 
-PLATFORM = ti.platforms.emt432
+PLATFORM = ti.platforms.emt432:MSP432P401R
 TARGET   = gnu.targets.arm.M4F
 CCOPTS   = --compileOptions "-gdwarf-3 -gstrict-dwarf -fno-exceptions"
 
