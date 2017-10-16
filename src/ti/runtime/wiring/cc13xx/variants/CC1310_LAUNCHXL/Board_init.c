@@ -344,15 +344,6 @@ const GPIOCC26XX_Config GPIOCC26XX_config = {
 };
 
 /*
- *  ======== Board_initGPIO ========
- */
-void Board_initGPIO(void)
-{
-    /* set up initial GPIO pin configurations */
-    GPIO_init();
-}
-
-/*
  *  =============================== NVS ===============================
  *  Non-Volatile Storage configuration.
  */

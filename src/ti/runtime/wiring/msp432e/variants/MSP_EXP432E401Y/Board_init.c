@@ -163,6 +163,7 @@ const UDMAMSP432E4_Config UDMAMSP432E4_config = {
 void Board_init(void)
 {
     Power_init();
+    GPIO_init();
 
     /* Grant the DMA access to all FLASH memory */
     FLASH_CTRL->PP |= FLASH_PP_DFA;

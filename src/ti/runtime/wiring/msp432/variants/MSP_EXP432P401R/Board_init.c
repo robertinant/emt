@@ -1308,7 +1308,7 @@ void Board_initWatchdog(void)
  *  ======== Board_init ========
  */
 void Board_init(void) {
+    Board_initGPIO();
     Board_initPower();
-    GPIO_init();
 }
 
