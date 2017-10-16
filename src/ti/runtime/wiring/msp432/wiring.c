@@ -52,8 +52,6 @@
 #include <driverlib/rom_map.h>
 #include <driverlib/wdt_a.h>
 
-static Timer_Handle clockTimer = 0;
-static uint32_t clockTimerFreq = 0;
 static uint32_t timestampFreq = 0;
 static uint32_t clockTickTimestamp = 0;
 
@@ -67,13 +65,8 @@ unsigned long micros(void)
     uint32_t key;
     Types_FreqHz freq;
     uint64_t micros, expired;
-    uint32_t ffreq;
 
-    if (clockTimer == 0) {
-        clockTimer = Timer_getHandle(Clock_timerId);
-        Timer_getFreq(clockTimer, &freq);
-        clockTimerFreq = freq.lo;
-
+    if (timestampFreq == 0) {
         Timestamp_getFreq(&freq);
         timestampFreq = freq.lo;
     }
@@ -81,21 +74,11 @@ unsigned long micros(void)
     key = Hwi_disable();
 
     micros = Clock_getTicks() * Clock_tickPeriod;
-
-    /* use timestamp snapshot when in watchdog tick mode */
-    if (delayMode == 1) {
-        expired = Timestamp_get32() - clockTickTimestamp;
-        ffreq = timestampFreq;
-    }
-    /* use expired counts from Clock time when in Timer_A tick mode */
-    else {
-        expired = Timer_getExpiredCounts(clockTimer);
-        ffreq = clockTimerFreq;
-    }
+    expired = Timestamp_get32() - clockTickTimestamp;
 
     Hwi_restore(key);
 
-    micros += (expired * 1000000) / ffreq;
+    micros += (expired * 1000000) / timestampFreq;
 
     return (micros);
 }
@@ -149,19 +132,23 @@ void delayMicroseconds(unsigned int us)
  *
  *  250ms Watchdog Timer interrupt handler.
  */
-static void clockTickFxn(uintptr_t arg)
+void energiaClockTickFxn(uintptr_t arg)
 {
     /*
      * Bump Clock tick count by 249.
      * Clock_tick() will bump it one more
      */
-    ((ti_sysbios_knl_Clock_Module_State *)(&ti_sysbios_knl_Clock_Module__state__V))->ticks += 249;
+    if (delayMode == 1) {
+        ((ti_sysbios_knl_Clock_Module_State *)(&ti_sysbios_knl_Clock_Module__state__V))->ticks += 249;
+    }
 
     /* snapshot current timestamp for micros() */
     clockTickTimestamp = Timestamp_get32();
 
     Clock_tick();
 }
+
+extern Timer_Handle energiaClockTimer;
 
 /*
  *  ======== switchToWatchdogTimer ========
@@ -171,18 +158,16 @@ static void clockTickFxn(uintptr_t arg)
  */
 static void switchToWatchdogTimer()
 {
-    Clock_TimerProxy_Handle clockTimer;
     static Hwi_Handle wdtHwi = NULL;
 
     /* Stop Timer_A currrently being used by Clock */
-    clockTimer = Clock_getTimerHandle();
-    Clock_TimerProxy_stop(clockTimer);
+    Timer_stop(energiaClockTimer);
 
     MAP_WDT_A_holdTimer();
 
     if (wdtHwi == NULL) {
         /* Create watchdog Timer Hwi */
-        wdtHwi = Hwi_create(19, clockTickFxn, NULL, NULL);
+        wdtHwi = Hwi_create(19, energiaClockTickFxn, NULL, NULL);
 
         /* set WDT to use 32KHz input, 250ms period */
         MAP_WDT_A_initIntervalTimer(WDT_A_CLOCKSOURCE_BCLK, WDT_A_CLOCKITERATIONS_8192);
@@ -211,8 +196,6 @@ static void switchToWatchdogTimer()
  */
 static void switchToTimerA()
 {
-    Clock_TimerProxy_Handle clockTimer;
-
     /* Stop watchdog Timer */
     MAP_WDT_A_holdTimer();
 
@@ -223,8 +206,7 @@ static void switchToTimerA()
     Power_setConstraint(PowerMSP432_DISALLOW_DEEPSLEEP_0);
 
     /* Re-start Timer_A */
-    clockTimer = Clock_getTimerHandle();
-    Clock_TimerProxy_start(clockTimer);
+    Timer_start(energiaClockTimer);
 
     /* hence, Clock_tick() will be called from 1ms Timer_A interrupt */
 }
