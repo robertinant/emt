@@ -1754,24 +1754,19 @@ static int consoleHandler_awtest(const char * line)
         aMuxChannelEnable(pin);
 
         analogWrite(pin, 1);
-        delay(2);
         aval[0] = pulseIn(COMMON_PIN, 1, 10000);
 
         analogWrite(pin, 128);
-        delay(2);
         aval[1] = pulseIn(COMMON_PIN, 1, 10000);
 
         analogWrite(pin, 254);
-        delay(2);
         aval[2] = pulseIn(COMMON_PIN, 1, 10000);
 
         analogWrite(pin, 0);
-        delay(2);
         aval[3] = pulseIn(COMMON_PIN, 1, 10000);
         aval[4] = digitalRead(COMMON_PIN);
 
         analogWrite(pin, 255);
-        delay(2);
         aval[5] = pulseIn(COMMON_PIN, 1, 10000);
         aval[6] = digitalRead(COMMON_PIN);
 
