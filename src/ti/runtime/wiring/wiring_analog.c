@@ -72,6 +72,12 @@ uint16_t analogRead(uint8_t pin)
             adcInitialized = true;
         }
 
+        /* 
+         * install stopAnalogReadFxn
+         * only if analogRead() is called will
+         * the stopAnalogReadFxn be referenced
+         * and pulled into .out file.
+         */
         stopAnalogReadFxnPtr = stopAnalogReadFxn;
 
         ADC_Params_init(&adcParams);
