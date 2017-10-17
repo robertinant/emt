@@ -45,13 +45,77 @@
 #include <ti/drivers/SPI.h>
 #include <ti/drivers/spi/SPICC26XXDMA.h>
 
+static uint32_t timestampFreq = 48000000;
+static Types_Timestamp64 clockTickTimestamp;
+static uint32_t clockTickCount;
+
+/*
+ *  ======== energiaTimeSync ========
+ *  Synchronize Clock ticks with Timestamp
+ *
+ *  Done on every Clock tick interrupt and on
+ *  wake up from DEEP SLEEP.
+ *
+ *  To provide adequate micros() resolution, the
+ *  SysTick timer is used. But, while in DEEP SLEEP,
+ *  the clock to the SysTick is suppressed. 
+ *  The Clock tick is maintained during
+ *  deep sleep but doesn't provide adequate micros()
+ *  resolution.
+ *
+ *  The time base for Clock (the RTC) is async
+ *  with the time base for the Timestamp (the SysTick).
+ *  After a long period of time without DEEP SLEEP.
+ *  the Timestamp and Clock tick will diverge unless
+ *  corrected each Clock tick interrupt.
+ */
+void energiaTimeSync(void)
+{
+    uint32_t key;
+
+    key = Hwi_disable();
+
+    TimestampProvider_get64(&clockTickTimestamp);
+    clockTickCount = Clock_getTicks();
+
+    Hwi_restore(key);
+}
+
+/*
+ *  ======== micros64 ========
+ *  compute delta T since timestamp snapshot.
+ *  add to that the clock tick snapshot in microseconds
+ */
+static uint64_t micros64(void)
+{
+    uint64_t t0, tnow, micros;
+    Types_Timestamp64 tsn;
+    uint32_t key;
+
+    key = Hwi_disable();
+
+    TimestampProvider_get64(&tsn);
+
+    t0 = (uint64_t)clockTickTimestamp.hi << 32 | clockTickTimestamp.lo;
+
+    Hwi_restore(key);
+
+    tnow = (uint64_t)tsn.hi << 32 | tsn.lo;
+
+    micros = (tnow - t0) * (uint64_t)1000000;
+    micros /= timestampFreq;
+
+    micros += (uint64_t)clockTickCount * (uint64_t)Clock_tickPeriod;
+
+    return(micros); 
+}
+
 /*
  *  ======== micros ========
  */
-unsigned long micros(void)
+unsigned long micros()
 {
-    /* all LPRF devices have a 10us tickPeriod */
-    return(Clock_getTicks() * Clock_tickPeriod); 
+    return (micros64());
 }
 
 /*
@@ -59,11 +123,7 @@ unsigned long micros(void)
  */
 unsigned long millis(void)
 {
-    uint64_t milliseconds;
-
-    milliseconds = ((uint64_t)Clock_getTicks() * (uint64_t)Clock_tickPeriod) / (uint64_t)1000;
-
-    return (milliseconds);
+    return (micros64() / 1000);
 }
 
 /*
@@ -144,6 +204,7 @@ const UART_FxnTable *uartFxnTablePtr = &UARTCC26XX_fxnTable;
  * the current thread is an ISR.
  */
 void myClock_doTick(UArg arg) {
+    energiaTimeSync();
     Clock_workFuncDynamic(0,0);
 }
 

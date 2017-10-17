@@ -736,12 +736,12 @@ const uint_least8_t PWM_count = CC1350_LAUNCHXL_PWMCOUNT;
  *  ======== PowerCC26XX_config ========
  */
 const PowerCC26XX_Config PowerCC26XX_config = {
-    .policyInitFxn = NULL,
-    .policyFxn = PowerCC26XX_standbyPolicy,
-    .calibrateFxn = PowerCC26XX_calibrate,
-    .enablePolicy = TRUE,
-    .calibrateRCOSC_LF = TRUE,
-    .calibrateRCOSC_HF = TRUE
+    .policyInitFxn      = NULL,
+    .policyFxn          = &PowerCC26XX_standbyPolicy,
+    .calibrateFxn       = &PowerCC26XX_calibrate,
+    .enablePolicy       = true,
+    .calibrateRCOSC_LF  = true,
+    .calibrateRCOSC_HF  = true,
 };
 
 /*
@@ -752,12 +752,22 @@ void Board_initPIN()
     PIN_init(BoardGpioInitTable);
 }
 
+static Power_NotifyObj energiaNotifyObject;
+extern void energiaTimeSync(void);
+
 /*
  *  ======== Board_initPower ========
  */
 void Board_initPower(void)
 {
     Power_init();
+
+    /*
+     * resync micros() and millis() time bases after
+     * clock to SysTick has been cut while in deep sleep
+     */
+    Power_registerNotify(&energiaNotifyObject, PowerCC26XX_AWAKE_STANDBY,
+                         (Power_NotifyFxn)energiaTimeSync, NULL);
 }
 
 /*

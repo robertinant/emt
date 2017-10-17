@@ -751,12 +751,22 @@ void Board_initPIN()
     PIN_init(BoardGpioInitTable);
 }
 
+static Power_NotifyObj energiaNotifyObject;
+extern void energiaTimeSync(void);
+
 /*
  *  ======== Board_initPower ========
  */
 void Board_initPower(void)
 {
     Power_init();
+
+    /*
+     * resync micros() and millis() time bases after
+     * clock to SysTick has been cut while in deep sleep
+     */
+    Power_registerNotify(&energiaNotifyObject, PowerCC26XX_AWAKE_STANDBY,
+                         (Power_NotifyFxn)energiaTimeSync, NULL);
 }
 
 /*
