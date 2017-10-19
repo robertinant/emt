@@ -155,35 +155,6 @@ const UDMAMSP432E4_Config UDMAMSP432E4_config = {
 };
 
 /*
- *  =============================== General ===============================
- */
-/*
- *  ======== Board_init ========
- */
-void Board_init(void)
-{
-    Power_init();
-    GPIO_init();
-
-    /* Grant the DMA access to all FLASH memory */
-    FLASH_CTRL->PP |= FLASH_PP_DFA;
-
-    /* Region start address - match FLASH start address */
-    FLASH_CTRL->DMAST = 0x00000000;
-
-    /*
-     * Access to FLASH is granted to the DMA in 2KB regions.  The value
-     * assigned to DMASZ is the amount of 2KB regions to which the DMA will
-     * have access.  The value can be determined via the following:
-     *     2 * (num_regions + 1) KB
-     *
-     * To grant full access to entire 1MB of FLASH:
-     *     2 * (511 + 1) KB = 1024 KB (1 MB)
-     */
-    FLASH_CTRL->DMASZ = 511;
-}
-
-/*
  *  =============================== EMAC ===============================
  */
 #include <ti/drivers/emac/EMACMSP432E4.h>
@@ -825,3 +796,32 @@ const Watchdog_Config Watchdog_config[MSP_EXP432E401Y_WATCHDOGCOUNT] = {
 };
 
 const uint_least8_t Watchdog_count = MSP_EXP432E401Y_WATCHDOGCOUNT;
+
+/*
+ *  =============================== General ===============================
+ */
+/*
+ *  ======== Board_init ========
+ */
+void Board_init(void)
+{
+    Power_init();
+    GPIO_init();
+
+    /* Grant the DMA access to all FLASH memory */
+    FLASH_CTRL->PP |= FLASH_PP_DFA;
+
+    /* Region start address - match FLASH start address */
+    FLASH_CTRL->DMAST = 0x00000000;
+
+    /*
+     * Access to FLASH is granted to the DMA in 2KB regions.  The value
+     * assigned to DMASZ is the amount of 2KB regions to which the DMA will
+     * have access.  The value can be determined via the following:
+     *     2 * (num_regions + 1) KB
+     *
+     * To grant full access to entire 1MB of FLASH:
+     *     2 * (511 + 1) KB = 1024 KB (1 MB)
+     */
+    FLASH_CTRL->DMASZ = 511;
+}
