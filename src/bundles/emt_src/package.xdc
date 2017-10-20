@@ -3,6 +3,9 @@ requires internal ti.runtime.wiring;
 requires internal ti.runtime.wiring.msp432;
 requires internal ti.runtime.wiring.msp432.variants.MSP_EXP432P401R;
 
+requires internal ti.runtime.wiring.msp432e;
+requires internal ti.runtime.wiring.msp432e.variants.MSP_EXP432E401Y;
+
 requires internal ti.runtime.wiring.cc13xx.variants.CC1310_LAUNCHXL;
 requires internal ti.runtime.wiring.cc13xx;
 
