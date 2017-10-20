@@ -1,4 +1,4 @@
-				emt-e10
+				emt-e11
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -122,11 +122,8 @@ DELETIONS
 
 CHANGES
 
-./imports.mak
-        build agains GA of MSP432E core SDK
-
-ti/runtime/wiring/msp432*
-        clock resolution work
+bundles/emt_src
+        added missing MSP432E sources to source bundle
 
 MRS
 
