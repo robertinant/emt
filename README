@@ -1,4 +1,4 @@
-				emt-e11
+				emt-e12
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -122,8 +122,9 @@ DELETIONS
 
 CHANGES
 
-bundles/emt_src
-        added missing MSP432E sources to source bundle
+./bundles/energia
+ti.runtime.wiring.msp432e
+        MSP432E support now has a full complement of Task priorities (for NDK)
 
 MRS
 
