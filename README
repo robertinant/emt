@@ -1,4 +1,4 @@
-				emt-e12
+				emt-e13
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -122,9 +122,11 @@ DELETIONS
 
 CHANGES
 
-./bundles/energia
+ti.runtime.wiring.msp432e.variants.*
+        adopt bare metal pin definitions from 81-95
+
 ti.runtime.wiring.msp432e
-        MSP432E support now has a full complement of Task priorities (for NDK)
+        Add bare metal analogWrite() implementation to MSP432E
 
 MRS
 
