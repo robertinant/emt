@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Texas Instruments Incorporated
+ * Copyright (c) 2017, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,6 +35,9 @@
 #include <ti/runtime/wiring/wiring_private.h>
 #include "wiring_analog.h"
 
+#include <ti/drivers/Power.h>
+#include <ti/drivers/power/PowerMSP432E4.h>
+
 #include <ti/drivers/GPIO.h>
 #include <ti/drivers/gpio/GPIOMSP432E4.h>
 
@@ -48,7 +51,12 @@
 
 #include <driverlib/rom.h>
 #include <driverlib/rom_map.h>
+#include "driverlib/adc.h"
 #include <driverlib/gpio.h>
+#include "driverlib/sysctl.h"
+
+extern GPIO_PinConfig gpioPinConfigs[];
+extern ADC_Config ADC_config[];
 
 void stopAnalogWriteFxn(uint8_t);
 void stopAnalogReadFxn(uint8_t);
@@ -144,7 +152,7 @@ void analogWrite(uint8_t pin, int val)
         }
 
         pwmHandles[pwmIndex] = pwmHandle;
-        
+
         /*
          * To reduce footprint when analogWrite isn't used,
          * reference stopAnalogWriteFxn only if analogWrite
@@ -190,7 +198,7 @@ void stopAnalogWriteFxn(uint8_t pin)
  * analogRead() support
  */
 
-int8_t analogReadShift = 4; /* 14 - 4 = 10 bits by default */
+int8_t analogReadShift = 2; /* 12 - 2 = 10 bits by default */
 
 /*
  * \brief           configure the A/D reference voltage
@@ -246,10 +254,10 @@ void stopAnalogRead(uint8_t pin)
 
 void stopAnalogReadFxn(uint8_t pin)
 {
-//    uint8_t adcIndex = digital_pin_to_adc_index[pin];
+    uint8_t adcIndex = digital_pin_to_adc_index[pin];
 
     /* Close ADC port */
-//    ADC_close((ADC_Handle)&(ADC_config[adcIndex]));
+    ADC_close((ADC_Handle)&(ADC_config[adcIndex]));
 
     digital_pin_to_pin_function[pin] = PIN_FUNC_UNUSED;
 }
@@ -259,6 +267,67 @@ void stopAnalogReadFxn(uint8_t pin)
  */
 void analogReadResolution(uint16_t bits)
 {
-    analogReadShift = 14 - bits;
+    analogReadShift = 12 - bits;
 }
 
+void myADCMSP432E4_close(ADC_Handle handle)
+{
+    uint32_t pin = (uint32_t)handle->object;
+    uint8_t port = (gpioPinConfigs[pin] >> 8) & 0xff;
+
+    /* disable clock/power to port */
+    Power_releaseDependency(GPIOMSP432E4_getPowerResourceId(port));
+}
+
+int_fast16_t myADCMSP432E4_convert(ADC_Handle handle, uint16_t *val)
+{
+    uint32_t hwiKey;
+    uint32_t pin = (uint32_t)handle->object;
+    uint8_t port = (gpioPinConfigs[pin] >> 8) & 0xff;
+    uint8_t mask = gpioPinConfigs[pin] & 0xff;
+    uint32_t portBase = GPIO_PORTA_BASE + (port * 0x1000);
+    uint16_t value[1];
+    uint32_t channel = digital_pin_to_adc_index[pin];
+    if (channel > 0xf) channel |= 0x100;
+
+    hwiKey = Hwi_disable();
+
+    ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_ADC0);
+
+    if (channel != ADC_CTL_TS)
+        ROM_GPIOPinTypeADC((uint32_t) portBase, mask);
+
+    ROM_ADCSequenceConfigure(ADC0_BASE, 3, ADC_TRIGGER_PROCESSOR, 0);
+    ROM_ADCSequenceStepConfigure(ADC0_BASE, 3, 0, channel | ADC_CTL_IE | ADC_CTL_END);
+    ROM_ADCSequenceEnable(ADC0_BASE, 3);
+
+    ROM_ADCIntClear(ADC0_BASE, 3);
+    ROM_ADCProcessorTrigger(ADC0_BASE, 3);
+
+    while(!ROM_ADCIntStatus(ADC0_BASE, 3, false)) {
+    }
+
+    ROM_ADCIntClear(ADC0_BASE, 3);
+    ROM_ADCSequenceDataGet(ADC0_BASE, 3, (uint32_t*) value);
+
+    Hwi_restore(hwiKey);
+
+    *val = value[0];
+    return (ADC_STATUS_SUCCESS);
+}
+
+
+void myADCMSP432E4_init(ADC_Handle handle)
+{
+}
+
+ADC_Handle myADCMSP432E4_open(ADC_Handle handle, ADC_Params *params)
+{
+    uint32_t pin = (uint32_t)handle->object;
+    uint8_t port = (gpioPinConfigs[pin] >> 8) & 0xff;
+
+    /* enable clock/power to port */
+    Power_setDependency(GPIOMSP432E4_getPowerResourceId(port));
+
+    return (handle);
+}

@@ -1523,14 +1523,14 @@ static uint8_t pinIds[] = {
 
 #if MSP432E_ARTEST_CMD == 1
 
-#define MAX_DAC_VALUE 2790  /* = 3.40V */
+#define MAX_DAC_VALUE 2688  /* = 3.30V */
 
-/* Supported Ax pins */
+/* Supported Ax pins on boosterpack 0 */
 static uint8_t pinIds[] = {
     A0,  A1,  A2,  A3,
-    A4,  A5,  A6,  A7,
-    A8,  A9,  A10, A11,
-    A12, A13, A14, A15
+    A4,
+    A8,  A9, 
+    A12, A14, A15
 };
 
 #endif  /* MSP432_ARTEST_CMD */
@@ -1754,24 +1754,19 @@ static int consoleHandler_awtest(const char * line)
         aMuxChannelEnable(pin);
 
         analogWrite(pin, 1);
-        delay(2);
         aval[0] = pulseIn(COMMON_PIN, 1, 10000);
 
         analogWrite(pin, 128);
-        delay(2);
         aval[1] = pulseIn(COMMON_PIN, 1, 10000);
 
         analogWrite(pin, 254);
-        delay(2);
         aval[2] = pulseIn(COMMON_PIN, 1, 10000);
 
         analogWrite(pin, 0);
-        delay(2);
         aval[3] = pulseIn(COMMON_PIN, 1, 10000);
         aval[4] = digitalRead(COMMON_PIN);
 
         analogWrite(pin, 255);
-        delay(2);
         aval[5] = pulseIn(COMMON_PIN, 1, 10000);
         aval[6] = digitalRead(COMMON_PIN);
 

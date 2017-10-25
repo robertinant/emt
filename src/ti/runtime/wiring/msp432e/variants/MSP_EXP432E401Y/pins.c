@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Texas Instruments Incorporated
+ * Copyright (c) 2017, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -137,13 +137,22 @@ uint8_t digital_pin_to_pin_function[] = {
     PIN_FUNC_UNUSED,  /*  79 - PK4 */
     PIN_FUNC_UNUSED,  /*  80 - PG1 */
     
-    /* virtual pins 81-88 */
-    PIN_FUNC_UNUSED,  /*  81 - PJ0 SW1 */
-    PIN_FUNC_UNUSED,  /*  82 - PJ1 SW2 */
-    PIN_FUNC_UNUSED,  /*  83 - PN1 D1 */
-    PIN_FUNC_UNUSED,  /*  84 - PN0 D2 */
-    PIN_FUNC_UNUSED,  /*  85 - PF4 D3 */
-    PIN_FUNC_UNUSED,  /*  86 - PF0 D4 */
+    /* virtual pins 81-95 */
+    PIN_FUNC_UNUSED,  /*  81 - PN1 D1 */
+    PIN_FUNC_UNUSED,  /*  82 - PN0 D2 */
+    PIN_FUNC_UNUSED,  /*  83 - PF4 D3 */
+    PIN_FUNC_UNUSED,  /*  84 - PF0 D4 */
+    PIN_FUNC_UNUSED,  /*  85 - PJ0 SW1 */
+    PIN_FUNC_UNUSED,  /*  86 - PJ1 SW2 */
+    PIN_FUNC_UNUSED,  /*  87 - PD6 A5 */
+    PIN_FUNC_UNUSED,  /*  88 - PA0 JP4 */
+    PIN_FUNC_UNUSED,  /*  89 - PA1 JP5 */
+    PIN_FUNC_UNUSED,  /*  90 - PA2 */
+    PIN_FUNC_UNUSED,  /*  91 - PA3 */
+    PIN_FUNC_UNUSED,  /*  92 - PL6 */
+    PIN_FUNC_UNUSED,  /*  93 - PL7 */
+    PIN_FUNC_UNUSED,  /*  94 - PB0 */
+    PIN_FUNC_UNUSED,  /*  95 - PB1 */
 };
 
 /*
@@ -256,13 +265,22 @@ uint8_t digital_pin_to_pwm_index[] = {
     PWM_FIXED_INDEX_6,  /*  79 - PK4 PWM6 */
     PWM_FIXED_INDEX_5,  /*  80 - PG1 PWM5 */
     
-    /* virtual pins 81-88 */
-    PWM_NOT_MAPPABLE,   /*  81 - PJ0 SW1 */
-    PWM_NOT_MAPPABLE,   /*  82 - PJ1 SW2 */
-    PWM_NOT_MAPPABLE,   /*  83 - PN1 D1 */
-    PWM_NOT_MAPPABLE,   /*  84 - PN0 D2 */
-    PWM_NOT_MAPPABLE,   /*  85 - PF4 D3 */
-    PWM_FIXED_INDEX_0,  /*  86 - PF0 D4 PWM0 */
+    /* virtual pins 81-95 */
+    PWM_NOT_MAPPABLE,   /*  81 - PN1 D1 */
+    PWM_NOT_MAPPABLE,   /*  82 - PN0 D2 */
+    PWM_NOT_MAPPABLE,   /*  83 - PF4 D3 */
+    PWM_FIXED_INDEX_0,  /*  84 - PF0 D4 PWM0 */
+    PWM_NOT_MAPPABLE,   /*  85 - PJ0 SW1 */
+    PWM_NOT_MAPPABLE,   /*  86 - PJ1 SW2 */
+    PWM_NOT_MAPPABLE,   /*  87 - PD6 A5 */
+    PWM_NOT_MAPPABLE,   /*  88 - PA0 JP4 */
+    PWM_NOT_MAPPABLE,   /*  89 - PA1 JP5 */
+    PWM_NOT_MAPPABLE,   /*  90 - PA2 */
+    PWM_NOT_MAPPABLE,   /*  91 - PA3 */
+    PWM_NOT_MAPPABLE,   /*  92 - PL6 */
+    PWM_NOT_MAPPABLE,   /*  93 - PL7 */
+    PWM_NOT_MAPPABLE,   /*  94 - PB0 */
+    PWM_NOT_MAPPABLE,   /*  95 - PB1 */
 };
 
 /*
@@ -274,12 +292,12 @@ const uint8_t digital_pin_to_adc_index[] = {
 
     /* pins 1-10 */
     NOT_ON_ADC,  /*  1  - 3.3V */
-    NOT_ON_ADC,  /*  2  - PE4 */
+    9,           /*  2  - PE4 A9 */
     NOT_ON_ADC,  /*  3  - PC4 */
     NOT_ON_ADC,  /*  4  - PC5 */
     NOT_ON_ADC,  /*  5  - PC6 */
-    NOT_ON_ADC,  /*  6  - PE5 */
-    NOT_ON_ADC,  /*  7  - PD3 */
+    8,           /*  6  - PE5 A8 */
+    12,          /*  7  - PD3 A12 */
     NOT_ON_ADC,  /*  8  - PC7 */
     NOT_ON_ADC,  /*  9  - PB2 */
     NOT_ON_ADC,  /*  10 - PB3 */
@@ -288,8 +306,8 @@ const uint8_t digital_pin_to_adc_index[] = {
     NOT_ON_ADC,  /*  11 - PP2 */
     NOT_ON_ADC,  /*  12 - PN3 */
     NOT_ON_ADC,  /*  13 - PN2 */
-    NOT_ON_ADC,  /*  14 - PD0 */
-    NOT_ON_ADC,  /*  15 - PD1 */
+    15,          /*  14 - PD0 A15 */
+    14,          /*  15 - PD1 A14 */
     NOT_ON_ADC,  /*  16 - RESET */
     NOT_ON_ADC,  /*  17 - PH3 */
     NOT_ON_ADC,  /*  18 - PH2 */
@@ -299,11 +317,11 @@ const uint8_t digital_pin_to_adc_index[] = {
     /* pins 21-30 */
     NOT_ON_ADC,  /*  21 - 5V */
     NOT_ON_ADC,  /*  22 - GND */
-    NOT_ON_ADC,  /*  23 - PE0 */
-    NOT_ON_ADC,  /*  24 - PE1 */
-    NOT_ON_ADC,  /*  25 - PE2 */
-    NOT_ON_ADC,  /*  26 - PE3 */
-    NOT_ON_ADC,  /*  27 - PD7 */
+    3,           /*  23 - PE0 A3 */
+    2,           /*  24 - PE1 A2 */
+    1,           /*  25 - PE2 A1 */
+    0,           /*  26 - PE3 A0 */
+    4,           /*  27 - PD7 A4 */
     NOT_ON_ADC,  /*  28 - PD6 */
     NOT_ON_ADC,  /*  29 - PM4 */
     NOT_ON_ADC,  /*  30 - PM5 */
@@ -322,11 +340,11 @@ const uint8_t digital_pin_to_adc_index[] = {
 
     /* pins 41-50 */
     NOT_ON_ADC,  /*  41  - 3.3V */
-    NOT_ON_ADC,  /*  42 - PD2 */
+    13,          /*  42 - PD2 A13 */
     NOT_ON_ADC,  /*  43 - PP0 */
     NOT_ON_ADC,  /*  44 - PP1 */
-    NOT_ON_ADC,  /*  45 - PD4 */
-    NOT_ON_ADC,  /*  46 - PD5 */
+    7,           /*  45 - PD4 A7 */
+    6,           /*  46 - PD5 A6 */
     NOT_ON_ADC,  /*  47 - PQ0 */
     NOT_ON_ADC,  /*  48 - PP4 */
     NOT_ON_ADC,  /*  49 - PN5 */
@@ -347,12 +365,12 @@ const uint8_t digital_pin_to_adc_index[] = {
     /* pins 61-70 */
     NOT_ON_ADC,  /*  61 - 5V */
     NOT_ON_ADC,  /*  62 - GND */
-    NOT_ON_ADC,  /*  63 - PB4 */
-    NOT_ON_ADC,  /*  64 - PB5 */
-    NOT_ON_ADC,  /*  65 - PK0 */
-    NOT_ON_ADC,  /*  66 - PK1 */
-    NOT_ON_ADC,  /*  67 - PK2 */
-    NOT_ON_ADC,  /*  68 - PK3 */
+    10,          /*  63 - PB4 A10 */
+    11,          /*  64 - PB5 A11 */
+    16,          /*  65 - PK0 A16 */
+    17,          /*  66 - PK1 A17 */
+    18,          /*  67 - PK2 A18 */
+    19,          /*  68 - PK3 A19 */
     NOT_ON_ADC,  /*  69 - PA4 */
     NOT_ON_ADC,  /*  70 - PA5 */
 
@@ -368,12 +386,20 @@ const uint8_t digital_pin_to_adc_index[] = {
     NOT_ON_ADC,  /*  79 - PK4 */
     NOT_ON_ADC,  /*  80 - PG1 */
     
-    /* virtual pins 81-88 */
-    NOT_ON_ADC,  /*  81 - PJ0 SW1 */
-    NOT_ON_ADC,  /*  82 - PJ1 SW2 */
-    NOT_ON_ADC,  /*  83 - PN1 D1 */
-    NOT_ON_ADC,  /*  84 - PN0 D2 */
-    NOT_ON_ADC,  /*  85 - PF4 D3 */
-    NOT_ON_ADC,  /*  86 - PF0 D4 */
+    /* virtual pins 81-95 */
+    NOT_ON_ADC,  /*  81 - PN1 D1 */
+    NOT_ON_ADC,  /*  82 - PN0 D2 */
+    NOT_ON_ADC,  /*  83 - PF4 D3 */
+    NOT_ON_ADC,  /*  84 - PF0 D4 */
+    NOT_ON_ADC,  /*  85 - PJ0 SW1 */
+    NOT_ON_ADC,  /*  86 - PJ1 SW2 */
+    5,           /*  87 - PD_6 A5 */
+    NOT_ON_ADC,  /*  88 - PA_0 JP4 */
+    NOT_ON_ADC,  /*  89 - PA_1 JP5 */
+    NOT_ON_ADC,  /*  90 - PA_2 */
+    NOT_ON_ADC,  /*  91 - PA_3 */
+    NOT_ON_ADC,  /*  92 - PL_6 */
+    NOT_ON_ADC,  /*  93 - PL_7 */
+    NOT_ON_ADC,  /*  94 - PB_0 */
+    NOT_ON_ADC,  /*  95 - PB_1 */
 };
-

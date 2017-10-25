@@ -70,15 +70,14 @@ uint16_t analogRead(uint8_t pin)
         if (adcInitialized == false) {
             ADC_init();
             adcInitialized = true;
+            /* 
+             * install stopAnalogReadFxn
+             * only if analogRead() is called will
+             * the stopAnalogReadFxn be referenced
+             * and pulled into .out file.
+             */
+            stopAnalogReadFxnPtr = stopAnalogReadFxn;
         }
-
-        /* 
-         * install stopAnalogReadFxn
-         * only if analogRead() is called will
-         * the stopAnalogReadFxn be referenced
-         * and pulled into .out file.
-         */
-        stopAnalogReadFxnPtr = stopAnalogReadFxn;
 
         ADC_Params_init(&adcParams);
         adcParams.isProtected = false;  /* do NOT use a semaphore for thread safety */

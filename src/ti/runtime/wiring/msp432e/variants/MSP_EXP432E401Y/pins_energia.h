@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Texas Instruments Incorporated
+ * Copyright (c) 2017, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,37 +36,33 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-static const uint8_t RED_LED = 83;      /* All LEDs are green */
-static const uint8_t GREEN_LED = 84;    /* All LEDs are green */
-static const uint8_t BLUE_LED = 85;     /* All LEDs are green */
-static const uint8_t YELLOW_LED = 86;   /* All LEDs are green */
+static const uint8_t RED_LED = 81;      /* All LEDs are green */
+static const uint8_t GREEN_LED = 82;    /* All LEDs are green */
+static const uint8_t BLUE_LED = 83;     /* All LEDs are green */
+static const uint8_t YELLOW_LED = 84;   /* All LEDs are green */
 
-static const uint8_t PUSH1 = 81;
-static const uint8_t PUSH2 = 82;
+static const uint8_t PUSH1 = 85;
+static const uint8_t PUSH2 = 86;
 
-static const uint8_t A0 = 30;
-static const uint8_t A1 = 29;
-static const uint8_t A2 = 61;
-static const uint8_t A3 = 12;
-static const uint8_t A4 = 33;
-static const uint8_t A5 = 13;
-static const uint8_t A6 = 28;
-static const uint8_t A7 = 8;
-static const uint8_t A8 = 27;
-static const uint8_t A9 = 26;
-static const uint8_t A10 = 6;
-static const uint8_t A11 = 25;
-static const uint8_t A12 = 5;
-static const uint8_t A13 = 24;
-static const uint8_t A14 = 23;
-static const uint8_t A15 = 2;
-static const uint8_t A16 = 59;
-static const uint8_t A17 = 42;
-static const uint8_t A18 = 58;
-static const uint8_t A19 = 57;
-static const uint8_t A20 = 41;
-static const uint8_t A21 = 43;
-static const uint8_t A22 = 69;
-static const uint8_t A23 = 44;
+static const uint8_t A0 = 26;
+static const uint8_t A1 = 25;
+static const uint8_t A2 = 24;
+static const uint8_t A3 = 23;
+static const uint8_t A4 = 27;
+static const uint8_t A5 = 87;
+static const uint8_t A6 = 46;
+static const uint8_t A7 = 45;
+static const uint8_t A8 = 6;
+static const uint8_t A9 = 2;
+static const uint8_t A10 = 63;
+static const uint8_t A11 = 64;
+static const uint8_t A12 = 7;
+static const uint8_t A13 = 42;
+static const uint8_t A14 = 15;
+static const uint8_t A15 = 14;
+static const uint8_t A16 = 65;
+static const uint8_t A17 = 66;
+static const uint8_t A18 = 67;
+static const uint8_t A19 = 68;
 
 #endif

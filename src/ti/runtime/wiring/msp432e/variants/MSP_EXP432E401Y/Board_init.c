@@ -59,20 +59,124 @@
 #include <ti/drivers/ADC.h>
 //#include <ti/drivers/adc/ADCMSP432E4.h>
 
-/* ADC function table for ADCMSP432 implementation */
-//const ADC_FxnTable myADCMSP432_fxnTable = {
-//    ADCMSP432E4_close,
-//    NULL, /* ADCMSP432_control, */
-//    ADCMSP4324_convert,
-//    NULL, /* ADCMSP432_convertRawToMicroVolts, */
-//    ADCMSP4324_init,
-//    ADCMSP4324_open
-//};
+extern void myADCMSP432E4_close(ADC_Handle);
+extern int_fast16_t myADCMSP432E4_convert(ADC_Handle handle, uint16_t *value);
+extern void myADCMSP432E4_init(ADC_Handle handle);
+extern ADC_Handle myADCMSP432E4_open(ADC_Handle handle, ADC_Params *params);
 
-const ADC_Config ADC_config[] = {
+/* ADC function table for ADCMSP432 implementation */
+const ADC_FxnTable myADCMSP432E4_fxnTable = {
+    myADCMSP432E4_close,
+    NULL, /* ADCMSP432_control, */
+    myADCMSP432E4_convert,
+    NULL, /* ADCMSP432_convertRawToMicroVolts, */
+    myADCMSP432E4_init,
+    myADCMSP432E4_open
 };
 
-const uint_least8_t ADC_count = 0;
+const ADC_Config ADC_config[] = {
+    {
+        .fxnTablePtr = &myADCMSP432E4_fxnTable,
+        .object = (void *)(26), /* 0 */
+        .hwAttrs = NULL
+    },
+    {
+        .fxnTablePtr = &myADCMSP432E4_fxnTable,
+        .object = (void *)(25), /* 1 */
+        .hwAttrs = NULL
+    },
+    {
+        .fxnTablePtr = &myADCMSP432E4_fxnTable,
+        .object = (void *)(24), /* 2 */
+        .hwAttrs = NULL
+    },
+    {
+        .fxnTablePtr = &myADCMSP432E4_fxnTable,
+        .object = (void *)(23), /* 3 */
+        .hwAttrs = NULL
+    },
+    {
+        .fxnTablePtr = &myADCMSP432E4_fxnTable,
+        .object = (void *)(27), /* 4 */
+        .hwAttrs = NULL
+    },
+    {
+        .fxnTablePtr = &myADCMSP432E4_fxnTable,
+        .object = (void *)(0), /* 5 */
+        .hwAttrs = NULL
+    },
+    {
+        .fxnTablePtr = &myADCMSP432E4_fxnTable,
+        .object = (void *)(46), /* 6 */
+        .hwAttrs = NULL
+    },
+    {
+        .fxnTablePtr = &myADCMSP432E4_fxnTable,
+        .object = (void *)(45), /* 7 */
+        .hwAttrs = NULL
+    },
+    {
+        .fxnTablePtr = &myADCMSP432E4_fxnTable,
+        .object = (void *)(6),  /* 8 */
+        .hwAttrs = NULL
+    },
+    {
+        .fxnTablePtr = &myADCMSP432E4_fxnTable,
+        .object = (void *)(2),  /* 9 */
+        .hwAttrs = NULL
+    },
+    {
+        .fxnTablePtr = &myADCMSP432E4_fxnTable,
+        .object = (void *)(63), /* 10 */
+        .hwAttrs = NULL
+    },
+    {
+        .fxnTablePtr = &myADCMSP432E4_fxnTable,
+        .object = (void *)(64), /* 11 */
+        .hwAttrs = NULL
+    },
+    {
+        .fxnTablePtr = &myADCMSP432E4_fxnTable,
+        .object = (void *)(7), /* 12 */
+        .hwAttrs = NULL
+    },
+    {
+        .fxnTablePtr = &myADCMSP432E4_fxnTable,
+        .object = (void *)(42), /* 13 */
+        .hwAttrs = NULL
+    },
+    {
+        .fxnTablePtr = &myADCMSP432E4_fxnTable,
+        .object = (void *)(15), /* 14 */
+        .hwAttrs = NULL
+    },
+    {
+        .fxnTablePtr = &myADCMSP432E4_fxnTable,
+        .object = (void *)(14), /* 15 */
+        .hwAttrs = NULL
+    },
+    {
+        .fxnTablePtr = &myADCMSP432E4_fxnTable,
+        .object = (void *)(65), /* 16 */
+        .hwAttrs = NULL
+    },
+    {
+        .fxnTablePtr = &myADCMSP432E4_fxnTable,
+        .object = (void *)(66), /* 17 */
+        .hwAttrs = NULL
+    },
+    {
+        .fxnTablePtr = &myADCMSP432E4_fxnTable,
+        .object = (void *)(67), /* 18 */
+        .hwAttrs = NULL
+    },
+    {
+        .fxnTablePtr = &myADCMSP432E4_fxnTable,
+        .object = (void *)(68), /* 19 */
+        .hwAttrs = NULL
+    },};
+
+const uint_least8_t ADC_count = 20;
 
 /*
  *  ============================= Display =============================
@@ -304,13 +408,22 @@ GPIO_PinConfig gpioPinConfigs[] = {
     GPIOMSP432E4_PK4 | GPIO_DO_NOT_CONFIG,          /*  79 - PK4 */
     GPIOMSP432E4_PG1 | GPIO_DO_NOT_CONFIG,          /*  80 - PG1 */
 
-    /* virtual pins 81-86 */
-    GPIOMSP432E4_PJ0 | GPIO_DO_NOT_CONFIG,          /*  81 - PJ0 SW1 */
-    GPIOMSP432E4_PJ1 | GPIO_DO_NOT_CONFIG,          /*  82 - PJ1 SW2 */
-    GPIOMSP432E4_PN1 | GPIO_DO_NOT_CONFIG,          /*  83 - PN1 D1 */
-    GPIOMSP432E4_PN0 | GPIO_DO_NOT_CONFIG,          /*  84 - PN0 D2 */
-    GPIOMSP432E4_PF4 | GPIO_DO_NOT_CONFIG,          /*  85 - PF4 D3 */
-    GPIOMSP432E4_PF0 | GPIO_DO_NOT_CONFIG,          /*  86 - PF0 D4 */
+    /* virtual pins 81-95 */
+    GPIOMSP432E4_PN1 | GPIO_DO_NOT_CONFIG,          /*  81 - PN1 D1 */
+    GPIOMSP432E4_PN0 | GPIO_DO_NOT_CONFIG,          /*  82 - PN0 D2 */
+    GPIOMSP432E4_PF4 | GPIO_DO_NOT_CONFIG,          /*  83 - PF4 D3 */
+    GPIOMSP432E4_PF0 | GPIO_DO_NOT_CONFIG,          /*  84 - PF0 D4 */
+    GPIOMSP432E4_PJ0 | GPIO_DO_NOT_CONFIG,          /*  85 - PJ0 SW1 */
+    GPIOMSP432E4_PJ1 | GPIO_DO_NOT_CONFIG,          /*  86 - PJ1 SW2 */
+    GPIOMSP432E4_PD6 | GPIO_DO_NOT_CONFIG,          /*  87 - PD6 A5 */
+    GPIOMSP432E4_PA0 | GPIO_DO_NOT_CONFIG,          /*  88 - PA0 JP4 */
+    GPIOMSP432E4_PA1 | GPIO_DO_NOT_CONFIG,          /*  89 - PA1 JP5 */
+    GPIOMSP432E4_PA2 | GPIO_DO_NOT_CONFIG,          /*  90 - PA2 */
+    GPIOMSP432E4_PA3 | GPIO_DO_NOT_CONFIG,          /*  91 - PA3 */
+    GPIOMSP432E4_PL6 | GPIO_DO_NOT_CONFIG,          /*  92 - PL6 */
+    GPIOMSP432E4_PL7 | GPIO_DO_NOT_CONFIG,          /*  93 - PL7 */
+    GPIOMSP432E4_PB0 | GPIO_DO_NOT_CONFIG,          /*  94 - PB0 */
+    GPIOMSP432E4_PB1 | GPIO_DO_NOT_CONFIG,          /*  95 - PB1 */
 };
 
 /*
@@ -420,13 +533,22 @@ GPIO_CallbackFxn gpioCallbackFunctions[] = {
     NULL,  /*  79 - PK4 */
     NULL,  /*  80 - PG1 */
     
-    /* virtual pins 81-88 */
-    NULL,  /*  81 - PJ0 SW1 */
-    NULL,  /*  82 - PJ1 SW2 */
-    NULL,  /*  83 - PN1 D1 */
-    NULL,  /*  84 - PN0 D2 */
-    NULL,  /*  85 - PF4 D3 */
-    NULL,  /*  86 - PF0 D4 */
+    /* virtual pins 81-95 */
+    NULL,  /*  81 - PN1 D1 */
+    NULL,  /*  82 - PN0 D2 */
+    NULL,  /*  83 - PF4 D3 */
+    NULL,  /*  84 - PF0 D4 */
+    NULL,  /*  85 - PJ0 SW1 */
+    NULL,  /*  86 - PJ1 SW2 */
+    NULL,  /*  87 - PD6 A5 */
+    NULL,  /*  88 - PA0 JP4 */
+    NULL,  /*  89 - PA1 JP5 */
+    NULL,  /*  90 - PA2 */
+    NULL,  /*  91 - PA3 */
+    NULL,  /*  92 - PL6 */
+    NULL,  /*  93 - PL7 */
+    NULL,  /*  94 - PB0 */
+    NULL,  /*  95 - PB1 */
 };
 
 /* The device-specific GPIO_config structure */
