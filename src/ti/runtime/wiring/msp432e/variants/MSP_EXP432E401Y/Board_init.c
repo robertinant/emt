@@ -49,6 +49,11 @@
 #include <ti/devices/msp432e4/driverlib/sysctl.h>
 #include <ti/devices/msp432e4/driverlib/udma.h>
 
+#include <ti/devices/msp432e4/driverlib/rom.h>
+#include <ti/devices/msp432e4/driverlib/rom_map.h>
+#include <ti/devices/msp432e4/driverlib/gpio.h>
+#include <ti/devices/msp432e4/driverlib/sysctl.h>
+
 #include <ti/drivers/Power.h>
 
 #include "MSP_EXP432E401Y.h"
@@ -929,6 +934,16 @@ void Board_init(void)
 {
     Power_init();
     GPIO_init();
+
+    /* Supply clocks to GPIOD and GPIOF */
+    ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOD);
+    ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
+
+    /* Unlock and commit NMI pins PD7 and PF0 */
+    GPIOD->LOCK = GPIO_LOCK_KEY;
+    GPIOD->CR |= 0x80;
+    GPIOF->LOCK = GPIO_LOCK_KEY;
+    GPIOF->CR |= 0x01;
 
     /* Grant the DMA access to all FLASH memory */
     FLASH_CTRL->PP |= FLASH_PP_DFA;
