@@ -122,11 +122,11 @@ DELETIONS
 
 CHANGES
 
-ti.runtime.wiring.msp432e.variants.*
-        adopt bare metal pin definitions from 81-95
+bundles/energia/msp432e
+        add auto-Task deletion in MSP432E energia.cfg for NDK usage 
 
-ti.runtime.wiring.msp432e
-        Add bare metal analogWrite() implementation to MSP432E
+ti.runtime.wiring.msp432e.variants.*
+        unlock PD7 and Pf0
 
 MRS
 
