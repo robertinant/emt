@@ -1,4 +1,4 @@
-				emt-e13
+				emt-e14
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -122,11 +122,8 @@ DELETIONS
 
 CHANGES
 
-bundles/energia/msp432e
-        add auto-Task deletion in MSP432E energia.cfg for NDK usage 
-
-ti.runtime.wiring.msp432e.variants.*
-        unlock PD7 and Pf0
+bundles/energia/msp432/variants/*
+        Fix MSP432 analogWrite() adjacent pin corruption issue
 
 MRS
 
