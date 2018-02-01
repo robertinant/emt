@@ -59,6 +59,11 @@ cc13xx-$(TREE_NAME).zip: $(TREE_ROOT)/exports/emt_src.zip cc13xx/closure.zip
 	@echo making $@ ...
 	./cc13xx/mkbrd.ksh $< $(SDK.cc13xx)
 
+board.cc13x2: cc13x2-$(TREE_NAME).zip
+cc13x2-$(TREE_NAME).zip: $(TREE_ROOT)/exports/emt_src.zip cc13x2/closure.zip
+	@echo making $@ ...
+	./cc13x2/mkbrd.ksh $< $(SDK.cc13x2)
+
 board.msp432: msp432-$(TREE_NAME).zip
 msp432-$(TREE_NAME).zip: $(TREE_ROOT)/exports/emt_src.zip msp432/closure.zip
 	@echo making $@ ...

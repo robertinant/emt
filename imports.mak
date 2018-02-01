@@ -13,6 +13,7 @@ SDK_CC32XX = simplelink_cc32xx_sdk_1_50_00_01_eng
 MCPI_MSP432E_TREE =  $(TREES)/mcpi/mcpi-3.35.00.13
 SDK_MSP432 = simplelink_msp432p4_sdk_1_50_00_06
 SDK_CC13XX = simplelink_cc13x0_sdk_1_50_00_08
+MCPI_CC13X2_TREE = $(TREES)/mcpi/mcpi-3.50.00.08_eng
 
 #
 # Official SDK builds:
@@ -26,6 +27,7 @@ SDK_CC13XX = simplelink_cc13x0_sdk_1_50_00_08
 SDK.msp432 = $(TOOLS)/vendors/ti/msp432_sdk/$(SDK_MSP432)
 SDK.msp432e = $(firstword $(wildcard $(MCPI_MSP432E_TREE)/exports/coresdk_msp432e4_*))
 SDK.cc13xx = $(TOOLS)/vendors/ti/cc13xx_sdk/$(SDK_CC13XX)
+SDK.cc13x2 = $(firstword $(wildcard $(MCPI_CC13X2_TREE)/exports/coresdk_cc13xx_*))
 SDK.cc26xx = $(firstword $(wildcard $(MCPI_TREE)/exports/coresdk_cc13xx_*))
 SDK.cc32xx = $(TOOLS)/vendors/ti/cc3220_sdk/$(SDK_CC32XX)
 
@@ -35,6 +37,8 @@ TIRTOS.msp432e   = $(SDK.msp432e)/kernel/tirtos/packages
 TIDRIVERS.msp432e = $(SDK.msp432e)/source
 TIRTOS.cc13xx   = $(SDK.cc13xx)/kernel/tirtos/packages
 TIDRIVERS.cc13xx = $(SDK.cc13xx)/source
+TIRTOS.cc13x2   = $(SDK.cc13x2)/kernel/tirtos/packages
+TIDRIVERS.cc13x2 = $(SDK.cc13x2)/source
 TIRTOS.cc26xx   = $(SDK.cc26xx)/kernel/tirtos/packages
 TIDRIVERS.cc26xx = $(SDK.cc26xx)/source
 TIRTOS.cc32xx   = $(SDK.cc32xx)/kernel/tirtos/packages
@@ -55,4 +59,5 @@ IMPORT_PACKAGES =
 REFERENCED_REPOS = $(TIRTOS.msp432) $(TIDRIVERS.msp432) \
                    $(TIRTOS.msp432e) $(TIDRIVERS.msp432e) \
                    $(TIRTOS.cc13xx) $(TIDRIVERS.cc13xx) \
+                   $(TIRTOS.cc13x2) $(TIDRIVERS.cc13x2) \
                    $(TIRTOS.cc32xx) $(TIDRIVERS.cc32xx)
