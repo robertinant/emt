@@ -9,11 +9,11 @@
  *      Texas Instruments - initial implementation
  * 
  * --/COPYRIGHT--*/
-requires ti.platforms.emt26xx;
+requires ti.platforms.emt13xx;
 
 /*!
- *  ======== ti.platforms.emt26xx.tests ========
+ *  ======== ti.platforms.emt13xx.tests ========
  *  Test package for the Energia MT CC26xxLP platform
  */
-package ti.platforms.emt26xx.tests [1, 0, 0] {
+package ti.platforms.emt13xx.tests [1, 0, 0] {
 }

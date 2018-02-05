@@ -1,11 +1,10 @@
 # define default set of platforms, compiler toolchains, and tests to build
-PLATFORMS ?= cc13xx cc26xx msp432 cc32xx 
+PLATFORMS ?= cc13x2 cc13xx msp432 msp432e cc32xx 
 
 ifeq (,$(TESTS))
     TESTS        = blink hello alloc string 
     TESTS.cc32xx = pstring MultiBlink 
     TESTS.msp432 = pstring MultiBlink 
-    TESTS.cc26xx = pstring MultiBlink 
 endif
 
 # define (optional) tools to run on output files to summarize footprint
@@ -50,9 +49,9 @@ closure-$(TREE_NAME).tar.gz: $(TREE_ROOT)/exports/emt_src.zip $(CLOSURE_ZIPS)
 	./copy.ksh $<
 
 # rules to make the loadable board .zip archives
-.PHONY: board.msp432 board.cc32xx board.cc13xx
+.PHONY: board.msp432 board.cc32xx board.cc13xx board.cc13x2
 
-boards: board.msp432e board.msp432 board.cc32xx board.cc13xx
+boards: board.msp432e board.msp432 board.cc32xx board.cc13xx board.cc13x2
 
 board.cc13xx: cc13xx-$(TREE_NAME).zip
 cc13xx-$(TREE_NAME).zip: $(TREE_ROOT)/exports/emt_src.zip cc13xx/closure.zip
@@ -93,6 +92,8 @@ cc32xx-$(TREE_NAME).zip: $(TREE_ROOT)/exports/emt_src.zip cc32xx/closure.zip
 clean:
 	-rm -f closure-$(TREE_NAME).tar.gz
 	-rm -f msp432-$(TREE_NAME).zip
+	-rm -f msp432e-$(TREE_NAME).zip
 	-rm -f cc32xx-$(TREE_NAME).zip
 	-rm -f cc13xx-$(TREE_NAME).zip
+	-rm -f cc13x2-$(TREE_NAME).zip
 	$(call BUILD_ALL,clean)

@@ -1,10 +1,10 @@
 #  This file defines the installation locations of prerequisite components
-#  for the MSP432 LaunchPad Energia MT wiring port:
+#  for the CC13x2 LaunchPad Energia MT wiring port:
 #      CCROOT  - an arm compiler (TI 5.2.5 or gcc 4.8)
 #      DRVLIB  - the MSP432 driverlib product install directory
 #      XDCROOT - XDCtools (version 3.30.05 or above)
 #      INO2CPP - command to convert .ino sketch files to .cpp files
-#      TIRTOS  - TI-RTOS for MSP432
+#      TIRTOS  - TI-RTOS for CC13x2
 #      EMTROOT - the packages/ folder in the EMT product
 #
 #  For example, on Windows, these might be set as follows:

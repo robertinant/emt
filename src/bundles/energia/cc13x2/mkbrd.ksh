@@ -137,7 +137,7 @@ unzip -q $srczip -d $DSTDIR/cores
 
 # remove sources that are unrelated to the core $CORE
 echo "remove unrelated cores ..."
-for c in msp432 msp432e cc26xx cc13x2 cc32xx; do
+for c in msp432 msp432e cc26xx cc13xx cc13x2 cc32xx; do
     if [ "$c" != "$CORE" ]; then
 	echo "    rm -rf $c ..."
 	rm -rf $DSTDIR/cores/emt/ti/runtime/wiring/$c
