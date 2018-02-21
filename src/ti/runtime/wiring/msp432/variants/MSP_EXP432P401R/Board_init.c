@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2016, Texas Instruments Incorporated
+ * Copyright (c) 2015-2018, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -349,7 +349,7 @@ const uint_least8_t ADC_count = Board_ADCCOUNT;
 #elif defined(__GNUC__)
 __attribute__ ((aligned (256)))
 #endif
-static DMA_ControlTable dmaControlTable[8];
+static DMA_ControlTable dmaControlTable[16];
 
 /*
  *  ======== dmaErrorHwi ========
@@ -703,7 +703,7 @@ const I2CMSP432_HWAttrsV1 i2cMSP432HWAttrs[Board_I2CCOUNT] = {
     }
 };
 
-const I2C_Config I2C_config[] = {
+const I2C_Config I2C_config[Board_I2CCOUNT] = {
     {
         .fxnTablePtr = &myI2CMSP432_fxnTable,
         .object = &i2cMSP432Objects[0],
@@ -713,7 +713,7 @@ const I2C_Config I2C_config[] = {
         .fxnTablePtr = &myI2CMSP432_fxnTable,
         .object = &i2cMSP432Objects[1],
         .hwAttrs = &i2cMSP432HWAttrs[1]
-    },
+    }
 };
 
 const uint_least8_t I2C_count = Board_I2CCOUNT;
@@ -1005,7 +1005,7 @@ const SPIMSP432DMA_HWAttrsV1 spiMSP432DMAHWAttrs[Board_SPICOUNT] = {
         .baseAddr = EUSCI_B0_BASE,
         .bitOrder = EUSCI_B_SPI_MSB_FIRST,
         .clockSource = EUSCI_B_SPI_CLOCKSOURCE_SMCLK,
-        .defaultTxBufValue = 0,
+        .defaultTxBufValue = 0xFF,
         .dmaIntNum = INT_DMA_INT1,
         .intPriority = 0xC0,       /* make SPI interrupt one priority higher than default */
         .rxDMAChannelIndex = DMA_CH1_EUSCIB0RX0,
@@ -1021,7 +1021,7 @@ const SPIMSP432DMA_HWAttrsV1 spiMSP432DMAHWAttrs[Board_SPICOUNT] = {
         .baseAddr = EUSCI_B2_BASE,
         .bitOrder = EUSCI_B_SPI_MSB_FIRST,
         .clockSource = EUSCI_B_SPI_CLOCKSOURCE_SMCLK,
-        .defaultTxBufValue = 0,
+        .defaultTxBufValue = 0xFF,
         .dmaIntNum = INT_DMA_INT2,
         .intPriority = 0xC0,       /* make SPI interrupt one priority higher than default */
         .rxDMAChannelIndex = DMA_CH5_EUSCIB2RX0,
@@ -1230,7 +1230,8 @@ const UARTMSP432_HWAttrsV1 uartMSP432HWAttrs[Board_UARTCOUNT] = {
         .ringBufPtr  = uartMSP432RingBuffer0,
         .ringBufSize = sizeof(uartMSP432RingBuffer0),
         .rxPin = UARTMSP432_P1_2_UCA0RXD,
-        .txPin = UARTMSP432_P1_3_UCA0TXD
+        .txPin = UARTMSP432_P1_3_UCA0TXD,
+        .errorFxn = NULL
     },
     {
         .baseAddr = EUSCI_A2_BASE,
@@ -1244,7 +1245,8 @@ const UARTMSP432_HWAttrsV1 uartMSP432HWAttrs[Board_UARTCOUNT] = {
         .ringBufPtr  = uartMSP432RingBuffer1,
         .ringBufSize = sizeof(uartMSP432RingBuffer1),
         .rxPin = UARTMSP432_P3_2_UCA2RXD,
-        .txPin = UARTMSP432_P3_3_UCA2TXD
+        .txPin = UARTMSP432_P3_3_UCA2TXD,
+        .errorFxn = NULL
     }
 };
 
@@ -1282,7 +1284,7 @@ const WatchdogMSP432_HWAttrs watchdogMSP432HWAttrs[Board_WATCHDOGCOUNT] = {
         .intPriority = (~0),
         .clockSource = WDT_A_CLOCKSOURCE_SMCLK,
         .clockDivider = WDT_A_CLOCKDIVIDER_8192K
-    },
+    }
 };
 
 const Watchdog_Config Watchdog_config[] = {

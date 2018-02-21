@@ -19,24 +19,24 @@
 #define LED GREEN_LED
   
 // the setup routine runs once when you press reset:
-void setup6() {                
+void setup6x() {                
   // initialize the digital pin as an output.
   pinMode(LED, OUTPUT);     
 }
 
 // the loop routine runs over and over again forever:
-void loop6() {
+void loop6x() {
   digitalWrite(LED, HIGH);   // turn the LED on (HIGH is the voltage level)
   delay(1000);               // wait for a second
   digitalWrite(LED, LOW);    // turn the LED off by making the voltage LOW
   delay(1000);               // wait for a second
 }
 
-void setup6x()
+void setup6()
 { 
     Serial.begin(115200); 
     Serial.print("millis() at start: "); 
-    Serial.print(millis()); 
+    Serial.println(millis());
     Serial.print("micros() at start: "); 
     Serial.println(micros()); 
 }
@@ -44,16 +44,25 @@ void setup6x()
 uint32_t microsThen;
 uint32_t millisTshen;
 
-void loop6x()
+void loop6()
 { 
 // put your main code here, to run repeatedly: 
     uint32_t microsNow = micros(); 
     uint32_t millisNow = millis(); 
-    delay(1000); 
-    Serial.print("\nMicros after delay: "); 
-    Serial.println(micros() - microsNow); 
+    uint32_t delta;
+    delay(1001); 
+    Serial.print("\nMicros before and after delay: "); 
+    delta = micros() - microsNow;
+    Serial.print(microsNow); 
+    Serial.print(" ");
+    Serial.println(micros()); 
+    Serial.print("Micros after delay: "); 
+    Serial.println(delta); 
+//    Serial.println(micros() - microsNow); 
     Serial.print("Millis after delay: "); 
     Serial.println(millis() - millisNow);
     Serial.print("Micros after delay: "); 
-    Serial.println(micros() - microsNow); 
+    delta = micros() - microsNow;
+    Serial.println(delta); 
+//    Serial.println(micros() - microsNow); 
  }

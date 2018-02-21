@@ -10,10 +10,13 @@ ENERGIA = /db/builds/xinstall/energia_nightly/Energia
 #
 MCPI_TREE = $(TREES)/mcpi/mcpi-3.30.00.13
 SDK_CC32XX = simplelink_cc32xx_sdk_1_50_00_01_eng
-MCPI_MSP432E_TREE =  $(TREES)/mcpi/mcpi-3.35.00.13
+MCPI_CC32XX_TREE =  $(TREES)/mcpi/mcpi-3.50.00.15_eng
+MCPI_MSP432_TREE =  $(TREES)/mcpi/mcpi-3.50.00.15_eng
+MCPI_MSP432E_TREE =  $(TREES)/mcpi/mcpi-3.50.00.15_eng
 SDK_MSP432 = simplelink_msp432p4_sdk_1_50_00_06
 SDK_CC13XX = simplelink_cc13x0_sdk_1_50_00_08
-MCPI_CC13X2_TREE = $(TREES)/mcpi/mcpi-3.50.00.11_eng
+MCPI_CC13XX_TREE = $(TREES)/mcpi/mcpi-3.50.00.15_eng
+MCPI_CC13X2_TREE = $(TREES)/mcpi/mcpi-3.50.00.15_eng
 
 #
 # Official SDK builds:
@@ -24,12 +27,15 @@ MCPI_CC13X2_TREE = $(TREES)/mcpi/mcpi-3.50.00.11_eng
 #
 # Specific required imports (referenced by makeunix, for example)
 #
-SDK.msp432 = $(TOOLS)/vendors/ti/msp432_sdk/$(SDK_MSP432)
+#SDK.msp432 = $(TOOLS)/vendors/ti/msp432_sdk/$(SDK_MSP432)
+SDK.msp432 = $(firstword $(wildcard $(MCPI_MSP432_TREE)/exports/coresdk_msp432_*))
 SDK.msp432e = $(firstword $(wildcard $(MCPI_MSP432E_TREE)/exports/coresdk_msp432e4_*))
-SDK.cc13xx = $(TOOLS)/vendors/ti/cc13xx_sdk/$(SDK_CC13XX)
+#SDK.cc13xx = $(TOOLS)/vendors/ti/cc13xx_sdk/$(SDK_CC13XX)
+SDK.cc13xx = $(firstword $(wildcard $(MCPI_CC13XX_TREE)/exports/coresdk_cc13xx_*))
 SDK.cc13x2 = $(firstword $(wildcard $(MCPI_CC13X2_TREE)/exports/coresdk_cc13xx_*))
 SDK.cc26xx = $(firstword $(wildcard $(MCPI_TREE)/exports/coresdk_cc13xx_*))
-SDK.cc32xx = $(TOOLS)/vendors/ti/cc3220_sdk/$(SDK_CC32XX)
+SDK.cc32xx = $(firstword $(wildcard $(MCPI_CC32XX_TREE)/exports/coresdk_cc32xx_*))
+#SDK.cc32xx = $(TOOLS)/vendors/ti/cc3220_sdk/$(SDK_CC32XX)
 
 TIRTOS.msp432   = $(SDK.msp432)/kernel/tirtos/packages
 TIDRIVERS.msp432 = $(SDK.msp432)/source

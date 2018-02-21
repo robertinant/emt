@@ -181,18 +181,6 @@ void delay(uint32_t milliseconds)
 }
 
 /*
- * The following is a hack to force the usage of our local modified
- * copy of UARTCC26XX.c to support the PEEK and AVAILABLE control
- * commands. These control commands will be available in the
- * 3.10.00 TI Drivers.
- */
-
-#include <ti/drivers/UART.h>
-#include <ti/drivers/uart/UARTCC26XX.h>
-
-const UART_FxnTable *uartFxnTablePtr = &UARTCC26XX_fxnTable;
-
-/*
  * The following two functions implement a hack to
  * force the Clock functions to be executed within
  * the Clock timer interrupt thread rather than

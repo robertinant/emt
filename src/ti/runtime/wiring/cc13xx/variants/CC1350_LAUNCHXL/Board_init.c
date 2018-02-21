@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2016, Texas Instruments Incorporated
+ * Copyright (c) 2015-2018, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -86,7 +86,8 @@ const ADCCC26XX_HWAttrs adcCC26xxHWAttrs[CC1350_LAUNCHXL_ADCCOUNT] = {
         .refSource           = ADCCC26XX_VDDS_REFERENCE,
         .samplingDuration    = ADCCC26XX_SAMPLING_DURATION_2P7_US,
         .inputScalingEnabled = true,
-        .triggerSource       = ADCCC26XX_TRIGGER_MANUAL
+        .triggerSource       = ADCCC26XX_TRIGGER_MANUAL,
+        .returnAdjustedVal   = true
     },
     {
         .adcDIO              = CC1350_LAUNCHXL_DIO24_ANALOG,
@@ -94,7 +95,8 @@ const ADCCC26XX_HWAttrs adcCC26xxHWAttrs[CC1350_LAUNCHXL_ADCCOUNT] = {
         .refSource           = ADCCC26XX_VDDS_REFERENCE,
         .samplingDuration    = ADCCC26XX_SAMPLING_DURATION_2P7_US,
         .inputScalingEnabled = true,
-        .triggerSource       = ADCCC26XX_TRIGGER_MANUAL
+        .triggerSource       = ADCCC26XX_TRIGGER_MANUAL,
+        .returnAdjustedVal   = true
     },
     {
         .adcDIO              = CC1350_LAUNCHXL_DIO25_ANALOG,
@@ -102,7 +104,8 @@ const ADCCC26XX_HWAttrs adcCC26xxHWAttrs[CC1350_LAUNCHXL_ADCCOUNT] = {
         .refSource           = ADCCC26XX_VDDS_REFERENCE,
         .samplingDuration    = ADCCC26XX_SAMPLING_DURATION_2P7_US,
         .inputScalingEnabled = true,
-        .triggerSource       = ADCCC26XX_TRIGGER_MANUAL
+        .triggerSource       = ADCCC26XX_TRIGGER_MANUAL,
+        .returnAdjustedVal   = true
     },
     {
         .adcDIO              = CC1350_LAUNCHXL_DIO26_ANALOG,
@@ -110,7 +113,8 @@ const ADCCC26XX_HWAttrs adcCC26xxHWAttrs[CC1350_LAUNCHXL_ADCCOUNT] = {
         .refSource           = ADCCC26XX_VDDS_REFERENCE,
         .samplingDuration    = ADCCC26XX_SAMPLING_DURATION_2P7_US,
         .inputScalingEnabled = true,
-        .triggerSource       = ADCCC26XX_TRIGGER_MANUAL
+        .triggerSource       = ADCCC26XX_TRIGGER_MANUAL,
+        .returnAdjustedVal   = true
     },
     {
         .adcDIO              = CC1350_LAUNCHXL_DIO27_ANALOG,
@@ -118,7 +122,8 @@ const ADCCC26XX_HWAttrs adcCC26xxHWAttrs[CC1350_LAUNCHXL_ADCCOUNT] = {
         .refSource           = ADCCC26XX_VDDS_REFERENCE,
         .samplingDuration    = ADCCC26XX_SAMPLING_DURATION_2P7_US,
         .inputScalingEnabled = true,
-        .triggerSource       = ADCCC26XX_TRIGGER_MANUAL
+        .triggerSource       = ADCCC26XX_TRIGGER_MANUAL,
+        .returnAdjustedVal   = true
     },
     {
         .adcDIO              = CC1350_LAUNCHXL_DIO28_ANALOG,
@@ -126,7 +131,8 @@ const ADCCC26XX_HWAttrs adcCC26xxHWAttrs[CC1350_LAUNCHXL_ADCCOUNT] = {
         .refSource           = ADCCC26XX_VDDS_REFERENCE,
         .samplingDuration    = ADCCC26XX_SAMPLING_DURATION_2P7_US,
         .inputScalingEnabled = true,
-        .triggerSource       = ADCCC26XX_TRIGGER_MANUAL
+        .triggerSource       = ADCCC26XX_TRIGGER_MANUAL,
+        .returnAdjustedVal   = true
     },
     {
         .adcDIO              = CC1350_LAUNCHXL_DIO29_ANALOG,
@@ -134,7 +140,8 @@ const ADCCC26XX_HWAttrs adcCC26xxHWAttrs[CC1350_LAUNCHXL_ADCCOUNT] = {
         .refSource           = ADCCC26XX_VDDS_REFERENCE,
         .samplingDuration    = ADCCC26XX_SAMPLING_DURATION_2P7_US,
         .inputScalingEnabled = true,
-        .triggerSource       = ADCCC26XX_TRIGGER_MANUAL
+        .triggerSource       = ADCCC26XX_TRIGGER_MANUAL,
+        .returnAdjustedVal   = true
     },
     {
         .adcDIO              = CC1350_LAUNCHXL_DIO30_ANALOG,
@@ -142,7 +149,8 @@ const ADCCC26XX_HWAttrs adcCC26xxHWAttrs[CC1350_LAUNCHXL_ADCCOUNT] = {
         .refSource           = ADCCC26XX_VDDS_REFERENCE,
         .samplingDuration    = ADCCC26XX_SAMPLING_DURATION_2P7_US,
         .inputScalingEnabled = true,
-        .triggerSource       = ADCCC26XX_TRIGGER_MANUAL
+        .triggerSource       = ADCCC26XX_TRIGGER_MANUAL,
+        .returnAdjustedVal   = true
     },
     {
         .adcDIO              = PIN_UNASSIGNED,
@@ -150,7 +158,8 @@ const ADCCC26XX_HWAttrs adcCC26xxHWAttrs[CC1350_LAUNCHXL_ADCCOUNT] = {
         .refSource           = ADCCC26XX_VDDS_REFERENCE,
         .samplingDuration    = ADCCC26XX_SAMPLING_DURATION_2P7_US,
         .inputScalingEnabled = true,
-        .triggerSource       = ADCCC26XX_TRIGGER_MANUAL
+        .triggerSource       = ADCCC26XX_TRIGGER_MANUAL,
+        .returnAdjustedVal   = true
     },
     {
         .adcDIO              = PIN_UNASSIGNED,
@@ -158,7 +167,8 @@ const ADCCC26XX_HWAttrs adcCC26xxHWAttrs[CC1350_LAUNCHXL_ADCCOUNT] = {
         .refSource           = ADCCC26XX_VDDS_REFERENCE,
         .samplingDuration    = ADCCC26XX_SAMPLING_DURATION_2P7_US,
         .inputScalingEnabled = true,
-        .triggerSource       = ADCCC26XX_TRIGGER_MANUAL
+        .triggerSource       = ADCCC26XX_TRIGGER_MANUAL,
+        .returnAdjustedVal   = true
     },
     {
         .adcDIO              = PIN_UNASSIGNED,
@@ -187,35 +197,33 @@ const ADC_Config ADC_config[CC1350_LAUNCHXL_ADCCOUNT] = {
 const uint_least8_t ADC_count = CC1350_LAUNCHXL_ADCCOUNT;
 
 /*
- *  ========================= IO driver initialization =========================
- *  From main, PIN_init(BoardGpioInitTable) should be called to setup safe
- *  settings for this board.
- *  When a pin is allocated and then de-allocated, it will revert to the state
- *  configured in this table
+ *  ========================== Crypto =======================================
+ *  NOTE: The Crypto implementation should be considered experimental and not validated!
 */
-#include <ti/drivers/PIN.h>
-#include  <ti/drivers/pin/PINCC26XX.h>
 
-const PIN_Config BoardGpioInitTable[] = {
-    Board_RLED   | PIN_GPIO_OUTPUT_EN | PIN_GPIO_LOW | PIN_PUSHPULL | PIN_DRVSTR_MAX,         /* LED initially off             */
-    Board_GLED   | PIN_GPIO_OUTPUT_EN | PIN_GPIO_LOW | PIN_PUSHPULL | PIN_DRVSTR_MAX,         /* LED initially off             */
-    Board_BTN1   | PIN_INPUT_EN | PIN_PULLUP | PIN_IRQ_BOTHEDGES | PIN_HYSTERESIS,            /* Button is active low          */
-    Board_BTN2   | PIN_INPUT_EN | PIN_PULLUP | PIN_IRQ_BOTHEDGES | PIN_HYSTERESIS,            /* Button is active low          */
-    Board_UART_RX | PIN_INPUT_EN | PIN_PULLDOWN,                                              /* UART RX via debugger back channel */
-    Board_UART_TX | PIN_GPIO_OUTPUT_EN | PIN_GPIO_HIGH | PIN_PUSHPULL,                        /* UART TX via debugger back channel */
-    Board_SPI0_MOSI | PIN_INPUT_EN | PIN_PULLDOWN,                                            /* SPI master out - slave in */
-    Board_SPI0_MISO | PIN_INPUT_EN | PIN_PULLDOWN,                                            /* SPI master in - slave out */
-    Board_SPI0_CLK | PIN_INPUT_EN | PIN_PULLDOWN,                                             /* SPI clock */
+/* Include drivers */
+#include <ti/drivers/crypto/CryptoCC26XX.h>
 
-    PIN_TERMINATE
+/* Crypto objects */
+CryptoCC26XX_Object cryptoCC26XXObjects[CC1350_LAUNCHXL_CRYPTOCOUNT];
+
+/* Crypto configuration structure, describing which pins are to be used */
+const CryptoCC26XX_HWAttrs cryptoCC26XXHWAttrs[CC1350_LAUNCHXL_CRYPTOCOUNT] = {
+    {
+        .baseAddr = CRYPTO_BASE,
+        .powerMngrId = PowerCC26XX_PERIPH_CRYPTO,
+        .intNum = INT_CRYPTO_RESULT_AVAIL_IRQ,    /* <driverlib>/inc/hw_ints.h */
+        .intPriority = ~0,
+    }
 };
 
-PINCC26XX_HWAttrs PINCC26XX_hwAttrs = {
-    .intPriority = ~0,
-    .swiPriority = 0
+/* Crypto configuration structure */
+const CryptoCC26XX_Config CryptoCC26XX_config[] = {
+    {
+        .object  = &cryptoCC26XXObjects[0],
+        .hwAttrs = &cryptoCC26XXHWAttrs[0]
+    },
 };
-
-/*============================================================================*/
 
 /*
  * ======== GPIO driver ========
@@ -344,6 +352,89 @@ const GPIOCC26XX_Config GPIOCC26XX_config = {
 };
 
 /*
+ *  ============================ GPTimer =================================
+ *  Remove unused entries to reduce flash usage both in Board.c and Board.h
+ */
+
+#include <ti/drivers/timer/GPTimerCC26XX.h>
+
+/*  GPTimer objects, one per full-width timer (A+B) (Timer 0, Timer 1..) */
+GPTimerCC26XX_Object gptimerCC26XXObjects[CC1350_LAUNCHXL_GPTIMERCOUNT];
+
+/* GPTimer hardware attributes, one per timer part (Timer 0A, 0B, 1A, 1B..) */
+const GPTimerCC26XX_HWAttrs gptimerCC26xxHWAttrs[CC1350_LAUNCHXL_GPTIMERPARTSCOUNT] = {
+    { .baseAddr = GPT0_BASE, .intNum = INT_GPT0A, .intPriority = (~0), .powerMngrId = PowerCC26XX_PERIPH_GPT0, .pinMux = GPT_PIN_0A, },
+    { .baseAddr = GPT0_BASE, .intNum = INT_GPT0B, .intPriority = (~0), .powerMngrId = PowerCC26XX_PERIPH_GPT0, .pinMux = GPT_PIN_0B, },
+    { .baseAddr = GPT1_BASE, .intNum = INT_GPT1A, .intPriority = (~0), .powerMngrId = PowerCC26XX_PERIPH_GPT1, .pinMux = GPT_PIN_1A, },
+    { .baseAddr = GPT1_BASE, .intNum = INT_GPT1B, .intPriority = (~0), .powerMngrId = PowerCC26XX_PERIPH_GPT1, .pinMux = GPT_PIN_1B, },
+    { .baseAddr = GPT2_BASE, .intNum = INT_GPT2A, .intPriority = (~0), .powerMngrId = PowerCC26XX_PERIPH_GPT2, .pinMux = GPT_PIN_2A, },
+    { .baseAddr = GPT2_BASE, .intNum = INT_GPT2B, .intPriority = (~0), .powerMngrId = PowerCC26XX_PERIPH_GPT2, .pinMux = GPT_PIN_2B, },
+    { .baseAddr = GPT3_BASE, .intNum = INT_GPT3A, .intPriority = (~0), .powerMngrId = PowerCC26XX_PERIPH_GPT3, .pinMux = GPT_PIN_3A, },
+    { .baseAddr = GPT3_BASE, .intNum = INT_GPT3B, .intPriority = (~0), .powerMngrId = PowerCC26XX_PERIPH_GPT3, .pinMux = GPT_PIN_3B, },
+};
+
+/* GPTimer configuration (used as GPTimer_Handle by driver and application) */
+const GPTimerCC26XX_Config GPTimerCC26XX_config[CC1350_LAUNCHXL_GPTIMERPARTSCOUNT] = {
+    { &gptimerCC26XXObjects[0], &gptimerCC26xxHWAttrs[0], GPT_A },
+    { &gptimerCC26XXObjects[0], &gptimerCC26xxHWAttrs[1], GPT_B },
+    { &gptimerCC26XXObjects[1], &gptimerCC26xxHWAttrs[2], GPT_A },
+    { &gptimerCC26XXObjects[1], &gptimerCC26xxHWAttrs[3], GPT_B },
+    { &gptimerCC26XXObjects[2], &gptimerCC26xxHWAttrs[4], GPT_A },
+    { &gptimerCC26XXObjects[2], &gptimerCC26xxHWAttrs[5], GPT_B },
+    { &gptimerCC26XXObjects[3], &gptimerCC26xxHWAttrs[6], GPT_A },
+    { &gptimerCC26XXObjects[3], &gptimerCC26xxHWAttrs[7], GPT_B },
+};
+
+/*
+ *  ============================= I2C =====================================
+ */
+
+/* Include drivers */
+#include <ti/drivers/i2c/I2CCC26XX.h>
+
+extern void I2CCC26XX_cancel(I2C_Handle handle);
+extern void I2CCC26XX_close(I2C_Handle handle);
+extern int_fast16_t I2CCC26XX_control(I2C_Handle handle, uint_fast16_t cmd, void *arg);
+extern void I2CCC26XX_init(I2C_Handle handle);
+extern I2C_Handle I2CCC26XX_open(I2C_Handle handle, I2C_Params *params);
+extern bool I2CCC26XX_transfer(I2C_Handle handle, I2C_Transaction *transaction);
+
+const I2C_FxnTable myI2CCC26XX_fxnTable = {
+    NULL, /* I2CCC26XX_cancel, */
+    I2CCC26XX_close,
+    NULL, /* I2CCC26XX_control, */
+    I2CCC26XX_init,
+    I2CCC26XX_open,
+    I2CCC26XX_transfer
+};
+
+/* I2C objects */
+I2CCC26XX_Object i2cCC26xxObjects[CC1350_LAUNCHXL_I2CCOUNT];
+
+/* I2C configuration structure, describing which pins are to be used */
+const I2CCC26XX_HWAttrsV1 i2cCC26xxHWAttrs[CC1350_LAUNCHXL_I2CCOUNT] = {
+    {
+        .baseAddr = I2C0_BASE,
+        .powerMngrId = PowerCC26XX_PERIPH_I2C0,
+        .intNum = INT_I2C_IRQ,    /* <driverlib>/inc/hw_ints.h */
+        .intPriority = (~0),
+        .swiPriority = 0,
+        .sdaPin = Board_I2C0_SDA0,
+        .sclPin = Board_I2C0_SCL0,
+    },
+};
+
+const I2C_Config I2C_config[] = {
+    {
+        .fxnTablePtr = &myI2CCC26XX_fxnTable,
+        .object = &i2cCC26xxObjects[0],
+        .hwAttrs = &i2cCC26xxHWAttrs[0]
+    },
+};
+
+const uint_least8_t I2C_count = CC1350_LAUNCHXL_I2CCOUNT;
+
+/*
  *  =============================== NVS ===============================
  *  Non-Volatile Storage configuration.
  */
@@ -398,102 +489,106 @@ const NVS_Config NVS_config[] = {
 int NVS_count = 2;
 
 /*
- *  ============================= UART ===================================
-*/
+ *  =============================== PIN ===============================
+ */
+#include <ti/drivers/PIN.h>
+#include  <ti/drivers/pin/PINCC26XX.h>
 
-/* Include drivers */
-#include <ti/drivers/UART.h>
-#include <ti/drivers/uart/UARTCC26XX.h>
+const PIN_Config BoardGpioInitTable[] = {
+    Board_RLED   | PIN_GPIO_OUTPUT_EN | PIN_GPIO_LOW | PIN_PUSHPULL | PIN_DRVSTR_MAX,         /* LED initially off             */
+    Board_GLED   | PIN_GPIO_OUTPUT_EN | PIN_GPIO_LOW | PIN_PUSHPULL | PIN_DRVSTR_MAX,         /* LED initially off             */
+    Board_BTN1   | PIN_INPUT_EN | PIN_PULLUP | PIN_IRQ_BOTHEDGES | PIN_HYSTERESIS,            /* Button is active low          */
+    Board_BTN2   | PIN_INPUT_EN | PIN_PULLUP | PIN_IRQ_BOTHEDGES | PIN_HYSTERESIS,            /* Button is active low          */
+    Board_UART_RX | PIN_INPUT_EN | PIN_PULLDOWN,                                              /* UART RX via debugger back channel */
+    Board_UART_TX | PIN_GPIO_OUTPUT_EN | PIN_GPIO_HIGH | PIN_PUSHPULL,                        /* UART TX via debugger back channel */
+    Board_SPI0_MOSI | PIN_INPUT_EN | PIN_PULLDOWN,                                            /* SPI master out - slave in */
+    Board_SPI0_MISO | PIN_INPUT_EN | PIN_PULLDOWN,                                            /* SPI master in - slave out */
+    Board_SPI0_CLK | PIN_INPUT_EN | PIN_PULLDOWN,                                             /* SPI clock */
 
-
-extern void UARTCC26XX_close(UART_Handle handle);
-extern int_fast16_t UARTCC26XX_control(UART_Handle handle, uint_fast16_t cmd,
-        void *arg);
-extern void UARTCC26XX_init(UART_Handle handle);
-extern UART_Handle UARTCC26XX_open(UART_Handle handle, UART_Params *params);
-extern int_fast32_t UARTCC26XX_read(UART_Handle handle, void *buffer, size_t size);
-extern void UARTCC26XX_readCancel(UART_Handle handle);
-extern int_fast32_t UARTCC26XX_readPolling(UART_Handle handle, void *buffer,
-        size_t size);
-extern int_fast32_t UARTCC26XX_write(UART_Handle handle, const void *buffer,
-        size_t size);
-extern void UARTCC26XX_writeCancel(UART_Handle handle);
-extern int_fast32_t UARTCC26XX_writePolling(UART_Handle handle, const void *buffer,
-        size_t size);
-
-/* UART function table for UARTMP432 implementation */
-const UART_FxnTable myUARTCC26XX_fxnTable = {
-    UARTCC26XX_close,
-    UARTCC26XX_control,
-    UARTCC26XX_init,
-    UARTCC26XX_open,
-    UARTCC26XX_read,
-    NULL, /* UARTCC26XX_readPolling, */
-    NULL, /* UARTCC26XX_readCancel, */
-    UARTCC26XX_write,
-    NULL, /* UARTCC26XX_writePolling, */
-    NULL /* UARTCC26XX_writeCancel, */
+    PIN_TERMINATE
 };
 
-/* UART objects */
-UARTCC26XX_Object uartCC26XXObjects[CC1350_LAUNCHXL_UARTCOUNT];
-unsigned char uartCC26XXRingBuffer[CC1350_LAUNCHXL_UARTCOUNT][32];
-
-/* UART hardware parameter structure, also used to assign UART pins */
-const UARTCC26XX_HWAttrsV2 uartCC26XXHWAttrs[CC1350_LAUNCHXL_UARTCOUNT] = {
-    {   /* CC1350_LAUNCHXL_UART0 */
-        .baseAddr = UART0_BASE,
-        .powerMngrId = PowerCC26XX_PERIPH_UART0,
-        .intNum = INT_UART0_COMB,    /* <driverlib>/inc/hw_ints.h */
-        .intPriority = (0xc0),
-        .swiPriority = 0,
-        .txPin = Board_UART_TX,
-        .rxPin = Board_UART_RX,
-        .ctsPin = PIN_UNASSIGNED,
-        .rtsPin = PIN_UNASSIGNED,
-        .ringBufPtr     = uartCC26XXRingBuffer[0],
-        .ringBufSize    = sizeof(uartCC26XXRingBuffer[0])
-    },
+PINCC26XX_HWAttrs PINCC26XX_hwAttrs = {
+    .intPriority = ~0,
+    .swiPriority = 0
 };
 
-/* UART configuration structure */
-const UART_Config UART_config[] = {
-    {
-        .fxnTablePtr = &myUARTCC26XX_fxnTable,
-        .object      = &uartCC26XXObjects[0],
-        .hwAttrs     = &uartCC26XXHWAttrs[0]
-    },
-};
+/* 
+ *  =============================== Power ===============================
+ */
 
-const uint_least8_t UART_count = CC1350_LAUNCHXL_UARTCOUNT;
+#include <ti/drivers/Power.h>
+#include <ti/drivers/power/PowerCC26XX.h>
 
 /*
- *  ============================= UDMA ===================================
-*/
-
-/* Include drivers */
-#include <ti/drivers/dma/UDMACC26XX.h>
-
-/* UDMA objects */
-UDMACC26XX_Object udmaObjects[CC1350_LAUNCHXL_UDMACOUNT];
-
-/* UDMA configuration structure */
-const UDMACC26XX_HWAttrs udmaHWAttrs[CC1350_LAUNCHXL_UDMACOUNT] = {
-    {
-        .baseAddr = UDMA0_BASE, 
-        .powerMngrId = PowerCC26XX_PERIPH_UDMA,
-        .intNum = INT_DMA_ERR,    /* <driverlib>/inc/hw_ints.h */
-        .intPriority = (~0)
-    },
+ *  ======== PowerCC26XX_config ========
+ */
+const PowerCC26XX_Config PowerCC26XX_config = {
+    .policyInitFxn      = NULL,
+    .policyFxn          = &PowerCC26XX_standbyPolicy,
+    .calibrateFxn       = &PowerCC26XX_calibrate,
+    .enablePolicy       = true,
+    .calibrateRCOSC_LF  = true,
+    .calibrateRCOSC_HF  = true,
 };
 
-/* UDMA configuration structure */
-const UDMACC26XX_Config UDMACC26XX_config[] = {
-    {
-        .object  = &udmaObjects[0],
-        .hwAttrs = &udmaHWAttrs[0]
-    },
+/*
+ *  ============================= PWM ====================================
+ *  Remove unused entries to reduce flash usage both in Board.c and Board.h
+ */
+
+#include <ti/drivers/PWM.h>
+#include <ti/drivers/pwm/PWMTimerCC26XX.h>
+
+void PWMTimerCC26XX_close(PWM_Handle handle);
+int_fast16_t PWMTimerCC26XX_control(PWM_Handle handle, uint_fast16_t cmd, void *arg);
+void PWMTimerCC26XX_init(PWM_Handle handle);
+PWM_Handle PWMTimerCC26XX_open(PWM_Handle handle, PWM_Params *params);
+int_fast16_t PWMTimerCC26XX_setDuty(PWM_Handle handle, uint32_t dutyValue);
+int_fast16_t PWMTimerCC26XX_setPeriod(PWM_Handle handle, uint32_t periodValue);
+void PWMTimerCC26XX_start(PWM_Handle handle);
+void PWMTimerCC26XX_stop(PWM_Handle handle);
+
+/* PWM function table for PWMTimerCC26XX implementation */
+const PWM_FxnTable myPWMTimerCC26XX_fxnTable = {
+    PWMTimerCC26XX_close,
+    NULL, /* PWMTimerCC26XX_control, */
+    PWMTimerCC26XX_init,
+    PWMTimerCC26XX_open,
+    PWMTimerCC26XX_setDuty,
+    NULL, /* PWMTimerCC26XX_setPeriod, */
+    PWMTimerCC26XX_start,
+    NULL /* PWMTimerCC26XX_stop */
 };
+
+/* PWM object, one per PWM output */
+PWMTimerCC26XX_Object pwmtimerCC26xxObjects[CC1350_LAUNCHXL_PWMCOUNT];
+
+/* PWM configuration, one per PWM output.   */
+PWMTimerCC26XX_HwAttrs pwmtimerCC26xxHWAttrs[CC1350_LAUNCHXL_PWMCOUNT] = {
+    { .pwmPin = Board_PWMPIN0, .gpTimerUnit = Board_GPTIMER0A },
+    { .pwmPin = Board_PWMPIN1, .gpTimerUnit = Board_GPTIMER0B },
+    { .pwmPin = Board_PWMPIN2, .gpTimerUnit = Board_GPTIMER1A },
+    { .pwmPin = Board_PWMPIN3, .gpTimerUnit = Board_GPTIMER1B },
+    { .pwmPin = Board_PWMPIN4, .gpTimerUnit = Board_GPTIMER2A },
+    { .pwmPin = Board_PWMPIN5, .gpTimerUnit = Board_GPTIMER2B },
+    { .pwmPin = Board_PWMPIN6, .gpTimerUnit = Board_GPTIMER3A },
+    { .pwmPin = Board_PWMPIN7, .gpTimerUnit = Board_GPTIMER3B },
+};
+
+/* PWM configuration (used as PWM_Handle by driver and application) */
+const PWM_Config PWM_config[CC1350_LAUNCHXL_PWMCOUNT] = {
+    { &myPWMTimerCC26XX_fxnTable, &pwmtimerCC26xxObjects[0], &pwmtimerCC26xxHWAttrs[0] },
+    { &myPWMTimerCC26XX_fxnTable, &pwmtimerCC26xxObjects[1], &pwmtimerCC26xxHWAttrs[1] },
+    { &myPWMTimerCC26XX_fxnTable, &pwmtimerCC26xxObjects[2], &pwmtimerCC26xxHWAttrs[2] },
+    { &myPWMTimerCC26XX_fxnTable, &pwmtimerCC26xxObjects[3], &pwmtimerCC26xxHWAttrs[3] },
+    { &myPWMTimerCC26XX_fxnTable, &pwmtimerCC26xxObjects[4], &pwmtimerCC26xxHWAttrs[4] },
+    { &myPWMTimerCC26XX_fxnTable, &pwmtimerCC26xxObjects[5], &pwmtimerCC26xxHWAttrs[5] },
+    { &myPWMTimerCC26XX_fxnTable, &pwmtimerCC26xxObjects[6], &pwmtimerCC26xxHWAttrs[6] },
+    { &myPWMTimerCC26XX_fxnTable, &pwmtimerCC26xxObjects[7], &pwmtimerCC26xxHWAttrs[7] },
+};
+
+const uint_least8_t PWM_count = CC1350_LAUNCHXL_PWMCOUNT;
 
 /*
  *  ========================== SPI DMA ===================================
@@ -556,192 +651,100 @@ const SPI_Config SPI_config[] = {
 const uint_least8_t SPI_count = CC1350_LAUNCHXL_SPICOUNT;
 
 /*
- *  ============================= I2C =====================================
- */
-
-/* Include drivers */
-#include <ti/drivers/i2c/I2CCC26XX.h>
-
-extern void I2CCC26XX_cancel(I2C_Handle handle);
-extern void I2CCC26XX_close(I2C_Handle handle);
-extern int_fast16_t I2CCC26XX_control(I2C_Handle handle, uint_fast16_t cmd, void *arg);
-extern void I2CCC26XX_init(I2C_Handle handle);
-extern I2C_Handle I2CCC26XX_open(I2C_Handle handle, I2C_Params *params);
-extern bool I2CCC26XX_transfer(I2C_Handle handle, I2C_Transaction *transaction);
-
-const I2C_FxnTable myI2CCC26XX_fxnTable = {
-    NULL, /* I2CCC26XX_cancel, */
-    I2CCC26XX_close,
-    NULL, /* I2CCC26XX_control, */
-    I2CCC26XX_init,
-    I2CCC26XX_open,
-    I2CCC26XX_transfer
-};
-
-/* I2C objects */
-I2CCC26XX_Object i2cCC26xxObjects[CC1350_LAUNCHXL_I2CCOUNT];
-
-/* I2C configuration structure, describing which pins are to be used */
-const I2CCC26XX_HWAttrsV1 i2cCC26xxHWAttrs[CC1350_LAUNCHXL_I2CCOUNT] = {
-    {
-        .baseAddr = I2C0_BASE,
-        .powerMngrId = PowerCC26XX_PERIPH_I2C0,
-        .intNum = INT_I2C_IRQ,    /* <driverlib>/inc/hw_ints.h */
-        .intPriority = (~0),
-        .swiPriority = 0,
-        .sdaPin = Board_I2C0_SDA0,
-        .sclPin = Board_I2C0_SCL0,
-    },
-};
-
-const I2C_Config I2C_config[] = {
-    {
-        .fxnTablePtr = &myI2CCC26XX_fxnTable,
-        .object = &i2cCC26xxObjects[0],
-        .hwAttrs = &i2cCC26xxHWAttrs[0]
-    },
-};
-
-const uint_least8_t I2C_count = CC1350_LAUNCHXL_I2CCOUNT;
-
-/*
- *  ========================== Crypto =======================================
- *  NOTE: The Crypto implementation should be considered experimental and not validated!
+ *  ============================= UART ===================================
 */
 
 /* Include drivers */
-#include <ti/drivers/crypto/CryptoCC26XX.h>
+#include <ti/drivers/UART.h>
+#include <ti/drivers/uart/UARTCC26X0.h>
 
-/* Crypto objects */
-CryptoCC26XX_Object cryptoCC26XXObjects[CC1350_LAUNCHXL_CRYPTOCOUNT];
 
-/* Crypto configuration structure, describing which pins are to be used */
-const CryptoCC26XX_HWAttrs cryptoCC26XXHWAttrs[CC1350_LAUNCHXL_CRYPTOCOUNT] = {
-    {
-        .baseAddr = CRYPTO_BASE,
-        .powerMngrId = PowerCC26XX_PERIPH_CRYPTO,
-        .intNum = INT_CRYPTO_RESULT_AVAIL_IRQ,    /* <driverlib>/inc/hw_ints.h */
-        .intPriority = ~0,
-    }
+extern void UARTCC26X0_close(UART_Handle handle);
+extern int_fast16_t UARTCC26X0_control(UART_Handle handle, uint_fast16_t cmd,
+        void *arg);
+extern void UARTCC26X0_init(UART_Handle handle);
+extern UART_Handle UARTCC26X0_open(UART_Handle handle, UART_Params *params);
+extern int_fast32_t UARTCC26X0_read(UART_Handle handle, void *buffer, size_t size);
+extern void UARTCC26X0_readCancel(UART_Handle handle);
+extern int_fast32_t UARTCC26X0_readPolling(UART_Handle handle, void *buffer,
+        size_t size);
+extern int_fast32_t UARTCC26X0_write(UART_Handle handle, const void *buffer,
+        size_t size);
+extern void UARTCC26X0_writeCancel(UART_Handle handle);
+extern int_fast32_t UARTCC26X0_writePolling(UART_Handle handle, const void *buffer,
+        size_t size);
+
+/* UART function table for UARTMP432 implementation */
+const UART_FxnTable myUARTCC26X0_fxnTable = {
+    UARTCC26X0_close,
+    UARTCC26X0_control,
+    UARTCC26X0_init,
+    UARTCC26X0_open,
+    UARTCC26X0_read,
+    NULL, /* UARTCC26X0_readPolling, */
+    NULL, /* UARTCC26X0_readCancel, */
+    UARTCC26X0_write,
+    NULL, /* UARTCC26X0_writePolling, */
+    NULL /* UARTCC26X0_writeCancel, */
 };
 
-/* Crypto configuration structure */
-const CryptoCC26XX_Config CryptoCC26XX_config[] = {
-    {
-        .object  = &cryptoCC26XXObjects[0],
-        .hwAttrs = &cryptoCC26XXHWAttrs[0]
+/* UART objects */
+UARTCC26X0_Object uartCC26XXObjects[CC1350_LAUNCHXL_UARTCOUNT];
+unsigned char uartCC26XXRingBuffer[CC1350_LAUNCHXL_UARTCOUNT][32];
+
+/* UART hardware parameter structure, also used to assign UART pins */
+const UARTCC26X0_HWAttrs uartCC26XXHWAttrs[CC1350_LAUNCHXL_UARTCOUNT] = {
+    {   /* CC1350_LAUNCHXL_UART0 */
+        .baseAddr = UART0_BASE,
+        .intNum = INT_UART0_COMB,    /* <driverlib>/inc/hw_ints.h */
+        .intPriority = (0xc0),
+        .swiPriority = 0,
+        .txPin = Board_UART_TX,
+        .rxPin = Board_UART_RX,
+        .ctsPin = PIN_UNASSIGNED,
+        .rtsPin = PIN_UNASSIGNED,
+        .ringBufPtr     = uartCC26XXRingBuffer[0],
+        .ringBufSize    = sizeof(uartCC26XXRingBuffer[0])
     },
 };
 
-/*
- *  ============================ GPTimer =================================
- *  Remove unused entries to reduce flash usage both in Board.c and Board.h
- */
-
-#include <ti/drivers/timer/GPTimerCC26XX.h>
-
-/*  GPTimer objects, one per full-width timer (A+B) (Timer 0, Timer 1..) */
-GPTimerCC26XX_Object gptimerCC26XXObjects[CC1350_LAUNCHXL_GPTIMERCOUNT];
-
-/* GPTimer hardware attributes, one per timer part (Timer 0A, 0B, 1A, 1B..) */
-const GPTimerCC26XX_HWAttrs gptimerCC26xxHWAttrs[CC1350_LAUNCHXL_GPTIMERPARTSCOUNT] = {
-    { .baseAddr = GPT0_BASE, .intNum = INT_GPT0A, .intPriority = (~0), .powerMngrId = PowerCC26XX_PERIPH_GPT0, .pinMux = GPT_PIN_0A, },
-    { .baseAddr = GPT0_BASE, .intNum = INT_GPT0B, .intPriority = (~0), .powerMngrId = PowerCC26XX_PERIPH_GPT0, .pinMux = GPT_PIN_0B, },
-    { .baseAddr = GPT1_BASE, .intNum = INT_GPT1A, .intPriority = (~0), .powerMngrId = PowerCC26XX_PERIPH_GPT1, .pinMux = GPT_PIN_1A, },
-    { .baseAddr = GPT1_BASE, .intNum = INT_GPT1B, .intPriority = (~0), .powerMngrId = PowerCC26XX_PERIPH_GPT1, .pinMux = GPT_PIN_1B, },
-    { .baseAddr = GPT2_BASE, .intNum = INT_GPT2A, .intPriority = (~0), .powerMngrId = PowerCC26XX_PERIPH_GPT2, .pinMux = GPT_PIN_2A, },
-    { .baseAddr = GPT2_BASE, .intNum = INT_GPT2B, .intPriority = (~0), .powerMngrId = PowerCC26XX_PERIPH_GPT2, .pinMux = GPT_PIN_2B, },
-    { .baseAddr = GPT3_BASE, .intNum = INT_GPT3A, .intPriority = (~0), .powerMngrId = PowerCC26XX_PERIPH_GPT3, .pinMux = GPT_PIN_3A, },
-    { .baseAddr = GPT3_BASE, .intNum = INT_GPT3B, .intPriority = (~0), .powerMngrId = PowerCC26XX_PERIPH_GPT3, .pinMux = GPT_PIN_3B, },
+/* UART configuration structure */
+const UART_Config UART_config[] = {
+    {
+        .fxnTablePtr = &myUARTCC26X0_fxnTable,
+        .object      = &uartCC26XXObjects[0],
+        .hwAttrs     = &uartCC26XXHWAttrs[0]
+    },
 };
 
-/* GPTimer configuration (used as GPTimer_Handle by driver and application) */
-const GPTimerCC26XX_Config GPTimerCC26XX_config[CC1350_LAUNCHXL_GPTIMERPARTSCOUNT] = {
-    { &gptimerCC26XXObjects[0], &gptimerCC26xxHWAttrs[0], GPT_A },
-    { &gptimerCC26XXObjects[0], &gptimerCC26xxHWAttrs[1], GPT_B },
-    { &gptimerCC26XXObjects[1], &gptimerCC26xxHWAttrs[2], GPT_A },
-    { &gptimerCC26XXObjects[1], &gptimerCC26xxHWAttrs[3], GPT_B },
-    { &gptimerCC26XXObjects[2], &gptimerCC26xxHWAttrs[4], GPT_A },
-    { &gptimerCC26XXObjects[2], &gptimerCC26xxHWAttrs[5], GPT_B },
-    { &gptimerCC26XXObjects[3], &gptimerCC26xxHWAttrs[6], GPT_A },
-    { &gptimerCC26XXObjects[3], &gptimerCC26xxHWAttrs[7], GPT_B },
-};
+const uint_least8_t UART_count = CC1350_LAUNCHXL_UARTCOUNT;
 
 /*
- *  ============================= PWM ====================================
- *  Remove unused entries to reduce flash usage both in Board.c and Board.h
- */
+ *  ============================= UDMA ===================================
+*/
 
-#include <ti/drivers/PWM.h>
-#include <ti/drivers/pwm/PWMTimerCC26XX.h>
+/* Include drivers */
+#include <ti/drivers/dma/UDMACC26XX.h>
 
-void PWMTimerCC26XX_close(PWM_Handle handle);
-int_fast16_t PWMTimerCC26XX_control(PWM_Handle handle, uint_fast16_t cmd, void *arg);
-void PWMTimerCC26XX_init(PWM_Handle handle);
-PWM_Handle PWMTimerCC26XX_open(PWM_Handle handle, PWM_Params *params);
-int_fast16_t PWMTimerCC26XX_setDuty(PWM_Handle handle, uint32_t dutyValue);
-int_fast16_t PWMTimerCC26XX_setPeriod(PWM_Handle handle, uint32_t periodValue);
-void PWMTimerCC26XX_start(PWM_Handle handle);
-void PWMTimerCC26XX_stop(PWM_Handle handle);
+/* UDMA objects */
+UDMACC26XX_Object udmaObjects[CC1350_LAUNCHXL_UDMACOUNT];
 
-/* PWM function table for PWMTimerCC26XX implementation */
-const PWM_FxnTable myPWMTimerCC26XX_fxnTable = {
-    PWMTimerCC26XX_close,
-    NULL, /* PWMTimerCC26XX_control, */
-    PWMTimerCC26XX_init,
-    PWMTimerCC26XX_open,
-    PWMTimerCC26XX_setDuty,
-    NULL, /* PWMTimerCC26XX_setPeriod, */
-    PWMTimerCC26XX_start,
-    NULL /* PWMTimerCC26XX_stop */
+/* UDMA configuration structure */
+const UDMACC26XX_HWAttrs udmaHWAttrs[CC1350_LAUNCHXL_UDMACOUNT] = {
+    {
+        .baseAddr = UDMA0_BASE, 
+        .powerMngrId = PowerCC26XX_PERIPH_UDMA,
+        .intNum = INT_DMA_ERR,    /* <driverlib>/inc/hw_ints.h */
+        .intPriority = (~0)
+    },
 };
 
-/* PWM object, one per PWM output */
-PWMTimerCC26XX_Object pwmtimerCC26xxObjects[CC1350_LAUNCHXL_PWMCOUNT];
-
-/* PWM configuration, one per PWM output.   */
-PWMTimerCC26XX_HwAttrs pwmtimerCC26xxHWAttrs[CC1350_LAUNCHXL_PWMCOUNT] = {
-    { .pwmPin = Board_PWMPIN0, .gpTimerUnit = Board_GPTIMER0A },
-    { .pwmPin = Board_PWMPIN1, .gpTimerUnit = Board_GPTIMER0B },
-    { .pwmPin = Board_PWMPIN2, .gpTimerUnit = Board_GPTIMER1A },
-    { .pwmPin = Board_PWMPIN3, .gpTimerUnit = Board_GPTIMER1B },
-    { .pwmPin = Board_PWMPIN4, .gpTimerUnit = Board_GPTIMER2A },
-    { .pwmPin = Board_PWMPIN5, .gpTimerUnit = Board_GPTIMER2B },
-    { .pwmPin = Board_PWMPIN6, .gpTimerUnit = Board_GPTIMER3A },
-    { .pwmPin = Board_PWMPIN7, .gpTimerUnit = Board_GPTIMER3B },
-};
-
-/* PWM configuration (used as PWM_Handle by driver and application) */
-const PWM_Config PWM_config[CC1350_LAUNCHXL_PWMCOUNT] = {
-    { &myPWMTimerCC26XX_fxnTable, &pwmtimerCC26xxObjects[0], &pwmtimerCC26xxHWAttrs[0] },
-    { &myPWMTimerCC26XX_fxnTable, &pwmtimerCC26xxObjects[1], &pwmtimerCC26xxHWAttrs[1] },
-    { &myPWMTimerCC26XX_fxnTable, &pwmtimerCC26xxObjects[2], &pwmtimerCC26xxHWAttrs[2] },
-    { &myPWMTimerCC26XX_fxnTable, &pwmtimerCC26xxObjects[3], &pwmtimerCC26xxHWAttrs[3] },
-    { &myPWMTimerCC26XX_fxnTable, &pwmtimerCC26xxObjects[4], &pwmtimerCC26xxHWAttrs[4] },
-    { &myPWMTimerCC26XX_fxnTable, &pwmtimerCC26xxObjects[5], &pwmtimerCC26xxHWAttrs[5] },
-    { &myPWMTimerCC26XX_fxnTable, &pwmtimerCC26xxObjects[6], &pwmtimerCC26xxHWAttrs[6] },
-    { &myPWMTimerCC26XX_fxnTable, &pwmtimerCC26xxObjects[7], &pwmtimerCC26xxHWAttrs[7] },
-};
-
-const uint_least8_t PWM_count = CC1350_LAUNCHXL_PWMCOUNT;
-
-/* 
- *  =============================== Power ===============================
- */
-
-#include <ti/drivers/Power.h>
-#include <ti/drivers/power/PowerCC26XX.h>
-
-/*
- *  ======== PowerCC26XX_config ========
- */
-const PowerCC26XX_Config PowerCC26XX_config = {
-    .policyInitFxn      = NULL,
-    .policyFxn          = &PowerCC26XX_standbyPolicy,
-    .calibrateFxn       = &PowerCC26XX_calibrate,
-    .enablePolicy       = true,
-    .calibrateRCOSC_LF  = true,
-    .calibrateRCOSC_HF  = true,
+/* UDMA configuration structure */
+const UDMACC26XX_Config UDMACC26XX_config[] = {
+    {
+        .object  = &udmaObjects[0],
+        .hwAttrs = &udmaHWAttrs[0]
+    },
 };
 
 /*
@@ -767,7 +770,7 @@ void Board_initPower(void)
      * clock to SysTick has been cut while in deep sleep
      */
     Power_registerNotify(&energiaNotifyObject, PowerCC26XX_AWAKE_STANDBY,
-                         (Power_NotifyFxn)energiaTimeSync, NULL);
+                         (Power_NotifyFxn)energiaTimeSync, (uintptr_t)NULL);
 }
 
 /*

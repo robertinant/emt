@@ -65,12 +65,12 @@
 #define MSP432_ARTEST_CMD 1
 #define CC26XX_ARTEST_CMD 0
 #define MSP432E_ARTEST_CMD 0
-#elif defined(BOARD_CC2650_LAUNCHXL) || defined(BOARD_CC1310_LAUNCHXL) || defined(BOARD_CC1350_LAUNCHXL)
+#elif defined(BOARD_CC2650_LAUNCHXL) || defined(BOARD_CC1310_LAUNCHXL) || defined(BOARD_CC1350_LAUNCHXL) ||  defined(BOARD_CC1352R1_LAUNCHXL)
 #define CC32XX_ARTEST_CMD 0
 #define MSP432_ARTEST_CMD 0
 #define CC26XX_ARTEST_CMD 1
 #define MSP432E_ARTEST_CMD 0
-#elif defined(BOARD_MSP_EXP432E401Y)
+#elif defined(BOARD_MSP_EXP432E401Y) || defined(BOARD_EK_TM4C1294XL)
 #define CC32XX_ARTEST_CMD 0
 #define MSP432_ARTEST_CMD 0
 #define CC26XX_ARTEST_CMD 0
@@ -89,12 +89,12 @@
 #define MSP432_AWTEST_CMD 1
 #define CC26XX_AWTEST_CMD 0
 #define MSP432E_AWTEST_CMD 0
-#elif defined(BOARD_CC2650_LAUNCHXL) || defined(BOARD_CC1310_LAUNCHXL) || defined(BOARD_CC1350_LAUNCHXL)
+#elif defined(BOARD_CC2650_LAUNCHXL) || defined(BOARD_CC1310_LAUNCHXL) || defined(BOARD_CC1350_LAUNCHXL) ||  defined(BOARD_CC1352R1_LAUNCHXL)
 #define CC32XX_AWTEST_CMD 0
 #define MSP432_AWTEST_CMD 0
 #define CC26XX_AWTEST_CMD 1
 #define MSP432E_AWTEST_CMD 0
-#elif defined(BOARD_MSP_EXP432E401Y)
+#elif defined(BOARD_MSP_EXP432E401Y) || defined(BOARD_EK_TM4C1294XL)
 #define CC32XX_AWTEST_CMD 0
 #define MSP432_AWTEST_CMD 0
 #define CC26XX_AWTEST_CMD 0
@@ -113,12 +113,12 @@
 #define MSP432_DRWTEST_CMD 1
 #define CC26XX_DRWTEST_CMD 0
 #define MSP432E_DRWTEST_CMD 0
-#elif defined(BOARD_CC2650_LAUNCHXL) || defined(BOARD_CC1310_LAUNCHXL) || defined(BOARD_CC1350_LAUNCHXL)
+#elif defined(BOARD_CC2650_LAUNCHXL) || defined(BOARD_CC1310_LAUNCHXL) || defined(BOARD_CC1350_LAUNCHXL) ||  defined(BOARD_CC1352R1_LAUNCHXL)
 #define CC32XX_DRWTEST_CMD 0
 #define MSP432_DRWTEST_CMD 0
 #define CC26XX_DRWTEST_CMD 1
 #define MSP432E_DRWTEST_CMD 0
-#elif defined(BOARD_MSP_EXP432E401Y)
+#elif defined(BOARD_MSP_EXP432E401Y) || defined(BOARD_EK_TM4C1294XL)
 #define CC32XX_DRWTEST_CMD 0
 #define MSP432_DRWTEST_CMD 0
 #define CC26XX_DRWTEST_CMD 0
@@ -1525,13 +1525,25 @@ static uint8_t pinIds[] = {
 
 #define MAX_DAC_VALUE 2688  /* = 3.30V */
 
+#if defined(BOARD_MSP_EXP432E401Y)
 /* Supported Ax pins on boosterpack 0 */
 static uint8_t pinIds[] = {
-    A0,  A1,  A2,  A3,
-    A4,
+    A0,  A1,  A3,
+    A4,  A5,
     A8,  A9, 
     A12, A14, A15
 };
+
+#elif defined(BOARD_EK_TM4C1294XL)
+
+/* Supported Ax pins on boosterpack 0 */
+static uint8_t pinIds[] = {
+    A0,  A1,  A3,
+    A4,
+    A8,  A9,
+    A12, A14, A15
+};
+#endif
 
 #endif  /* MSP432_ARTEST_CMD */
 
@@ -1577,8 +1589,9 @@ static int consoleHandler_artest(const char * line)
     uint16_t aval[4];
     static char response[80];
 
-    /* force jumpered pin 24 to input mode */
+    /* force jumpered pins 24 and 5 to input mode */
     pinMode(24, INPUT);
+    pinMode(5, INPUT);
 
     Wire.begin();
 
@@ -1686,7 +1699,7 @@ static uint8_t awPinIds[] = {
     37,  39,  40
 };
 
-#elif defined(BOARD_CC1310_LAUNCHXL) || defined(BOARD_CC1350_LAUNCHXL)
+#elif defined(BOARD_CC1310_LAUNCHXL) || defined(BOARD_CC1350_LAUNCHXL) || defined(BOARD_CC26X2R1_LAUNCHXL)
 
 /* Supported analogWrite pins */
 static uint8_t awPinIds[] = {
@@ -1696,6 +1709,19 @@ static uint8_t awPinIds[] = {
     18,  19,  23,  24,
     25,  26,  27,  28,
     30,  36,
+    37,  39,  40
+};
+
+#elif defined(BOARD_CC1352R1_LAUNCHXL)
+
+/* Supported analogWrite pins */
+static uint8_t awPinIds[] = {
+    2,   5,
+    6,   7,   8,
+    12,  13,  14,  15,
+    18,  19,  23,  24,
+    25,  26,  27,  28,
+    36,
     37,  39,  40
 };
 
@@ -1832,7 +1858,7 @@ static uint8_t drwPinIds[] = {
     40
 };
 
-#elif defined(BOARD_CC1310_LAUNCHXL) || defined(BOARD_CC1350_LAUNCHXL)
+#elif defined(BOARD_CC1310_LAUNCHXL) || defined(BOARD_CC1350_LAUNCHXL) || defined(BOARD_CC26X2R1_LAUNCHXL)
 
 /* Supported digital pins */
 static uint8_t drwPinIds[] = {
@@ -1846,6 +1872,19 @@ static uint8_t drwPinIds[] = {
     40
 };
 
+#elif defined(BOARD_CC1352R1_LAUNCHXL)
+
+/* Supported digital pins */
+static uint8_t drwPinIds[] = {
+    2,   5,
+    6,   7,   8,
+    12,  13,  14,  15,
+    18,  19,  23,  24,
+    25,  26,  27,  28,
+    36,  37,  38,  39,
+    40
+};
+
 #endif
 #endif  /* CC26XX_DRWTEST_CMD */
 
@@ -1855,7 +1894,7 @@ static uint8_t drwPinIds[] = {
 static uint8_t drwPinIds[] = {
         2, 5, 6, 7, 8,
    11, 12, 13, 14, 15, 17, 18, 19,
-   23, 24, 25, 26, 28, 29, 30,
+   23, 24, 25, 26, 27, 28, 29, 30,
    31, 32, 33, 34, 35, 36, 37, 38, 39, 40
 };
 
@@ -1988,7 +2027,7 @@ static int consoleHandler_drwtest(const char * line)
 
 #endif /* DRWTEST_CMD */
 
-#if NVSTEST_CMD
+#if NVSTEST_CMD == 1
 #include  <ti/drivers/NVS.h>
 
 static int consoleHandler_nvstest(const char *line)

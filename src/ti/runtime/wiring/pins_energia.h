@@ -19,6 +19,8 @@
 #include <ti/runtime/wiring/msp432/variants/MSP_EXP432P401R/pins_energia.h>
 #elif defined(BOARD_MSP_EXP432E401Y)
 #include <ti/runtime/wiring/msp432e/variants/MSP_EXP432E401Y/pins_energia.h>
+#elif defined(BOARD_EK_TM4C1294XL)
+#include <ti/runtime/wiring/msp432e/variants/EK_TM4C1294XL/pins_energia.h>
 #elif defined(BOARD_CC2650STK_BLE)
 #include <ti/runtime/wiring/cc26xx/variants/CC2650STK_BLE/pins_energia.h>
 #elif defined(BOARD_CC2650_LAUNCHXL)
