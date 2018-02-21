@@ -44,6 +44,7 @@
 
 #include <ti/devices/msp432e4/inc/msp432.h>
 
+#include <ti/devices/msp432e4/driverlib/adc.h>
 #include <ti/devices/msp432e4/driverlib/interrupt.h>
 #include <ti/devices/msp432e4/driverlib/pwm.h>
 #include <ti/devices/msp432e4/driverlib/sysctl.h>
@@ -62,124 +63,252 @@
  *  =============================== ADC ===============================
  */
 #include <ti/drivers/ADC.h>
-//#include <ti/drivers/adc/ADCMSP432E4.h>
+#include <ti/drivers/adc/ADCMSP432E4.h>
 
-extern void myADCMSP432E4_close(ADC_Handle);
-extern int_fast16_t myADCMSP432E4_convert(ADC_Handle handle, uint16_t *value);
-extern void myADCMSP432E4_init(ADC_Handle handle);
-extern ADC_Handle myADCMSP432E4_open(ADC_Handle handle, ADC_Params *params);
+extern ADC_Handle ADCMSP432E4_open(ADC_Handle handle, ADC_Params *params);
+extern void ADCMSP432E4_close(ADC_Handle handle);
+extern void ADCMSP432E4_init(ADC_Handle handle);
+extern int_fast16_t ADCMSP432E4_convert(ADC_Handle handle, uint16_t *value);
 
 /* ADC function table for ADCMSP432 implementation */
 const ADC_FxnTable myADCMSP432E4_fxnTable = {
-    myADCMSP432E4_close,
+    ADCMSP432E4_close,
     NULL, /* ADCMSP432_control, */
-    myADCMSP432E4_convert,
+    ADCMSP432E4_convert,
     NULL, /* ADCMSP432_convertRawToMicroVolts, */
-    myADCMSP432E4_init,
-    myADCMSP432E4_open
+    ADCMSP432E4_init,
+    ADCMSP432E4_open
 };
 
-const ADC_Config ADC_config[] = {
+/* ADC objects */
+ADCMSP432E4_Object adcMSP432E4Objects[20];
+
+/* ADC configuration structure */
+ADCMSP432E4_HWAttrsV1 adcMSP432E4HWAttrs[20] = {
+    {
+        .adcPin = ADCMSP432E4_PE_3_A0,
+        .refVoltage = ADCMSP432E4_VREF_INTERNAL,
+        .adcModule = ADCMSP432E4_MOD0,
+        .adcSeq = ADCMSP432E4_SEQ0
+    },
+    {
+        .adcPin = ADCMSP432E4_PE_2_A1,
+        .refVoltage = ADCMSP432E4_VREF_INTERNAL,
+        .adcModule = ADCMSP432E4_MOD0,
+        .adcSeq = ADCMSP432E4_SEQ0
+    },
+    {
+        .adcPin = ADCMSP432E4_PE_1_A2,
+        .refVoltage = ADCMSP432E4_VREF_INTERNAL,
+        .adcModule = ADCMSP432E4_MOD0,
+        .adcSeq = ADCMSP432E4_SEQ0
+    },
+    {
+        .adcPin = ADCMSP432E4_PE_0_A3,
+        .refVoltage = ADCMSP432E4_VREF_INTERNAL,
+        .adcModule = ADCMSP432E4_MOD0,
+        .adcSeq = ADCMSP432E4_SEQ0
+    },
+    {
+        .adcPin = ADCMSP432E4_PD_7_A4,
+        .refVoltage = ADCMSP432E4_VREF_INTERNAL,
+        .adcModule = ADCMSP432E4_MOD0,
+        .adcSeq = ADCMSP432E4_SEQ0
+    },
+    {
+        .adcPin = ADCMSP432E4_PD_6_A5,
+        .refVoltage = ADCMSP432E4_VREF_INTERNAL,
+        .adcModule = ADCMSP432E4_MOD0,
+        .adcSeq = ADCMSP432E4_SEQ0
+    },
+    {
+        .adcPin = ADCMSP432E4_PD_5_A6,
+        .refVoltage = ADCMSP432E4_VREF_INTERNAL,
+        .adcModule = ADCMSP432E4_MOD0,
+        .adcSeq = ADCMSP432E4_SEQ0
+    },
+    {
+        .adcPin = ADCMSP432E4_PD_4_A7,
+        .refVoltage = ADCMSP432E4_VREF_INTERNAL,
+        .adcModule = ADCMSP432E4_MOD0,
+        .adcSeq = ADCMSP432E4_SEQ0
+    },
+    {
+        .adcPin = ADCMSP432E4_PE_5_A8,
+        .refVoltage = ADCMSP432E4_VREF_INTERNAL,
+        .adcModule = ADCMSP432E4_MOD0,
+        .adcSeq = ADCMSP432E4_SEQ0
+    },
+    {
+        .adcPin = ADCMSP432E4_PE_4_A9,
+        .refVoltage = ADCMSP432E4_VREF_INTERNAL,
+        .adcModule = ADCMSP432E4_MOD0,
+        .adcSeq = ADCMSP432E4_SEQ0
+    },
+    {
+        .adcPin = ADCMSP432E4_PB_4_A10,
+        .refVoltage = ADCMSP432E4_VREF_INTERNAL,
+        .adcModule = ADCMSP432E4_MOD0,
+        .adcSeq = ADCMSP432E4_SEQ0
+    },
+    {
+        .adcPin = ADCMSP432E4_PB_5_A11,
+        .refVoltage = ADCMSP432E4_VREF_INTERNAL,
+        .adcModule = ADCMSP432E4_MOD0,
+        .adcSeq = ADCMSP432E4_SEQ0
+    },
+    {
+        .adcPin = ADCMSP432E4_PD_3_A12,
+        .refVoltage = ADCMSP432E4_VREF_INTERNAL,
+        .adcModule = ADCMSP432E4_MOD0,
+        .adcSeq = ADCMSP432E4_SEQ0
+    },
+    {
+        .adcPin = ADCMSP432E4_PD_2_A13,
+        .refVoltage = ADCMSP432E4_VREF_INTERNAL,
+        .adcModule = ADCMSP432E4_MOD0,
+        .adcSeq = ADCMSP432E4_SEQ0
+    },
+    {
+        .adcPin = ADCMSP432E4_PD_1_A14,
+        .refVoltage = ADCMSP432E4_VREF_INTERNAL,
+        .adcModule = ADCMSP432E4_MOD0,
+        .adcSeq = ADCMSP432E4_SEQ0
+    },
+    {
+        .adcPin = ADCMSP432E4_PD_0_A15,
+        .refVoltage = ADCMSP432E4_VREF_INTERNAL,
+        .adcModule = ADCMSP432E4_MOD0,
+        .adcSeq = ADCMSP432E4_SEQ0
+    },
+    {
+        .adcPin = ADCMSP432E4_PK_0_A16,
+        .refVoltage = ADCMSP432E4_VREF_INTERNAL,
+        .adcModule = ADCMSP432E4_MOD0,
+        .adcSeq = ADCMSP432E4_SEQ0
+    },
+    {
+        .adcPin = ADCMSP432E4_PK_1_A17,
+        .refVoltage = ADCMSP432E4_VREF_INTERNAL,
+        .adcModule = ADCMSP432E4_MOD0,
+        .adcSeq = ADCMSP432E4_SEQ0
+    },
+    {
+        .adcPin = ADCMSP432E4_PK_2_A18,
+        .refVoltage = ADCMSP432E4_VREF_INTERNAL,
+        .adcModule = ADCMSP432E4_MOD0,
+        .adcSeq = ADCMSP432E4_SEQ0
+    },
+    {
+        .adcPin = ADCMSP432E4_PK_3_A19,
+        .refVoltage = ADCMSP432E4_VREF_INTERNAL,
+        .adcModule = ADCMSP432E4_MOD0,
+        .adcSeq = ADCMSP432E4_SEQ0
+    }
+};
+
+const ADC_Config ADC_config[20] = {
     {
         .fxnTablePtr = &myADCMSP432E4_fxnTable,
-        .object = (void *)(26), /* 0 */
-        .hwAttrs = NULL
+        .object = &adcMSP432E4Objects[0],
+        .hwAttrs = &adcMSP432E4HWAttrs[0]
     },
     {
         .fxnTablePtr = &myADCMSP432E4_fxnTable,
-        .object = (void *)(25), /* 1 */
-        .hwAttrs = NULL
+        .object = &adcMSP432E4Objects[1],
+        .hwAttrs = &adcMSP432E4HWAttrs[1]
     },
     {
         .fxnTablePtr = &myADCMSP432E4_fxnTable,
-        .object = (void *)(24), /* 2 */
-        .hwAttrs = NULL
+        .object = &adcMSP432E4Objects[2],
+        .hwAttrs = &adcMSP432E4HWAttrs[2]
     },
     {
         .fxnTablePtr = &myADCMSP432E4_fxnTable,
-        .object = (void *)(23), /* 3 */
-        .hwAttrs = NULL
+        .object = &adcMSP432E4Objects[3],
+        .hwAttrs = &adcMSP432E4HWAttrs[3]
     },
     {
         .fxnTablePtr = &myADCMSP432E4_fxnTable,
-        .object = (void *)(27), /* 4 */
-        .hwAttrs = NULL
+        .object = &adcMSP432E4Objects[4],
+        .hwAttrs = &adcMSP432E4HWAttrs[4]
     },
     {
         .fxnTablePtr = &myADCMSP432E4_fxnTable,
-        .object = (void *)(0), /* 5 */
-        .hwAttrs = NULL
+        .object = &adcMSP432E4Objects[5],
+        .hwAttrs = &adcMSP432E4HWAttrs[5]
     },
     {
         .fxnTablePtr = &myADCMSP432E4_fxnTable,
-        .object = (void *)(46), /* 6 */
-        .hwAttrs = NULL
+        .object = &adcMSP432E4Objects[6],
+        .hwAttrs = &adcMSP432E4HWAttrs[6]
     },
     {
         .fxnTablePtr = &myADCMSP432E4_fxnTable,
-        .object = (void *)(45), /* 7 */
-        .hwAttrs = NULL
+        .object = &adcMSP432E4Objects[7],
+        .hwAttrs = &adcMSP432E4HWAttrs[7]
     },
     {
         .fxnTablePtr = &myADCMSP432E4_fxnTable,
-        .object = (void *)(6),  /* 8 */
-        .hwAttrs = NULL
+        .object = &adcMSP432E4Objects[8],
+        .hwAttrs = &adcMSP432E4HWAttrs[8]
     },
     {
         .fxnTablePtr = &myADCMSP432E4_fxnTable,
-        .object = (void *)(2),  /* 9 */
-        .hwAttrs = NULL
+        .object = &adcMSP432E4Objects[9],
+        .hwAttrs = &adcMSP432E4HWAttrs[9]
     },
     {
         .fxnTablePtr = &myADCMSP432E4_fxnTable,
-        .object = (void *)(63), /* 10 */
-        .hwAttrs = NULL
+        .object = &adcMSP432E4Objects[10],
+        .hwAttrs = &adcMSP432E4HWAttrs[10]
     },
     {
         .fxnTablePtr = &myADCMSP432E4_fxnTable,
-        .object = (void *)(64), /* 11 */
-        .hwAttrs = NULL
+        .object = &adcMSP432E4Objects[11],
+        .hwAttrs = &adcMSP432E4HWAttrs[11]
     },
     {
         .fxnTablePtr = &myADCMSP432E4_fxnTable,
-        .object = (void *)(7), /* 12 */
-        .hwAttrs = NULL
+        .object = &adcMSP432E4Objects[12],
+        .hwAttrs = &adcMSP432E4HWAttrs[12]
     },
     {
         .fxnTablePtr = &myADCMSP432E4_fxnTable,
-        .object = (void *)(42), /* 13 */
-        .hwAttrs = NULL
+        .object = &adcMSP432E4Objects[13],
+        .hwAttrs = &adcMSP432E4HWAttrs[13]
     },
     {
         .fxnTablePtr = &myADCMSP432E4_fxnTable,
-        .object = (void *)(15), /* 14 */
-        .hwAttrs = NULL
+        .object = &adcMSP432E4Objects[14],
+        .hwAttrs = &adcMSP432E4HWAttrs[14]
     },
     {
         .fxnTablePtr = &myADCMSP432E4_fxnTable,
-        .object = (void *)(14), /* 15 */
-        .hwAttrs = NULL
+        .object = &adcMSP432E4Objects[15],
+        .hwAttrs = &adcMSP432E4HWAttrs[15]
     },
     {
         .fxnTablePtr = &myADCMSP432E4_fxnTable,
-        .object = (void *)(65), /* 16 */
-        .hwAttrs = NULL
+        .object = &adcMSP432E4Objects[16],
+        .hwAttrs = &adcMSP432E4HWAttrs[16]
     },
     {
         .fxnTablePtr = &myADCMSP432E4_fxnTable,
-        .object = (void *)(66), /* 17 */
-        .hwAttrs = NULL
+        .object = &adcMSP432E4Objects[17],
+        .hwAttrs = &adcMSP432E4HWAttrs[17]
     },
     {
         .fxnTablePtr = &myADCMSP432E4_fxnTable,
-        .object = (void *)(67), /* 18 */
-        .hwAttrs = NULL
+        .object = &adcMSP432E4Objects[18],
+        .hwAttrs = &adcMSP432E4HWAttrs[18]
     },
     {
         .fxnTablePtr = &myADCMSP432E4_fxnTable,
-        .object = (void *)(68), /* 19 */
-        .hwAttrs = NULL
-    },};
+        .object = &adcMSP432E4Objects[19],
+        .hwAttrs = &adcMSP432E4HWAttrs[19]
+    }
+};
 
 const uint_least8_t ADC_count = 20;
 
@@ -188,11 +317,19 @@ const uint_least8_t ADC_count = 20;
  */
 #include <ti/display/Display.h>
 #include <ti/display/DisplayUart.h>
+#include <ti/display/DisplaySharp.h>
 #define MAXPRINTLEN 1024
 
+#ifndef BOARD_DISPLAY_SHARP_SIZE
+#define BOARD_DISPLAY_SHARP_SIZE    96
+#endif
+
 DisplayUart_Object displayUartObject;
+DisplaySharp_Object    displaySharpObject;
 
 static char displayBuf[MAXPRINTLEN];
+static uint_least8_t sharpDisplayBuf[BOARD_DISPLAY_SHARP_SIZE * BOARD_DISPLAY_SHARP_SIZE / 8];
+
 
 const DisplayUart_HWAttrs displayUartHWAttrs = {
     .uartIdx = MSP_EXP432E401Y_UART0,
@@ -202,10 +339,32 @@ const DisplayUart_HWAttrs displayUartHWAttrs = {
     .strBufLen = MAXPRINTLEN
 };
 
+const DisplaySharp_HWAttrsV1 displaySharpHWattrs = {
+    .spiIndex    = MSP_EXP432E401Y_SPI2,
+    .csPin       = MSP_EXP432E401Y_LCD_CS,
+    .powerPin    = MSP_EXP432E401Y_LCD_POWER,
+    .enablePin   = MSP_EXP432E401Y_LCD_ENABLE,
+    .pixelWidth  = BOARD_DISPLAY_SHARP_SIZE,
+    .pixelHeight = BOARD_DISPLAY_SHARP_SIZE,
+    .displayBuf  = sharpDisplayBuf,
+};
+
+#ifndef BOARD_DISPLAY_USE_UART
+#define BOARD_DISPLAY_USE_UART 1
+#endif
 #ifndef BOARD_DISPLAY_USE_UART_ANSI
 #define BOARD_DISPLAY_USE_UART_ANSI 0
 #endif
+#ifndef BOARD_DISPLAY_USE_LCD
+#define BOARD_DISPLAY_USE_LCD 0
+#endif
 
+/*
+ * This #if/#else is needed to workaround a problem with the
+ * IAR compiler. The IAR compiler doesn't like the empty array
+ * initialization. (IAR Error[Pe1345])
+ */
+ #if (BOARD_DISPLAY_USE_UART || BOARD_DISPLAY_USE_LCD)
 const Display_Config Display_config[] = {
     {
 #  if (BOARD_DISPLAY_USE_UART_ANSI)
@@ -215,7 +374,15 @@ const Display_Config Display_config[] = {
 #  endif
         .object = &displayUartObject,
         .hwAttrs = &displayUartHWAttrs
-    }
+    },
+#endif
+#if (BOARD_DISPLAY_USE_LCD)
+    {
+        .fxnTablePtr = &DisplaySharp_fxnTable,
+        .object      = &displaySharpObject,
+        .hwAttrs     = &displaySharpHWattrs
+    },
+#endif
 };
 
 const uint_least8_t Display_count = sizeof(Display_config) / sizeof(Display_Config);
@@ -232,7 +399,7 @@ const uint_least8_t Display_count = sizeof(Display_config) / sizeof(Display_Conf
 #elif defined(__GNUC__)
 __attribute__ ((aligned (1024)))
 #endif
-static tDMAControlTable dmaControlTable[32];
+static tDMAControlTable dmaControlTable[64];
 
 /*
  *  ======== dmaErrorFxn ========
@@ -266,6 +433,8 @@ const UDMAMSP432E4_Config UDMAMSP432E4_config = {
 /*
  *  =============================== EMAC ===============================
  */
+/* minimize scope of ndk/inc/stk_main.h -- this eliminates TIPOSIX path dependencies */
+#define NDK_NOUSERAPIS 1
 #include <ti/drivers/emac/EMACMSP432E4.h>
 
 /*
@@ -283,13 +452,14 @@ NIMU_DEVICE_TABLE_ENTRY NIMUDeviceTable[2] = {
 };
 
 /*
- *  EMAC configuration structure
- *  Set user/company specific MAC octates. The following sets the address
- *  to ff-ff-ff-ff-ff-ff. Users need to change this to make the label on
- *  their boards.
+ *  Ethernet MAC address
+ *  NOTE: By default (i.e. when each octet is 0xff), the driver reads the MAC
+ *        address that's stored in flash. To override this behavior, manually
+ *        set the octets of the MAC address you wish to use into the array here:
  */
 unsigned char macAddress[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
 
+/* EMAC configuration structure */
 const EMACMSP432E4_HWAttrs EMACMSP432E4_hwAttrs = {
     .baseAddr = EMAC0_BASE,
     .intNum = INT_EMAC0,
@@ -349,7 +519,7 @@ GPIO_PinConfig gpioPinConfigs[] = {
     GPIOMSP432E4_PE2 | GPIO_DO_NOT_CONFIG,          /*  25 - PE2 */
     GPIOMSP432E4_PE3 | GPIO_DO_NOT_CONFIG,          /*  26 - PE3 */
     GPIOMSP432E4_PD7 | GPIO_DO_NOT_CONFIG,          /*  27 - PD7  NMI */
-    GPIOMSP432E4_PA6 | GPIO_DO_NOT_CONFIG,          /*  28 - PA6 */
+    GPIOMSP432E4_PD6 | GPIO_DO_NOT_CONFIG,          /*  28 - PD6 */
     GPIOMSP432E4_PM4 | GPIO_DO_NOT_CONFIG,          /*  29 - PM4 */
     GPIOMSP432E4_PM5 | GPIO_DO_NOT_CONFIG,          /*  30 - PM5 */
 
@@ -474,7 +644,7 @@ GPIO_CallbackFxn gpioCallbackFunctions[] = {
     NULL,  /*  25 - PE2 */
     NULL,  /*  26 - PE3 */
     NULL,  /*  27 - PD7 NMI */
-    NULL,  /*  28 - PA6 */
+    NULL,  /*  28 - PD6 */
     NULL,  /*  29 - PM4 */
     NULL,  /*  30 - PM5 */
 
@@ -575,32 +745,32 @@ I2CMSP432E4_Object i2cMSP432E4Objects[MSP_EXP432E401Y_I2CCOUNT];
 
 const I2CMSP432E4_HWAttrs i2cMSP432E4HWAttrs[MSP_EXP432E401Y_I2CCOUNT] = {
     {
-        .baseAddr = I2C7_BASE,
-        .intNum = INT_I2C7,
-        .intPriority = (~0),
-        .sclPin = I2CMSP432E4_PD0_I2C7SCL,
-        .sdaPin = I2CMSP432E4_PD1_I2C7SDA
-    },
-    {
         .baseAddr = I2C0_BASE,
         .intNum = INT_I2C0,
         .intPriority = (~0),
         .sclPin = I2CMSP432E4_PB2_I2C0SCL,
         .sdaPin = I2CMSP432E4_PB3_I2C0SDA
+    },
+    {
+        .baseAddr = I2C7_BASE,
+        .intNum = INT_I2C7,
+        .intPriority = (~0),
+        .sclPin = I2CMSP432E4_PD0_I2C7SCL,
+        .sdaPin = I2CMSP432E4_PD1_I2C7SDA
     }
 };
 
 const I2C_Config I2C_config[MSP_EXP432E401Y_I2CCOUNT] = {
     {
         .fxnTablePtr = &I2CMSP432E4_fxnTable,
-        .object = &i2cMSP432E4Objects[MSP_EXP432E401Y_I2C7],
-        .hwAttrs = &i2cMSP432E4HWAttrs[MSP_EXP432E401Y_I2C7]
-    },
-    {
-        .fxnTablePtr = &I2CMSP432E4_fxnTable,
         .object = &i2cMSP432E4Objects[MSP_EXP432E401Y_I2C0],
         .hwAttrs = &i2cMSP432E4HWAttrs[MSP_EXP432E401Y_I2C0]
     },
+    {
+        .fxnTablePtr = &I2CMSP432E4_fxnTable,
+        .object = &i2cMSP432E4Objects[MSP_EXP432E401Y_I2C7],
+        .hwAttrs = &i2cMSP432E4HWAttrs[MSP_EXP432E401Y_I2C7]
+    }
 };
 
 const uint_least8_t I2C_count = MSP_EXP432E401Y_I2CCOUNT;
@@ -641,7 +811,7 @@ const uint_least8_t NVS_count = MSP_EXP432E401Y_NVSCOUNT;
 #include <ti/drivers/power/PowerMSP432E4.h>
 const PowerMSP432E4_Config PowerMSP432E4_config = {
     .policyFxn = &PowerMSP432E4_sleepPolicy,
-    .enablePolicy = false /* Disabled due to TIRTOS-1297 */
+    .enablePolicy = true
 };
 
 /*
@@ -816,13 +986,18 @@ __attribute__ ((aligned (32)))
 #endif
 uint16_t spiMSP432E4DMAscratchBuf[MSP_EXP432E401Y_SPICOUNT];
 
+/*
+ * NOTE: The SPI instances below can be used by the SD driver to communicate
+ * with a SD card via SPI.  The 'defaultTxBufValue' fields below are set to 0xFF
+ * to satisfy the SDSPI driver requirement.
+ */
 const SPIMSP432E4DMA_HWAttrs spiMSP432E4DMAHWAttrs[MSP_EXP432E401Y_SPICOUNT] = {
     {
         .baseAddr = SSI2_BASE,
         .intNum = INT_SSI2,
         .intPriority = (~0),
         .scratchBufPtr = &spiMSP432E4DMAscratchBuf[MSP_EXP432E401Y_SPI2],
-        .defaultTxBufValue = 0,
+        .defaultTxBufValue = 0xFF,
         .rxDmaChannel = UDMA_CH12_SSI2RX,
         .txDmaChannel = UDMA_CH13_SSI2TX,
         .minDmaTransferSize = 10,
@@ -836,7 +1011,7 @@ const SPIMSP432E4DMA_HWAttrs spiMSP432E4DMAHWAttrs[MSP_EXP432E401Y_SPICOUNT] = {
         .intNum = INT_SSI3,
         .intPriority = (~0),
         .scratchBufPtr = &spiMSP432E4DMAscratchBuf[MSP_EXP432E401Y_SPI3],
-        .defaultTxBufValue = 0,
+        .defaultTxBufValue = 0xFF,
         .minDmaTransferSize = 10,
         .rxDmaChannel = UDMA_CH14_SSI3RX,
         .txDmaChannel = UDMA_CH15_SSI3TX,
@@ -883,7 +1058,8 @@ const UARTMSP432E4_HWAttrs uartMSP432E4HWAttrs[MSP_EXP432E401Y_UARTCOUNT] = {
         .rxPin = UARTMSP432E4_PA0_U0RX,
         .txPin = UARTMSP432E4_PA1_U0TX,
         .ctsPin = UARTMSP432E4_PIN_UNASSIGNED,
-        .rtsPin = UARTMSP432E4_PIN_UNASSIGNED
+        .rtsPin = UARTMSP432E4_PIN_UNASSIGNED,
+        .errorFxn = NULL
     }
 };
 
@@ -910,7 +1086,7 @@ const WatchdogMSP432E4_HWAttrs watchdogMSP432E4HWAttrs[MSP_EXP432E401Y_WATCHDOGC
         .baseAddr = WATCHDOG0_BASE,
         .intNum = INT_WATCHDOG,
         .intPriority = (~0),
-        .reloadValue = 80000000 // 1 second period at default CPU clock freq
+        .reloadValue = 80000000 /* 1 second period at default CPU clock freq */
     },
 };
 

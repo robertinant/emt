@@ -322,7 +322,7 @@ const uint8_t digital_pin_to_adc_index[] = {
     1,           /*  25 - PE2 A1 */
     0,           /*  26 - PE3 A0 */
     4,           /*  27 - PD7 A4 */
-    NOT_ON_ADC,  /*  28 - PD6 */
+    5,           /*  28 - PD6 A5 */
     NOT_ON_ADC,  /*  29 - PM4 */
     NOT_ON_ADC,  /*  30 - PM5 */
 

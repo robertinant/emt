@@ -45,7 +45,7 @@
 #include <ti/drivers/pwm/PWMMSP432E4.h>
 
 #include <ti/drivers/ADC.h>
-//#include <ti/drivers/adc/ADCMSP432E4.h>
+#include <ti/drivers/adc/ADCMSP432E4.h>
 
 #include <ti/sysbios/family/arm/m3/Hwi.h>
 
@@ -56,6 +56,7 @@
 #include "driverlib/sysctl.h"
 
 extern GPIO_PinConfig gpioPinConfigs[];
+extern ADCMSP432E4_HWAttrsV1 adcMSP432E4HWAttrs[];
 extern ADC_Config ADC_config[];
 
 void stopAnalogWriteFxn(uint8_t);
@@ -88,6 +89,7 @@ void stopDigitalRead(uint8_t pin)
  */
  void stopDigitalWrite(uint8_t pin)
 {
+    digitalRead(pin);
 }
 
 /*
@@ -207,36 +209,26 @@ int8_t analogReadShift = 2; /* 12 - 2 = 10 bits by default */
  */
 void analogReference(uint16_t mode)
 {
-//    uint_fast16_t refVoltage;
+    uint_fast16_t refVoltage;
     uint8_t i;
 
     switch (mode) {
-        default:
-        case DEFAULT:  /* Use VCC as reference (3.3V) */
-//            refVoltage = ADCMSP432_REF_VOLTAGE_VDD;
-            break;
-
-        case INTERNAL1V2:
-//            refVoltage = ADCMSP432_REF_VOLTAGE_INT_1_2V;
-            break;
-
         case INTERNAL1V45:
-//            refVoltage = ADCMSP432_REF_VOLTAGE_INT_1_45V;
-            break;
-
+        case INTERNAL1V2:
         case INTERNAL:
         case INTERNAL2V5:
-//            refVoltage = ADCMSP432_REF_VOLTAGE_INT_2_5V;
+            refVoltage = ADCMSP432E4_VREF_INTERNAL;
             break;
 
+        case DEFAULT:  /* Use VCC as reference (3.3V) */
         case EXTERNAL:
-//            refVoltage = ADCMSP432_REF_VOLTAGE_EXT;
+            refVoltage = ADCMSP432E4_VREF_EXTERNAL_3V;
             break;
     }
 
     /* update all adc HWAttrs accordingly */
     for (i = 0; i < 24; i++) {
-//        adcMSP432HWAttrs[i].refVoltage = refVoltage;
+        adcMSP432E4HWAttrs[i].refVoltage = refVoltage;
     }
 }
 
@@ -268,66 +260,4 @@ void stopAnalogReadFxn(uint8_t pin)
 void analogReadResolution(uint16_t bits)
 {
     analogReadShift = 12 - bits;
-}
-
-void myADCMSP432E4_close(ADC_Handle handle)
-{
-    uint32_t pin = (uint32_t)handle->object;
-    uint8_t port = (gpioPinConfigs[pin] >> 8) & 0xff;
-
-    /* disable clock/power to port */
-    Power_releaseDependency(GPIOMSP432E4_getPowerResourceId(port));
-}
-
-int_fast16_t myADCMSP432E4_convert(ADC_Handle handle, uint16_t *val)
-{
-    uint32_t hwiKey;
-    uint32_t pin = (uint32_t)handle->object;
-    uint8_t port = (gpioPinConfigs[pin] >> 8) & 0xff;
-    uint8_t mask = gpioPinConfigs[pin] & 0xff;
-    uint32_t portBase = GPIO_PORTA_BASE + (port * 0x1000);
-    uint16_t value[1];
-    uint32_t channel = digital_pin_to_adc_index[pin];
-    if (channel > 0xf) channel |= 0x100;
-
-    hwiKey = Hwi_disable();
-
-    ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_ADC0);
-
-    if (channel != ADC_CTL_TS)
-        ROM_GPIOPinTypeADC((uint32_t) portBase, mask);
-
-    ROM_ADCSequenceConfigure(ADC0_BASE, 3, ADC_TRIGGER_PROCESSOR, 0);
-    ROM_ADCSequenceStepConfigure(ADC0_BASE, 3, 0, channel | ADC_CTL_IE | ADC_CTL_END);
-    ROM_ADCSequenceEnable(ADC0_BASE, 3);
-
-    ROM_ADCIntClear(ADC0_BASE, 3);
-    ROM_ADCProcessorTrigger(ADC0_BASE, 3);
-
-    while(!ROM_ADCIntStatus(ADC0_BASE, 3, false)) {
-    }
-
-    ROM_ADCIntClear(ADC0_BASE, 3);
-    ROM_ADCSequenceDataGet(ADC0_BASE, 3, (uint32_t*) value);
-
-    Hwi_restore(hwiKey);
-
-    *val = value[0];
-    return (ADC_STATUS_SUCCESS);
-}
-
-
-void myADCMSP432E4_init(ADC_Handle handle)
-{
-}
-
-ADC_Handle myADCMSP432E4_open(ADC_Handle handle, ADC_Params *params)
-{
-    uint32_t pin = (uint32_t)handle->object;
-    uint8_t port = (gpioPinConfigs[pin] >> 8) & 0xff;
-
-    /* enable clock/power to port */
-    Power_setDependency(GPIOMSP432E4_getPowerResourceId(port));
-
-    return (handle);
 }
