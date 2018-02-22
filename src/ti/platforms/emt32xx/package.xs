@@ -8,6 +8,22 @@ function init()
         return;
     }
 
+    /* the following section is needed to work around an problem in the rts
+     * packages for arm: both TI and Gnu boot files define a .bootVects
+     * section, but only TI creates the section below (if it's not already
+     * defined).
+     * 
+     * The issue is that, if the TI rts package defines this sectios it _also_ 
+     * places this section at 0 but the CC3200 does not have 0 in the link
+     * memory map(!) this triggers a link error.
+     * 
+     * In order to link with SYS/BIOS, we should set the type to "DESCT" 
+     * because SYS/BIOS will replces this section with its own.
+     * 
+     * In order to link without SYS/BIOS, type should not be set and the
+     * address should be set to 0x20004000
+     */
+
     if (Program.sectMap[".bootVecs"] === undefined) {
         Program.sectMap[".bootVecs"] = new Program.SectionSpec();
         Program.sectMap[".bootVecs"].loadAddress = 0x20004000;

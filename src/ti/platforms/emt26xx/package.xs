@@ -7,11 +7,6 @@ function init()
     if (xdc.om.$name != 'cfg') {
         return;
     }
-
-    if (Program.sectMap[".bootVecs"] === undefined) {
-        Program.sectMap[".bootVecs"] = new Program.SectionSpec();
-        Program.sectMap[".bootVecs"].loadAddress = 0x20004000;
-    }
 }
 
 /*
