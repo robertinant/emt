@@ -8,6 +8,6 @@ echo "pushing local git repo to gitorious ..."
 (cd ../emt.git; git push --all; git push --tags)
 
 echo "pushing board packages to energia.nu ..."
-./push.ksh
+#./push.ksh
 
 echo "done."
