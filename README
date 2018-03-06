@@ -1,4 +1,4 @@
-				emt-e16
+				emt-e17
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -118,21 +118,11 @@ NOTE
 ========================================================================
 ADDITIONS
 
-ti.runtime.wiring.cc13x2
-        added initial Agama support (using 3.50.0.11  core  SDK)
-
-ti.runtime.wiring.cc13x2.variants.EK_TM4C1294XL
-        added EK_TM4C1294XL launchpad support
-
 DELETIONS
 
 CHANGES
 
-ti.runtime.wirint.msp432e
-        rework MSP_EXP432E401Y board support to use new ADC driver
-
-*
-        misc rework to match 3.50 CoreSDK TI-Driver extensions
+rebuilt to recover board packages for all devices
 
 MRS
 

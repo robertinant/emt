@@ -4,7 +4,7 @@ echo "removing uncompressed closures ..."
 base=./src/bundles/energia
 rm -rf $base/msp432/closure $base/cc3200/closure $base/cc26xx/closure
 
-echo "pushing local git repo to gitorious ..."
+echo "pushing local git repo to bitbucket ..."
 (cd ../emt.git; git push --all; git push --tags)
 
 echo "pushing board packages to energia.nu ..."
