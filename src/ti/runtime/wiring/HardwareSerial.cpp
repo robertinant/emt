@@ -412,6 +412,15 @@ void serialEvent() { }
 void serialEvent1() __attribute__((weak));
 void serialEvent1() { }
 
+void serialEvent2() __attribute__((weak));
+void serialEvent2() { }
+
+void serialEvent3() __attribute__((weak));
+void serialEvent3() { }
+
+void serialEvent4() __attribute__((weak));
+void serialEvent4() { }
+
 void serialEventRun(void)
 {
     if (Serial.available()) {
@@ -423,5 +432,26 @@ void serialEventRun1(void)
 {
     if (Serial1.available()) {
         serialEvent1();
+    }
+}
+
+void serialEventRun2(void)
+{
+    if (Serial2.available()) {
+        serialEvent2();
+    }
+}
+
+void serialEventRun3(void)
+{
+    if (Serial3.available()) {
+        serialEvent3();
+    }
+}
+
+void serialEventRun4(void)
+{
+    if (Serial4.available()) {
+        serialEvent4();
     }
 }

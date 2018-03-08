@@ -741,39 +741,90 @@ const GPIOMSP432E4_Config GPIOMSP432E4_config = {
 #include <ti/drivers/I2C.h>
 #include <ti/drivers/i2c/I2CMSP432E4.h>
 
-I2CMSP432E4_Object i2cMSP432E4Objects[MSP_EXP432E401Y_I2CCOUNT];
+#define Board_I2CCOUNT 5
 
-const I2CMSP432E4_HWAttrs i2cMSP432E4HWAttrs[MSP_EXP432E401Y_I2CCOUNT] = {
+I2CMSP432E4_Object i2cMSP432E4Objects[Board_I2CCOUNT];
+
+const I2CMSP432E4_HWAttrs i2cMSP432E4HWAttrs[Board_I2CCOUNT] = {
+    /* Wire */
     {
         .baseAddr = I2C0_BASE,
         .intNum = INT_I2C0,
         .intPriority = (~0),
-        .sclPin = I2CMSP432E4_PB2_I2C0SCL,
+        .sclPin  = I2CMSP432E4_PB2_I2C0SCL,
         .sdaPin = I2CMSP432E4_PB3_I2C0SDA
     },
+    /* Wire1 */
+    {
+        .baseAddr = I2C2_BASE,
+        .intNum = INT_I2C2,
+        .intPriority = (~0),
+        .sclPin  = I2CMSP432E4_PN5_I2C2SCL,
+        .sdaPin = I2CMSP432E4_PN4_I2C2SDA
+    },
+    /* Wire2 */
     {
         .baseAddr = I2C7_BASE,
         .intNum = INT_I2C7,
         .intPriority = (~0),
-        .sclPin = I2CMSP432E4_PD0_I2C7SCL,
+        .sclPin  = I2CMSP432E4_PD0_I2C7SCL,
         .sdaPin = I2CMSP432E4_PD1_I2C7SDA
-    }
-};
-
-const I2C_Config I2C_config[MSP_EXP432E401Y_I2CCOUNT] = {
-    {
-        .fxnTablePtr = &I2CMSP432E4_fxnTable,
-        .object = &i2cMSP432E4Objects[MSP_EXP432E401Y_I2C0],
-        .hwAttrs = &i2cMSP432E4HWAttrs[MSP_EXP432E401Y_I2C0]
     },
+    /* Wire3 */
     {
-        .fxnTablePtr = &I2CMSP432E4_fxnTable,
-        .object = &i2cMSP432E4Objects[MSP_EXP432E401Y_I2C7],
-        .hwAttrs = &i2cMSP432E4HWAttrs[MSP_EXP432E401Y_I2C7]
+        .baseAddr = I2C8_BASE,
+        .intNum = INT_I2C8,
+        .intPriority = (~0),
+        .sclPin  = I2CMSP432E4_PA2_I2C8SCL,
+        .sdaPin = I2CMSP432E4_PA3_I2C8SDA
+    },
+    /* Wire4 */
+    {
+        .baseAddr = I2C2_BASE,
+        .intNum = INT_I2C2,
+        .intPriority = (~0),
+        .sclPin  = I2CMSP432E4_PL1_I2C2SCL,
+        .sdaPin = I2CMSP432E4_PL0_I2C2SDA
     }
 };
 
-const uint_least8_t I2C_count = MSP_EXP432E401Y_I2CCOUNT;
+/*
+ *  ======== I2C_config ========
+ */
+const I2C_Config I2C_config[Board_I2CCOUNT] = {
+    /* Wire */
+    {
+        .fxnTablePtr = &I2CMSP432E4_fxnTable,
+        .object = &i2cMSP432E4Objects[0],
+        .hwAttrs = &i2cMSP432E4HWAttrs[0]
+    },
+    /* Wire1 */
+    {
+        .fxnTablePtr = &I2CMSP432E4_fxnTable,
+        .object = &i2cMSP432E4Objects[1],
+        .hwAttrs = &i2cMSP432E4HWAttrs[1]
+    },
+    /* Wire2 */
+    {
+        .fxnTablePtr = &I2CMSP432E4_fxnTable,
+        .object = &i2cMSP432E4Objects[2],
+        .hwAttrs = &i2cMSP432E4HWAttrs[2]
+    },
+    /* Wire3 */
+    {
+        .fxnTablePtr = &I2CMSP432E4_fxnTable,
+        .object = &i2cMSP432E4Objects[3],
+        .hwAttrs = &i2cMSP432E4HWAttrs[3]
+    },
+    /* Wire4 */
+    {
+        .fxnTablePtr = &I2CMSP432E4_fxnTable,
+        .object = &i2cMSP432E4Objects[4],
+        .hwAttrs = &i2cMSP432E4HWAttrs[4]
+    }
+};
+
+const uint_least8_t I2C_count = Board_I2CCOUNT;
 
 /*
  *  =============================== NVS ===============================
@@ -992,6 +1043,7 @@ uint16_t spiMSP432E4DMAscratchBuf[MSP_EXP432E401Y_SPICOUNT];
  * to satisfy the SDSPI driver requirement.
  */
 const SPIMSP432E4DMA_HWAttrs spiMSP432E4DMAHWAttrs[MSP_EXP432E401Y_SPICOUNT] = {
+    /* SPI */
     {
         .baseAddr = SSI2_BASE,
         .intNum = INT_SSI2,
@@ -1006,6 +1058,7 @@ const SPIMSP432E4DMA_HWAttrs spiMSP432E4DMAHWAttrs[MSP_EXP432E401Y_SPICOUNT] = {
         .xdat0PinMask = SPIMSP432E4_PD1_SSI2XDAT0,
         .xdat1PinMask = SPIMSP432E4_PD0_SSI2XDAT1
     },
+    /* SPI1 */
     {
         .baseAddr = SSI3_BASE,
         .intNum = INT_SSI3,
@@ -1043,35 +1096,127 @@ const uint_least8_t SPI_count = MSP_EXP432E401Y_SPICOUNT;
 #include <ti/drivers/UART.h>
 #include <ti/drivers/uart/UARTMSP432E4.h>
 
-UARTMSP432E4_Object uartMSP432E4Objects[MSP_EXP432E401Y_UARTCOUNT];
-unsigned char uartMSP432E4RingBuffer[MSP_EXP432E401Y_UARTCOUNT][32];
+#define Board_UARTCOUNT 5
 
-/* UART configuration structure */
-const UARTMSP432E4_HWAttrs uartMSP432E4HWAttrs[MSP_EXP432E401Y_UARTCOUNT] = {
-    {
-        .baseAddr = UART0_BASE,
-        .intNum = INT_UART0,
-        .intPriority = (~0),
-        .flowControl = UARTMSP432E4_FLOWCTRL_NONE,
-        .ringBufPtr  = uartMSP432E4RingBuffer[MSP_EXP432E401Y_UART0],
-        .ringBufSize = sizeof(uartMSP432E4RingBuffer[MSP_EXP432E401Y_UART0]),
-        .rxPin = UARTMSP432E4_PA0_U0RX,
-        .txPin = UARTMSP432E4_PA1_U0TX,
-        .ctsPin = UARTMSP432E4_PIN_UNASSIGNED,
-        .rtsPin = UARTMSP432E4_PIN_UNASSIGNED,
-        .errorFxn = NULL
-    }
+static unsigned char uartMSP432E4RingBuffer0[32];
+UARTMSP432E4_Object uartMSP432E4Objects0;
+
+/* Serial */
+static const UARTMSP432E4_HWAttrs uartMSP432E4HWAttrs0 = {
+    .baseAddr           = UART0_BASE,
+    .intNum             = INT_UART0,
+    .intPriority        = (~0),
+    .flowControl        = UARTMSP432E4_FLOWCTRL_NONE,
+    .ringBufPtr         = uartMSP432E4RingBuffer0,
+    .ringBufSize        = sizeof(uartMSP432E4RingBuffer0),
+    .rxPin              = UARTMSP432E4_PA0_U0RX,
+    .txPin              = UARTMSP432E4_PA1_U0TX,
+    .ctsPin             = UARTMSP432E4_PIN_UNASSIGNED, 
+    .rtsPin             = UARTMSP432E4_PIN_UNASSIGNED, 
+    .errorFxn           = NULL
 };
 
-const UART_Config UART_config[MSP_EXP432E401Y_UARTCOUNT] = {
-    {
+static unsigned char uartMSP432E4RingBuffer1[32];
+UARTMSP432E4_Object uartMSP432E4Objects1;
+
+/* Serial1 */
+static const UARTMSP432E4_HWAttrs uartMSP432E4HWAttrs1 = {
+    .baseAddr           = UART7_BASE,
+    .intNum             = INT_UART7,
+    .intPriority        = (~0),
+    .flowControl        = UARTMSP432E4_FLOWCTRL_NONE,
+    .ringBufPtr         = uartMSP432E4RingBuffer1,
+    .ringBufSize        = sizeof(uartMSP432E4RingBuffer1),
+    .rxPin              = UARTMSP432E4_PC4_U7RX,
+    .txPin              = UARTMSP432E4_PC5_U7TX,
+    .ctsPin             = UARTMSP432E4_PIN_UNASSIGNED, 
+    .rtsPin             = UARTMSP432E4_PIN_UNASSIGNED, 
+    .errorFxn           = NULL
+};
+
+static unsigned char uartMSP432E4RingBuffer2[32];
+UARTMSP432E4_Object uartMSP432E4Objects2;
+
+/* Serial2 */
+static const UARTMSP432E4_HWAttrs uartMSP432E4HWAttrs2 = {
+    .baseAddr           = UART6_BASE,
+    .intNum             = INT_UART6,
+    .intPriority        = (~0),
+    .flowControl        = UARTMSP432E4_FLOWCTRL_NONE,
+    .ringBufPtr         = uartMSP432E4RingBuffer2,
+    .ringBufSize        = sizeof(uartMSP432E4RingBuffer2),
+    .rxPin              = UARTMSP432E4_PP0_U6RX,
+    .txPin              = UARTMSP432E4_PP1_U6TX,
+    .ctsPin             = UARTMSP432E4_PIN_UNASSIGNED, 
+    .rtsPin             = UARTMSP432E4_PIN_UNASSIGNED, 
+    .errorFxn           = NULL
+};
+
+static unsigned char uartMSP432E4RingBuffer3[32];
+UARTMSP432E4_Object uartMSP432E4Objects3;
+
+/* Serial3 */
+static const UARTMSP432E4_HWAttrs uartMSP432E4HWAttrs3 = {
+    .baseAddr           = UART3_BASE,
+    .intNum             = INT_UART3,
+    .intPriority        = (~0),
+    .flowControl        = UARTMSP432E4_FLOWCTRL_NONE,
+    .ringBufPtr         = uartMSP432E4RingBuffer3,
+    .ringBufSize        = sizeof(uartMSP432E4RingBuffer3),
+    .rxPin              = UARTMSP432E4_PA4_U3RX,
+    .txPin              = UARTMSP432E4_PA5_U3TX,
+    .ctsPin             = UARTMSP432E4_PIN_UNASSIGNED, 
+    .rtsPin             = UARTMSP432E4_PIN_UNASSIGNED, 
+    .errorFxn           = NULL
+};
+
+static unsigned char uartMSP432E4RingBuffer4[32];
+UARTMSP432E4_Object uartMSP432E4Objects4;
+
+/* Serial4 */
+static const UARTMSP432E4_HWAttrs uartMSP432E4HWAttrs4 = {
+    .baseAddr           = UART4_BASE,
+    .intNum             = INT_UART4,
+    .intPriority        = (~0),
+    .flowControl        = UARTMSP432E4_FLOWCTRL_NONE,
+    .ringBufPtr         = uartMSP432E4RingBuffer4,
+    .ringBufSize        = sizeof(uartMSP432E4RingBuffer4),
+    .rxPin              = UARTMSP432E4_PK0_U4RX,
+    .txPin              = UARTMSP432E4_PK1_U4TX,
+    .ctsPin             = UARTMSP432E4_PIN_UNASSIGNED, 
+    .rtsPin             = UARTMSP432E4_PIN_UNASSIGNED, 
+    .errorFxn           = NULL
+};
+
+const UART_Config UART_config[Board_UARTCOUNT] = {
+    {   // Serial
         .fxnTablePtr = &UARTMSP432E4_fxnTable,
-        .object = &uartMSP432E4Objects[MSP_EXP432E401Y_UART0],
-        .hwAttrs = &uartMSP432E4HWAttrs[MSP_EXP432E401Y_UART0]
-    }
+        .object      = &uartMSP432E4Objects0,
+        .hwAttrs     = &uartMSP432E4HWAttrs0
+    },
+    {   // Serial1
+        .fxnTablePtr = &UARTMSP432E4_fxnTable,
+        .object      = &uartMSP432E4Objects1,
+        .hwAttrs     = &uartMSP432E4HWAttrs1
+    },
+    {   // Serial2
+        .fxnTablePtr = &UARTMSP432E4_fxnTable,
+        .object      = &uartMSP432E4Objects2,
+        .hwAttrs     = &uartMSP432E4HWAttrs2
+    },
+    {   // Serial3
+        .fxnTablePtr = &UARTMSP432E4_fxnTable,
+        .object      = &uartMSP432E4Objects3,
+        .hwAttrs     = &uartMSP432E4HWAttrs3
+    },
+    {   // Serial4
+        .fxnTablePtr = &UARTMSP432E4_fxnTable,
+        .object      = &uartMSP432E4Objects4,
+        .hwAttrs     = &uartMSP432E4HWAttrs4
+    },
 };
 
-const uint_least8_t UART_count = MSP_EXP432E401Y_UARTCOUNT;
+const uint_least8_t UART_count = Board_UARTCOUNT;
 
 /*
  *  =============================== Watchdog ===============================
