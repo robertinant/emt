@@ -37,3 +37,6 @@
  */
 TwoWire Wire;
 TwoWire Wire1(1);
+TwoWire Wire2(2);
+TwoWire Wire3(3);
+TwoWire Wire4(4);
