@@ -1,4 +1,4 @@
-				emt-e17
+				emt-e18
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -122,7 +122,11 @@ DELETIONS
 
 CHANGES
 
-rebuilt to recover board packages for all devices
+./imports.mak
+        switch to GA of 3.50 CoreSDK
+
+ti.runtime.wiring + ti.runtime.wiring.msp432e
+         Add all SPI, Wire, and Serial instances defined for MSP432E variants
 
 MRS
 
