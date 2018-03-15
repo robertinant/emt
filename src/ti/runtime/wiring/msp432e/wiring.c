@@ -159,3 +159,16 @@ void getSpiInfo(void *spi, SpiInfo *spiInfo)
     spiInfo->transferModePtr = &obj->transferMode;
     spiInfo->minDmaTransferSize = hwAttrs->minDmaTransferSize;
 }
+
+/*
+ *  ======== NDK_hookInit ========
+ */
+/*
+ * Provide a weakly defined version of the NDK's Task register hook function
+ * for when an application doesn't use NDK and doesn't link with the NDK
+ * libraries.
+ */
+void NDK_hookInit(int) __attribute__((weak));
+void NDK_hookInit(int x)
+{
+}
