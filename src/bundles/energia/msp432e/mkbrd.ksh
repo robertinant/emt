@@ -6,9 +6,9 @@
 #
 #  cc32xx uses the M4 target  => GCC libs install-native/*/lib/armv7e-m
 #  msp432 uses the M4F target => GCC libs install-native/*/lib/armv7e-m/fpu
-#  msp432e uses the M4F target => GCC libs install-native/*/lib/armv7e-m/fpu
 #  cc26xx uses the M3 target  => GCC libs install-native/*/lib/armv7-m
 #  cc13xx uses the M3 target  => GCC libs install-native/*/lib/armv7-m
+#  cc13x2 uses the M4F target => GCC libs install-native/*/lib/armv7e-m/fpu
 #
 #  CORE   = the directory name appearing in <closure>/ti/runtime/wiring/<core>
 #  SRCDIR = directory containing this file
@@ -26,9 +26,6 @@
 #          <board_n>
 #
 usage="usage: <path_to_emt_source_archive> <sdk-directory>"
-
-# the GNULIB for msp432
-#GNULIB="armv7e-m"
 
 XDCBIN=$TOOLS/vendors/xdc/xdctools_3_50_02_20_core/Linux/bin
 if [ ! -d $XDCBIN ]; then

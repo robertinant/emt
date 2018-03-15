@@ -27,9 +27,6 @@
 #
 usage="usage: <path_to_emt_source_archive> <sdk-directory>"
 
-# the GNULIB for cc13x2
-#GNULIB="armv7-m"
-
 XDCBIN=$TOOLS/vendors/xdc/xdctools_3_50_02_20_core/Linux/bin
 if [ ! -d $XDCBIN ]; then
     echo "$0: XDCBIN does not exist: $XDCBIN"
