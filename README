@@ -1,4 +1,4 @@
-				emt-e18
+				emt-e19
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -122,11 +122,14 @@ DELETIONS
 
 CHANGES
 
-./imports.mak
-        switch to GA of 3.50 CoreSDK
+bundles/energia/msp432e
+    Add NDK Task hook to msp432e .cfg file
 
-ti.runtime.wiring + ti.runtime.wiring.msp432e
-         Add all SPI, Wire, and Serial instances defined for MSP432E variants
+ti.runtime.wiring.msp432e
+    Add weak definition of NDK hook for non-NDK sketches
+
+bundles/energia/*
+    unify mkboard scripts (in prep for creating one for all)
 
 MRS
 
