@@ -1,4 +1,4 @@
-				emt-e19
+				emt-e20
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -115,6 +115,8 @@ NOTE
     and can be safely ignored for the time being:
         warning: ti.sysbios.family.arm.msp432.init.Boot: "/db/vendors/ti/msp432_sdk/simplelink_msp432p4_sdk_1_50_00_06/kernel/tirtos/packages/ti/sysbios/family/arm/msp432/init/Boot.xs", line 120: ti.sysbios.family.arm.msp432.init.Boot : Unknown device: MSP432P401R. Assuming MSP432P401P compatible.
 
+    s3cmd is from wget https://github.com/s3tools/s3cmd/releases/download/v2.0.1/s3cmd-2.0.1.zip
+
 ========================================================================
 ADDITIONS
 
@@ -122,14 +124,13 @@ DELETIONS
 
 CHANGES
 
-bundles/energia/msp432e
-    Add NDK Task hook to msp432e .cfg file
+./push.ksh
+        use S3 in lieu of lftp to transfer board packages to energia.nu
 
-ti.runtime.wiring.msp432e
-    Add weak definition of NDK hook for non-NDK sketches
 
-bundles/energia/*
-    unify mkboard scripts (in prep for creating one for all)
+ti/runtime/wiring/msp432
+        Removed our local copy of the PWMTimerMSP432.c file
 
 MRS
 
+ENERGIAMT-20 analogWrite() clobbers adjacent pins
