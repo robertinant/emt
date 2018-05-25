@@ -2030,7 +2030,7 @@ static int consoleHandler_drwtest(const char * line)
 #if NVSTEST_CMD == 1
 #include  <ti/drivers/NVS.h>
 
-static int consoleHandler_nvstest(const char *line)
+static int consoleHandler_nvstestx(const char *line)
 {
     NVS_Handle handle;
     NVS_Params nvsParams;
@@ -2100,3 +2100,36 @@ static int consoleHandler_nvstest(const char *line)
     return (RETURN_SUCCESS);
 }
 #endif
+
+#include <xdc/runtime/Types.h>
+#include <ti/sysbios/family/arm/lm4/TimestampProvider.h>
+
+static int consoleHandler_nvstest(const char *line)
+{
+   uint32_t ui32TimeInUs;
+   static uint32_t ui32Time0 = 0;
+   static uint32_t frequency;
+   Types_FreqHz freq;
+
+   if (ui32Time0 == 0) {
+       ui32Time0 = TimestampProvider_get32();
+       TimestampProvider_getFreq(&freq);
+       frequency = freq.lo / 1000000;
+   }
+
+   Serial.print("Frequency = ");
+   Serial.print(frequency);
+   Serial.print(", ");
+   Serial.print("t0 = ");
+   Serial.print(ui32Time0);
+   Serial.print(", ");
+   Serial.print("ui32Time = ");
+   Serial.print(ui32TimeInUs);
+   Serial.print(", ");
+
+   ui32TimeInUs = TimestampProvider_get32();
+   ui32TimeInUs = (ui32TimeInUs - ui32Time0) / frequency;
+
+   Serial.print("ui32TimeInUs = ");
+   Serial.println(ui32TimeInUs);
+}

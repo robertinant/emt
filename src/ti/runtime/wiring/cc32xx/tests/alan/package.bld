@@ -17,11 +17,11 @@ var INCS = '-I"' + DLIBROOT + '" '
 
 Pkg.uses = ["ti/runtime/wiring", "ti/runtime/wiring/cc32xx"];
 
-var PLATFORM = "ti.platforms.emt32xx:CC3220S_LAUNCHXL";
-var DEFS = "-Dxdc__nolocalstring=1 -DBOARD_CC3220S_LAUNCHXL";
+//var PLATFORM = "ti.platforms.emt32xx:CC3220S_LAUNCHXL";
+//var DEFS = "-Dxdc__nolocalstring=1 -DBOARD_CC3220S_LAUNCHXL";
 
-//var PLATFORM = "ti.platforms.emt32xx:CC3220SF_LAUNCHXL";
-//var DEFS = "-Dxdc__nolocalstring=1 -DBOARD_CC3220SF_LAUNCHXL";
+var PLATFORM = "ti.platforms.emt32xx:CC3220SF_LAUNCHXL";
+var DEFS = "-Dxdc__nolocalstring=1 -DBOARD_CC3220SF_LAUNCHXL";
 
 var MAIN = "main.cpp";
 var SRCS = getSources(".");
