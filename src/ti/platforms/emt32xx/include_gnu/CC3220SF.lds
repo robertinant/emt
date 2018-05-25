@@ -63,6 +63,7 @@ SECTIONS {
     .rodata : {
         *(.rodata)
         *(.rodata*)
+        . = ALIGN (4);
     } > REGION_TEXT AT> REGION_TEXT
 
     .data : ALIGN (4) {
