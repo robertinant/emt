@@ -6,9 +6,11 @@ Pkg.attrs.exportAll = true;
 
 Pkg.uses = ["ti/runtime/wiring"];
 
-var PLATFORM = "ti.platforms.emt13x2:CC1352R1_LAUNCHXL";
-var DEFS = "-Dxdc__nolocalstring=1 -DBOARD_CC1352R1_LAUNCHXL";
+//var PLATFORM = "ti.platforms.emt13x2:CC1352R1_LAUNCHXL";
+//var DEFS = "-Dxdc__nolocalstring=1 -DBOARD_CC1352R1_LAUNCHXL";
 
+var PLATFORM = "ti.platforms.emt13x2:CC26X2R1_LAUNCHXL";
+var DEFS = "-Dxdc__nolocalstring=1 -DBOARD_CC26X2R1_LAUNCHXL";
 
 DEFS += " -DDeviceFamily_CC13X2 ";
 

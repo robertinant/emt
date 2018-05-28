@@ -217,8 +217,8 @@ GPIO_PinConfig gpioPinConfigs[] = {
     /* pins 1-10 */
     GPIOCC26XX_EMPTY_PIN | GPIO_DO_NOT_CONFIG,  /*  1  - 3.3V */
     GPIOCC26XX_DIO_23 | GPIO_DO_NOT_CONFIG,     /*  2  - DIO_23 */
-    GPIOCC26XX_DIO_03 | GPIO_DO_NOT_CONFIG,     /*  3  - DIO_03 */
-    GPIOCC26XX_DIO_02 | GPIO_DO_NOT_CONFIG,     /*  4  - DIO_02 */
+    GPIOCC26XX_DIO_02 | GPIO_DO_NOT_CONFIG,     /*  3  - DIO_02 */
+    GPIOCC26XX_DIO_03 | GPIO_DO_NOT_CONFIG,     /*  4  - DIO_03 */
     GPIOCC26XX_DIO_22 | GPIO_DO_NOT_CONFIG,     /*  5  - DIO_22 */
     GPIOCC26XX_DIO_24 | GPIO_DO_NOT_CONFIG,     /*  6  - DIO_24 */
     GPIOCC26XX_DIO_10 | GPIO_DO_NOT_CONFIG,     /*  7  - DIO_10 */
@@ -494,12 +494,12 @@ PINCC26XX_HWAttrs PINCC26XX_hwAttrs = {
  */
 
 #include <ti/drivers/Power.h>
-#include <ti/drivers/power/PowerCC26XX.h>
+#include <ti/drivers/power/PowerCC26X2.h>
 
 /*
  *  ======== PowerCC26XX_config ========
  */
-const PowerCC26XX_Config PowerCC26X2_config = {
+const PowerCC26X2_Config PowerCC26X2_config = {
     .policyInitFxn      = NULL,
     .policyFxn          = &PowerCC26XX_standbyPolicy,
     .calibrateFxn       = &PowerCC26XX_calibrate,

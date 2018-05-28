@@ -6,11 +6,11 @@ Pkg.attrs.exportAll = true;
 
 Pkg.uses = ["ti/runtime/wiring"];
 
-//var PLATFORM = "ti.platforms.emt432e:MSP_EXP432E401Y";
-//var DEFS = "-Dxdc__nolocalstring=1 -DBOARD_MSP_EXP432E401Y";
+var PLATFORM = "ti.platforms.emt432e:MSP_EXP432E401Y";
+var DEFS = "-Dxdc__nolocalstring=1 -DBOARD_MSP_EXP432E401Y";
 
-var PLATFORM = "ti.platforms.emt432e:EK_TM4C1294XL";
-var DEFS = "-Dxdc__nolocalstring=1 -DBOARD_EK_TM4C1294XL";
+//var PLATFORM = "ti.platforms.emt432e:EK_TM4C1294XL";
+//var DEFS = "-Dxdc__nolocalstring=1 -DBOARD_EK_TM4C1294XL";
 
 var SRCS = getSources(".");
 var MAIN = "main.cpp";

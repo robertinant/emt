@@ -489,17 +489,17 @@ PINCC26XX_HWAttrs PINCC26XX_hwAttrs = {
     .swiPriority = 0
 };
 
-/* 
+/*
  *  =============================== Power ===============================
  */
 
 #include <ti/drivers/Power.h>
-#include <ti/drivers/power/PowerCC26XX.h>
+#include <ti/drivers/power/PowerCC26X2.h>
 
 /*
  *  ======== PowerCC26XX_config ========
  */
-const PowerCC26XX_Config PowerCC26X2_config = {
+const PowerCC26X2_Config PowerCC26X2_config = {
     .policyInitFxn      = NULL,
     .policyFxn          = &PowerCC26XX_standbyPolicy,
     .calibrateFxn       = &PowerCC26XX_calibrate,
