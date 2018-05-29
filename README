@@ -1,4 +1,4 @@
-				emt-e20
+				emt-e21
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -124,13 +124,8 @@ DELETIONS
 
 CHANGES
 
-./push.ksh
-        use S3 in lieu of lftp to transfer board packages to energia.nu
-
-
-ti/runtime/wiring/msp432
-        Removed our local copy of the PWMTimerMSP432.c file
+ti/runtime/wiring/cc13x2/variants/*
+        Fix Agama Power Config + minor cleanup of pins.c comments
 
 MRS
 
-ENERGIAMT-20 analogWrite() clobbers adjacent pins
