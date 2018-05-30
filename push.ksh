@@ -5,9 +5,9 @@ if [ -r ./.lastword ]; then
 fi
 
 if [ "$PASSWORD" = "" ]; then
-    tree="`ls -dr $TREES/emt/emt-b[0-9][0-9]* | egrep -v '@|.*x$' | head -2 | tail -1`"
+    tree="`ls -dr $TREES/emt/emt-e[0-9][0-9]* | egrep -v '@|.*x$' | head -2 | tail -1`"
     if [ -r $tree/.lastword ]; then
-	export PASSWORD="`cd $tree; /bin/pwd`/.lastword`"
+	export PASSWORD="`cd $tree; /bin/pwd`/.lastword"
     else
 	echo "WARNING: energia push failed: can't read $tree"
 	echo "    you must run `/bin/pwd`/push.ksh to push the closures"
