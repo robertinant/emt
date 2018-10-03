@@ -124,8 +124,8 @@ DELETIONS
 
 CHANGES
 
-ti/runtime/wiring/cc13x2/variants/*
-        Fix Agama Power Config + minor cleanup of pins.c comments
+ti/runtime/wiring/msp432/variants/MSP_EXP432P401R
+        Add LED1 to pins_energia.h for MSP432
 
 MRS
 
