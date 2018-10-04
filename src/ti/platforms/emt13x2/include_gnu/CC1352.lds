@@ -219,7 +219,7 @@ SECTIONS {
     } > REGION_HEAP AT> REGION_HEAP
 
     /* Heap buffer used by HeapMem */
-    .priheap : {
+    .priheap (NOLOAD) : {
         . = ALIGN (8);
         __primary_heap_start__ = .;
         . += HEAPSIZE;

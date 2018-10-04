@@ -63,7 +63,7 @@ SECTIONS {
     PROVIDE (_vtable_base_address =
         DEFINED(_vtable_base_address) ? _vtable_base_address : 0x20000000);
 
-    .vtable (_vtable_base_address) : AT (_vtable_base_address) {
+    .vtable (_vtable_base_address) (NOLOAD) : AT (_vtable_base_address) {
         KEEP (*(.vtable))
     } > REGION_DATA
 
@@ -119,7 +119,7 @@ SECTIONS {
         __bss_end__ = .;
     } > REGION_BSS
 
-    .stack : ALIGN(0x8) {
+    .stack (NOLOAD) : ALIGN(0x8) {
         _stack = .;
         __stack = .;
         KEEP(*(.stack))
