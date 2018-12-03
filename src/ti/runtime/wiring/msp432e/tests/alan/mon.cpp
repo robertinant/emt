@@ -5,6 +5,7 @@
 
 #include <xdc/runtime/System.h>
 #include <xdc/runtime/Memory.h>
+#include <xdc/runtime/Timestamp.h>
 #include <xdc/runtime/Types.h>
 
 #include <ti/sysbios/BIOS.h>
@@ -53,6 +54,7 @@
 #define AWTEST_CMD 1 /* analogWrite() self test */
 #define DRWTEST_CMD 1 /* digitalRead/Write self test */
 #define NVSTEST_CMD 1 /* nvsTest self test */
+#define CLKTEST_CMD 1 /* Clock Accuracy self test */
 
 #if ARTEST_CMD == 1
 #if defined(BOARD_CC3200LP) || defined(BOARD_CC3200_LAUNCHXL) || defined(BOARD_CC3220S_LAUNCHXL) || defined(BOARD_CC3220SF_LAUNCHXL)
@@ -60,7 +62,7 @@
 #define MSP432_ARTEST_CMD 0
 #define CC26XX_ARTEST_CMD 0
 #define MSP432E_ARTEST_CMD 0
-#elif defined(BOARD_MSP432LP) || defined(BOARD_MSP_EXP432P401R)
+#elif defined(BOARD_MSP432LP) || defined(BOARD_MSP_EXP432P401R) || defined(BOARD_MSP_EXP432P4111)
 #define CC32XX_ARTEST_CMD 0
 #define MSP432_ARTEST_CMD 1
 #define CC26XX_ARTEST_CMD 0
@@ -84,7 +86,7 @@
 #define MSP432_AWTEST_CMD 0
 #define CC26XX_AWTEST_CMD 0
 #define MSP432E_AWTEST_CMD 0
-#elif defined(BOARD_MSP432LP) || defined(BOARD_MSP_EXP432P401R)
+#elif defined(BOARD_MSP432LP) || defined(BOARD_MSP_EXP432P401R) || defined(BOARD_MSP_EXP432P4111)
 #define CC32XX_AWTEST_CMD 0
 #define MSP432_AWTEST_CMD 1
 #define CC26XX_AWTEST_CMD 0
@@ -108,7 +110,7 @@
 #define MSP432_DRWTEST_CMD 0
 #define CC26XX_DRWTEST_CMD 0
 #define MSP432E_DRWTEST_CMD 0
-#elif defined(BOARD_MSP432LP) || defined(BOARD_MSP_EXP432P401R)
+#elif defined(BOARD_MSP432LP) || defined(BOARD_MSP_EXP432P401R) || defined(BOARD_MSP_EXP432P4111)
 #define CC32XX_DRWTEST_CMD 0
 #define MSP432_DRWTEST_CMD 1
 #define CC26XX_DRWTEST_CMD 0
@@ -220,6 +222,10 @@ static int consoleHandler_drwtest(const char *line);
 static int consoleHandler_nvstest(const char *line);
 #endif
 
+#if CLKTEST_CMD == 1
+static int consoleHandler_clktest(const char *line);
+#endif
+
 static char home[] = "\e[H";
 static char clear[] = "\e[2J";
 
@@ -288,6 +294,9 @@ static const struct {
 #if NVSTEST_CMD == 1
     GEN_COMMTABLE_ENTRY(nvstest, "NVS test",                    "usage: nvstest"),
 #endif
+#if CLKTEST_CMD == 1
+    GEN_COMMTABLE_ENTRY(clktest, "Clock Accuracy test",         "usage: clktest"),
+#endif
     GEN_COMMTABLE_ENTRY(help,    "Get information on commands. Usage: help [command]",  NULL),
     {NULL,NULL,NULL,NULL}   // Indicates end of table
 };
@@ -295,6 +304,7 @@ static const struct {
 void MON_SETUP(void)
 {
     SERIAL.begin(115200, true);
+//    SERIAL.begin(115200, false);
     SERIAL.println("Welcome! This is the SERIAL debug console.");
 }
 
@@ -2030,7 +2040,7 @@ static int consoleHandler_drwtest(const char * line)
 #if NVSTEST_CMD == 1
 #include  <ti/drivers/NVS.h>
 
-static int consoleHandler_nvstestx(const char *line)
+static int consoleHandler_nvstest(const char *line)
 {
     NVS_Handle handle;
     NVS_Params nvsParams;
@@ -2101,35 +2111,44 @@ static int consoleHandler_nvstestx(const char *line)
 }
 #endif
 
-#include <xdc/runtime/Types.h>
-#include <ti/sysbios/family/arm/lm4/TimestampProvider.h>
+#if CLKTEST_CMD == 1
 
-static int consoleHandler_nvstest(const char *line)
+static int consoleHandler_clktest(const char *line)
 {
-   uint32_t ui32TimeInUs;
-   static uint32_t ui32Time0 = 0;
-   static uint32_t frequency;
-   Types_FreqHz freq;
+    uint32_t ts0, ts1, ms0, ms1, us0, us1;
+    uint32_t delta = 10000;
 
-   if (ui32Time0 == 0) {
-       ui32Time0 = TimestampProvider_get32();
-       TimestampProvider_getFreq(&freq);
-       frequency = freq.lo / 1000000;
-   }
+    char *endptr = NULL;
 
-   Serial.print("Frequency = ");
-   Serial.print(frequency);
-   Serial.print(", ");
-   Serial.print("t0 = ");
-   Serial.print(ui32Time0);
-   Serial.print(", ");
-   Serial.print("ui32Time = ");
-   Serial.print(ui32TimeInUs);
-   Serial.print(", ");
+    if (*line++ == ' ') {
+        endptr = (char *)line;
+        delta = 1000 * strtoul(endptr, &endptr, 10);
+    }
 
-   ui32TimeInUs = TimestampProvider_get32();
-   ui32TimeInUs = (ui32TimeInUs - ui32Time0) / frequency;
+    Serial.print("Starting ");
+    Serial.print(delta/1000);
+    Serial.println("s delay");
 
-   Serial.print("ui32TimeInUs = ");
-   Serial.println(ui32TimeInUs);
+    ts0 = Timestamp_get32();
+    us0 = micros();
+    ms0 = millis();
+
+    delay(delta); /* wait 10 seconds */
+
+    ts1 = Timestamp_get32();
+    us1 = micros();
+    ms1 = millis();
+
+    Serial.print("10s delta Timestamp_get32 = ");
+    Serial.println(ts1-ts0);
+
+    Serial.print("10s delta micros()  = ");
+    Serial.println(us1-us0);
+
+    Serial.print("10s delta millis()  = ");
+    Serial.println(ms1-ms0);
+
+    return (RETURN_SUCCESS);
 }
+
+#endif
