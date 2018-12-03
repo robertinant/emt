@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Texas Instruments Incorporated
+ * Copyright (c) 2018, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -104,6 +104,7 @@ void stopDigitalRead(uint8_t pin)
  * The PWM scale factor is then 163200 / 255 = 640
  */
 
+#define PWM_PERIOD_IN_COUNTS 163200
 #define PWM_SCALE_FACTOR 163200/255
 
 void analogWrite(uint8_t pin, int val)
@@ -155,8 +156,8 @@ void analogWrite(uint8_t pin, int val)
         PWM_Params_init(&pwmParams);
 
         /* Open the PWM port */
-        pwmParams.periodUnits = PWM_PERIOD_US;
-        pwmParams.periodValue = 2040; /* arduino period is 2.04ms (490Hz) */
+        pwmParams.periodUnits = PWM_PERIOD_COUNTS;
+        pwmParams.periodValue = PWM_PERIOD_IN_COUNTS; /* arduino period is 2.04ms (490Hz) */
         pwmParams.dutyUnits = PWM_DUTY_COUNTS;
 
         pwmCC32XXHWAttrs[pwmIndex].pwmPin = pwmPin;

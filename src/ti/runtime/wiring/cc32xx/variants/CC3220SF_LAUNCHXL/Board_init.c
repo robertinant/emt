@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017, Texas Instruments Incorporated
+ * Copyright (c) 2015-2018, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -391,6 +391,7 @@ const PWM_FxnTable myPWMTimerCC32XX_fxnTable = {
     PWMTimerCC32XX_open,
     PWMTimerCC32XX_setDuty,
     NULL, /* PWMTimerCC32XX_setPeriod, */
+    NULL, /* PWMTimerCC32XX_setPeriodAndDuty, */
     PWMTimerCC32XX_start,
     NULL /* PWMTimerCC32XX_stop */
 };

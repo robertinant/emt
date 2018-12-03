@@ -571,6 +571,7 @@ const PWM_FxnTable myPWMTimerCC26XX_fxnTable = {
     PWMTimerCC26XX_open,
     PWMTimerCC26XX_setDuty,
     NULL, /* PWMTimerCC26XX_setPeriod, */
+    NULL, /* PWMTimerCC26XX_setPeriodAndDuty, */
     PWMTimerCC26XX_start,
     NULL /* PWMTimerCC26XX_stop */
 };

@@ -10,13 +10,13 @@ ENERGIA = /db/builds/xinstall/energia_nightly/Energia
 #
 MCPI_TREE = $(TREES)/mcpi/mcpi-3.30.00.13
 SDK_CC32XX = simplelink_cc32xx_sdk_1_50_00_01_eng
-MCPI_CC32XX_TREE =  $(TREES)/mcpi/mcpi-3.50.00.17
-MCPI_MSP432_TREE =  $(TREES)/mcpi/mcpi-3.50.00.17
-MCPI_MSP432E_TREE =  $(TREES)/mcpi/mcpi-3.50.00.17
+MCPI_CC32XX_TREE =  $(TREES)/mcpi/mcpi-3.80.00.22
+MCPI_MSP432_TREE =  $(TREES)/mcpi/mcpi-3.80.00.22
+MCPI_MSP432E_TREE =  $(TREES)/mcpi/mcpi-3.80.00.22
 SDK_MSP432 = simplelink_msp432p4_sdk_1_50_00_06
 SDK_CC13XX = simplelink_cc13x0_sdk_1_50_00_08
-MCPI_CC13XX_TREE = $(TREES)/mcpi/mcpi-3.50.00.17
-MCPI_CC13X2_TREE = $(TREES)/mcpi/mcpi-3.50.00.17
+MCPI_CC13XX_TREE = $(TREES)/mcpi/mcpi-3.80.00.22
+MCPI_CC13X2_TREE = $(TREES)/mcpi/mcpi-3.80.00.22
 
 #
 # Official SDK builds:

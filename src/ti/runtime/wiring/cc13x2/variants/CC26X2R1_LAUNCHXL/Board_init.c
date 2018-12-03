@@ -46,10 +46,10 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include <ti/devices/cc13x2_cc26x2_v1/driverlib/ioc.h>
-#include <ti/devices/cc13x2_cc26x2_v1/driverlib/udma.h>
-#include <ti/devices/cc13x2_cc26x2_v1/inc/hw_ints.h>
-#include <ti/devices/cc13x2_cc26x2_v1/inc/hw_memmap.h>
+#include <ti/devices/cc13x2_cc26x2/driverlib/ioc.h>
+#include <ti/devices/cc13x2_cc26x2/driverlib/udma.h>
+#include <ti/devices/cc13x2_cc26x2/inc/hw_ints.h>
+#include <ti/devices/cc13x2_cc26x2/inc/hw_memmap.h>
 
 #include <ti/drivers/Power.h>
 #include <ti/drivers/power/PowerCC26XX.h>
@@ -533,6 +533,7 @@ const PWM_FxnTable myPWMTimerCC26XX_fxnTable = {
     PWMTimerCC26XX_open,
     PWMTimerCC26XX_setDuty,
     NULL, /* PWMTimerCC26XX_setPeriod, */
+    NULL, /* PWMTimerCC26XX_setPeriodAndDuty, */
     PWMTimerCC26XX_start,
     NULL /* PWMTimerCC26XX_stop */
 };

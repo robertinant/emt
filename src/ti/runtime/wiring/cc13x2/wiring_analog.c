@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2016, Texas Instruments Incorporated
+ * Copyright (c) 2015-2018, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -54,8 +54,8 @@
 #include <ti/sysbios/family/arm/m3/Hwi.h>
 #include <ti/sysbios/family/arm/lm4/Timer.h>
 
-#include <ti/devices/cc13x2_cc26x2_v1/driverlib/ioc.h>
-#include <ti/devices/cc13x2_cc26x2_v1/driverlib/aux_adc.h>
+#include <ti/devices/cc13x2_cc26x2/driverlib/ioc.h>
+#include <ti/devices/cc13x2_cc26x2/driverlib/aux_adc.h>
 
 /*
  * analogWrite() support
