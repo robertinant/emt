@@ -33,7 +33,7 @@
 /*
  *  ======== Board_init.c ========
  *  This file is responsible for setting up the board specific items for the
- *  MSP_EXP432P401R Launch Pad board.
+ *  MSP_EXP432P4111 Launch Pad board.
  */
 
 #include <stdbool.h>
@@ -402,7 +402,7 @@ void Board_initGeneral(void)
 /*
  * Array of Pin configurations
  * NOTE: The order of the pin configurations must coincide with what was
- *       defined in MSP_EXP432P401R.h
+ *       defined in MSP_EXP432P4111.h
  * NOTE: Pins not used for interrupts should be placed at the end of the
  *       array.  Callback entries can be omitted from callbacks array to
  *       reduce memory usage.
@@ -507,7 +507,7 @@ GPIO_PinConfig gpioPinConfigs[] = {
 /*
  * Array of callback function pointers
  * NOTE: The order of the pin configurations must coincide with what was
- *       defined in MSP_EXP432P401R.h
+ *       defined in MSP_EXP432P4111.h
  * NOTE: Pins not used for interrupts can be omitted from callbacks array to
  *       reduce memory usage (if placed at end of gpioPinConfigs array).
  */
@@ -733,7 +733,7 @@ extern uint8_t __NVS_SIZE__;
 NVSMSP432_HWAttrs nvsMSP432HWAttrs[] = {
     {
         .regionBase = (void *)&__NVS_BASE__,   /* base of unused flash aligned on 4k boundary */
-        .regionSize = (size_t)(&__NVS_SIZE__) 
+        .regionSize = (size_t)(&__NVS_SIZE__)
     },
 };
 
@@ -769,6 +769,7 @@ const PowerMSP432_ConfigV1 PowerMSP432_config = {
 void Board_initPower(void)
 {
     Power_init();
+    Power_setConstraint(PowerMSP432_DISALLOW_DEEPSLEEP_0);
 }
 
 /*
@@ -839,7 +840,7 @@ PWMTimerMSP432_HWAttrsV2 pwmTimerMSP432HWAttrs[Board_PWMCOUNT] = {
         .pwmPin = PWMTimerMSP432_P2_7_TA1CCR4A
     },
 
-	/* fixed pin mapped PWM channels */
+    /* fixed pin mapped PWM channels */
     {
         .clockSource = TIMER_A_CLOCKSOURCE_SMCLK,
         .pwmPin = PWMTimerMSP432_P2_1_TA0CCR1A
@@ -1266,7 +1267,6 @@ void Board_init(void) {
     Board_initPower();
 }
 
-extern void delay401R(uint32_t milliseconds);
+extern void delay4111(uint32_t milliseconds);
 
-void (*delayFxn)(uint32_t milliseconds) = delay401R;
-
+void (*delayFxn)(uint32_t milliseconds) = delay4111;

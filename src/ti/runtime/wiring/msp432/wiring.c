@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017, Texas Instruments Incorporated
+ * Copyright (c) 2015-2018, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,6 +40,8 @@
 #include <ti/sysbios/knl/Task.h>
 
 #include <ti/sysbios/family/arm/m3/Hwi.h>
+
+#define ti_sysbios_family_arm_msp432_Timer__internalaccess
 #include <ti/sysbios/family/arm/msp432/Timer.h>
 
 #include <ti/drivers/Power.h>
@@ -127,12 +129,23 @@ void delayMicroseconds(unsigned int us)
     }
 }
 
+extern void (*delayFxn)(uint32_t milliseconds);
+
 /*
- *  ======== clockTickFxn ========
- *
- *  250ms Watchdog Timer interrupt handler.
+ *  ======== delay ========
  */
-void energiaClockTickFxn(uintptr_t arg)
+void delay(uint32_t milliseconds)
+{
+    delayFxn(milliseconds);
+}
+
+/* Timer created statically */
+extern Timer_Handle energiaClockTimer; /* initialized in energia.cfg file */
+
+/*
+ *  ======== energiaClockTickFxnP401R ========
+ */
+void energiaClockTickFxnP401R(uintptr_t arg)
 {
     /*
      * Bump Clock tick count by 249.
@@ -147,8 +160,6 @@ void energiaClockTickFxn(uintptr_t arg)
 
     Clock_tick();
 }
-
-extern Timer_Handle energiaClockTimer;
 
 /*
  *  ======== switchToWatchdogTimer ========
@@ -167,7 +178,7 @@ static void switchToWatchdogTimer()
 
     if (wdtHwi == NULL) {
         /* Create watchdog Timer Hwi */
-        wdtHwi = Hwi_create(19, energiaClockTickFxn, NULL, NULL);
+        wdtHwi = Hwi_create(19, energiaClockTickFxnP401R, NULL, NULL);
 
         /* set WDT to use 32KHz input, 250ms period */
         MAP_WDT_A_initIntervalTimer(WDT_A_CLOCKSOURCE_BCLK, WDT_A_CLOCKITERATIONS_8192);
@@ -212,9 +223,9 @@ static void switchToTimerA()
 }
 
 /*
- *  ======== delay ========
+ *  ======== delay401R ========
  */
-void delay(uint32_t milliseconds)
+void delay401R(uint32_t milliseconds)
 {
     if (milliseconds == 0) {
         Task_yield();
@@ -247,6 +258,52 @@ void delay(uint32_t milliseconds)
         /* always using Timer_A */
         case 2:
             break;
+    }
+
+    /* timeout is always in milliseconds so that Clock_workFunc() behaves properly */
+    Task_sleep(milliseconds);
+}
+
+/*
+ *  ======== energiaClockTickFxnP4111 ========
+ */
+void energiaClockTickFxnP4111(uintptr_t arg)
+{
+    static uint16_t error = 0;
+
+    /*
+     * Timer is clocked at 32,768Hz (ACLK).
+     *
+     * The following algorithm, derived from:
+     *   https://e2e.ti.com/support/microcontrollers/msp430/f/166/t/107222?1mSec-tick-for-OS-from-XT1-with-32768-Hz-crystal
+     * will ensure that 125 interrupts equals 125ms, to the accuracy of the
+     * timebase.
+     */
+
+    error += 96;
+
+    if (error >= 125) {
+        error -= 125;
+        energiaClockTimer->period = 33;
+    }
+    else {
+        energiaClockTimer->period = 32;
+    }
+
+    /* snapshot current timestamp for micros() */
+    clockTickTimestamp = Timestamp_get32();
+
+    Clock_tick();
+}
+
+/*
+ *  ======== delay4111 ========
+ */
+void delay4111(uint32_t milliseconds)
+{
+    if (milliseconds == 0) {
+        Task_yield();
+        return;
     }
 
     /* timeout is always in milliseconds so that Clock_workFunc() behaves properly */
