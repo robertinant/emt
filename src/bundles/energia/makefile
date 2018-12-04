@@ -1,10 +1,10 @@
 # define default set of platforms, compiler toolchains, and tests to build
-PLATFORMS ?= cc13x2 cc13xx msp432 msp432e cc32xx 
+PLATFORMS ?= cc13x2 cc13xx msp432 msp432p4111 msp432e cc32xx
 
 ifeq (,$(TESTS))
-    TESTS        = blink hello alloc string 
-    TESTS.cc32xx = pstring MultiBlink 
-    TESTS.msp432 = pstring MultiBlink 
+    TESTS        = blink hello alloc string
+    TESTS.cc32xx = pstring MultiBlink
+    TESTS.msp432 = pstring MultiBlink
 endif
 
 # define (optional) tools to run on output files to summarize footprint

@@ -58,7 +58,7 @@ JOBS = --jobs=1
 
 	@echo "======== msp432p4111-*.zip [./src/bundles/energia] ========"
 	@echo "making msp432p4111 board 'package' ..."
-	make -C src/bundles/energia PLATFORMS=msp432 all msp432p4111-$(notdir $(CURDIR)).zip
+	make -C src/bundles/energia PLATFORMS=msp432p4111 all msp432p4111-$(notdir $(CURDIR)).zip
 
 	@echo "======== msp432e-*.zip [./src/bundles/energia] ========"
 	@echo "making msp432e board 'package' ..."

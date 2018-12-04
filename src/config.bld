@@ -83,8 +83,8 @@ gnuTargets.M3.lnkOpts.suffix  += " -Wl,--no-wchar-size-warning";
 gnuTargets.M3.platform = "ti.platforms.emt26xx";
 tiTargets.M3.platform =  "ti.platforms.emt26xx";
 
-gnuTargets.M4F.platform = "ti.platforms.emt432:MSP432P401R";
-tiTargets.M4F.platform =  "ti.platforms.emt432:MSP432P401R";
+gnuTargets.M4F.platform = "ti.platforms.emt432:MSP_EXP432P401R";
+tiTargets.M4F.platform =  "ti.platforms.emt432:MSP_EXP432P401R";
 
 gnuTargets.M4.platform = "ti.platforms.emt32xx";
 tiTargets.M4.platform =  "ti.platforms.emt32xx";
