@@ -49,9 +49,10 @@ closure-$(TREE_NAME).tar.gz: $(TREE_ROOT)/exports/emt_src.zip $(CLOSURE_ZIPS)
 	./copy.ksh $<
 
 # rules to make the loadable board .zip archives
-.PHONY: board.msp432 board.cc32xx board.cc13xx board.cc13x2
+.PHONY: board.msp432 board.msp432p4111 board.cc32xx board.cc13xx board.cc13x2
 
-boards: board.msp432e board.msp432 board.msp432p4111 board.cc32xx board.cc13xx board.cc13x2
+boards: $(foreach p, $(PLATFORMS), board.$(p))
+	@echo $^ done
 
 board.cc13xx: cc13xx-$(TREE_NAME).zip
 cc13xx-$(TREE_NAME).zip: $(TREE_ROOT)/exports/emt_src.zip cc13xx/closure.zip
@@ -71,7 +72,7 @@ msp432-$(TREE_NAME).zip: $(TREE_ROOT)/exports/emt_src.zip msp432/closure.zip
 board.msp432p4111: msp432p4111-$(TREE_NAME).zip
 msp432p4111-$(TREE_NAME).zip: $(TREE_ROOT)/exports/emt_src.zip msp432p4111/closure.zip
 	@echo making $@ ...
-	./msp432p4111/mkbrd.ksh $< $(SDK.msp432)
+	./msp432p4111/mkbrd.ksh $< $(SDK.msp432) $(dir $(filter %/closure.zip,$^))
 
 board.msp432e: msp432e-$(TREE_NAME).zip
 msp432e-$(TREE_NAME).zip: $(TREE_ROOT)/exports/emt_src.zip msp432e/closure.zip
