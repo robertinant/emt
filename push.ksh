@@ -17,7 +17,7 @@ if [ "$PASSWORD" = "" ]; then
     cp -f $PASSWORD ./.lastword
 fi
 
-devices="msp432 msp432e cc13xx cc32xx"
+devices="msp432 msp432e msp432p4111 cc13xx cc32xx"
 if [ $# -gt 0 ]; then
     devices="$@"
 fi

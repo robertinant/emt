@@ -2,16 +2,20 @@
 #
 # Create Arduino board package for the core specified by a closure
 #
-#  Usage: mkbrd <path_to_emt_source_archive> <sdk-installation>
+#  Usage: mkbrd <path_to_emt_source_archive> <sdk-installation> <cfg-dir>
 #
-#  cc32xx uses the M4 target  => GCC libs install-native/*/lib/armv7e-m
-#  msp432 uses the M4F target => GCC libs install-native/*/lib/armv7e-m/fpu
-#  cc26xx uses the M3 target  => GCC libs install-native/*/lib/armv7-m
-#  cc13xx uses the M3 target  => GCC libs install-native/*/lib/armv7-m
-#  cc13x2 uses the M4F target => GCC libs install-native/*/lib/armv7e-m/fpu
+#  mkbrd generates a zip file in the current working directory with the
+#  name <cfgbase>-<version>.zip, where
+#      <cfgbase> is the basename of the directory containing the closure
+#      <version> is derived from the name of the repo's top-level directory
+#
+#  The zip file's top-level directory is a version number that is derived
+#  from the latest tag in the repo.
 #
 #  CORE   = the directory name appearing in <closure>/ti/runtime/wiring/<core>
-#  SRCDIR = directory containing this file
+#           which contains the device-specific sources for the wiring lib
+#
+#  CFGDIR = directory containing closure.zip, boards.txt, platform.txt, ...
 #
 #                        TMPDIR = temp for staging all the zip content
 #  <vers>                DSTDIR
@@ -41,6 +45,10 @@ fi
 
 srczip="$1"
 SDK="$2"
+if [ ! -d $3 ]; then
+    echo "$0: error: \'$3\' is not a directory"
+    exit 1
+fi
 if [ ! -r "$srczip" ]; then
     echo "$0: error: emt source archive is not readable: $srczip"
     exit 1
@@ -49,11 +57,10 @@ if [ ! -d "$SDK" ]; then
     echo "$0: error: core SDK is not readable: $SDK"
     exit 1
 fi
+CFGDIR="`cd $3; /bin/pwd`"
+CFGBASE="`basename $CFGDIR`"
 
 cwd=$(pwd)
-
-SRCDIR=`dirname $0`
-SRCDIR=`cd $SRCDIR; /bin/pwd`
 
 TMPDIR="`mktemp -d -t brdpkgXXX`"
 
@@ -105,11 +112,11 @@ SEMVERS="$series.$patch.0"
 # extract closure to TMPDIR
 echo "Extracting closure ..."
 FILE=closure
-if [ ! -r  "$SRCDIR/$FILE.zip" ]; then
-    echo "error: $SRCDIR/$FILE.zip is not readable"
+if [ ! -r  "$CFGDIR/$FILE.zip" ]; then
+    echo "error: $CFGDIR/$FILE.zip is not readable"
     exit 0
 fi
-unzip -q $SRCDIR/$FILE.zip -d $TMPDIR
+unzip -q $CFGDIR/$FILE.zip -d $TMPDIR
 if [ $? != "0" ]; then
     echo "error: unzip of closure to $TMPDIR/closure failed"
     exit 1
@@ -120,7 +127,7 @@ DSTDIR=$TMPDIR/$SEMVERS
 mkdir -p $DSTDIR
 
 # copy board and platform files to DSTDIR
-cp $SRCDIR/platform.txt $SRCDIR/boards.txt $DSTDIR
+cp $CFGDIR/platform.txt $CFGDIR/boards.txt $DSTDIR
 
 # get core name from closure
 CORE=`find $TMPDIR/closure/ti/runtime/wiring/*/variants -maxdepth 6 -name variants`
@@ -134,7 +141,7 @@ unzip -q $srczip -d $DSTDIR/cores
 
 # remove sources that are unrelated to the core $CORE
 echo "remove unrelated cores ..."
-for c in msp432e msp432 cc26xx cc13xx cc32xx; do
+for c in msp432 msp432e cc26xx cc13xx cc13x2 cc32xx; do
     if [ "$c" != "$CORE" ]; then
 	echo "    rm -rf $c ..."
 	rm -rf $DSTDIR/cores/emt/ti/runtime/wiring/$c
@@ -164,6 +171,13 @@ rm -rf $DSTDIR/system/kernel/tirtos/packages/ti/targets/omf/elf/docs
 rm -rf $DSTDIR/system/kernel/tirtos/packages/ti/targets/arm/rtsarm
 rm -rf $DSTDIR/system/kernel/tirtos/packages/ti/sysbios/rom/c28
 
+#
+#  cc32xx uses the M4 target  => GCC libs install-native/*/lib/armv7e-m
+#  msp432 uses the M4F target => GCC libs install-native/*/lib/armv7e-m/fpu
+#  cc26xx uses the M3 target  => GCC libs install-native/*/lib/armv7-m
+#  cc13xx uses the M3 target  => GCC libs install-native/*/lib/armv7-m
+#  cc13x2 uses the M4F target => GCC libs install-native/*/lib/armv7e-m/fpu
+#
 #echo "culling gcc libc libraries ..."
 #gld="`find $DSTDIR/system/kernel -type d -wholename '*/gnu/targets/arm/libs/install-native/arm-none-eabi/lib'`"
 #for d in `ls $gld`; do
@@ -232,8 +246,8 @@ sed -e 's|\(lib/board.*\)|/* \1 commented out by mkbrd.ksh */|' -e 's|\(ti/runti
 
 # create board archive
 echo "Creating board package zip archive ..."
-rm -f $cwd/$CORE-$VERSION.*
-cd $TMPDIR; zip -rq $cwd/$CORE-$VERSION.zip $SEMVERS
+rm -f $cwd/$CFGBASE-$VERSION.*
+cd $TMPDIR; zip -rq $cwd/$CFGBASE-$VERSION.zip $SEMVERS
 
 # cleanup
 chmod -R +w $DSTDIR/system
