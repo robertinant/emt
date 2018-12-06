@@ -1,4 +1,4 @@
-				emt-e23
+				emt-e24
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -120,16 +120,16 @@ NOTE
 ========================================================================
 ADDITIONS
 
+bundles/energia/msp432p4111
+ti/runtime/wiring/msp432
+        Add MSP432P4111 support
+
 DELETIONS
 
 CHANGES
 
-ti/platforms/launchpad
-    update GCC linker command template to mark .empty as "(NOLOAD)"
-    
-ti/platforms/*
-    update *.lds files to mark .stack and .vtable sections as "(NOLOAD)"
-    
+imports.mak
+ti/runtime/wiring/*
+        Do the needful to work with CoreSDK 3.80
 MRS
 
-ENERGIAMT-23 - objcopy of some energia executables is huge
