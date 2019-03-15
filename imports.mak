@@ -8,15 +8,15 @@ ENERGIA = /db/builds/xinstall/energia_nightly/Energia
 #
 # internal TISB trees containing imports
 #
-MCPI_TREE = $(TREES)/mcpi/mcpi-3.30.00.13
-SDK_CC32XX = simplelink_cc32xx_sdk_1_50_00_01_eng
-MCPI_CC32XX_TREE =  $(TREES)/mcpi/mcpi-3.80.00.22
-MCPI_MSP432_TREE =  $(TREES)/mcpi/mcpi-3.80.00.22
-MCPI_MSP432E_TREE =  $(TREES)/mcpi/mcpi-3.80.00.22
+MCPI_CC32XX_TREE  = $(TREES)/mcpi/mcpi-3.80.00.22
+MCPI_MSP432_TREE  = $(TREES)/mcpi/mcpi-3.80.00.22
+MCPI_MSP432E_TREE = $(TREES)/mcpi/mcpi-3.80.00.22
+MCPI_CC13XX_TREE  = $(TREES)/mcpi/mcpi-3.80.00.22
+MCPI_CC13X2_TREE  = $(TREES)/mcpi/mcpi-3.80.00.22
+
+SDK_CC32XX = simplelink_cc32xx_sdk_2_40_02_00
 SDK_MSP432 = simplelink_msp432p4_sdk_1_50_00_06
 SDK_CC13XX = simplelink_cc13x0_sdk_1_50_00_08
-MCPI_CC13XX_TREE = $(TREES)/mcpi/mcpi-3.80.00.22
-MCPI_CC13X2_TREE = $(TREES)/mcpi/mcpi-3.80.00.22
 
 #
 # Official SDK builds:
@@ -33,7 +33,7 @@ SDK.msp432e = $(firstword $(wildcard $(MCPI_MSP432E_TREE)/exports/coresdk_msp432
 #SDK.cc13xx = $(TOOLS)/vendors/ti/cc13xx_sdk/$(SDK_CC13XX)
 SDK.cc13xx = $(firstword $(wildcard $(MCPI_CC13XX_TREE)/exports/coresdk_cc13xx_*))
 SDK.cc13x2 = $(firstword $(wildcard $(MCPI_CC13X2_TREE)/exports/coresdk_cc13xx_*))
-SDK.cc26xx = $(firstword $(wildcard $(MCPI_TREE)/exports/coresdk_cc13xx_*))
+SDK.cc26xx = $(firstword $(wildcard $(MCPI_CC13XX_TREE)/exports/coresdk_cc13xx_*))
 SDK.cc32xx = $(firstword $(wildcard $(MCPI_CC32XX_TREE)/exports/coresdk_cc32xx_*))
 #SDK.cc32xx = $(TOOLS)/vendors/ti/cc3220_sdk/$(SDK_CC32XX)
 

@@ -1,4 +1,4 @@
-				emt-e24
+				emt-e25
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -120,16 +120,13 @@ NOTE
 ========================================================================
 ADDITIONS
 
-bundles/energia/msp432p4111
-ti/runtime/wiring/msp432
-        Add MSP432P4111 support
-
 DELETIONS
 
 CHANGES
 
-imports.mak
-ti/runtime/wiring/*
-        Do the needful to work with CoreSDK 3.80
+./imports.mak:
+        update to simplelink_cc32xx_sdk_2_40_02_00 (from simplelink_cc32xx_sdk_1_50_00_01_eng)
+        update CC26xx to mcpi-3.80.00.22 (from mcpi-3.30.00.13)
+
 MRS
 
