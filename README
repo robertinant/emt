@@ -1,4 +1,4 @@
-				emt-e25
+				emt-e26
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -119,14 +119,16 @@ NOTE
 
 ========================================================================
 ADDITIONS
-
+ti/runtime/wiring/cc13x2/variants/CC1312R1_LAUNCHXL
+    
 DELETIONS
 
 CHANGES
 
-./imports.mak:
-        update to simplelink_cc32xx_sdk_2_40_02_00 (from simplelink_cc32xx_sdk_1_50_00_01_eng)
-        update CC26xx to mcpi-3.80.00.22 (from mcpi-3.30.00.13)
+ti/platforms/launchpad
+    fixed linkcmd_gnu.xdt to use COPY rather than NOLOAD for the xdc.meta
+    section; for some unknown reason, NOLOAD does not retain xdc.meat in the
+    .out file but COPY does(!)
 
 MRS
 
