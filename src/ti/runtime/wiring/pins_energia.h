@@ -39,6 +39,8 @@
 #include <ti/runtime/wiring/cc13x2/variants/CC1352R1_LAUNCHXL/pins_energia.h>
 #elif defined(BOARD_CC26X2R1_LAUNCHXL)
 #include <ti/runtime/wiring/cc13x2/variants/CC26X2R1_LAUNCHXL/pins_energia.h>
+#elif defined(BOARD_LPSTK_CC1352R)
+#include <ti/runtime/wiring/cc13x2/variants/LPSTK_CC1352R/pins_energia.h>
 #endif
 
 #endif

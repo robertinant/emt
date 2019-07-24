@@ -31,3 +31,20 @@ CC1312R1_LAUNCHXL.upload.tool=dslite
 CC1312R1_LAUNCHXL.upload.protocol=dslite
 CC1312R1_LAUNCHXL.upload.maximum_size=131072
 
+LPSTK_CC1352R.vid.0=0x2341
+LPSTK_CC1352R.pid.0=0x0c9f
+LPSTK_CC1352R.name=LaunchPad w/ cc1352 EMT (48MHz)
+LPSTK_CC1352R.upload.maximum_size=16384
+LPSTK_CC1352R.upload.maximum_ram_size=2560
+LPSTK_CC1352R.build.mcu=cortex-m4
+LPSTK_CC1352R.build.f_cpu=48000000L
+LPSTK_CC1352R.build.core=cc13x2
+LPSTK_CC1352R.build.variant=LPSTK_CC1352R
+LPSTK_CC1352R.build.board=LPSTK_CC1352R
+LPSTK_CC1352R.build.ldscript=ti/runtime/wiring/cc13x2/linker.cmd
+LPSTK_CC1352R.upload.tool=dslite
+LPSTK_CC1352R.upload.protocol=dslite
+LPSTK_CC1352R.upload.maximum_size=131072
+LPSTK_CC1352R.upload.maximum_data_size=8192
+
+
