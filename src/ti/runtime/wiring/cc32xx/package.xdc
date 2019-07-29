@@ -1,4 +1,3 @@
-requires ti.tirtos;
 requires ti.runtime.wiring;
 
 /*!
