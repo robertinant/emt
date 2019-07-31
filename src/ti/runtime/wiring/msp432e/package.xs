@@ -21,14 +21,6 @@ function getLibs(prog)
 	    this);
 	return (null);
     }
-
-    /* add dpl and drivers libraries since their getLibs() are broken for msp432e */
-    dplBase = xdc.loadPackage("ti.dpl").packageBase;
-    dpllib = dplBase + "/lib/dpl_msp432e4.a" + suffix;
-
-    drvBase = xdc.loadPackage("ti.drivers").packageBase;
-    drvlib = drvBase + "/lib/drivers_msp432e4.a" + suffix;
-
     var ext = "." + suffix + ".lib";
 
     /* generate an variant library name that's _not_ variant-specific 
@@ -57,5 +49,5 @@ function getLibs(prog)
     var dev = this.$name.substring(this.$name.lastIndexOf('.') + 1);
     var lib =  "lib/wiring_" + dev + ext;
     var vlib = vbase + "lib/board" + ext;
-    return (lib + ";" + vlib + ";" + drvlib + ";" + dpllib);
+    return (lib + ";" + vlib);
 }

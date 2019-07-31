@@ -67,7 +67,7 @@
 #define MSP432_ARTEST_CMD 1
 #define CC26XX_ARTEST_CMD 0
 #define MSP432E_ARTEST_CMD 0
-#elif defined(BOARD_CC2650_LAUNCHXL) || defined(BOARD_CC1310_LAUNCHXL) || defined(BOARD_CC1350_LAUNCHXL) || defined(BOARD_CC1352R1_LAUNCHXL) || defined(BOARD_CC26X2R1_LAUNCHXL)
+#elif defined(BOARD_CC2650_LAUNCHXL) || defined(BOARD_CC1310_LAUNCHXL) || defined(BOARD_CC1350_LAUNCHXL) || defined(BOARD_CC1312R1_LAUNCHXL) || defined(BOARD_CC1352R1_LAUNCHXL) || defined(BOARD_CC26X2R1_LAUNCHXL) || defined(BOARD_LPSTK_CC1352R)
 #define CC32XX_ARTEST_CMD 0
 #define MSP432_ARTEST_CMD 0
 #define CC26XX_ARTEST_CMD 1
@@ -91,7 +91,7 @@
 #define MSP432_AWTEST_CMD 1
 #define CC26XX_AWTEST_CMD 0
 #define MSP432E_AWTEST_CMD 0
-#elif defined(BOARD_CC2650_LAUNCHXL) || defined(BOARD_CC1310_LAUNCHXL) || defined(BOARD_CC1350_LAUNCHXL) || defined(BOARD_CC1352R1_LAUNCHXL) || defined(BOARD_CC26X2R1_LAUNCHXL)
+#elif defined(BOARD_CC2650_LAUNCHXL) || defined(BOARD_CC1310_LAUNCHXL) || defined(BOARD_CC1350_LAUNCHXL) || defined(BOARD_CC1312R1_LAUNCHXL) || defined(BOARD_CC1352R1_LAUNCHXL) || defined(BOARD_CC26X2R1_LAUNCHXL) || defined(BOARD_LPSTK_CC1352R)
 #define CC32XX_AWTEST_CMD 0
 #define MSP432_AWTEST_CMD 0
 #define CC26XX_AWTEST_CMD 1
@@ -115,7 +115,7 @@
 #define MSP432_DRWTEST_CMD 1
 #define CC26XX_DRWTEST_CMD 0
 #define MSP432E_DRWTEST_CMD 0
-#elif defined(BOARD_CC2650_LAUNCHXL) || defined(BOARD_CC1310_LAUNCHXL) || defined(BOARD_CC1350_LAUNCHXL) || defined(BOARD_CC1352R1_LAUNCHXL) || defined(BOARD_CC26X2R1_LAUNCHXL)
+#elif defined(BOARD_CC2650_LAUNCHXL) || defined(BOARD_CC1310_LAUNCHXL) || defined(BOARD_CC1350_LAUNCHXL) || defined(BOARD_CC1312R1_LAUNCHXL) || defined(BOARD_CC1352R1_LAUNCHXL) || defined(BOARD_CC26X2R1_LAUNCHXL) || defined(BOARD_LPSTK_CC1352R)
 #define CC32XX_DRWTEST_CMD 0
 #define MSP432_DRWTEST_CMD 0
 #define CC26XX_DRWTEST_CMD 1
@@ -126,6 +126,7 @@
 #define CC26XX_DRWTEST_CMD 0
 #define MSP432E_DRWTEST_CMD 1
 #endif
+#define SELFTEST_CMD 1
 #endif
 
 /* self test board's common pin */
@@ -226,6 +227,11 @@ static int consoleHandler_nvstest(const char *line);
 static int consoleHandler_clktest(const char *line);
 #endif
 
+#if SELFTEST_CMD == 1
+static int consoleHandler_rte(const char *line);
+static int consoleHandler_dacwr(const char *line);
+#endif
+
 static char home[] = "\e[H";
 static char clear[] = "\e[2J";
 
@@ -296,6 +302,10 @@ static const struct {
 #endif
 #if CLKTEST_CMD == 1
     GEN_COMMTABLE_ENTRY(clktest, "Clock Accuracy test",         "usage: clktest"),
+#endif
+#if SELFTEST_CMD == 1
+    GEN_COMMTABLE_ENTRY(rte,      "route pin to common",        "usage: rte <pin>"),
+    GEN_COMMTABLE_ENTRY(dacwr,    "Set DAC to value",           "usage: dacwr <value>"),
 #endif
     GEN_COMMTABLE_ENTRY(help,    "Get information on commands. Usage: help [command]",  NULL),
     {NULL,NULL,NULL,NULL}   // Indicates end of table
@@ -1722,7 +1732,7 @@ static uint8_t awPinIds[] = {
     37,  39,  40
 };
 
-#elif defined(BOARD_CC1352R1_LAUNCHXL)
+#elif defined(BOARD_CC1312R1_LAUNCHXL) || defined(BOARD_CC1352R1_LAUNCHXL) || defined(BOARD_LPSTK_CC1352R)
 
 /* Supported analogWrite pins */
 static uint8_t awPinIds[] = {
@@ -1882,7 +1892,7 @@ static uint8_t drwPinIds[] = {
     40
 };
 
-#elif defined(BOARD_CC1352R1_LAUNCHXL)
+#elif defined(BOARD_CC1312R1_LAUNCHXL) || defined(BOARD_CC1352R1_LAUNCHXL)  || defined(BOARD_LPSTK_CC1352R)
 
 /* Supported digital pins */
 static uint8_t drwPinIds[] = {
@@ -2149,6 +2159,64 @@ static int consoleHandler_clktest(const char *line)
     Serial.println(ms1-ms0);
 
     return (RETURN_SUCCESS);
+}
+
+#endif
+
+#if SELFTEST_CMD == 1
+
+static int consoleHandler_rte(const char *line)
+{
+    char *endptr;
+    uint8_t pin;
+    static char response[80];
+
+    if (*line++ != ' ') {
+        return RETURN_FAIL_PRINT_USAGE;
+    }
+
+    pin = strtol(line , &endptr, 10);
+
+    Wire.begin();
+
+    /* turn off the DAC so that mux routes output pins to pin 23 */
+    disableDac();
+
+    pinMode(COMMON_PIN, INPUT);
+
+    /* force jumpered pin 24 to input mode */
+    pinMode(24, INPUT);
+
+    System_snprintf(response, sizeof(response),
+        "Routing pin %d to common pin %d", pin, COMMON_PIN);
+    SERIAL.println(response);
+
+    aMuxChannelEnable(pin);
+
+    return RETURN_SUCCESS;
+}
+
+static int consoleHandler_dacwr(const char *line)
+{
+    char *endptr;
+    uint32_t value;
+    static char response[80];
+
+    if (*line++ != ' ') {
+        return RETURN_FAIL_PRINT_USAGE;
+    }
+
+    value = strtol(line , &endptr, 10);
+
+    Wire.begin();
+
+    System_snprintf(response, sizeof(response),
+        "Setting DAC to %d", value);
+    SERIAL.println(response);
+
+    dacWrite(value);
+
+    return RETURN_SUCCESS;
 }
 
 #endif
