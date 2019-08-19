@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2016, Texas Instruments Incorporated
+ * Copyright (c) 2015-2019, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,8 +31,6 @@
  */
 
 #define ARDUINO_MAIN
-
-#define DEVICE_FAMILY cc13x0
 
 #include <ti/runtime/wiring/wiring_private.h>
 #include "wiring_analog.h"
