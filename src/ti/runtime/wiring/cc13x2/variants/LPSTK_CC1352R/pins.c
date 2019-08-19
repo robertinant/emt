@@ -31,7 +31,7 @@
  */
 
 #include <ti/runtime/wiring/wiring_private.h>
-#include <ti/runtime/wiring/cc13xx/wiring_analog.h>
+#include <ti/runtime/wiring/cc13x2/wiring_analog.h>
 
 uint8_t digital_pin_to_pin_function[] = {
     PIN_FUNC_INVALID,   /*  dummy */
