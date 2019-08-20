@@ -17,6 +17,7 @@ MCPI_CC13X2_TREE  = $(TREES)/mcpi/mcpi-4.20.01.01
 SDK_CC32XX = simplelink_cc32xx_sdk_2_40_02_00
 SDK_MSP432 = simplelink_msp432p4_sdk_1_50_00_06
 SDK_CC13XX = simplelink_cc13x0_sdk_1_50_00_08
+SDK_CC13X2 = simplelink_cc13x2_26x2_sdk_3_20_00_68
 
 #
 # Official SDK builds:
@@ -32,7 +33,8 @@ SDK.msp432 = $(firstword $(wildcard $(MCPI_MSP432_TREE)/exports/coresdk_msp432_*
 SDK.msp432e = $(firstword $(wildcard $(MCPI_MSP432E_TREE)/exports/coresdk_msp432e4_*))
 #SDK.cc13xx = $(TOOLS)/vendors/ti/cc13xx_sdk/$(SDK_CC13XX)
 SDK.cc13xx = $(firstword $(wildcard $(MCPI_CC13XX_TREE)/exports/coresdk_cc13xx_*))
-SDK.cc13x2 = $(firstword $(wildcard $(MCPI_CC13X2_TREE)/exports/coresdk_cc13xx_*))
+#SDK.cc13x2 = $(firstword $(wildcard $(MCPI_CC13X2_TREE)/exports/coresdk_cc13xx_*))
+SDK.cc13x2 = /db/vendors/ti/cc13x2_26x2_sdk/$(SDK_CC13X2)
 SDK.cc26xx = $(firstword $(wildcard $(MCPI_CC13XX_TREE)/exports/coresdk_cc13xx_*))
 SDK.cc32xx = $(firstword $(wildcard $(MCPI_CC32XX_TREE)/exports/coresdk_cc32xx_*))
 #SDK.cc32xx = $(TOOLS)/vendors/ti/cc3220_sdk/$(SDK_CC32XX)
