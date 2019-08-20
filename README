@@ -1,4 +1,4 @@
-				emt-e28
+				emt-e29
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -124,11 +124,11 @@ DELETIONS
 
 CHANGES
 
-ti/runtime/wiring/cc13x2
-    remove DeviceFamily definition which is being provided in CCOPTS
+bundles/emt_src
+    fixed to include CC13X2 sources
 
-ti/runtime/wiring/cc13x2/variants
-    fix pins.c to include correct wiring_analog.h file
+imports.mak
+    build against SDK (not just the CORE SDK) for the CC13x2
     
 MRS
 
