@@ -1,4 +1,4 @@
-				emt-e27
+				emt-e28
 
 		Energia Multi-Threaded (EMT) Wiring Support
 
@@ -120,18 +120,15 @@ NOTE
 ========================================================================
 ADDITIONS
 
-src/ti/runtime/wiring/cc13x2/variants/LPSTK_CC1352R
-    
 DELETIONS
 
 CHANGES
 
-*
-    updated to MCPI 4.20 (from 3.80)
+ti/runtime/wiring/cc13x2
+    remove DeviceFamily definition which is being provided in CCOPTS
 
-
-ti/platforms/launchpad
-    And NVS region base address with baseAddressMask
-
+ti/runtime/wiring/cc13x2/variants
+    fix pins.c to include correct wiring_analog.h file
+    
 MRS
 
