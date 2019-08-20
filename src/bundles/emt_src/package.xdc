@@ -9,6 +9,11 @@ requires internal ti.runtime.wiring.msp432e.variants.MSP_EXP432E401Y;
 requires internal ti.runtime.wiring.cc13xx.variants.CC1310_LAUNCHXL;
 requires internal ti.runtime.wiring.cc13xx;
 
+requires internal ti.runtime.wiring.cc13x2.variants.LPSTK_CC1352R;
+requires internal ti.runtime.wiring.cc13x2.variants.CC1312R1_LAUNCHXL;
+requires internal ti.runtime.wiring.cc13x2.variants.CC1352R1_LAUNCHXL;
+requires internal ti.runtime.wiring.cc13x2;
+
 //requires internal ti.runtime.wiring.cc26xx;
 //requires internal ti.runtime.wiring.cc26xx.variants.CC2650STK_BLE;
 
